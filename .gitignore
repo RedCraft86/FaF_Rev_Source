@@ -39,8 +39,6 @@ Build/*/**
 !/Build/**/*.ico
 
 Content/
-!/Content/Levels/
-!/Content/Blueprints/
 
 DerivedDataCache/
 Intermediate/
