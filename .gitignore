@@ -45,6 +45,8 @@ Content/
 DerivedDataCache/
 Intermediate/
 Plugins/
+!Plugins/RCUtils/Source
+!/Plugins/RCUtils/*.uplugin
 
 Saved/
 !/Saved/Config/WindowsEditor/Editor.ini
