@@ -35,25 +35,25 @@ Binaries/
 Build/*
 !Build/*/
 Build/*/**
-!Build/*/PakBlacklist*.txt
-!Build/**/*.ico
+!/Build/*/PakBlacklist*.txt
+!/Build/**/*.ico
 
 Content/
-!Content/Levels/
-!Content/Blueprints/
+!/Content/Levels/
+!/Content/Blueprints/
 
 DerivedDataCache/
 Intermediate/
 Plugins/
 
 Saved/
-!Saved/Config/WindowsEditor/Editor.ini
-!Saved/Config/WindowsEditor/EditorPerProjectUserSettings.ini
-!Saved/Config/WindowsEditor/Engine.ini
-!Saved/Config/WindowsEditor/ExpressiveText.ini
-!Saved/Config/WindowsEditor/Game.ini
-!Saved/Config/WindowsEditor/GameplayTagsEditorState.ini
-!Saved/Config/WindowsEditor/GameUserSettings.ini
+!/Saved/Config/WindowsEditor/Editor.ini
+!/Saved/Config/WindowsEditor/EditorPerProjectUserSettings.ini
+!/Saved/Config/WindowsEditor/Engine.ini
+!/Saved/Config/WindowsEditor/ExpressiveText.ini
+!/Saved/Config/WindowsEditor/Game.ini
+!/Saved/Config/WindowsEditor/GameplayTagsEditorState.ini
+!/Saved/Config/WindowsEditor/GameUserSettings.ini
 
-Source/GameCore/GameCore.h
-Source/GameCore/GameCore.cpp
+/Source/GameCore/GameCore.h
+/Source/GameCore/GameCore.cpp
