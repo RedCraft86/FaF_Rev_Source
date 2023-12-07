@@ -7,8 +7,6 @@
 class FGameCoreModule final : public FDefaultGameModuleImpl
 {
 private:
-
-	inline static FString DefaultAES = "6+p3XQ76zlXylpDB/530UxPHbfYt5iZeH+Q6CSXt78g=";
 	
 public:
 
