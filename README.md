@@ -1,1 +1,1 @@
-﻿This is a repository for the Source Code of "Fredbear and Friends Revelation."
+﻿This is a repository for the Source Code of "Fredbear and Friends Revelation." Blueprints are not Source Controlled due to some complications.
