@@ -3,6 +3,7 @@
 #pragma once
 
 #include "GameCore.h"
+#include "GameKeys.h"
 #include "Engine/DeveloperSettings.h"
 #include "Inventory/GCInventoryTypes.h"
 #include "Materials/MaterialParameterCollection.h"
@@ -179,12 +180,12 @@ private:
 			bUpdate = false;
 			if (PrivateKey.IsEmpty())
 			{
-				PrivateKey = FGameCoreModule::Decrypt(GameKey);
+				PrivateKey = FGameCoreModule::DecryptAES(GameKey, GameKeys::GamejoltAES);
 			}
 			else
 			{
-				GameKey = FGameCoreModule::Encrypt(PrivateKey);
-				PrivateKey = FGameCoreModule::Decrypt(GameKey);
+				GameKey = FGameCoreModule::EncryptAES(PrivateKey, GameKeys::GamejoltAES);
+				PrivateKey = FGameCoreModule::DecryptAES(GameKey, GameKeys::GamejoltAES);
 				
 				TryUpdateDefaultConfigFile();
 			}

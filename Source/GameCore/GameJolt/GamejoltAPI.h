@@ -2,6 +2,7 @@
 
 #pragma once
 
+#include "GameKeys.h"
 #include "HttpModule.h"
 #include "RCRuntimeTypes.h"
 #include "Core/GCSettings.h"
@@ -22,7 +23,8 @@ namespace GamejoltAPI
 		{
 			FString BaseURL{TEXT("https://api.gamejolt.com/api/game/v1_2") / URL};
 			BaseURL += TEXT("&game_id=") + FString::FromInt(Settings->GameID);
-			return BaseURL + "&signature=" + FMD5::HashAnsiString(*(BaseURL + FGameCoreModule::Decrypt(Settings->GameKey)));
+			return BaseURL + "&signature=" + FMD5::HashAnsiString(*(BaseURL +
+				FGameCoreModule::DecryptAES(Settings->GameKey, GameKeys::GamejoltAES)));
 		}
 
 		return TEXT("");
