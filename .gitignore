@@ -47,6 +47,8 @@ Plugins/
 !/Plugins/RCUtils/*.uplugin
 
 Saved/
+/Saved/Config/WindowsEditor/EditorPerProjectUserSettings.ini
+
 !/Saved/Config/WindowsEditor/Editor.ini
 !/Saved/Config/WindowsEditor/Engine.ini
 !/Saved/Config/WindowsEditor/ExpressiveText.ini
