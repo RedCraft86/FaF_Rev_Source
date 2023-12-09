@@ -57,3 +57,4 @@ Saved/
 !/Saved/Config/WindowsEditor/GameUserSettings.ini
 
 /Source/GameCore/GameKeys.h
+/Config/DefaultCrypto.ini
