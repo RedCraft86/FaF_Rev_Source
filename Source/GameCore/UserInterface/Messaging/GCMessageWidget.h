@@ -18,14 +18,21 @@ struct GAMECORE_API FGCNoticeData
 {
 	GENERATED_BODY()
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "NoticeData")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Data")
+		bool bUseBasicText;
+	
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Data", meta = (MultiLine = true, DisplayName = "Text", EditCondition = "bUseBasicText", EditConditionHides))
+		FText TextBasic;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Data", meta = (EditCondition = "!bUseBasicText", EditConditionHides))
 		FExpressiveTextFields Text;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "NoticeData", meta = (ClampMin = 1.0f, UIMin = 1.0f))
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Data", meta = (ClampMin = 1.0f, UIMin = 1.0f))
 		float DisplayTime;
 
-	FGCNoticeData() : DisplayTime(1.0f)
+	FGCNoticeData() : bUseBasicText(false), TextBasic(FText::GetEmpty()), DisplayTime(1.0f)
 	{
+		TextBasic = FText::FromString("Sample Text");
 		Text.Text = FText::FromString("Sample Text");
 		Text.Alignment = {EExpressiveTextVerticalAlignment::Top, EExpressiveTextHorizontalAlignment::Center};
 		Text.Justification = ETextJustify::Center;
@@ -40,8 +47,9 @@ struct GAMECORE_API FGCNoticeData
 #endif
 	}
 
-	explicit FGCNoticeData(const FText& InText, const float InDisplayTime = 1.0f) : DisplayTime(InDisplayTime)
+	explicit FGCNoticeData(const FText& InText, const float InDisplayTime = 1.0f) : bUseBasicText(false), DisplayTime(InDisplayTime)
 	{
+		TextBasic = InText;
 		Text.Text = InText;
 		Text.Alignment = {EExpressiveTextVerticalAlignment::Top, EExpressiveTextHorizontalAlignment::Center};
 		Text.Justification = ETextJustify::Center;
@@ -65,6 +73,10 @@ struct GAMECORE_API FGCNoticeData
 		{
 			RetVal.InlinedExpressiveText.DefaultStyle = UGCSettings::Get()->BaseTextStyle.LoadSynchronous();
 		}
+		if (bUseBasicText)
+		{
+			RetVal.InlinedExpressiveText.Text = TextBasic;
+		}
 		return RetVal;
 	}
 };
@@ -74,7 +86,7 @@ struct GAMECORE_API FGCSubtitleData : public FGCNoticeData
 {
 	GENERATED_BODY()
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "SubtitleData")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Data")
 		FText Name;
 
 	FGCSubtitleData() : Name(FText::FromString(TEXT("You"))) {}
