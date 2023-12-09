@@ -56,5 +56,4 @@ Saved/
 !/Saved/Config/WindowsEditor/GameplayTagsEditorState.ini
 !/Saved/Config/WindowsEditor/GameUserSettings.ini
 
-/Source/GameCore/GameCore.h
-/Source/GameCore/GameCore.cpp
+/Source/GameCore/GameKeys.h
