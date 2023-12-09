@@ -5,15 +5,23 @@
 #include "InstancedStruct.h"
 #include "RCUtilsSubsystem.h"
 #include "Sound/AmbientSound.h"
+#include "LevelSequenceActor.h"
+#include "LevelSequencePlayer.h"
 #include "GameFramework/Actor.h"
 #include "Misc/OutputDeviceNull.h"
-#include "Kismet/GameplayStatics.h"
 #include "Engine/StaticMeshActor.h"
 #include "Engine/LevelScriptActor.h"
 #include "Components/AudioComponent.h"
 #include "Player/GCPlayerController.h"
 #include "UserInterface/Messaging/GCMessageWidget.h"
 #include "GCFieldUtils.generated.h"
+
+UENUM(BlueprintType, DisplayName = "Event Change Type")
+enum class EGCEventChangeType : uint8
+{
+	Set,
+	Toggle
+};
 
 USTRUCT(BlueprintInternalUseOnly)
 struct GAMECORE_API FGCEvent
@@ -49,7 +57,9 @@ protected:
 		if (const UWorld* World = GEngine->GetWorldFromContextObject(WorldContext, EGetWorldErrorMode::LogAndReturnNull))
 		{
 			FTimerManager& Timer = World->GetTimerManager();
-			if (!bRetriggerable) Timer.ClearTimer(Handle);
+			if (Timer.IsTimerActive(Handle) && !bRetriggerable) return;
+			
+			Timer.ClearTimer(Handle);
 			Timer.SetTimer(Handle, [this, WorldContext]()
 			{
 				for (FInstancedStruct& Event : Events)
@@ -207,109 +217,207 @@ protected:
 	}
 };
 
-USTRUCT(BlueprintType, DisplayName = "Toggle Visibility")
+USTRUCT(BlueprintType, DisplayName = "Play Sequence")
+struct GAMECORE_API FGCSequencerEvent : public FGCEvent
+{
+	GENERATED_BODY()
+
+	FGCSequencerEvent()
+		: Target(nullptr)
+		, PlayRate(1.0f)
+	{}
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Sequence")
+		ALevelSequenceActor* Target;
+	
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Sequence")
+		float PlayRate;
+
+protected:
+	
+	virtual void RunEvent(const UObject* WorldContext) override
+	{
+		if (FMath::IsNearlyZero(PlayRate)) return;
+		if (ULevelSequencePlayer* Player = Target ? Target->GetSequencePlayer() : nullptr)
+		{
+			Player->SetPlayRate(FMath::Abs(PlayRate));
+			PlayRate < 0.0f ? Player->PlayReverse() : Player->Play();
+		}
+	}
+};
+
+USTRUCT(BlueprintType, DisplayName = "Change Visibility")
 struct GAMECORE_API FGCVisibilityEvent : public FGCEvent
 {
 	GENERATED_BODY()
 
 	FGCVisibilityEvent()
-		: bSyncedStates(true)
-		, bStartingState(true)
+		: ChangeType(EGCEventChangeType::Set)
+		, ToState(true)
 		, Targets({})
-		, bCurrentState(true)
 	{}
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Visibility")
-		bool bSyncedStates;
+		EGCEventChangeType ChangeType;
 		
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Visibility", meta = (EditCondition = "bSyncedStates", EditConditionHides))
-		bool bStartingState;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Visibility", meta = (EditCondition = "ChangeType == EGCEventChangeType::Set", EditConditionHides))
+		bool ToState;
 	
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Visibility")
 		TSet<AActor*> Targets;
 	
 protected:
 
-	bool bCurrentState;
-	
 	virtual void RunEvent(const UObject* WorldContext) override
 	{
-		if (bSyncedStates)
+		switch (ChangeType)
 		{
-			bCurrentState = !bStartingState;
+		case EGCEventChangeType::Set:
 			for (AActor* Target : Targets)
 			{
-				Target->SetActorHiddenInGame(!bCurrentState);
+				Target->SetActorHiddenInGame(!ToState);
 			}
-		}
-		else
-		{
+			break;
+
+		case EGCEventChangeType::Toggle:
 			for (AActor* Target : Targets)
 			{
 				Target->SetActorHiddenInGame(!Target->IsHidden());
+			}
+			break;
+		}
+	}
+};
+
+USTRUCT(BlueprintType, DisplayName = "Change Collision")
+struct GAMECORE_API FGCCollisionEvent : public FGCEvent
+{
+	GENERATED_BODY()
+
+	FGCCollisionEvent()
+		: ChangeType(EGCEventChangeType::Set)
+		, ToState(true)
+		, Targets({})
+	{}
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Collision")
+		EGCEventChangeType ChangeType;
+		
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Collision", meta = (EditCondition = "ChangeType == EGCEventChangeType::Set", EditConditionHides))
+		bool ToState;
+	
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Collision")
+		TSet<AActor*> Targets;
+	
+protected:
+
+	virtual void RunEvent(const UObject* WorldContext) override
+	{
+		switch (ChangeType)
+		{
+		case EGCEventChangeType::Set:
+			for (AActor* Target : Targets)
+			{
+				Target->SetActorEnableCollision(ToState);
+			}
+			break;
+
+		case EGCEventChangeType::Toggle:
+			for (AActor* Target : Targets)
+			{
+				Target->SetActorEnableCollision(!Target->GetActorEnableCollision());
+			}
+			break;
+		}
+	}
+};
+
+USTRUCT(BlueprintType, DisplayName = "Play Sound Actor")
+struct GAMECORE_API FGCPlaySoundEvent : public FGCEvent
+{
+	GENERATED_BODY()
+
+	FGCPlaySoundEvent()
+		: StartTime(0.0f)
+		, bFade(false)
+		, FadeTime(1.0f)
+		, FadeCurve(EAudioFaderCurve::Linear)
+		, Target(nullptr)
+	{}
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Play Sound", meta = (ClampMin = 0.0f, UIMin = 0.0f))
+		float StartTime;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Play Sound")
+		bool bFade;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Play Sound", meta = (ClampMin = 0.1f, UIMin = 0.1f, EditCondition = "bFadeIn", EditConditionHides))
+		float FadeTime;
+	
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Play Sound", meta = (EditCondition = "bFadeIn", EditConditionHides))
+		EAudioFaderCurve FadeCurve;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Play Sound")
+		AAmbientSound* Target;
+
+protected:
+	
+	virtual void RunEvent(const UObject* WorldContext) override
+	{
+		if (UAudioComponent* AudioComp = Target ? Target->GetAudioComponent() : nullptr)
+		{
+			if (AudioComp->IsPlaying()) return;
+			if (bFade && FadeTime > 0.0f)
+			{
+				AudioComp->FadeIn(FadeTime, 0.0f, StartTime, FadeCurve);
+			}
+			else
+			{
+				AudioComp->Play(StartTime);
 			}
 		}
 	}
 };
 
-USTRUCT(BlueprintType, DisplayName = "Play Sound")
-struct GAMECORE_API FGCSoundEvent : public FGCEvent
+USTRUCT(BlueprintType, DisplayName = "Stop Sound Actor")
+struct GAMECORE_API FGCSoundPlayEvent : public FGCEvent
 {
 	GENERATED_BODY()
 
-	FGCSoundEvent()
-		: Type(TEXT("Local")), SoundWave(nullptr), SoundActor(nullptr)
-		, VolumeMultiplier(1.0f), PitchMultiplier(1.0f), StartTime(0.0f)
+	FGCSoundPlayEvent()
+		: bFade(false)
+		, FadeTime(1.0f)
+		, FadeCurve(EAudioFaderCurve::Linear)
+		, Target(nullptr)
 	{}
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Sound", meta = (GetOptions = "SoundTypes"))
-		FName Type;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Stop Sound")
+		bool bFade;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Stop Sound", meta = (ClampMin = 0.1f, UIMin = 0.1f, EditCondition = "bFadeIn", EditConditionHides))
+		float FadeTime;
 	
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Sound", meta = (EditCondition = "Type == 'Local'", EditConditionHides))
-		TSoftObjectPtr<USoundWave> SoundWave;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Stop Sound", meta = (EditCondition = "bFadeIn", EditConditionHides))
+		EAudioFaderCurve FadeCurve;
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Sound", meta = (EditCondition = "Type == 'Actor'", EditConditionHides))
-		AAmbientSound* SoundActor;
-
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Sound", meta = (EditCondition = "Type != 'None'", EditConditionHides))
-		float VolumeMultiplier;
-
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Sound", meta = (EditCondition = "Type != 'None'", EditConditionHides))
-		float PitchMultiplier;
-
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Sound", meta = (EditCondition = "Type != 'None'", EditConditionHides))
-		float StartTime;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Stop Sound")
+		AAmbientSound* Target;
 
 protected:
-
-	UPROPERTY(meta = (TransientToolProperty))
-		TArray<FName> SoundTypes = {TEXT("Local"), TEXT("Actor")};
-
+	
 	virtual void RunEvent(const UObject* WorldContext) override
 	{
-		switch (SoundTypes.Find(Type))
+		if (UAudioComponent* AudioComp = Target ? Target->GetAudioComponent() : nullptr)
 		{
-		case 0:
-			if (!SoundWave.IsNull())
+			if (!AudioComp->IsPlaying()) return;
+			if (bFade && FadeTime > 0.0f)
 			{
-				UGameplayStatics::PlaySound2D(WorldContext, SoundWave.LoadSynchronous(),
-					VolumeMultiplier, PitchMultiplier, StartTime);
+				AudioComp->FadeOut(FadeTime, 0.0f, FadeCurve);
 			}
-			break;
-			
-		case 1:
-			if (IsValid(SoundActor))
+			else
 			{
-				if (UAudioComponent* Comp = SoundActor->GetAudioComponent())
-				{
-					Comp->VolumeMultiplier = VolumeMultiplier;
-					Comp->PitchMultiplier = PitchMultiplier;
-					Comp->Play(0.0f);
-				}
+				AudioComp->Stop();
 			}
-			break;
-			
-		default: break;
 		}
 	}
 };
