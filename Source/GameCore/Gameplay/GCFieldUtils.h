@@ -40,13 +40,13 @@ struct GAMECORE_API FGCDelayedEvent : public FGCEvent
 
 	FGCDelayedEvent() : bRetriggerable(false), Delay(1.0f), Events({}) {}
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Settings")
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Delay")
 		bool bRetriggerable;
 	
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Settings", meta = (ClampMin = 0.1f, UIMin = 0.1f))
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Delay", meta = (ClampMin = 0.1f, UIMin = 0.1f))
 		float Delay;
 	
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Settings", meta = (BaseStruct = "/Script/GameCore.GCEvent", ExcludeBaseStruct))
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Delay", meta = (BaseStruct = "/Script/GameCore.GCEvent", ExcludeBaseStruct))
 		TArray<FInstancedStruct> Events;
 
 protected:
@@ -84,10 +84,10 @@ struct GAMECORE_API FGCGlobalEvent : public FGCEvent
 		, Payload({})
 	{}
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "GlobalEvent")
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Global Event")
 		FGameplayTag EventID;
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "GlobalEvent")
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Global Event")
 		FInstancedStruct Payload;
 
 protected:
@@ -111,10 +111,10 @@ struct GAMECORE_API FGCLocalEvent : public FGCEvent
 		, Targets({})
 	{}
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "LocalEvent")
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Local Event")
 		TSet<FName> EventNames;
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "LocalEvent")
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Local Event")
 		TSet<AActor*> Targets;
 
 protected:
@@ -145,7 +145,7 @@ struct GAMECORE_API FGCRemoteEvent : public FGCEvent
 		: EventNames({})
 	{}
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "LocalEvent")
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Remote Event")
 		TSet<FName> EventNames;
 
 protected:
@@ -213,35 +213,6 @@ protected:
 		if (const AGCPlayerController* PC = AGCPlayerController::Get(WorldContext))
 		{
 			PC->GetUserWidget<UGCMessageWidget>()->QueueSubtitleByObject(SubtitleData, bObjectOverrideQueue ? WorldContext : nullptr);
-		}
-	}
-};
-
-USTRUCT(BlueprintType, DisplayName = "Play Sequence")
-struct GAMECORE_API FGCSequencerEvent : public FGCEvent
-{
-	GENERATED_BODY()
-
-	FGCSequencerEvent()
-		: Target(nullptr)
-		, PlayRate(1.0f)
-	{}
-
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Sequence")
-		ALevelSequenceActor* Target;
-	
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Sequence")
-		float PlayRate;
-
-protected:
-	
-	virtual void RunEvent(const UObject* WorldContext) override
-	{
-		if (FMath::IsNearlyZero(PlayRate)) return;
-		if (ULevelSequencePlayer* Player = Target ? Target->GetSequencePlayer() : nullptr)
-		{
-			Player->SetPlayRate(FMath::Abs(PlayRate));
-			PlayRate < 0.0f ? Player->PlayReverse() : Player->Play();
 		}
 	}
 };
@@ -332,6 +303,73 @@ protected:
 	}
 };
 
+USTRUCT(BlueprintType, DisplayName = "Change Material")
+struct GAMECORE_API FGCMaterialEvent : public FGCEvent
+{
+	GENERATED_BODY()
+
+	FGCMaterialEvent()
+		: ChangeTo({})
+		, Targets({})
+	{}
+	
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Material")
+		TMap<uint8, UMaterialInterface*> ChangeTo;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Material")
+		TSet<AStaticMeshActor*> Targets;
+
+protected:
+	
+	virtual void RunEvent(const UObject* WorldContext) override
+	{
+		for (const AStaticMeshActor* Target : Targets)
+		{
+			if (UStaticMeshComponent* MeshComp = Target ? Target->GetStaticMeshComponent() : nullptr)
+			{
+				for (const TPair<uint8, UMaterialInterface*>& Pair : ChangeTo)
+				{
+					if (!Pair.Value) continue;
+					MeshComp->SetMaterial(Pair.Key, Pair.Value);
+				}
+			}
+		}
+	}
+};
+
+USTRUCT(BlueprintType, DisplayName = "Change Primitive Data")
+struct GAMECORE_API FGCPrimitiveDataEvent : public FGCEvent
+{
+	GENERATED_BODY()
+
+	FGCPrimitiveDataEvent()
+		: ChangeTo({})
+		, Targets({})
+	{}
+	
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Primitive Data")
+		TMap<uint8, float> ChangeTo;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Primitive Data")
+		TSet<AStaticMeshActor*> Targets;
+	
+protected:
+	
+	virtual void RunEvent(const UObject* WorldContext) override
+	{
+		for (const AStaticMeshActor* Target : Targets)
+		{
+			if (UStaticMeshComponent* MeshComp = Target ? Target->GetStaticMeshComponent() : nullptr)
+			{
+				for (const TPair<uint8, float>& Pair : ChangeTo)
+				{
+					MeshComp->SetCustomPrimitiveDataFloat(Pair.Key, Pair.Value);
+				}
+			}
+		}
+	}
+};
+
 USTRUCT(BlueprintType, DisplayName = "Play Sound Actor")
 struct GAMECORE_API FGCPlaySoundEvent : public FGCEvent
 {
@@ -342,7 +380,7 @@ struct GAMECORE_API FGCPlaySoundEvent : public FGCEvent
 		, bFade(false)
 		, FadeTime(1.0f)
 		, FadeCurve(EAudioFaderCurve::Linear)
-		, Target(nullptr)
+		, Targets({})
 	{}
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Play Sound", meta = (ClampMin = 0.0f, UIMin = 0.0f))
@@ -351,29 +389,32 @@ struct GAMECORE_API FGCPlaySoundEvent : public FGCEvent
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Play Sound")
 		bool bFade;
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Play Sound", meta = (ClampMin = 0.1f, UIMin = 0.1f, EditCondition = "bFadeIn", EditConditionHides))
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Play Sound", meta = (ClampMin = 0.1f, UIMin = 0.1f, EditCondition = "bFade", EditConditionHides))
 		float FadeTime;
 	
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Play Sound", meta = (EditCondition = "bFadeIn", EditConditionHides))
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Play Sound", meta = (EditCondition = "bFade", EditConditionHides))
 		EAudioFaderCurve FadeCurve;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Play Sound")
-		AAmbientSound* Target;
+		TSet<AAmbientSound*> Targets;
 
 protected:
 	
 	virtual void RunEvent(const UObject* WorldContext) override
 	{
-		if (UAudioComponent* AudioComp = Target ? Target->GetAudioComponent() : nullptr)
+		for (const AAmbientSound* Target : Targets)
 		{
-			if (AudioComp->IsPlaying()) return;
-			if (bFade && FadeTime > 0.0f)
+			if (UAudioComponent* AudioComp = Target ? Target->GetAudioComponent() : nullptr)
 			{
-				AudioComp->FadeIn(FadeTime, 0.0f, StartTime, FadeCurve);
-			}
-			else
-			{
-				AudioComp->Play(StartTime);
+				if (AudioComp->IsPlaying()) return;
+				if (bFade && FadeTime > 0.0f)
+				{
+					AudioComp->FadeIn(FadeTime, 0.0f, StartTime, FadeCurve);
+				}
+				else
+				{
+					AudioComp->Play(StartTime);
+				}
 			}
 		}
 	}
@@ -388,93 +429,69 @@ struct GAMECORE_API FGCSoundPlayEvent : public FGCEvent
 		: bFade(false)
 		, FadeTime(1.0f)
 		, FadeCurve(EAudioFaderCurve::Linear)
-		, Target(nullptr)
+		, Targets({})
 	{}
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Stop Sound")
 		bool bFade;
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Stop Sound", meta = (ClampMin = 0.1f, UIMin = 0.1f, EditCondition = "bFadeIn", EditConditionHides))
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Stop Sound", meta = (ClampMin = 0.1f, UIMin = 0.1f, EditCondition = "bFade", EditConditionHides))
 		float FadeTime;
 	
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Stop Sound", meta = (EditCondition = "bFadeIn", EditConditionHides))
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Stop Sound", meta = (EditCondition = "bFade", EditConditionHides))
 		EAudioFaderCurve FadeCurve;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Stop Sound")
-		AAmbientSound* Target;
+		TSet<AAmbientSound*> Targets;
 
 protected:
 	
 	virtual void RunEvent(const UObject* WorldContext) override
 	{
-		if (UAudioComponent* AudioComp = Target ? Target->GetAudioComponent() : nullptr)
+		for (const AAmbientSound* Target : Targets)
 		{
-			if (!AudioComp->IsPlaying()) return;
-			if (bFade && FadeTime > 0.0f)
+			if (UAudioComponent* AudioComp = Target ? Target->GetAudioComponent() : nullptr)
 			{
-				AudioComp->FadeOut(FadeTime, 0.0f, FadeCurve);
-			}
-			else
-			{
-				AudioComp->Stop();
+				if (!AudioComp->IsPlaying()) return;
+				if (bFade && FadeTime > 0.0f)
+				{
+					AudioComp->FadeOut(FadeTime, 0.0f, FadeCurve);
+				}
+				else
+				{
+					AudioComp->Stop();
+				}
 			}
 		}
 	}
 };
 
-USTRUCT(BlueprintType, DisplayName = "Change Material")
-struct GAMECORE_API FGCMaterialEvent : public FGCEvent
+
+USTRUCT(BlueprintType, DisplayName = "Play Sequence")
+struct GAMECORE_API FGCSequencerEvent : public FGCEvent
 {
 	GENERATED_BODY()
 
-	FGCMaterialEvent()
+	FGCSequencerEvent()
 		: Target(nullptr)
-		, ChangeTo({})
+		, PlayRate(1.0f)
 	{}
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Subtitle")
-		AStaticMeshActor* Target;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Sequence")
+		ALevelSequenceActor* Target;
 	
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Subtitle")
-		TMap<uint8, UMaterialInterface*> ChangeTo;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Sequence")
+		float PlayRate;
 
 protected:
 	
 	virtual void RunEvent(const UObject* WorldContext) override
 	{
-		if (!Target) return;
-		for (const TPair<uint8, UMaterialInterface*>& Pair : ChangeTo)
+		if (FMath::IsNearlyZero(PlayRate)) return;
+		if (ULevelSequencePlayer* Player = Target ? Target->GetSequencePlayer() : nullptr)
 		{
-			if (!Pair.Value) continue;
-			Target->GetStaticMeshComponent()->SetMaterial(Pair.Key, Pair.Value);
-		}
-	}
-};
-
-USTRUCT(BlueprintType, DisplayName = "Change Primitive Data")
-struct GAMECORE_API FGCPrimitiveDataEvent : public FGCEvent
-{
-	GENERATED_BODY()
-
-	FGCPrimitiveDataEvent()
-		: Target(nullptr)
-		, ChangeTo({})
-	{}
-
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Subtitle")
-		AStaticMeshActor* Target;
-	
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Subtitle")
-		TMap<uint8, float> ChangeTo;
-
-protected:
-	
-	virtual void RunEvent(const UObject* WorldContext) override
-	{
-		if (!Target) return;
-		for (const TPair<uint8, float>& Pair : ChangeTo)
-		{
-			Target->GetStaticMeshComponent()->SetCustomPrimitiveDataFloat(Pair.Key, Pair.Value);
+			Player->SetPlayRate(FMath::Abs(PlayRate));
+			PlayRate < 0.0f ? Player->PlayReverse() : Player->Play();
 		}
 	}
 };
