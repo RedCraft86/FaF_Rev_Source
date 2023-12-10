@@ -42,9 +42,9 @@ Content/
 
 DerivedDataCache/
 Intermediate/
-Plugins/Narrative/
-Plugins/RCUtils/Binaries/
-Plugins/RCUtils/Intermediate/
+Plugins/
+!Plugins/RCUtils/Source/
+!Plugins/RCUtils/*.uplugin
 
 Saved/
 !Saved/Config/WindowsEditor/GameUserSettings.ini
