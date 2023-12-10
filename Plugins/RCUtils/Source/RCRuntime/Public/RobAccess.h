@@ -1,4 +1,4 @@
-// Copyright (C) Tayzar Linn. All Rights Reserved.
+// Copyright (C) Tayzar (RedCraft86). All Rights Reserved.
 
 // Rob comes from here: http://bloglitb.blogspot.com/2011/12/access-to-private-members-safer.html
 

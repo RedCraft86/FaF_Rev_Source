@@ -1,4 +1,4 @@
-﻿// Copyright (C) Tayzar Linn. All Rights Reserved.
+﻿// Copyright (C) Tayzar (RedCraft86). All Rights Reserved.
 
 #include "GCSaveObjects.h"
 #include "Misc/FileHelper.h"

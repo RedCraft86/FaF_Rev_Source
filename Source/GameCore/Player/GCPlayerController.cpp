@@ -1,4 +1,4 @@
-﻿// Copyright (C) Tayzar Linn. All Rights Reserved.
+﻿// Copyright (C) Tayzar (RedCraft86). All Rights Reserved.
 
 // ReSharper disable CppParameterMayBeConstPtrOrRef
 
