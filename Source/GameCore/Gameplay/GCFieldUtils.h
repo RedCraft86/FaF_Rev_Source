@@ -231,7 +231,7 @@ struct GAMECORE_API FGCVisibilityEvent : public FGCEvent
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Visibility")
 		EGCEventChangeType ChangeType;
 		
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Visibility", meta = (EditCondition = "ChangeType == EGCEventChangeType::Set", EditConditionHides))
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Visibility", meta = (EditCondition = "ChangeType == 0", EditConditionHides))
 		bool ToState;
 	
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Visibility")
@@ -274,7 +274,7 @@ struct GAMECORE_API FGCCollisionEvent : public FGCEvent
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Collision")
 		EGCEventChangeType ChangeType;
 		
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Collision", meta = (EditCondition = "ChangeType == EGCEventChangeType::Set", EditConditionHides))
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Collision", meta = (EditCondition = "ChangeType == 0", EditConditionHides))
 		bool ToState;
 	
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Collision")
@@ -409,7 +409,7 @@ protected:
 				if (AudioComp->IsPlaying()) return;
 				if (bFade && FadeTime > 0.0f)
 				{
-					AudioComp->FadeIn(FadeTime, 0.0f, StartTime, FadeCurve);
+					AudioComp->FadeIn(FadeTime, 1.0f, StartTime, FadeCurve);
 				}
 				else
 				{
