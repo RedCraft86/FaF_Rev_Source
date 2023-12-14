@@ -10,7 +10,7 @@
 #include "ListGen_AchievementID.generated.h"
 
 UCLASS(DisplayName = "List Generator - Achievement IDs")
-class UAIDifficultyIDListGen final : public UTableListGeneratorBase
+class UAchievementIDListGen final : public UTableListGeneratorBase
 {
 	GENERATED_BODY()
 
