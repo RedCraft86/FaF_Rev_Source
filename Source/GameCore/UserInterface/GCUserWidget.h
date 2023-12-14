@@ -7,7 +7,9 @@
 
 #define PLAY_FIRST_FRAME(Animation) \
 	PlayAnimationTimeRange(Animation, 0.0f, 0.01f); \
-	PlayAnimationReverse(Animation); 
+	PlayAnimationReverse(Animation);
+
+#define PLAY_ANIM(Animation, Direction) PlayAnimation(Animation, 0.0f, 1, EUMGSequencePlayMode::Direction);
 
 UCLASS(Abstract, DisplayName = "Advanced User Widget Base")
 class GAMECORE_API UGCUserWidget : public UUserWidget

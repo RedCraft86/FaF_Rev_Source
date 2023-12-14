@@ -165,12 +165,12 @@ UGCNarrativeWidget::UGCNarrativeWidget(const FObjectInitializer& ObjectInitializ
 	WidgetZOrder = 11;
 	bAutoAddToViewport = true;
 
+	QuestBox = nullptr;
 	QuestBranchBox = nullptr;
 	DialogueNameText = nullptr;
 	DialogueTitleText = nullptr;
 	SkipLineButton = nullptr;
 	DialogueReplyBox = nullptr;
-	QuestFadeAnim = nullptr;
 	DialogueFadeAnim = nullptr;
 	RepliesFadeAnim = nullptr;
 	BranchWidgetClass = NULL;
@@ -202,14 +202,6 @@ void UGCNarrativeWidget::SetQuestsHidden(const bool bInHidden)
 	if (bQuestsHidden != bInHidden)
 	{
 		bQuestsHidden = bInHidden;
-		if (bQuestsHidden)
-		{
-			PlayAnimationReverse(QuestFadeAnim);
-		}
-		else
-		{
-			PlayAnimationForward(QuestFadeAnim);
-		}
 	}
 }
 
@@ -263,6 +255,17 @@ void UGCNarrativeWidget::NativeConstruct()
 	PLAY_FIRST_FRAME(RepliesFadeAnim);
 }
 
+void UGCNarrativeWidget::NativeTick(const FGeometry& MyGeometry, float InDeltaTime)
+{
+	Super::NativeTick(MyGeometry, InDeltaTime);
+	const float Current = QuestBox->GetRenderOpacity();
+	const float Target = bQuestsHidden ? 0.0f : 1.0f;
+	if (Current != Target)
+	{
+		QuestBox->SetRenderOpacity(FMath::FInterpConstantTo(Current, Target, InDeltaTime, 5.0f));
+	}
+}
+
 void UGCNarrativeWidget::RefreshQuestList(const UQuest* Quest, const UQuestBranch* Branch)
 {
 	QuestBranchBox->ClearChildren();
@@ -276,8 +279,7 @@ void UGCNarrativeWidget::RefreshQuestList(const UQuest* Quest, const UQuestBranc
 			QuestBranchBox->AddChild(BranchWidget);
 		}
 
-		bQuestsHidden = false;
-		PlayAnimation(QuestFadeAnim);
+		SetQuestsHidden(false);
 	}
 }
 
@@ -297,8 +299,7 @@ void UGCNarrativeWidget::OnQuestNewState(UQuest* Quest, const UQuestState* State
 			}
 		}
 
-		bQuestsHidden = false;
-		PlayAnimation(QuestFadeAnim);
+		SetQuestsHidden(false);
 	}
 	else
 	{

@@ -118,6 +118,9 @@ public:
 	UGCNarrativeWidget(const FObjectInitializer& ObjectInitializer);
 
 	UPROPERTY(Transient, meta = (BindWidget))
+		UPanelWidget* QuestBox;
+	
+	UPROPERTY(Transient, meta = (BindWidget))
 		UPanelWidget* QuestBranchBox;
 
 	UPROPERTY(Transient, meta = (BindWidget))
@@ -131,9 +134,6 @@ public:
 	
 	UPROPERTY(Transient, meta = (BindWidget))
 		UPanelWidget* DialogueReplyBox;
-
-	UPROPERTY(Transient, meta = (BindWidgetAnim))
-		UWidgetAnimation* QuestFadeAnim;
 
 	UPROPERTY(Transient, meta = (BindWidgetAnim))
 		UWidgetAnimation* DialogueFadeAnim;
@@ -181,6 +181,7 @@ protected:
 	virtual void InitData(AGCPlayerController* Controller) override;
 	virtual void NativeOnInitialized() override;
 	virtual void NativeConstruct() override;
+	virtual void NativeTick(const FGeometry& MyGeometry, float InDeltaTime) override;
 	
 	// Quests
 	void RefreshQuestList(const UQuest* Quest, const UQuestBranch* Branch);
