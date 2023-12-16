@@ -279,6 +279,7 @@ void UGCNarrativeWidget::RefreshQuestList(const UQuest* Quest, const UQuestBranc
 			QuestBranchBox->AddChild(BranchWidget);
 		}
 
+		QuestBox->SetRenderOpacity(0.0f);
 		SetQuestsHidden(false);
 	}
 }
@@ -299,6 +300,7 @@ void UGCNarrativeWidget::OnQuestNewState(UQuest* Quest, const UQuestState* State
 			}
 		}
 
+		QuestBox->SetRenderOpacity(0.0f);
 		SetQuestsHidden(false);
 	}
 	else
