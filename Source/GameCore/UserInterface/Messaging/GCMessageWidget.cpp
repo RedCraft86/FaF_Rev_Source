@@ -56,7 +56,7 @@ void UGCMessageWidget::QueueNotice(const FGCNoticeData& InData, const bool bOver
 void UGCMessageWidget::QueueSubtitleText(const FText InText, const float InTime, const bool bOverrideQueue)
 {
 	FGCSubtitleData Data;
-	Data.Text.Text = InText;
+	Data.TextBasic = InText;
 	Data.DisplayTime = InTime;
 	QueueSubtitle(Data, bOverrideQueue);
 }
