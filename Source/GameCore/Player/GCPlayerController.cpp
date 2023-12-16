@@ -57,8 +57,7 @@ UGCUserWidget* AGCPlayerController::GetUserWidget(const TSubclassOf<UGCUserWidge
 {
 	for (UGCUserWidget* Widget : WidgetObjects)
 	{
-		if (Widget && Widget->IsA(WidgetClass))
-			return Widget;
+		if (Widget && Widget->IsA(WidgetClass)) return Widget;
 	}
 
 	return nullptr;

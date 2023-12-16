@@ -7,6 +7,7 @@
 #include "Components/RichTextBlock.h"
 #include "Animation/UMGSequencePlayer.h"
 #include "Narrative/GCNarrativeComponent.h"
+#include "UserInterface/Messaging/GCMessageWidget.h"
 #include "Player/GCPlayerController.h"
 #include "NarrativeDataTask.h"
 #include "Core/GCSettings.h"
@@ -268,6 +269,14 @@ void UGCNarrativeWidget::NativeTick(const FGeometry& MyGeometry, float InDeltaTi
 	}
 }
 
+void UGCNarrativeWidget::QuestUpdatedNotify()
+{
+	if (UGCMessageWidget* MsgWidget = PlayerController->GetUserWidget<UGCMessageWidget>())
+	{
+		MsgWidget->QueueNoticeByObject(FGCNoticeData{FText::FromString("Objective Updated"), 1.0f}, this);
+	}
+}
+
 void UGCNarrativeWidget::RefreshQuestList(const UQuest* Quest, const UQuestBranch* Branch)
 {
 	QuestBranchBox->ClearChildren();
@@ -281,6 +290,7 @@ void UGCNarrativeWidget::RefreshQuestList(const UQuest* Quest, const UQuestBranc
 			QuestBranchBox->AddChild(BranchWidget);
 		}
 
+		QuestUpdatedNotify();
 		QuestBox->SetRenderOpacity(0.0f);
 		SetQuestsHidden(false);
 	}
@@ -302,6 +312,7 @@ void UGCNarrativeWidget::OnQuestNewState(UQuest* Quest, const UQuestState* State
 			}
 		}
 
+		QuestUpdatedNotify();
 		QuestBox->SetRenderOpacity(0.0f);
 		SetQuestsHidden(false);
 	}
