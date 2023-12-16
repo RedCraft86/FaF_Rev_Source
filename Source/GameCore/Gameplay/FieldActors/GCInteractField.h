@@ -49,6 +49,15 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Interaction Field")
 		void SetEnabled(const bool bEnabled);
 
+	UFUNCTION(BlueprintPure, Category = "Interaction Field")
+		bool GetEnabled() const { return GetActorEnableCollision(); }
+
+	UFUNCTION(BlueprintPure, Category = "Interaction Field")
+		bool HasEverBeenUsed() const { return UseCount > 0; }
+
+	UFUNCTION(BlueprintPure, Category = "Interaction Field")
+		int32 GetUsedCount() const { return UseCount; }
+	
 	DECLARE_MULTICAST_DELEGATE(FNativeOnInteracted)
 	FNativeOnInteracted OnInteracted;
 	
@@ -57,6 +66,7 @@ public:
 	virtual bool GetInteractionInfo_Implementation(FText& DisplayName) override;
 	
 protected:
-	
+
+	int32 UseCount;
 	bool bUsed;
 };

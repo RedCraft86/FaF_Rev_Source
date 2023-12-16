@@ -35,6 +35,9 @@ AGCInteractField::AGCInteractField()
 	Collision.CollisionEnabled = ECollisionEnabled::QueryOnly;
 	Collision.ObjectType = ECC_WorldDynamic;
 	Events = {};
+
+	UseCount = 0;
+	bUsed = false;
 }
 
 void AGCInteractField::SetEnabled(const bool bEnabled)
@@ -63,11 +66,9 @@ void AGCInteractField::OnConstruction(const FTransform& Transform)
 
 void AGCInteractField::OnBeginInteract_Implementation(AGCPlayerCharacter* Player, const FHitResult& HitResult)
 {
-	if (bUsed)
-	{
-		return;
-	}
-	
+	if (bUsed) return;
+
+	UseCount++;
 	OnInteracted.Broadcast();
 	OnInteractedBP.Broadcast();
 	
