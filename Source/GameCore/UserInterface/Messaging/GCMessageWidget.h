@@ -163,8 +163,10 @@ protected:
 	
 	TQueue<FGCNoticeData> NoticeQueue;
 	TQueue<FGCSubtitleData> SubtitleQueue;
+	
 	FGCNoticeData Notice;
 	FGCSubtitleData Subtitle;
+	
 	FTimerHandle NoticeTimer;
 	FTimerHandle SubtitleTimer;
 	
