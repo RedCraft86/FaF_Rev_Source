@@ -223,15 +223,15 @@ struct GAMECORE_API FGCVisibilityEvent : public FGCEvent
 	GENERATED_BODY()
 
 	FGCVisibilityEvent()
-		: ChangeType(EGCEventChangeType::Set)
+		: Type(EGCEventChangeType::Set)
 		, ToState(true)
 		, Targets({})
 	{}
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Visibility")
-		EGCEventChangeType ChangeType;
+		EGCEventChangeType Type;
 		
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Visibility", meta = (EditCondition = "ChangeType == 0", EditConditionHides))
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Visibility", meta = (EditCondition = "Type == 0", EditConditionHides))
 		bool ToState;
 	
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Visibility")
@@ -241,7 +241,7 @@ protected:
 
 	virtual void RunEvent(const UObject* WorldContext) override
 	{
-		switch (ChangeType)
+		switch (Type)
 		{
 		case EGCEventChangeType::Set:
 			for (AActor* Target : Targets)
@@ -266,15 +266,15 @@ struct GAMECORE_API FGCCollisionEvent : public FGCEvent
 	GENERATED_BODY()
 
 	FGCCollisionEvent()
-		: ChangeType(EGCEventChangeType::Set)
+		: Type(EGCEventChangeType::Set)
 		, ToState(true)
 		, Targets({})
 	{}
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Collision")
-		EGCEventChangeType ChangeType;
+		EGCEventChangeType Type;
 		
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Collision", meta = (EditCondition = "ChangeType == 0", EditConditionHides))
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Collision", meta = (EditCondition = "Type == 0", EditConditionHides))
 		bool ToState;
 	
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Collision")
@@ -284,7 +284,7 @@ protected:
 
 	virtual void RunEvent(const UObject* WorldContext) override
 	{
-		switch (ChangeType)
+		switch (Type)
 		{
 		case EGCEventChangeType::Set:
 			for (AActor* Target : Targets)
