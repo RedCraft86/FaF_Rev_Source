@@ -269,7 +269,7 @@ void UGCNarrativeWidget::NativeTick(const FGeometry& MyGeometry, float InDeltaTi
 	}
 }
 
-void UGCNarrativeWidget::QuestUpdatedNotify()
+void UGCNarrativeWidget::QuestUpdatedNotify() const
 {
 	if (UGCMessageWidget* MsgWidget = PlayerController->GetUserWidget<UGCMessageWidget>())
 	{

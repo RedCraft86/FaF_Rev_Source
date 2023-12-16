@@ -34,12 +34,18 @@ void UGCMessageWidget::QueueNoticeText(const FText InText, const float InTime, c
 	FGCNoticeData Data;
 	Data.Text.Text = InText;
 	Data.DisplayTime = InTime;
+	LastNoticeObject = nullptr;
 	QueueNotice(Data, bOverrideQueue);
 }
 
 void UGCMessageWidget::QueueNotice(const FGCNoticeData& InData, const bool bOverrideQueue)
 {
-	LastNoticeObject = nullptr;
+	if (Notice.GetTextString() == InData.GetTextString()) return;
+	if (const FGCNoticeData* PeekVal = NoticeQueue.Peek())
+	{
+		if (PeekVal->GetTextString() == InData.GetTextString()) return;
+	}
+	
 	if (bOverrideQueue)
 	{
 		NoticeQueue.Empty();
@@ -58,12 +64,18 @@ void UGCMessageWidget::QueueSubtitleText(const FText InText, const float InTime,
 	FGCSubtitleData Data;
 	Data.TextBasic = InText;
 	Data.DisplayTime = InTime;
+	LastSubtitleObject = nullptr;
 	QueueSubtitle(Data, bOverrideQueue);
 }
 
 void UGCMessageWidget::QueueSubtitle(const FGCSubtitleData& InData, const bool bOverrideQueue)
 {
-	LastNoticeObject = nullptr;
+	if (Subtitle.GetTextString() == InData.GetTextString()) return;
+	if (const FGCSubtitleData* PeekVal = SubtitleQueue.Peek())
+	{
+		if (PeekVal->Name.ToString() == InData.Name.ToString() && PeekVal->GetTextString() == InData.GetTextString()) return;
+	}
+	
 	if (bOverrideQueue)
 	{
 		SubtitleQueue.Empty();
@@ -79,19 +91,38 @@ void UGCMessageWidget::QueueSubtitle(const FGCSubtitleData& InData, const bool b
 
 void UGCMessageWidget::QueueNoticeByObject(const FGCNoticeData& InData, const UObject* InObject)
 {
+	// if (InObject == LastNoticeObject && Notice.GetTextString() == InData.GetTextString())
+	// 	return;
+ //    			
+	// if (const FGCNoticeData* PeekVal = NoticeQueue.Peek())
+	// {
+	// 	if (InObject == LastNoticeObject && PeekVal->GetTextString() == InData.GetTextString())
+	// 		return;
+	// }
+	//
 	QueueNotice(InData, InObject ? InObject != LastNoticeObject : false);
 	LastNoticeObject = InObject;
 }
 
 void UGCMessageWidget::QueueSubtitleByObject(const FGCSubtitleData& InData, const UObject* InObject)
 {
+	// if (InObject == LastSubtitleObject && Subtitle.GetTextString() == InData.GetTextString()
+	// && Subtitle.Name.ToString() == InData.Name.ToString())
+	// 	return;
+	//
+	// if (const FGCSubtitleData* PeekVal = SubtitleQueue.Peek())
+	// {
+	// 	if (InObject == LastSubtitleObject && PeekVal->GetTextString() == InData.GetTextString()
+	// 		&& PeekVal->Name.ToString() == InData.Name.ToString())
+	// 		return;
+	// }
+	
 	QueueSubtitle(InData, InObject ? InObject != LastSubtitleObject : false);
 	LastSubtitleObject = InObject;
 }
 
 void UGCMessageWidget::UpdateNotice()
 {
-	FGCNoticeData Notice;
 	if (NoticeQueue.Dequeue(Notice))
 	{
 		PlayAnimation(NoticeAnim);
@@ -110,7 +141,6 @@ void UGCMessageWidget::UpdateNotice()
 
 void UGCMessageWidget::UpdateSubtitle()
 {
-	FGCSubtitleData Subtitle;
 	if (SubtitleQueue.Dequeue(Subtitle))
 	{
 		PlayAnimation(SubtitleAnim);

@@ -184,7 +184,7 @@ protected:
 	virtual void NativeTick(const FGeometry& MyGeometry, float InDeltaTime) override;
 	
 	// Quests
-	void QuestUpdatedNotify();
+	void QuestUpdatedNotify() const;
 	void RefreshQuestList(const UQuest* Quest, const UQuestBranch* Branch);
 	
 	UFUNCTION() void OnQuestNewState(UQuest* Quest, const UQuestState* State);

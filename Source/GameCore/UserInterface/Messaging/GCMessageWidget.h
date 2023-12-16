@@ -79,6 +79,11 @@ struct GAMECORE_API FGCNoticeData
 		}
 		return RetVal;
 	}
+
+	FString GetTextString() const
+	{
+		return bUseBasicText ? TextBasic.ToString() : Text.Text.ToString();
+	}
 };
 
 USTRUCT(BlueprintType, DisplayName = "Subtitle Data")
@@ -158,7 +163,8 @@ protected:
 	
 	TQueue<FGCNoticeData> NoticeQueue;
 	TQueue<FGCSubtitleData> SubtitleQueue;
-	
+	FGCNoticeData Notice;
+	FGCSubtitleData Subtitle;
 	FTimerHandle NoticeTimer;
 	FTimerHandle SubtitleTimer;
 	
