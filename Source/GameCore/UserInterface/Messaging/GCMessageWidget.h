@@ -30,7 +30,7 @@ struct GAMECORE_API FGCNoticeData
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Data", meta = (ClampMin = 1.0f, UIMin = 1.0f))
 		float DisplayTime;
 
-	FGCNoticeData() : bUseBasicText(false), TextBasic(FText::GetEmpty()), DisplayTime(1.0f)
+	FGCNoticeData() : bUseBasicText(true), TextBasic(FText::GetEmpty()), DisplayTime(1.0f)
 	{
 		TextBasic = FText::FromString("Sample Text");
 		Text.Text = FText::FromString("Sample Text");
