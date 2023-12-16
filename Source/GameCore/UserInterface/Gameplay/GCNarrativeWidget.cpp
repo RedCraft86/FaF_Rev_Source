@@ -31,10 +31,12 @@ void UGCQuestTaskWidget::InitWidget(const UNarrativeTask* Task)
 		{
 			TaskDisplaySr = TaskObject->DescriptionOverride.ToString();
 		}
+
+		const FString CountDisplay(FString::Printf(TEXT(" (%d/%d)"),
+			TaskObject->GetProgress(), TaskObject->RequiredQuantity));
 		
-		TaskDisplaySr += FString::Printf(TEXT("%s (%d/%d)"),
-			TaskObject->bOptional ? TEXT(" (Optional)") : TEXT(""),
-			TaskObject->GetProgress(), TaskObject->RequiredQuantity);
+		TaskDisplaySr += TaskObject->bOptional ? TEXT(" (Optional)") : TEXT("");
+		TaskDisplaySr += TaskObject->RequiredQuantity > 1 ? CountDisplay : TEXT("");
 		
 		DisplayText->SetText(FText::FromString(TaskDisplaySr));
 	}
