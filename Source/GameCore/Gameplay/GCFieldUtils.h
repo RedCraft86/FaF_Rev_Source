@@ -14,6 +14,7 @@
 #include "Components/AudioComponent.h"
 #include "Player/GCPlayerController.h"
 #include "UserInterface/Messaging/GCMessageWidget.h"
+#include "Narrative/GCNarrativeComponent.h"
 #include "GCFieldUtils.generated.h"
 
 UENUM(BlueprintType, DisplayName = "Event Change Type")
@@ -466,7 +467,6 @@ protected:
 	}
 };
 
-
 USTRUCT(BlueprintType, DisplayName = "Play Sequence")
 struct GAMECORE_API FGCSequencerEvent : public FGCEvent
 {
@@ -492,6 +492,37 @@ protected:
 		{
 			Player->SetPlayRate(FMath::Abs(PlayRate));
 			PlayRate < 0.0f ? Player->PlayReverse() : Player->Play();
+		}
+	}
+};
+
+USTRUCT(BlueprintType, DisplayName = "Narrative Task")
+struct GAMECORE_API FGCNarrativeTaskEvent : public FGCEvent
+{
+	GENERATED_BODY()
+
+	FGCNarrativeTaskEvent()
+		: Task(nullptr)
+		, Argument(TEXT(""))
+		, Amount(1)
+	{}
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "NarrativeTask")
+		UNarrativeDataTask* Task;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "NarrativeTask", meta = (MultiLine = false, EditCondition = "Task != nullptr"))
+		FString Argument;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "NarrativeTask", meta = (ClampMin = 1, UIMin = 1, EditCondition = "Task != nullptr"))
+		uint8 Amount;
+
+protected:
+	
+	virtual void RunEvent(const UObject* WorldContext) override
+	{
+		if (UGCNarrativeComponent* Narrative = UGCNarrativeComponent::Get(WorldContext))
+		{
+			Narrative->CompleteNarrativeDataTask(Task, Argument, Amount);
 		}
 	}
 };
