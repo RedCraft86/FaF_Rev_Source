@@ -126,7 +126,7 @@ void ANPCStaticBase::OnConstruction(const FTransform& Transform)
 #endif
 	
 	LookAtComponent->SetRelativeLocation(LookAtLocation);
-	if (!HeadSocketName.IsNone() && HeadSocketName != EyePosition->GetAttachSocketName() && MeshComponent->DoesSocketExist(HeadSocketName))
+	if (HeadSocketName != EyePosition->GetAttachSocketName())
 	{
 		EyePosition->AttachToComponent(MeshComponent, FAttachmentTransformRules::KeepRelativeTransform, HeadSocketName);
 	}
