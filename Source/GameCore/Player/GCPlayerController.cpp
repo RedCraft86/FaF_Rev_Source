@@ -9,6 +9,7 @@
 #include "UserInterface/GCUserWidget.h"
 #include "UserInterface/GCFrameRateWidget.h"
 #include "UserInterface/Menus/GCPauseWidget.h"
+#include "UserInterface/Gameplay/GCGameplayWidget.h"
 #include "UserInterface/Gameplay/GCInventoryWidget.h"
 #include "UserInterface/Gameplay/GCNarrativeWidget.h"
 #include "UserInterface/Messaging/GCMessageWidget.h"
@@ -325,6 +326,7 @@ void AGCPlayerController::OnDialogueStarted(UDialogue* Dialogue)
 	EnterScriptedEvent(false);
 	GCCharacter::OnEnteredDialogue(Dialogue->NPCActor);
 	PlayerCharacter->SetLockOnTarget(GCCharacter::GetLookAtComponent(Dialogue->NPCActor));
+	GetUserWidget<UGCGameplayWidget>()->SetWidgetHidden(true);
 	GetUserWidget<UGCMessageWidget>()->SetWidgetHidden(true);
 	
 	SetShowMouseCursor(true);
@@ -337,6 +339,7 @@ void AGCPlayerController::OnDialogueFinished(UDialogue* Dialogue)
 	ExitScriptedEvent();
 	GCCharacter::OnExitedDialogue(Dialogue->NPCActor);
 	PlayerCharacter->SetLockOnTarget(nullptr);
+	GetUserWidget<UGCGameplayWidget>()->SetWidgetHidden(false);
 	GetUserWidget<UGCMessageWidget>()->SetWidgetHidden(false);
 	
 	SetShowMouseCursor(false);
