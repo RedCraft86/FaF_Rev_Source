@@ -45,6 +45,7 @@ public:
 	
 private:
 #if WITH_EDITORONLY_DATA
+	UPROPERTY(EditInstanceOnly, Category = "NPC", AdvancedDisplay) bool bTryApplyAttachedTransform = false;
 	UPROPERTY(meta = (TransientToolProperty)) TArray<FName> SocketNames = {};
 #endif
 

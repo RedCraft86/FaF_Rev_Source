@@ -33,14 +33,16 @@ ANPCStaticBase::ANPCStaticBase()
 	MeshComponent->SetCanEverAffectNavigation(false);
 	MeshComponent->SetCollisionProfileName(TEXT("CharacterMesh"));
 	MeshComponent->SetRelativeLocation(FVector{0.0f, 0.0f, -90.0f});
-	MeshComponent->SetRelativeRotation(FRotator{0.0f, 0.0f, -90.0f});
+	MeshComponent->SetRelativeRotation(FRotator{0.0f, -90.0f, 0.0f});
 	MeshComponent->SetupAttachment(CapsuleComponent);
 	
 	EyePosition = CreateDefaultSubobject<UArrowComponent>("EyePosition");
+	EyePosition->SetRelativeLocation(FVector{0.0f, 0.0f, 90.0f});
+	EyePosition->SetRelativeRotation(FRotator{0.0f, 90.0f, 0.0f});
 	EyePosition->SetupAttachment(MeshComponent);
 
 	LookAtComponent = CreateDefaultSubobject<USceneComponent>("LookAtComponent");
-	LookAtComponent->SetupAttachment(MeshComponent);
+	LookAtComponent->SetupAttachment(CapsuleComponent);
 #if WITH_EDITORONLY_DATA
 	LookAtComponent->bVisualizeComponent = true;
 #endif
@@ -132,4 +134,18 @@ void ANPCStaticBase::OnConstruction(const FTransform& Transform)
 	{
 		EyePosition->AttachToComponent(MeshComponent, FAttachmentTransformRules::KeepRelativeTransform, HeadSocketName);
 	}
+
+#if WITH_EDITORONLY_DATA
+	if (!FApp::IsGame() && bTryApplyAttachedTransform)
+	{
+		EyePosition->SetRelativeTransform(
+			FTransform{
+				FRotator{90.0f, 0.0f, 0.0f},
+				FVector{0.0f, -10.0f, 0.0f},
+				FVector{0.5f, 0.5f, 0.5f}
+			});
+		
+		bTryApplyAttachedTransform = false;
+	}
+#endif
 }

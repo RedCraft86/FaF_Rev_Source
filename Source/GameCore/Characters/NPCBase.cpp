@@ -17,13 +17,15 @@ ANPCBase::ANPCBase()
 	GetCapsuleComponent()->SetCollisionObjectType(ECC_Pawn);
 
 	GetMesh()->SetRelativeLocation(FVector{0.0f, 0.0f, -90.0f});
-	GetMesh()->SetRelativeRotation(FRotator{0.0f, 0.0f, -90.0f});
+	GetMesh()->SetRelativeRotation(FRotator{0.0f, -90.0f, 0.0f});
 
 	EyePosition = CreateDefaultSubobject<UArrowComponent>("EyePosition");
+	EyePosition->SetRelativeLocation(FVector{0.0f, 0.0f, 90.0f});
+	EyePosition->SetRelativeRotation(FRotator{0.0f, 90.0f, 0.0f});
 	EyePosition->SetupAttachment(GetMesh());
 
 	LookAtComponent = CreateDefaultSubobject<USceneComponent>("LookAtComponent");
-	LookAtComponent->SetupAttachment(GetMesh());
+	LookAtComponent->SetupAttachment(GetCapsuleComponent());
 #if WITH_EDITORONLY_DATA
 	LookAtComponent->bVisualizeComponent = true;
 #endif
@@ -62,7 +64,7 @@ void ANPCBase::OnConstruction(const FTransform& Transform)
 {
 	Super::OnConstruction(Transform);
 #if WITH_EDITORONLY_DATA
-	if (FApp::IsGame())
+	if (!FApp::IsGame())
 	{
 		SocketNames.Empty(1); SocketNames.Add(NAME_None);
 		SocketNames = GetMesh()->GetAllSocketNames();
@@ -74,4 +76,18 @@ void ANPCBase::OnConstruction(const FTransform& Transform)
 	{
 		EyePosition->AttachToComponent(GetMesh(), FAttachmentTransformRules::KeepRelativeTransform, HeadSocketName);
 	}
+
+#if WITH_EDITORONLY_DATA
+	if (!FApp::IsGame() && bTryApplyAttachedTransform)
+	{
+		EyePosition->SetRelativeTransform(
+			FTransform{
+				FRotator{90.0f, 0.0f, 0.0f},
+				FVector{0.0f, -10.0f, 0.0f},
+				FVector{0.5f, 0.5f, 0.5f}
+			});
+		
+		bTryApplyAttachedTransform = false;
+	}
+#endif
 }
