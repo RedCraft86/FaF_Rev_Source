@@ -4,11 +4,17 @@
 #include "Player/GCPlayerCharacter.h"
 #include "Kismet/KismetMathLibrary.h"
 #include "Components/ArrowComponent.h"
+#include "Components/CapsuleComponent.h"
 
 ANPCBase::ANPCBase()
 {
 	PrimaryActorTick.bCanEverTick = true;
 	PrimaryActorTick.bStartWithTickEnabled = false;
+
+	GetCapsuleComponent()->SetCollisionProfileName(UCollisionProfile::Pawn_ProfileName);
+	GetCapsuleComponent()->SetCollisionResponseToChannel(ECC_GameTraceChannel1, ECR_Block);
+	GetCapsuleComponent()->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
+	GetCapsuleComponent()->SetCollisionObjectType(ECC_Pawn);
 
 	EyePosition = CreateDefaultSubobject<UArrowComponent>("EyePosition");
 	EyePosition->SetupAttachment(GetMesh());
@@ -19,6 +25,8 @@ ANPCBase::ANPCBase()
 	LookAtComponent->bVisualizeComponent = true;
 #endif
 
+	CharacterName = FText::GetEmpty();
+	bCanInteract = true;
 	HeadSocketName = NAME_None;
 	LookAtLocation = FVector::ZeroVector;
 }
@@ -36,17 +44,26 @@ void ANPCBase::GetPlayerCameraInfo(float& AngleTo, FVector& Location) const
 
 		AngleTo = UKismetMathLibrary::DegAcos(FVector::DotProduct(DotA, DotB));
 	}
-
+	
 	AngleTo = 0.0f;
 	Location = FVector::ZeroVector;
+}
+
+bool ANPCBase::GetInteractionInfo_Implementation(FText& DisplayName)
+{
+	DisplayName = CharacterName;
+	return bCanInteract;
 }
 
 void ANPCBase::OnConstruction(const FTransform& Transform)
 {
 	Super::OnConstruction(Transform);
 #if WITH_EDITORONLY_DATA
-	SocketNames.Empty(1); SocketNames.Add(NAME_None);
-	SocketNames = GetMesh()->GetAllSocketNames();
+	if (FApp::IsGame())
+	{
+		SocketNames.Empty(1); SocketNames.Add(NAME_None);
+		SocketNames = GetMesh()->GetAllSocketNames();
+	}
 #endif
 	
 	LookAtComponent->SetRelativeLocation(LookAtLocation);
