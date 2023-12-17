@@ -34,10 +34,6 @@ public:
 	virtual FVector GetEyeForwardVector_Implementation() { return FVector::ForwardVector; }
 
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Interface|Character")
-		FVector GetLookAtLocation();
-	virtual FVector GetLookAtLocation_Implementation() { return FVector::ZeroVector; }
-
-	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Interface|Character")
 		USceneComponent* GetLookAtComponent();
 	virtual USceneComponent* GetLookAtComponent_Implementation() { return nullptr; }
 };
@@ -83,19 +79,6 @@ namespace GCCharacter
 		}
 
 		return FVector::ForwardVector;
-	}
-
-	GAMECORE_API FORCEINLINE FVector GetLookAtLocation(UObject* Target)
-	{
-		if (ImplementedBy(Target))
-		{
-			if (USceneComponent* Comp = IGCCharacterInterface::Execute_GetLookAtComponent(Target))
-			{
-				return Comp->GetComponentLocation();
-			}
-		}
-
-		return FVector::ZeroVector;
 	}
 
 	GAMECORE_API FORCEINLINE USceneComponent* GetLookAtComponent(UObject* Target)
