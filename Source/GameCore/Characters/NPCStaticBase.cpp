@@ -37,9 +37,7 @@ ANPCStaticBase::ANPCStaticBase()
 	MeshComponent->SetupAttachment(CapsuleComponent);
 	
 	EyePosition = CreateDefaultSubobject<UArrowComponent>("EyePosition");
-	EyePosition->SetRelativeLocation(FVector{0.0f, 0.0f, 90.0f});
-	EyePosition->SetRelativeRotation(FRotator{0.0f, 90.0f, 0.0f});
-	EyePosition->SetupAttachment(MeshComponent);
+	EyePosition->SetupAttachment(CapsuleComponent);
 
 	LookAtComponent = CreateDefaultSubobject<USceneComponent>("LookAtComponent");
 	LookAtComponent->SetupAttachment(CapsuleComponent);
@@ -47,10 +45,10 @@ ANPCStaticBase::ANPCStaticBase()
 	LookAtComponent->bVisualizeComponent = true;
 #endif
 
-	CharacterName = FText::GetEmpty();
 	bCanInteract = true;
-	HeadSocketName = NAME_None;
-	LookAtLocation = FVector::ZeroVector;
+	CharacterName = FText::GetEmpty();
+	LookAtLocation = FVector{0.0f, 0.0f, 65.0f};
+	EyeTransform = {FRotator::ZeroRotator, FVector{0.0f, 0.0f, 70.0f}, FVector::OneVector};
 }
 
 void ANPCStaticBase::GetPlayerCameraInfo(float& AngleTo, FVector& Location) const
@@ -65,6 +63,7 @@ void ANPCStaticBase::GetPlayerCameraInfo(float& AngleTo, FVector& Location) cons
 		DotB.Normalize();
 
 		AngleTo = UKismetMathLibrary::DegAcos(FVector::DotProduct(DotA, DotB));
+		return;
 	}
 
 	AngleTo = 0.0f;
@@ -102,50 +101,27 @@ void ANPCStaticBase::OnConstruction(const FTransform& Transform)
 {
 	Super::OnConstruction(Transform);
 #if WITH_EDITORONLY_DATA
-	if (!FApp::IsGame())
+	// Spawn behavior that imitates ACharacter
+	if (!FApp::IsGame() && !bAlreadySpawned)
 	{
-		SocketNames.Empty(1); SocketNames.Add(NAME_None);
-		SocketNames = MeshComponent->GetAllSocketNames();
-
-		// Spawn behavior that imitates ACharacter
-		if (!bAlreadySpawned)
+		FHitResult HitResult;
+		const TSet Channels = {ECC_WorldStatic, ECC_WorldDynamic, ECC_PhysicsBody, ECC_Destructible};
+		for (const ECollisionChannel& Channel : Channels)
 		{
-			FHitResult HitResult;
-			const TSet Channels = {ECC_WorldStatic, ECC_WorldDynamic, ECC_PhysicsBody, ECC_Destructible};
-			for (const ECollisionChannel& Channel : Channels)
+			if (GetWorld()->LineTraceSingleByChannel(HitResult,
+				Transform.GetTranslation() + FVector{0.0f, 0.0f, 10.0f},
+				Transform.GetTranslation() - FVector{0.0f, 0.0f, CapsuleComponent->GetUnscaledCapsuleHalfHeight()},
+				Channel, {TEXT("StaticNPC_Floor_Test"), true, this}))
 			{
-				if (GetWorld()->LineTraceSingleByChannel(HitResult,
-					Transform.GetTranslation() + FVector{0.0f, 0.0f, 10.0f},
-					Transform.GetTranslation() - FVector{0.0f, 0.0f, CapsuleComponent->GetUnscaledCapsuleHalfHeight()},
-					Channel, {TEXT("StaticNPC_Floor_Test"), true, this}))
-				{
-					AddActorWorldOffset(FVector{0.0f, 0.0f, FVector::Dist(HitResult.Location, HitResult.TraceEnd)});
-					break;
-				}
+				AddActorWorldOffset(FVector{0.0f, 0.0f, FVector::Dist(HitResult.Location, HitResult.TraceEnd)});
+				break;
 			}
-		
-			bAlreadySpawned = true;
 		}
+		
+		bAlreadySpawned = true;
 	}
 #endif
 	
 	LookAtComponent->SetRelativeLocation(LookAtLocation);
-	if (HeadSocketName != EyePosition->GetAttachSocketName())
-	{
-		EyePosition->AttachToComponent(MeshComponent, FAttachmentTransformRules::KeepRelativeTransform, HeadSocketName);
-	}
-
-#if WITH_EDITORONLY_DATA
-	if (!FApp::IsGame() && bTryApplyAttachedTransform)
-	{
-		EyePosition->SetRelativeTransform(
-			FTransform{
-				FRotator{90.0f, 0.0f, 0.0f},
-				FVector{0.0f, -10.0f, 0.0f},
-				FVector{0.5f, 0.5f, 0.5f}
-			});
-		
-		bTryApplyAttachedTransform = false;
-	}
-#endif
+	EyePosition->SetRelativeTransform(EyeTransform);
 }

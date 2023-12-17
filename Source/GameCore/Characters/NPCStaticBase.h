@@ -28,18 +28,18 @@ public:
 	
 	UPROPERTY(BlueprintReadOnly, Category = "NPC")
 		USceneComponent* LookAtComponent;
-		
-	UPROPERTY(EditAnywhere, Category = "NPC", AdvancedDisplay, meta = (GetOptions = "SocketNames"))
-		FName HeadSocketName;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "NPC")
+		bool bCanInteract;
+	
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "NPC")
+		FText CharacterName;
 	
 	UPROPERTY(EditAnywhere, Category = "NPC", AdvancedDisplay, meta = (MakeEditWidget = true))
 		FVector LookAtLocation;
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "NPC")
-		FText CharacterName;
-	
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "NPC")
-		bool bCanInteract;
+	UPROPERTY(EditAnywhere, Category = "NPC", AdvancedDisplay, meta = (MakeEditWidget = true))
+		FTransform EyeTransform;
 
 	UFUNCTION(BlueprintPure, Category = "NPC")
 		void GetPlayerCameraInfo(float& AngleTo, FVector& Location) const;
@@ -53,8 +53,6 @@ public:
 
 private:
 #if WITH_EDITORONLY_DATA
-	UPROPERTY(EditInstanceOnly, Category = "NPC", AdvancedDisplay) bool bTryApplyAttachedTransform = false;
-	UPROPERTY(meta = (TransientToolProperty)) TArray<FName> SocketNames = {};
 	UPROPERTY(Transient) bool bAlreadySpawned = false;
 #endif
 	

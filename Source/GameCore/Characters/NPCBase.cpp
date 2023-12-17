@@ -30,10 +30,10 @@ ANPCBase::ANPCBase()
 	LookAtComponent->bVisualizeComponent = true;
 #endif
 
-	CharacterName = FText::GetEmpty();
 	bCanInteract = true;
-	HeadSocketName = NAME_None;
-	LookAtLocation = FVector::ZeroVector;
+	CharacterName = FText::GetEmpty();
+	LookAtLocation = FVector{0.0f, 0.0f, 65.0f};
+	EyeTransform = {FRotator::ZeroRotator, FVector{0.0f, 0.0f, 70.0f}, FVector::OneVector};
 }
 
 void ANPCBase::GetPlayerCameraInfo(float& AngleTo, FVector& Location) const
@@ -63,31 +63,7 @@ bool ANPCBase::GetInteractionInfo_Implementation(FText& DisplayName)
 void ANPCBase::OnConstruction(const FTransform& Transform)
 {
 	Super::OnConstruction(Transform);
-#if WITH_EDITORONLY_DATA
-	if (!FApp::IsGame())
-	{
-		SocketNames.Empty(1); SocketNames.Add(NAME_None);
-		SocketNames = GetMesh()->GetAllSocketNames();
-	}
-#endif
 	
 	LookAtComponent->SetRelativeLocation(LookAtLocation);
-	if (HeadSocketName != EyePosition->GetAttachSocketName())
-	{
-		EyePosition->AttachToComponent(GetMesh(), FAttachmentTransformRules::KeepRelativeTransform, HeadSocketName);
-	}
-
-#if WITH_EDITORONLY_DATA
-	if (!FApp::IsGame() && bTryApplyAttachedTransform)
-	{
-		EyePosition->SetRelativeTransform(
-			FTransform{
-				FRotator{90.0f, 0.0f, 0.0f},
-				FVector{0.0f, -10.0f, 0.0f},
-				FVector{0.5f, 0.5f, 0.5f}
-			});
-		
-		bTryApplyAttachedTransform = false;
-	}
-#endif
+	EyePosition->SetRelativeTransform(EyeTransform);
 }
