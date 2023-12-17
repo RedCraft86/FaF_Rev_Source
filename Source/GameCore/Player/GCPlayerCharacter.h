@@ -354,7 +354,7 @@ public:
 
 	virtual FVector GetEyeWorldLocation_Implementation() override { return PlayerCamera->GetComponentLocation(); }
 	virtual FVector GetEyeForwardVector_Implementation() override { return PlayerCamera->GetForwardVector(); }
-	virtual FVector GetLookAtLocation_Implementation() override { return GetEyeWorldLocation_Implementation(); }
+	virtual USceneComponent* GetLookAtComponent_Implementation() override { return PlayerCamera; }
 
 	virtual void InputBinding_Pause(const FInputActionValue& InValue);
 	virtual void InputBinding_Move(const FInputActionValue& InValue);
