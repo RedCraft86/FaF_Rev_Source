@@ -16,6 +16,9 @@ ANPCBase::ANPCBase()
 	GetCapsuleComponent()->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
 	GetCapsuleComponent()->SetCollisionObjectType(ECC_Pawn);
 
+	GetMesh()->SetRelativeLocation(FVector{0.0f, 0.0f, -90.0f});
+	GetMesh()->SetRelativeRotation(FRotator{0.0f, 0.0f, -90.0f});
+
 	EyePosition = CreateDefaultSubobject<UArrowComponent>("EyePosition");
 	EyePosition->SetupAttachment(GetMesh());
 

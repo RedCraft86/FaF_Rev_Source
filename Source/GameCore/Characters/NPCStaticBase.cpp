@@ -32,6 +32,8 @@ ANPCStaticBase::ANPCStaticBase()
 	MeshComponent->SetGenerateOverlapEvents(false);
 	MeshComponent->SetCanEverAffectNavigation(false);
 	MeshComponent->SetCollisionProfileName(TEXT("CharacterMesh"));
+	MeshComponent->SetRelativeLocation(FVector{0.0f, 0.0f, -90.0f});
+	MeshComponent->SetRelativeRotation(FRotator{0.0f, 0.0f, -90.0f});
 	MeshComponent->SetupAttachment(CapsuleComponent);
 	
 	EyePosition = CreateDefaultSubobject<UArrowComponent>("EyePosition");
