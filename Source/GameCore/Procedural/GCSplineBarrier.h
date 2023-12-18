@@ -30,10 +30,10 @@ public:
 	UPROPERTY(EditAnywhere, Category = "Settings")
 		FRCPrimitiveCollision Collision;
 
-#if WITH_EDITORONLY_DATA
 	UPROPERTY(EditAnywhere, Category = "Settings")
-		UMaterialInterface* Material = nullptr;
-	
+		UMaterialInterface* Material;
+
+#if WITH_EDITORONLY_DATA
 	UPROPERTY(EditAnywhere, Category = "Settings")
 		UMaterialInterface* OverlayMaterial = nullptr;
 #endif
@@ -41,9 +41,7 @@ public:
 	virtual void Construct() override;
 
 private:
-#if UE_BUILD_SHIPPING
-	virtual void BeginPlay() override;
-#endif
 	
+	virtual void BeginPlay() override;
 	virtual void OnConstruction(const FTransform& Transform) override;
 };

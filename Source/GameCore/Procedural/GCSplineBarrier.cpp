@@ -23,6 +23,7 @@ AGCSplineBarrier::AGCSplineBarrier()
 	bClosedLoop = true;
 	WallHeight = 100.0f;
 	Collision.SetCollisionProfile("InvisibleWall");
+	Material = nullptr;
 
 #if WITH_EDITORONLY_DATA
 	SceneRoot->bVisualizeComponent = true;
@@ -87,24 +88,21 @@ void AGCSplineBarrier::Construct()
 
 	ProceduralMesh->CreateMeshSection(0, Vertices, Triangles, Normals, {}, {}, Tangents, true);
 	URCRuntimeLibrary::SetPrimitiveCollision(ProceduralMesh, Collision);
+	ProceduralMesh->SetMaterial(0, Material);
 
 	Super::Construct();
 
-#if WITH_EDITORONLY_DATA
-	ProceduralMesh->SetMaterial(0, Material);
+#if WITH_EDITORONLY_DATA 
 	ProceduralMesh->SetMaterial(1, OverlayMaterial);
 	ProceduralMesh->CreateMeshSection(1, Vertices, Triangles, Normals, {}, {}, Tangents, false);
 #endif
 }
 
-#if UE_BUILD_SHIPPING
 void AGCSplineBarrier::BeginPlay()
 {
 	Super::BeginPlay();
-	SetActorHiddenInGame(true);
-	ProceduralMesh->SetMaterial(0, nullptr);
+	ProceduralMesh->ClearMeshSection(1);
 }
-#endif
 
 void AGCSplineBarrier::OnConstruction(const FTransform& Transform)
 {
