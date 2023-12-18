@@ -130,8 +130,7 @@ void UGCDialogueOptionWidget::InitWidget(UGCNarrativeWidget* NarrativeWidget, UD
 	ReplyObject = Reply;
 	if (ParentUI && ReplyObject)
 	{
-		const FString RawDesc = ReplyObject->GetOptionText(Dialogue).ToString();
-		DisplayText->SetText(FText::FromString(RawDesc.Len() > MaxCharCount ? RawDesc.Mid(0, MaxCharCount) + TEXT("...") : RawDesc));
+		DisplayText->SetText(ReplyObject->GetOptionText(Dialogue));
 
 		if (ReplyTaskType && ParentUI->GetNarrative()->HasCompletedTask(ReplyTaskType, ReplyObject->GetID().ToString(), 1))
 		{
@@ -366,7 +365,9 @@ void UGCNarrativeWidget::SelectDialogueReply(UDialogueNode_Player* Reply)
 			DialogueReply.Value->MarkSelected();
 		}
 	}
-	
+
+	SkipLineButton->SetIsEnabled(true);
+	SkipLineButton->SetVisibility(ESlateVisibility::Visible);
 	PlayAnimation(RepliesFadeAnim);
 }
 
@@ -388,6 +389,8 @@ void UGCNarrativeWidget::OnDialogueFinished(UDialogue* Dialogue)
 
 void UGCNarrativeWidget::OnDialogueRepliesAvailable(UDialogue* Dialogue, const TArray<UDialogueNode_Player*>& PlayerReplies)
 {
+	SkipLineButton->SetIsEnabled(false);
+	SkipLineButton->SetVisibility(ESlateVisibility::Hidden);
 	TArray<UDialogueNode_Player*> TempReplies = PlayerReplies;
 	Algo::Reverse(TempReplies);
 
@@ -400,7 +403,7 @@ void UGCNarrativeWidget::OnDialogueRepliesAvailable(UDialogue* Dialogue, const T
 		DialogueReplies.Add(Reply->GetID(), Widget);
 		DialogueReplyBox->AddChild(Widget);
 	}
-
+	
 	PlayAnimation(RepliesFadeAnim);
 }
 
