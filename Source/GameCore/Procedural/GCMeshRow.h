@@ -16,6 +16,9 @@ public:
 
 	UPROPERTY(EditAnywhere, Category = "Settings")
 		FRCStaticMeshProperties MeshData;
+		
+	UPROPERTY(EditAnywhere, Category = "Settings")
+		TMap<uint8, FRCStaticMeshProperties> ReplaceMeshes;
 
 	UPROPERTY(EditAnywhere, Category = "Settings")
 		FRCPrimitiveCollision Collision;

@@ -34,7 +34,7 @@ void AGCMeshRow::Construct()
 				InstanceTransform.GetScale3D()
 			});
 			
-			URCRuntimeLibrary::SetStaticMeshProperties(MeshComp, MeshData);
+			URCRuntimeLibrary::SetStaticMeshProperties(MeshComp, ReplaceMeshes.Contains(i) ? ReplaceMeshes.FindRef(i) : MeshData);
 			URCRuntimeLibrary::SetPrimitiveCollision(MeshComp, Collision);
 
 			MeshComp->AttachToComponent(GetRootComponent(), FAttachmentTransformRules::KeepRelativeTransform);
