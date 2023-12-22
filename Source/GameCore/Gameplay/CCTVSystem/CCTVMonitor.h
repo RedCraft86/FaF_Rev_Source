@@ -13,6 +13,9 @@ class GAMECORE_API ACCTVMonitor : public AActor
 public:
 
 	ACCTVMonitor();
+	
+	UPROPERTY(EditAnywhere, Category = "CCTV")
+		TArray<class ACCTVCamera*> Cameras;
 
 protected:
 

@@ -14,6 +14,8 @@ public:
 
 	ACCTVCamera();
 
+	bool IsOnCamera(const AActor* Actor);
+
 protected:
 
 	virtual void BeginPlay() override;
