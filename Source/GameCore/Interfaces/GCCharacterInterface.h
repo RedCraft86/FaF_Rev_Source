@@ -38,8 +38,8 @@ public:
 	virtual USceneComponent* GetLookAtComponent_Implementation() { return nullptr; }
 
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Interface|Character")
-		bool IsAnimatronic();
-	virtual bool IsAnimatronic_Implementation() { return false; }
+		bool IsAnimatronic() const;
+	virtual bool IsAnimatronic_Implementation() const { return false; }
 
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Interface|Character")
 		void RunNamedEvent(const FName& Name);
@@ -99,7 +99,7 @@ namespace GCCharacter
 		return nullptr;
 	}
 
-	GAMECORE_API FORCEINLINE bool IsAnimatronic(UObject* Target)
+	GAMECORE_API FORCEINLINE bool IsAnimatronic(const UObject* Target)
 	{
 		if (ImplementedBy(Target))
 		{
@@ -109,7 +109,7 @@ namespace GCCharacter
 		return false;
 	}
 
-	GAMECORE_API FORCEINLINE void RunNamedEvent(const FName& Name, UObject* Target)
+	GAMECORE_API FORCEINLINE void RunNamedEvent(UObject* Target, const FName& Name)
 	{
 		if (ImplementedBy(Target))
 		{
