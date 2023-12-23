@@ -23,6 +23,7 @@
 #include "RCMathLibrary.h"
 #include "Interfaces/GCDeviceInterface.h"
 #include "UserInterface/GCLoadingWidget.h"
+#include "UserInterface/Gameplay/GCGameplayWidget.h"
 #if WITH_EDITOR
 #include "Components/BillboardComponent.h"
 #endif
@@ -133,6 +134,7 @@ AGCPlayerCharacter::AGCPlayerCharacter(const FObjectInitializer& ObjectInitializ
 	ActiveWorldDevice = nullptr;
 	InteractionData = {};
 	EnemyStack = {};
+	PlayerController = nullptr;
 	
 	bRunning = false;
 	bCrouching = false;
@@ -207,13 +209,10 @@ void AGCPlayerCharacter::Tick(float DeltaTime)
 
 		if (IsMoving() && IsPlayerControlled())
 		{
-			if (APlayerController* PC = GetController<APlayerController>())
-			{
-				const TSubclassOf<UCameraShakeBase> Shake = bRunning ? CameraShakes.RunShake : CameraShakes.WalkShake;
-				const float Scale = bRunning ? CameraShakes.RunShakeScale : CameraShakes.WalkShakeScale;
+			const TSubclassOf<UCameraShakeBase> Shake = bRunning ? CameraShakes.RunShake : CameraShakes.WalkShake;
+			const float Scale = bRunning ? CameraShakes.RunShakeScale : CameraShakes.WalkShakeScale;
 
-				PC->ClientStartCameraShake(Shake, Scale);
-			}
+			PlayerController->ClientStartCameraShake(Shake, Scale);
 		}
 	}
 
@@ -313,13 +312,10 @@ bool AGCPlayerCharacter::TeleportTo(const FVector& DestLocation, const FRotator&
 {
 	//return Super::TeleportTo(DestLocation, DestRotation, bIsATest, bNoCheck);
 	
-	if (APlayerController* PC = GetController<APlayerController>())
-	{
-		PC->PlayerCameraManager->SetGameCameraCutThisFrame();
-		PC->SetControlRotation(DestRotation);
+	PlayerController->PlayerCameraManager->SetGameCameraCutThisFrame();
+	PlayerController->SetControlRotation(DestRotation);
 
-		CameraSmoother->OverrideWorldRotation(DestRotation);
-	}
+	CameraSmoother->OverrideWorldRotation(DestRotation);
 	
 	SetActorLocation(DestLocation);
 	return true;
@@ -333,16 +329,15 @@ void AGCPlayerCharacter::InputBinding_Pause(const FInputActionValue& InValue)
 		return;
 	}
 	
-	AGCPlayerController* PC = AGCPlayerController::Get(this);
-	if (PC && !PC->IsPaused())
+	if (!PlayerController->IsPaused())
 	{
 		if (bCanPause && !LoadingWidget->IsInViewport() &&!bHaveEyesClosed && (IS_AT_STATE(Normal) || IS_AT_STATE(Inventory)))
 		{
-			PC->PauseGame();
+			PlayerController->PauseGame();
 		}
 		else
 		{
-			PC->GetUserWidget<UGCMessageWidget>()->QueueNotice(
+			PlayerController->GetUserWidget<UGCMessageWidget>()->QueueNotice(
 				FGCNoticeData{ INVTEXT("Cannot Pause at the moment"), 2.0f }, true);
 		}
 	}
@@ -434,26 +429,22 @@ void AGCPlayerCharacter::InputBinding_Lean(const FInputActionValue& InValue)
 
 void AGCPlayerCharacter::InputBinding_Inventory(const FInputActionValue& InValue)
 {
-	AGCPlayerController* PC = GetController<AGCPlayerController>();
-	if (!bHaveEyesClosed && !IsGamePaused() && PC)
+	if (!bHaveEyesClosed && !IsGamePaused())
 	{
 		if (IS_AT_STATE(Normal))
 		{
-			PC->OpenInventory();	
+			PlayerController->OpenInventory();	
 		}
 		else if (IS_AT_STATE(Inventory))
 		{
-			PC->CloseInventory();
+			PlayerController->CloseInventory();
 		}
 	}
 }
 
 void AGCPlayerCharacter::InputBinding_HideQuests(const FInputActionValue& InValue)
 {
-	if (AGCPlayerController* PC = GetController<AGCPlayerController>())
-	{
-		PC->ToggleQuestsHidden();
-	}
+	PlayerController->ToggleQuestsHidden();
 }
 
 void AGCPlayerCharacter::InputBinding_Interact(const FInputActionValue& InValue)
@@ -498,22 +489,20 @@ void AGCPlayerCharacter::InputBinding_CloseEyes(const FInputActionValue& InValue
 
 void AGCPlayerCharacter::InputBinding_Equipment_Toggle(const FInputActionValue& InValue)
 {
-	const AGCPlayerController* PC = GetController<AGCPlayerController>();
-	if (!IsGamePaused() && PC && IS_AT_STATE(Normal))
+	if (!IsGamePaused() && IS_AT_STATE(Normal))
 	{
 		if (InValue.Get<bool>())
 		{
-			PC->GetInventoryManager()->ToggleEquipment();
+			PlayerController->GetInventoryManager()->ToggleEquipment();
 		}
 	}
 }
 
 void AGCPlayerCharacter::InputBinding_Equipment_Charge(const FInputActionValue& InValue)
 {
-	const AGCPlayerController* PC = GetController<AGCPlayerController>();
-	if (!IsGamePaused() && PC && IS_AT_STATE(Normal))
+	if (!IsGamePaused() && IS_AT_STATE(Normal))
 	{
-		PC->GetInventoryManager()->SetEquipmentCharging(InValue.Get<bool>());
+		PlayerController->GetInventoryManager()->SetEquipmentCharging(InValue.Get<bool>());
 	}
 }
 
@@ -594,7 +583,8 @@ void AGCPlayerCharacter::BeginPlay()
 {
 	Super::BeginPlay();
 	UGCGameInstance::Get(this)->PlayerCharacter = this;
-	AGCPlayerController::Get(this)->PlayerCameraManager->SetManualCameraFade(
+	PlayerController = AGCPlayerController::Get(this);
+	PlayerController->PlayerCameraManager->SetManualCameraFade(
 		1.0f, FColor::Black, true);
 	
 	SetActiveState(StartingState);
@@ -607,19 +597,15 @@ void AGCPlayerCharacter::BeginPlay()
 		bCanPause = bCachedCanPause;
 		if (LoadingWidget->IsInViewport())
 		{
-			AGCPlayerController::Get(this)->PlayerCameraManager->StartCameraFade(
+			PlayerController->PlayerCameraManager->StartCameraFade(
 				1.0f, 0.0f, 1.0f, FColor::Black, true);
 		}
 	}, 1.0f, false);
 	
-	APlayerController* PC = GetController<APlayerController>();
-	if (PC && PC->PlayerCameraManager)
-	{
-		EquipmentRoot->AttachToComponent(PC->PlayerCameraManager->GetTransformComponent(),
-		   FAttachmentTransformRules::KeepRelativeTransform);
-	}
+	EquipmentRoot->AttachToComponent(PlayerController->PlayerCameraManager->GetTransformComponent(),
+	   FAttachmentTransformRules::KeepRelativeTransform);
 
-	EyeShutWidget = CreateWidget<UGCEyeShutWidget>(PC ? PC : GetWorld()->GetFirstPlayerController(), EyeShutWidgetClass);
+	EyeShutWidget = CreateWidget<UGCEyeShutWidget>(PlayerController, EyeShutWidgetClass);
 	EyeShutWidget->AddToViewport();
 	
 	if (UGCUserSettings* Settings = UGCUserSettings::Get())
@@ -990,12 +976,14 @@ void AGCPlayerCharacter::SetWorldDevice(AActor* InActor)
 	if (ActiveWorldDevice != InActor && (GCDeviceInterface::ImplementedBy(InActor) || !InActor))
 	{
 		ActiveWorldDevice = InActor;
-		if (ActiveWorldDevice && GCDeviceInterface::ImplementedBy(ActiveWorldDevice))
+		if (ActiveWorldDevice)
 		{
+			PlayerController->GetUserWidget(UGCGameplayWidget::StaticClass())->SetWidgetHidden(true);
 			SetActiveState(EGCPlayerActiveState::Device);
 		}
 		else if (NOT_AT_STATE(Loading)) 
 		{
+			PlayerController->GetUserWidget(UGCGameplayWidget::StaticClass())->SetWidgetHidden(false);
 			SetActiveState(EGCPlayerActiveState::Normal);
 		}
 	}

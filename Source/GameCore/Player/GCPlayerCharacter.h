@@ -374,6 +374,8 @@ public:
 	virtual void SetLeanState(const EGCLeanState NewState);
 	virtual void SetEyesCloseState(const bool bNewState);
 
+	class AGCPlayerController* GetPC() const { return PlayerController; }
+
 protected:
 #if WITH_EDITOR
 	UBillboardComponent* VisualIcon;
@@ -393,6 +395,9 @@ protected:
 
 	UPROPERTY(Transient)
 		UGCLoadingWidget* LoadingWidget;
+
+	UPROPERTY(Transient)
+		class AGCPlayerController* PlayerController;
 	
 	bool bRunning;
 	bool bCrouching;
