@@ -13,6 +13,7 @@
 UENUM(BlueprintInternalUseOnly)
 enum class EGCCustomBoolKeys : uint8
 {
+	None,
 	CanRun,
 	CanPause,
 };
@@ -20,6 +21,7 @@ enum class EGCCustomBoolKeys : uint8
 UENUM(BlueprintInternalUseOnly)
 enum class EGCCustomFloatKeys : uint8
 {
+	None,
 	WalkMultiplier,
 	RunningSpeed,
 	LightIntensity,
@@ -64,12 +66,6 @@ struct GAMECORE_API FGCSequenceData : public FTableRowBase
 	
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "SequenceData")
 		TSet<FGCInvItemID> EnsureItems;
-
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Player")
-		bool bCanRun;
-	
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Player")
-		float WalkMultiplier;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Player", meta = (Bitmask, BitmaskEnum = "/Script/GameCore.EGCPlayerAbilityFlags"))
 		int32 AbilityFlags;
