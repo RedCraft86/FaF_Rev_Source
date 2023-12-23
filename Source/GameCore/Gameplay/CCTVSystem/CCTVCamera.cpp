@@ -1,7 +1,6 @@
 ﻿// Copyright (C) Tayzar (RedCraft86). All Rights Reserved.
 
 #include "CCTVCamera.h"
-
 #include "RCRuntimeLibrary.h"
 #include "Components/SceneCaptureComponent2D.h"
 #include "Kismet/KismetMathLibrary.h"
