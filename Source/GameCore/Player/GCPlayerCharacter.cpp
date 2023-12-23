@@ -163,6 +163,22 @@ AGCPlayerCharacter* AGCPlayerCharacter::Get(const UObject* WorldContext)
 	return PC ? PC->GetPawn<AGCPlayerCharacter>() : nullptr;
 }
 
+void AGCPlayerCharacter::SetCustomBooleanValue_Implementation(const FName& Key, const bool Value)
+{
+	if (Key.IsNone()) return;
+
+	if (Key == TEXT("CanRun")) SetCanRun(Value);
+	else if (Key == TEXT("CanPause")) SetCanPause(Value);
+}
+
+void AGCPlayerCharacter::SetCustomNumberValue_Implementation(const FName& Key, const float Value)
+{
+	if (Key.IsNone()) return;
+
+	if (Key == TEXT("WalkMultiplier")) AddWalkMultiplierModifier(TEXT("Level"), Value);
+	else if (Key == TEXT("RunSpeed")) RunningSpeed = Value;
+}
+
 bool AGCPlayerCharacter::IsInInvincibleState() const
 {
 	return IS_AT_STATE(Dialogue) || IS_AT_STATE(Cutscene) || IS_AT_STATE(Jumpscare) || IS_AT_STATE(Loading);

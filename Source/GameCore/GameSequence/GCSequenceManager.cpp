@@ -266,9 +266,17 @@ void UGCSequenceManager::OnWorldLoaded()
 			Teleporter->TeleportPlayer();
 		}
 
-		PlayerCharacter->SetCanRun(Data.bCanRun);
 		PlayerCharacter->SetAbilityFlags(Data.AbilityFlags);
-		PlayerCharacter->AddWalkMultiplierModifier(TEXT("Level"), Data.WalkMultiplier);
+
+		for (const TPair<FName, bool>& CustomBool : Data.CustomBooleanData)
+		{
+			PlayerCharacter->SetCustomBooleanValue(CustomBool.Key, CustomBool.Value);
+		}
+		
+		for (const TPair<FName, float>& CustomNumber : Data.CustomNumberData)
+		{
+			PlayerCharacter->SetCustomNumberValue(CustomNumber.Key, CustomNumber.Value);
+		}
 	}
 
 	PlayerController->PlayerCameraManager->SetManualCameraFade(1.0f, FLinearColor::Black, true);

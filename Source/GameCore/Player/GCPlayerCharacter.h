@@ -338,6 +338,14 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "References", meta = (ReadOnlyKeys))
 		TMap<EGCPlayerInputTypes, UInputAction*> InputActions;
 
+	UFUNCTION(BlueprintNativeEvent, meta = (ForceAsFunction = true))
+		void SetCustomBooleanValue(const FName& Key, const bool Value);
+	void SetCustomBooleanValue_Implementation(const FName& Key, const bool Value);
+
+	UFUNCTION(BlueprintNativeEvent, meta = (ForceAsFunction = true))
+		void SetCustomNumberValue(const FName& Key, const float Value);
+	void SetCustomNumberValue_Implementation(const FName& Key, const float Value);
+	
 	DECLARE_MULTICAST_DELEGATE(FOnEyeClosedStateChange);
 	FOnEyeClosedStateChange OnEyesClosed;
 	FOnEyeClosedStateChange OnEyesOpened;

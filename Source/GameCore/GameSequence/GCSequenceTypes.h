@@ -6,7 +6,6 @@
 #include "Core/CoreMacros.h"
 #include "Engine/DataTable.h"
 #include "GameplayTagContainer.h"
-#include "Engine/LevelScriptActor.h"
 #include "Inventory/GCInventoryTypes.h"
 #include "PulldownStruct/PulldownStructBase.h"
 #include "GCSequenceTypes.generated.h"
@@ -59,6 +58,20 @@ struct GAMECORE_API FGCSequenceData : public FTableRowBase
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Player", meta = (Bitmask, BitmaskEnum = "/Script/GameCore.EGCPlayerAbilityFlags"))
 		int32 AbilityFlags;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Player", meta = (GetOptions = "CustomBooleanKeys"))
+		TMap<FName, bool> CustomBooleanData;
+	
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Player", meta = (GetOptions = "CustomNumberKeys"))
+		TMap<FName, float> CustomNumberData;
+
+#if WITH_EDITORONLY_DATA
+	UPROPERTY(Transient, meta = (TransientToolProperty)) TArray<FName> CustomBooleanKeys =
+		{NAME_None, TEXT("CanRun"), TEXT("CanPause")};
+	
+	UPROPERTY(Transient, meta = (TransientToolProperty)) TArray<FName> CustomNumberKeys =
+		{NAME_None, TEXT("WalkMultiplier"), TEXT("RunSpeed"), TEXT("LightIntensity")};
+#endif
 	
 	FGCSequenceData()
 		: Label(TEXT(""))
