@@ -268,12 +268,12 @@ void UGCSequenceManager::OnWorldLoaded()
 
 		PlayerCharacter->SetAbilityFlags(Data.AbilityFlags);
 
-		for (const TPair<FName, bool>& CustomBool : Data.CustomBooleanData)
+		for (const TPair<EGCCustomBoolKeys, bool>& CustomBool : Data.CustomBooleanData)
 		{
 			PlayerCharacter->SetCustomBooleanValue(CustomBool.Key, CustomBool.Value);
 		}
 		
-		for (const TPair<FName, float>& CustomNumber : Data.CustomNumberData)
+		for (const TPair<EGCCustomFloatKeys, float>& CustomNumber : Data.CustomNumberData)
 		{
 			PlayerCharacter->SetCustomNumberValue(CustomNumber.Key, CustomNumber.Value);
 		}

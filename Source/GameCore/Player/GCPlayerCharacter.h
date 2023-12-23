@@ -339,12 +339,12 @@ public:
 		TMap<EGCPlayerInputTypes, UInputAction*> InputActions;
 
 	UFUNCTION(BlueprintNativeEvent, meta = (ForceAsFunction = true))
-		void SetCustomBooleanValue(const FName& Key, const bool Value);
-	void SetCustomBooleanValue_Implementation(const FName& Key, const bool Value);
+		void SetCustomBooleanValue(const EGCCustomBoolKeys& Key, const bool Value);
+	void SetCustomBooleanValue_Implementation(const EGCCustomBoolKeys& Key, const bool Value);
 
 	UFUNCTION(BlueprintNativeEvent, meta = (ForceAsFunction = true))
-		void SetCustomNumberValue(const FName& Key, const float Value);
-	void SetCustomNumberValue_Implementation(const FName& Key, const float Value);
+		void SetCustomNumberValue(const EGCCustomFloatKeys& Key, const float Value);
+	void SetCustomNumberValue_Implementation(const EGCCustomFloatKeys& Key, const float Value);
 	
 	DECLARE_MULTICAST_DELEGATE(FOnEyeClosedStateChange);
 	FOnEyeClosedStateChange OnEyesClosed;

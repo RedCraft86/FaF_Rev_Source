@@ -10,6 +10,21 @@
 #include "PulldownStruct/PulldownStructBase.h"
 #include "GCSequenceTypes.generated.h"
 
+UENUM(BlueprintInternalUseOnly)
+enum class EGCCustomBoolKeys : uint8
+{
+	CanRun,
+	CanPause,
+};
+
+UENUM(BlueprintInternalUseOnly)
+enum class EGCCustomFloatKeys : uint8
+{
+	WalkMultiplier,
+	RunningSpeed,
+	LightIntensity,
+};
+
 USTRUCT(BlueprintType, DisplayName = "Game Sequence ID")
 struct GAMECORE_API FGCSequenceID : public FPulldownStructBase
 {
@@ -60,18 +75,10 @@ struct GAMECORE_API FGCSequenceData : public FTableRowBase
 		int32 AbilityFlags;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Player", meta = (GetOptions = "CustomBooleanKeys"))
-		TMap<FName, bool> CustomBooleanData;
+		TMap<EGCCustomBoolKeys, bool> CustomBooleanData;
 	
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Player", meta = (GetOptions = "CustomNumberKeys"))
-		TMap<FName, float> CustomNumberData;
-
-#if WITH_EDITORONLY_DATA
-	UPROPERTY(Transient, meta = (TransientToolProperty)) TArray<FName> CustomBooleanKeys =
-		{NAME_None, TEXT("CanRun"), TEXT("CanPause")};
-	
-	UPROPERTY(Transient, meta = (TransientToolProperty)) TArray<FName> CustomNumberKeys =
-		{NAME_None, TEXT("WalkMultiplier"), TEXT("RunSpeed"), TEXT("LightIntensity")};
-#endif
+		TMap<EGCCustomFloatKeys, float> CustomNumberData;
 	
 	FGCSequenceData()
 		: Label(TEXT(""))
@@ -82,8 +89,6 @@ struct GAMECORE_API FGCSequenceData : public FTableRowBase
 		, MainMusic(nullptr)
 		, ChaseMusic(nullptr)
 		, EnsureItems({})
-		, bCanRun(true)
-		, WalkMultiplier(1.0f)
 		, AbilityFlags(0)
 	{}
 

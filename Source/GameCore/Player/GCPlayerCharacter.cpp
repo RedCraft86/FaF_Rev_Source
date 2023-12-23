@@ -163,20 +163,24 @@ AGCPlayerCharacter* AGCPlayerCharacter::Get(const UObject* WorldContext)
 	return PC ? PC->GetPawn<AGCPlayerCharacter>() : nullptr;
 }
 
-void AGCPlayerCharacter::SetCustomBooleanValue_Implementation(const FName& Key, const bool Value)
+void AGCPlayerCharacter::SetCustomBooleanValue_Implementation(const EGCCustomBoolKeys& Key, const bool Value)
 {
-	if (Key.IsNone()) return;
-
-	if (Key == TEXT("CanRun")) SetCanRun(Value);
-	else if (Key == TEXT("CanPause")) SetCanPause(Value);
+	switch(Key)
+	{
+	case EGCCustomBoolKeys::CanRun: SetCanRun(Value); break;
+	case EGCCustomBoolKeys::CanPause: SetCanPause(Value); break;
+	default: return;
+	}
 }
 
-void AGCPlayerCharacter::SetCustomNumberValue_Implementation(const FName& Key, const float Value)
+void AGCPlayerCharacter::SetCustomNumberValue_Implementation(const EGCCustomFloatKeys& Key, const float Value)
 {
-	if (Key.IsNone()) return;
-
-	if (Key == TEXT("WalkMultiplier")) AddWalkMultiplierModifier(TEXT("Level"), Value);
-	else if (Key == TEXT("RunSpeed")) RunningSpeed = Value;
+	switch(Key)
+	{
+	case EGCCustomFloatKeys::WalkMultiplier: AddWalkMultiplierModifier(TEXT("Level"), Value); break;
+	case EGCCustomFloatKeys::RunningSpeed: RunningSpeed = Value; break;
+	default: return;
+	}
 }
 
 bool AGCPlayerCharacter::IsInInvincibleState() const
