@@ -186,6 +186,9 @@ public:
 		static TArray<FVector> GetBoundingBoxVertices(const AActor* Target, const bool bOnlyCollidingComponents, const bool bIncludeFromChildActors, FVector& Origin, FVector& BoxExtent);
 
 	UFUNCTION(BlueprintPure, Category = "Actor", meta = (DefaultToSelf = "Target"))
+		static bool IsLocationInFront(const AActor* Target, const FVector Location);
+	
+	UFUNCTION(BlueprintPure, Category = "Actor", meta = (DefaultToSelf = "Target"))
 		static bool IsActorInFront(const AActor* Target, const AActor* ActorToTest);
 
 	/* Checks if actor is on the player screen

@@ -449,6 +449,19 @@ TArray<FVector> URCRuntimeLibrary::GetBoundingBoxVertices(const AActor* Target, 
 	return Result;
 }
 
+bool URCRuntimeLibrary::IsLocationInFront(const AActor* Target, const FVector Location)
+{
+	if (!IsValid(Target))
+	{
+		return false;
+	}
+	
+	FVector DotVec = Location - Target->GetActorLocation();
+	DotVec.Normalize();
+
+	return FVector::DotProduct(Target->GetActorForwardVector(), DotVec) > 0.0f;
+}
+
 bool URCRuntimeLibrary::IsActorInFront(const AActor* Target, const AActor* ActorToTest)
 {
 	if (!IsValid(Target) || !IsValid(ActorToTest))
@@ -456,13 +469,7 @@ bool URCRuntimeLibrary::IsActorInFront(const AActor* Target, const AActor* Actor
 		return false;
 	}
 	
-	const APlayerCameraManager* CamManager = UGameplayStatics::GetPlayerCameraManager(Target, 0);
-	if (!CamManager) CamManager = UGameplayStatics::GetPlayerCameraManager(ActorToTest, 0);
-
-	FVector DotVec = CamManager->GetCameraLocation() - Target->GetActorLocation();
-	DotVec.Normalize();
-
-	return FVector::DotProduct(Target->GetActorForwardVector(), DotVec) > 0.0f;
+	return IsLocationInFront(Target, ActorToTest->GetActorLocation());
 }
 
 bool URCRuntimeLibrary::IsActorInScreen(const AActor* Target, const float MaxDistance, const bool bOriginOnly, const bool bLineTraceCheck, const FActorBoundsCheckParams& TraceCheckParams)
