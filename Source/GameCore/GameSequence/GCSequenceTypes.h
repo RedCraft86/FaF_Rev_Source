@@ -70,10 +70,10 @@ struct GAMECORE_API FGCSequenceData : public FTableRowBase
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Player", meta = (Bitmask, BitmaskEnum = "/Script/GameCore.EGCPlayerAbilityFlags"))
 		int32 AbilityFlags;
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Player", meta = (GetOptions = "CustomBooleanKeys"))
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Player")
 		TMap<EGCCustomBoolKeys, bool> CustomBooleanData;
 	
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Player", meta = (GetOptions = "CustomNumberKeys"))
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Player")
 		TMap<EGCCustomFloatKeys, float> CustomNumberData;
 	
 	FGCSequenceData()
