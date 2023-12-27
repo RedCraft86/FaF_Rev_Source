@@ -1,4 +1,4 @@
-﻿// Copyright (C) Tayzar (RedCraft86). All Rights Reserved.
+﻿// Copyright (C) RedCraft86 (Tayzar). All Rights Reserved.
 
 #include "GCSplineBarrier.h"
 #include "Components/SplineComponent.h"
