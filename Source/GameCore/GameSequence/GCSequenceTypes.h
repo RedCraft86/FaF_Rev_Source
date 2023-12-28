@@ -95,7 +95,7 @@ struct GAMECORE_API FGCSequenceData : public FTableRowBase
 	
 	FORCEINLINE bool IsValidData() const
 	{
-		return !Level.IsNull() && TeleporterTag.IsValid();
+		return !Level.IsNull();
 	}
 
 	TSoftObjectPtr<UTexture2D> GetRandomBackground()
