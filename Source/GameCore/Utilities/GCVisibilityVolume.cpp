@@ -18,9 +18,12 @@ AGCVisibilityVolume::AGCVisibilityVolume()
 
 	bInvert = false;
 	Targets = {};
+	ConditionActors = {};
+	// SceneCaptureActors = {};
 	
 	bCachedState = true;
 	CachedTickStates = {};
+	// Captures = {};
 }
 
 #if WITH_EDITOR
@@ -30,6 +33,7 @@ void AGCVisibilityVolume::RandomizeColor()
 	bColored = true;
 	Color = FLinearColor::MakeRandomColor();
 	BrushColor = Color.ToFColor(true);
+	MarkComponentsRenderStateDirty();
 #endif
 }
 #endif
@@ -41,7 +45,7 @@ void AGCVisibilityVolume::FindActors()
 	for (AActor* Actor : TActorRange<AActor>(GetWorld()))
 	{
 		if (!Actor || (bWithinBounds && !EncompassesPoint(Actor->GetActorLocation()))) continue;
-		if (!FindTag.IsNone() && Actor->ActorHasTag(FindTag))
+		if (!FindTag.IsNone() || Actor->ActorHasTag(FindTag))
 		{
 			Targets.Add(Actor);
 		}
@@ -77,9 +81,24 @@ void AGCVisibilityVolume::ApplyState(const bool bVisible)
 void AGCVisibilityVolume::Tick(float DeltaSeconds)
 {
 	Super::Tick(DeltaSeconds);
+
+	bool bHasOverlaps = false;
 	if (const APlayerCameraManager* CamManager = UGameplayStatics::GetPlayerCameraManager(this, 0))
 	{
-		const bool bOverlap = EncompassesPoint(CamManager->GetCameraLocation());
-		ApplyState(bInvert ? !bOverlap : bOverlap);
+		bHasOverlaps = EncompassesPoint(CamManager->GetCameraLocation());
 	}
+
+	for (const AActor* Actor : ConditionActors)
+	{
+		if (!IsValid(Actor)) continue;
+		bHasOverlaps = bHasOverlaps || Actor->IsActorTickEnabled();
+	}
+
+	// for (const TWeakObjectPtr<USceneCaptureComponent> Capture : Captures)
+	// {
+	// 	if (!Capture.IsValid()) continue;
+	// 	bHasOverlaps = bHasOverlaps || Capture->bCaptureEveryFrame;
+	// }
+
+	ApplyState(bInvert ? !bHasOverlaps : bHasOverlaps);
 }
