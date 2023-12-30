@@ -151,6 +151,12 @@ void UGCSequenceManager::BeginUnloadWorld()
 			Narrative->ForgetQuest(Data.QuestClass.LoadSynchronous());
 		}
 
+		LoadPackageAsync(Data.Level.GetLongPackageName());
+		for (const TSoftObjectPtr<UWorld>& Lvl : Data.PreloadLevels)
+		{
+			LoadPackageAsync(Lvl.GetLongPackageName());
+		}
+
 		ULevelStreaming* LastLevel = UGameplayStatics::GetStreamingLevel(this, Data.GetLevelName());
 		if (LastLevel && LastLevel->IsLevelVisible())
 		{
