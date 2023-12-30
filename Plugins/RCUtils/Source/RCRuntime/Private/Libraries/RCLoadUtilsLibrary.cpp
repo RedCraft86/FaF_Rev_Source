@@ -18,6 +18,16 @@ void URCLoadUtilsLibrary::ForceGarbageCollection()
 #endif
 }
 
+bool URCLoadUtilsLibrary::IsAsyncPackageLoading(const FString Package)
+{
+	return GetAsyncLoadPercentage(*Package) != -1.0f;
+}
+
+float URCLoadUtilsLibrary::GetPackageAsyncLoadPercent(const FString Package)
+{
+	return GetAsyncLoadPercentage(*Package);
+}
+
 void URCLoadUtilsLibrary::FlushLevelStreaming(const UObject* WorldContextObject)
 {
 	if (UWorld* World = GEngine->GetWorldFromContextObject(WorldContextObject, EGetWorldErrorMode::LogAndReturnNull))

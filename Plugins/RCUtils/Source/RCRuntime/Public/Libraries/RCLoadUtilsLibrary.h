@@ -15,6 +15,12 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "LoadUtils")
 		static void ForceGarbageCollection();
 
+	UFUNCTION(BlueprintCallable, Category = "LoadUtils")
+		static bool IsAsyncPackageLoading(const FString Package);
+	
+	UFUNCTION(BlueprintCallable, Category = "LoadUtils")
+		static float GetPackageAsyncLoadPercent(const FString Package);
+
 	UFUNCTION(BlueprintCallable, Category = "LoadUtils", meta = (WorldContext = "WorldContextObject"))
 		static void FlushLevelStreaming(const UObject* WorldContextObject);
 	
@@ -31,7 +37,7 @@ public:
 		static void ApplyCustomPriorityLoading(const UObject* WorldContextObject, bool UseHighPriorityLoading, float MaxAsyncLoadingMilliSeconds, float MaxActorUpdateMilliSeconds);
 
 private:
-	
+
 	static void CaptureDefaultLoadingSettings();
 	static bool HasCapturedDefaults;
 	static float DefaultLevelStreamingActorsUpdateTimeLimit;
