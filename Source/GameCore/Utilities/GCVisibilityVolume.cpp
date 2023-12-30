@@ -45,7 +45,7 @@ void AGCVisibilityVolume::FindActors()
 	for (AActor* Actor : TActorRange<AActor>(GetWorld()))
 	{
 		if (!Actor || (bWithinBounds && !EncompassesPoint(Actor->GetActorLocation()))) continue;
-		if (!FindTag.IsNone() || Actor->ActorHasTag(FindTag))
+		if (FindTag.IsNone() || Actor->ActorHasTag(FindTag))
 		{
 			Targets.Add(Actor);
 		}
