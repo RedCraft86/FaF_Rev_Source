@@ -163,24 +163,17 @@ AGCPlayerCharacter* AGCPlayerCharacter::Get(const UObject* WorldContext)
 	return PC ? PC->GetPawn<AGCPlayerCharacter>() : nullptr;
 }
 
-void AGCPlayerCharacter::SetCustomBooleanValue_Implementation(const EGCCustomBoolKeys& Key, const bool Value)
+void AGCPlayerCharacter::SetCustomBooleanValue_Implementation(const FString& Key, const bool Value)
 {
-	switch(Key)
-	{
-	case EGCCustomBoolKeys::CanRun: SetCanRun(Value); break;
-	case EGCCustomBoolKeys::CanPause: SetCanPause(Value); break;
-	default: return;
-	}
+	if (Key == TEXT("CanRun")) SetCanRun(Value);
+	else if (Key == TEXT("CanPause")) SetCanPause(Value);
 }
 
-void AGCPlayerCharacter::SetCustomNumberValue_Implementation(const EGCCustomFloatKeys& Key, const float Value)
+void AGCPlayerCharacter::SetCustomNumberValue_Implementation(const FString& Key, const float Value)
 {
-	switch(Key)
-	{
-	case EGCCustomFloatKeys::WalkMultiplier: AddWalkMultiplierModifier(TEXT("Level"), Value); break;
-	case EGCCustomFloatKeys::RunningSpeed: RunningSpeed = Value; break;
-	default: return;
-	}
+	if (Key == TEXT("MaxStamina")) MaxStamina = Value;
+	else if (Key == TEXT("WalkMulti")) AddWalkMultiplierModifier(TEXT("Level"), Value);
+	else if (Key == TEXT("RunSpeed")) RunningSpeed = Value;
 }
 
 bool AGCPlayerCharacter::IsInInvincibleState() const
@@ -744,10 +737,9 @@ void AGCPlayerCharacter::TickWindowFocus()
 
 void AGCPlayerCharacter::TickStamina()
 {
-	const float DrainRate = -0.01f * MaxStamina * StaminaDrain;
-	const float GainRate = 0.01f * MaxStamina * (IsMoving() ? StaminaGain.Y : StaminaGain.X);
 	const bool bShouldDrain = IsMoving() && bRunning && !GetCharacterMovement()->IsFalling();
-	CurrentStamina = FMath::Clamp((bShouldDrain ? DrainRate : GainRate) + CurrentStamina, 0.0f, MaxStamina);
+	const float StaminaDelta = bShouldDrain ? -StaminaDrain : IsMoving() ? StaminaGain.Y : StaminaGain.X;
+	CurrentStamina = FMath::Clamp(StaminaDelta + CurrentStamina, 0.0f, MaxStamina);
 	if (CurrentStamina < 1.0f && !bStaminaPunished)
 	{
 		SetRunState(false);

@@ -10,23 +10,6 @@
 #include "PulldownStruct/PulldownStructBase.h"
 #include "GCSequenceTypes.generated.h"
 
-UENUM(BlueprintInternalUseOnly)
-enum class EGCCustomBoolKeys : uint8
-{
-	None,
-	CanRun,
-	CanPause,
-};
-
-UENUM(BlueprintInternalUseOnly)
-enum class EGCCustomFloatKeys : uint8
-{
-	None,
-	WalkMultiplier,
-	RunningSpeed,
-	LightIntensity,
-};
-
 USTRUCT(BlueprintType, DisplayName = "Game Sequence ID")
 struct GAMECORE_API FGCSequenceID : public FPulldownStructBase
 {
@@ -73,11 +56,11 @@ struct GAMECORE_API FGCSequenceData : public FTableRowBase
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Player", meta = (Bitmask, BitmaskEnum = "/Script/GameCore.EGCPlayerAbilityFlags"))
 		int32 AbilityFlags;
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Player")
-		TMap<EGCCustomBoolKeys, bool> CustomBooleanData;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Player", meta = (GetOptions = "BoolTypes"))
+		TMap<FString, bool> CustomBooleanData;
 	
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Player")
-		TMap<EGCCustomFloatKeys, float> CustomNumberData;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Player", meta = (GetOptions = "FloatTypes"))
+		TMap<FString, float> CustomNumberData;
 	
 	FGCSequenceData()
 		: Label(TEXT(""))
@@ -89,7 +72,19 @@ struct GAMECORE_API FGCSequenceData : public FTableRowBase
 		, ChaseMusic(nullptr)
 		, EnsureItems({})
 		, AbilityFlags(0)
-	{}
+	{
+		CustomBooleanData = {
+			{TEXT("CanRun"), true},
+			{TEXT("CanPause"), true}
+		};
+		
+		CustomNumberData = {
+			{TEXT("MaxStamina"), 100.0f},
+			{TEXT("WalkMulti"), 1.0f},
+			{TEXT("RunSpeed"), 700.0f},
+			{TEXT("LightIntensity"), 0.15f}
+		};
+	}
 
 	FORCEINLINE FName GetLevelName() const
 	{
@@ -108,6 +103,11 @@ struct GAMECORE_API FGCSequenceData : public FTableRowBase
 		return Backgrounds[FMath::RandRange(0, Backgrounds.Num() - 1)];
 	}
 
+#if WITH_EDITORONLY_DATA
+private:
+	UPROPERTY(meta = (TransientToolProperty)) TArray<FString> BoolTypes = {TEXT("None"), TEXT("CanRun"), TEXT("CanPause")};
+	UPROPERTY(meta = (TransientToolProperty)) TArray<FString> FloatTypes = {TEXT("None"), TEXT("MaxStamina"), TEXT("WalkMulti"), TEXT("RunSpeed"), TEXT("LightIntensity")};
+#endif
 #if WITH_EDITOR
 private:
 	virtual void OnDataTableChanged(const UDataTable* InDataTable, const FName InRowName) override
