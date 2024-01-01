@@ -278,10 +278,10 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Settings|Stamina", meta = (ClampMin = 1.0f, UIMin = 1.0f))
 		float MaxStamina;
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Settings|Stamina", DisplayName = "Consumption Percent", meta = (ClampMin = 0.0f, UIMin = 0.0f, ClampMax = 100.0f, UIMax = 100.0f))
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Settings|Stamina", DisplayName = "Consumption", meta = (ClampMin = 0.0f, UIMin = 0.0f))
 		float StaminaDrain;
 	
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Settings|Stamina", DisplayName = "Regeneration Percent", meta = (ClampMin = 0.0f, UIMin = 0.0f, ClampMax = 100.0f, UIMax = 100.0f))
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Settings|Stamina", DisplayName = "Regeneration", meta = (ClampMin = 0.0f, UIMin = 0.0f))
 		FVector2D StaminaGain;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Settings|Crouching")
@@ -339,12 +339,12 @@ public:
 		TMap<EGCPlayerInputTypes, UInputAction*> InputActions;
 
 	UFUNCTION(BlueprintNativeEvent, meta = (ForceAsFunction = true))
-		void SetCustomBooleanValue(const EGCCustomBoolKeys& Key, const bool Value);
-	void SetCustomBooleanValue_Implementation(const EGCCustomBoolKeys& Key, const bool Value);
+		void SetCustomBooleanValue(const FString& Key, const bool Value);
+	void SetCustomBooleanValue_Implementation(const FString& Key, const bool Value);
 
 	UFUNCTION(BlueprintNativeEvent, meta = (ForceAsFunction = true))
-		void SetCustomNumberValue(const EGCCustomFloatKeys& Key, const float Value);
-	void SetCustomNumberValue_Implementation(const EGCCustomFloatKeys& Key, const float Value);
+		void SetCustomNumberValue(const FString& Key, const float Value);
+	void SetCustomNumberValue_Implementation(const FString& Key, const float Value);
 	
 	DECLARE_MULTICAST_DELEGATE(FOnEyeClosedStateChange);
 	FOnEyeClosedStateChange OnEyesClosed;
