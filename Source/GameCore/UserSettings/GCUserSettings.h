@@ -77,12 +77,6 @@ public:
 
 	UFUNCTION(BlueprintPure, Category = "Settings")
 		FORCEINLINE bool GetUseFancyBloom() const { return bFancyBloom; }
-
-	UFUNCTION(BlueprintCallable, Category = "Settings")
-		void SetMirrorQuality(const int32 InMirrorQuality = 75);
-
-	UFUNCTION(BlueprintPure, Category = "Settings")
-		FORCEINLINE int32 GetMirrorQuality() const { return MirrorQuality; }
 	
 	UFUNCTION(BlueprintCallable, Category = "Settings")
 		void SetAntiAliasingMethod(const EGCAntiAliasingMethod InAntiAliasingMethod);
@@ -236,9 +230,6 @@ private:
 
 	UPROPERTY(Config)
 		bool bFancyBloom;
-
-	UPROPERTY(Config)
-		uint8 MirrorQuality;
 	
 	UPROPERTY(Config)
 		EGCAntiAliasingMethod AntiAliasingMethod;

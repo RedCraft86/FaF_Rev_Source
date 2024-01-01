@@ -95,9 +95,6 @@ public:
 		UGCToggleSetting* FancyBloomRow;
 
 	UPROPERTY(Transient, meta = (BindWidget))
-		UGCSwitcherSetting* MirrorQualityRow;
-
-	UPROPERTY(Transient, meta = (BindWidget))
 		UGCSwitcherSetting* MBlurAmountRow;
 	
 	UPROPERTY(Transient, meta = (BindWidget))

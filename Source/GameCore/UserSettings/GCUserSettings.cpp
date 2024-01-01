@@ -137,15 +137,6 @@ void UGCUserSettings::SetUseFancyBloom(const bool bUseFancyBloom)
 	bFancyBloom = bUseFancyBloom;
 }
 
-void UGCUserSettings::SetMirrorQuality(const int32 InMirrorQuality)
-{
-	if (MirrorQuality != InMirrorQuality)
-	{
-		MirrorQuality = InMirrorQuality;
-		OnDynamicApply.Broadcast(this);
-	}
-}
-
 void UGCUserSettings::SetAntiAliasingMethod(const EGCAntiAliasingMethod InAntiAliasingMethod)
 {
 	AntiAliasingMethod = InAntiAliasingMethod;
@@ -314,7 +305,6 @@ void UGCUserSettings::SetToDefaults()
 	ColorBlindMode = EGCColorBlindMode::None;
 	ColorBlindStrength = 10;
 	bFancyBloom = true;
-	MirrorQuality = 0;
 	AntiAliasingMethod = EGCAntiAliasingMethod::TAA;
 	MotionBlurAmount = 1;
 	FSRQuality = 0;

@@ -71,7 +71,6 @@ UGCSettingsWidget::UGCSettingsWidget(const FObjectInitializer& ObjectInitializer
 	CBlindStrengthRow = nullptr;
 
 	FancyBloomRow = nullptr;
-	MirrorQualityRow = nullptr;
 	MBlurAmountRow = nullptr;
 	AAliasingTypeRow = nullptr;
 	FSRQualityRow = nullptr;
@@ -171,7 +170,6 @@ void UGCSettingsWidget::NativeOnInitialized()
 	SETUP_SLIDER(CBlindStrengthRow, true, GetColorBlindStrength, SetColorBlindStrength);
 	//Rendering Features
 	SETUP_TOGGLE(FancyBloomRow, GetUseFancyBloom, SetUseFancyBloom);
-	SETUP_SWITCHER(MirrorQualityRow, GetMirrorQuality, SetMirrorQuality);
 	SETUP_SWITCHER(MBlurAmountRow, GetMotionBlurAmount, SetMotionBlurAmount);
 	SETUP_SWITCHER(AAliasingTypeRow, GetAAliasingInt, SetAAliasingInt);
 	SETUP_SWITCHER(FSRQualityRow, GetFSRQuality, SetFSRQuality);
