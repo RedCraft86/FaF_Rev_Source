@@ -156,6 +156,16 @@ void UGCUserSettings::SetMotionBlurAmount(const int32 InMotionBlurAmount)
 	MotionBlurAmount = FMath::Clamp(InMotionBlurAmount, 0, 4);
 }
 
+void UGCUserSettings::SetFSRQuality(const int32 InFSRQuality)
+{
+	FSRQuality = FMath::Clamp(InFSRQuality, 0, 4);
+}
+
+void UGCUserSettings::SetEnableFSRFrameInterp(const bool bInEnableFSRFrameInterp)
+{
+	bFSRFrameInterp = bInEnableFSRFrameInterp;
+}
+
 void UGCUserSettings::SetEnableCameraSmoothing(const bool bInEnableCameraSmoothing)
 {
 	bEnableCameraSmoothing = bInEnableCameraSmoothing;
@@ -293,7 +303,7 @@ void UGCUserSettings::SetToDefaults()
 #else
 	SetFullscreenMode(EWindowMode::Fullscreen);
 #endif
-	SetResolutionScaleNormalized(1.0f);
+	SetResolutionScaleNormalized(0.5f);
 	FrameRateLimit = 60.0f;
 	
 	Culture = FInternationalization::Get().GetDefaultCulture()->GetName();
@@ -307,6 +317,8 @@ void UGCUserSettings::SetToDefaults()
 	MirrorQuality = 0;
 	AntiAliasingMethod = EGCAntiAliasingMethod::TAA;
 	MotionBlurAmount = 1;
+	FSRQuality = 1;
+	bFSRFrameInterp = true;
 	bEnableCameraSmoothing = true;
 	bInvertMouseX = false;
 	bInvertMouseY = false;
@@ -338,11 +350,11 @@ void UGCUserSettings::ApplyNonResolutionSettings()
 		
 		if (IConsoleVariable* CVar_MotionBlurQuality = URCCVarLibrary::FindCVar(TEXT("r.MotionBlurQuality")))
 		{
-			CVar_MotionBlurQuality->Set(2, ECVF_SetByGameOverride);
+			CVar_MotionBlurQuality->Set(2, ECVF_SetByConsole);
 		}
 		if (IConsoleVariable* CVar_AntiAliasingMethod = URCCVarLibrary::FindCVar(TEXT("r.AntiAliasingMethod")))
 		{
-			CVar_AntiAliasingMethod->Set(2, ECVF_SetByGameOverride);
+			CVar_AntiAliasingMethod->Set(2, ECVF_SetByConsole);
 		}
 	}
 	else
@@ -352,12 +364,21 @@ void UGCUserSettings::ApplyNonResolutionSettings()
 		
 		if (IConsoleVariable* CVar_MotionBlurQuality = URCCVarLibrary::FindCVar(TEXT("r.MotionBlurQuality")))
 		{
-			CVar_MotionBlurQuality->Set(FMath::Clamp((int32)MotionBlurAmount, 0, 4), ECVF_SetByGameOverride);
+			CVar_MotionBlurQuality->Set(FMath::Clamp((int32)MotionBlurAmount, 0, 4), ECVF_SetByConsole);
 		}
 		if (IConsoleVariable* CVar_AntiAliasingMethod = URCCVarLibrary::FindCVar(TEXT("r.AntiAliasingMethod")))
 		{
-			CVar_AntiAliasingMethod->Set(ConvertAAMethod(AntiAliasingMethod), ECVF_SetByGameOverride);
+			CVar_AntiAliasingMethod->Set(ConvertAAMethod(AntiAliasingMethod), ECVF_SetByConsole);
 		}
+	}
+
+	if (IConsoleVariable* CVar_FSRQuality = URCCVarLibrary::FindCVar(TEXT("r.FidelityFX.FSR3.QualityMode")))
+	{
+		CVar_FSRQuality->Set(FMath::Clamp((int32)FSRQuality, 0, 4), ECVF_SetByConsole);
+	}
+	if (IConsoleVariable* CVar_FSRFrameInterp = URCCVarLibrary::FindCVar(TEXT("r.AntiAliasingMethod")))
+	{
+		CVar_FSRFrameInterp->Set(bFSRFrameInterp ? 1 : 0, ECVF_SetByConsole);
 	}
 
 	ApplyColorBlindSettings();

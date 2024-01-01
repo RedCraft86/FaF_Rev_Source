@@ -102,6 +102,12 @@ public:
 	
 	UPROPERTY(Transient, meta = (BindWidget))
 		UGCSwitcherSetting* AAliasingTypeRow;
+
+	UPROPERTY(Transient, meta = (BindWidget))
+		UGCSwitcherSetting* FSRQualityRow;
+	
+	UPROPERTY(Transient, meta = (BindWidget))
+		UGCToggleSetting* FSRFrameInterpRow;
 	
 	// Advanced
 	UPROPERTY(Transient, meta = (BindWidget))

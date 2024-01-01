@@ -74,6 +74,8 @@ UGCSettingsWidget::UGCSettingsWidget(const FObjectInitializer& ObjectInitializer
 	MirrorQualityRow = nullptr;
 	MBlurAmountRow = nullptr;
 	AAliasingTypeRow = nullptr;
+	FSRQualityRow = nullptr;
+	FSRFrameInterpRow = nullptr;
 	
 	AutoDetectText = nullptr;
 	AutoDetectButton = nullptr;
@@ -172,6 +174,8 @@ void UGCSettingsWidget::NativeOnInitialized()
 	SETUP_SWITCHER(MirrorQualityRow, GetMirrorQuality, SetMirrorQuality);
 	SETUP_SWITCHER(MBlurAmountRow, GetMotionBlurAmount, SetMotionBlurAmount);
 	SETUP_SWITCHER(AAliasingTypeRow, GetAAliasingInt, SetAAliasingInt);
+	SETUP_SWITCHER(FSRQualityRow, GetFSRQuality, SetFSRQuality);
+	SETUP_TOGGLE(FSRFrameInterpRow, GetEnableFSRFrameInterp, SetEnableFSRFrameInterp);
 	// Advanced
 	AutoDetectText->SetText(FText::FromString(TEXT("Run Hardware Benchmark")));
 	AutoDetectButton->OnClicked.AddDynamic(this, &UGCSettingsWidget::OnAutoDetectClicked);

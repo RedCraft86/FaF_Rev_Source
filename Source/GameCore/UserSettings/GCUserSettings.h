@@ -97,6 +97,18 @@ public:
 		FORCEINLINE int32 GetMotionBlurAmount() const { return MotionBlurAmount; }
 
 	UFUNCTION(BlueprintCallable, Category = "Settings")
+		void SetFSRQuality(const int32 InFSRQuality = 1);
+
+	UFUNCTION(BlueprintPure, Category = "Settings")
+		FORCEINLINE int32 GetFSRQuality() const { return FSRQuality; }
+
+	UFUNCTION(BlueprintCallable, Category = "Settings")
+		void SetEnableFSRFrameInterp(const bool bInEnableFSRFrameInterp = true);
+
+	UFUNCTION(BlueprintPure, Category = "Settings")
+		FORCEINLINE bool GetEnableFSRFrameInterp() const { return bFSRFrameInterp; }
+
+	UFUNCTION(BlueprintCallable, Category = "Settings")
 		void SetEnableCameraSmoothing(const bool bInEnableCameraSmoothing);
 
 	UFUNCTION(BlueprintPure, Category = "Settings")
@@ -233,6 +245,12 @@ private:
 
 	UPROPERTY(Config)
 		uint8 MotionBlurAmount;
+
+	UPROPERTY(Config)
+		uint8 FSRQuality;
+
+	UPROPERTY(Config)
+		bool bFSRFrameInterp;
 
 	UPROPERTY(Config)
 		bool bEnableCameraSmoothing;
