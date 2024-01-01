@@ -317,7 +317,7 @@ void UGCUserSettings::SetToDefaults()
 	MirrorQuality = 0;
 	AntiAliasingMethod = EGCAntiAliasingMethod::TAA;
 	MotionBlurAmount = 1;
-	FSRQuality = 1;
+	FSRQuality = 0;
 	bFSRFrameInterp = true;
 	bEnableCameraSmoothing = true;
 	bInvertMouseX = false;

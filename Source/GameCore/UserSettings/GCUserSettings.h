@@ -97,7 +97,7 @@ public:
 		FORCEINLINE int32 GetMotionBlurAmount() const { return MotionBlurAmount; }
 
 	UFUNCTION(BlueprintCallable, Category = "Settings")
-		void SetFSRQuality(const int32 InFSRQuality = 1);
+		void SetFSRQuality(const int32 InFSRQuality = 0);
 
 	UFUNCTION(BlueprintPure, Category = "Settings")
 		FORCEINLINE int32 GetFSRQuality() const { return FSRQuality; }
