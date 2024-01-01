@@ -47,6 +47,7 @@ void AGCTeleportTarget::TeleportPlayer() const
 {
 	if (AGCPlayerCharacter* Player = AGCPlayerCharacter::Get(this))
 	{
+		Player->SetStaminaPercent(Player->MaxStamina);
 		TeleportActor(Player);
 	}
 	else
