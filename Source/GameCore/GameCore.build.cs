@@ -28,6 +28,7 @@ public class GameCore : ModuleRules
 				"Slate",
 				"SlateCore",
 				"JsonUtilities",
+				"ApplicationCore",
 				"DeveloperSettings",
 				"EngineSettings",
 				"AssetRegistry",

@@ -269,15 +269,18 @@ TArray<FIntPoint> UGCUserSettings::GetAllResolutions()
 	TArray<FIntPoint> Supported;
 	UKismetSystemLibrary::GetSupportedFullscreenResolutions(Supported);
 	
-	TArray<FIntPoint> Result = Supported;
-	// const FIntPoint Max = Get()->GetDesktopResolution();
-	// for (const FIntPoint& Elem : Supported)
-	// {
-	// 	if (Elem.X <= Max.X && Elem.Y <= Max.Y)
-	// 	{
-	// 		Result.Add(Elem);
-	// 	}
-	// }
+	FDisplayMetrics Metrics;
+	FDisplayMetrics::RebuildDisplayMetrics(Metrics);
+
+	TArray<FIntPoint> Result;
+	for (const FIntPoint& Elem : Supported)
+	{
+		if (Elem.X <= Metrics.PrimaryDisplayWidth
+			&& Elem.Y <= Metrics.PrimaryDisplayHeight)
+		{
+			Result.Add(Elem);
+		}
+	}
 	
 	Algo::Reverse(Result);
 	return Result;
