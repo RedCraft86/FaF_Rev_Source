@@ -57,15 +57,15 @@ void UGCGameInstance::Init()
 	FFileHelper::LoadFileToString(JsonStr, *(FPaths::ProjectSavedDir() / TEXT("Global.json")));
 	FJsonObjectWrapper GlobalJson;
 	GlobalJson.JsonObjectFromString(JsonStr);
-	if (GlobalJson.JsonObject->GetBoolField(TEXT("Finished_First_Launch")))
+	if (!GlobalJson.JsonObject->GetBoolField(TEXT("Finished_First_Launch")))
 	{
 		UGCUserSettings::Get()->SetToDefaults();
 		UGCUserSettings::Get()->ApplyNonResolutionSettings();
-	}
-	else
-	{
+		
 		GlobalJson.JsonObject->SetBoolField(TEXT("Finished_First_Launch"), true);
-		GlobalJson.JsonObjectToString(JsonStr);
+
+		const TSharedRef<TJsonWriter<>> JsonWriter = TJsonWriterFactory<>::Create(&JsonStr, 0);
+		FJsonSerializer::Serialize(GlobalJson.JsonObject.ToSharedRef(), JsonWriter, true);
 		
 		FFileHelper::SaveStringToFile(JsonStr, *(FPaths::ProjectSavedDir() / TEXT("Global.json")));
 	}
