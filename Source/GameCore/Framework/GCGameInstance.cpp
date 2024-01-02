@@ -4,6 +4,7 @@
 #include "Player/GCPlayerCharacter.h"
 #include "UserSettings/GCUserSettings.h"
 #include "Kismet/KismetSystemLibrary.h"
+#include "JsonObjectWrapper.h"
 #include "RCCVarLibrary.h"
 
 UGCGameInstance::UGCGameInstance()
@@ -51,6 +52,23 @@ void UGCGameInstance::Init()
 {
 	Super::Init();
 	UGCUserSettings::Get()->GameInstance = this;
+
+	FString JsonStr;
+	FFileHelper::LoadFileToString(JsonStr, *(FPaths::ProjectSavedDir() / TEXT("Global.json")));
+	FJsonObjectWrapper GlobalJson;
+	GlobalJson.JsonObjectFromString(JsonStr);
+	if (GlobalJson.JsonObject->GetBoolField(TEXT("Finished_First_Launch")))
+	{
+		UGCUserSettings::Get()->SetToDefaults();
+		UGCUserSettings::Get()->ApplyNonResolutionSettings();
+	}
+	else
+	{
+		GlobalJson.JsonObject->SetBoolField(TEXT("Finished_First_Launch"), true);
+		GlobalJson.JsonObjectToString(JsonStr);
+		
+		FFileHelper::SaveStringToFile(JsonStr, *(FPaths::ProjectSavedDir() / TEXT("Global.json")));
+	}
 }
 
 void UGCGameInstance::WorldBeginPlay()
