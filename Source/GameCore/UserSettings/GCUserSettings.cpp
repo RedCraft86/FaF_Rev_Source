@@ -286,7 +286,8 @@ TArray<FIntPoint> UGCUserSettings::GetAllResolutions()
 void UGCUserSettings::SetToDefaults()
 {
 	Super::SetToDefaults();
-	
+
+	SetVSyncEnabled(true);
 	SetOverallScalabilityLevel(2);
 	SetScreenResolution(GetDesktopResolution());
 #if WITH_EDITOR
@@ -294,7 +295,7 @@ void UGCUserSettings::SetToDefaults()
 #else
 	SetFullscreenMode(EWindowMode::Fullscreen);
 #endif
-	SetResolutionScaleNormalized(0.5f);
+	SetResolutionScaleValueEx(FMath::Lerp(Scalability::MinResolutionScale, Scalability::MaxResolutionScale, 0.5f));
 	FrameRateLimit = 60.0f;
 	
 	Culture = FInternationalization::Get().GetDefaultCulture()->GetName();
