@@ -60,8 +60,11 @@ void UGCGameInstance::Init()
 	if (!GlobalJson.JsonObject->GetBoolField(TEXT("Finished_First_Launch")))
 	{
 #if !WITH_EDITOR
-		UGCUserSettings::Get()->SetToDefaults();
-		UGCUserSettings::Get()->ApplyNonResolutionSettings();
+		UGCUserSettings* Settings = UGCUserSettings::Get();
+		Settings->SetToDefaults();
+		Settings->SetOverallQuality(3);
+		Settings->SetResScalePercent(50.0f);
+		Settings->ApplyNonResolutionSettings();
 #endif
 		GlobalJson.JsonObject->SetBoolField(TEXT("Finished_First_Launch"), true);
 
