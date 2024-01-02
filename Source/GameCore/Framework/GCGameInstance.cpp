@@ -52,16 +52,17 @@ void UGCGameInstance::Init()
 {
 	Super::Init();
 	UGCUserSettings::Get()->GameInstance = this;
-
+	
 	FString JsonStr;
 	FFileHelper::LoadFileToString(JsonStr, *(FPaths::ProjectSavedDir() / TEXT("Global.json")));
 	FJsonObjectWrapper GlobalJson;
 	GlobalJson.JsonObjectFromString(JsonStr);
 	if (!GlobalJson.JsonObject->GetBoolField(TEXT("Finished_First_Launch")))
 	{
+#if !WITH_EDITOR
 		UGCUserSettings::Get()->SetToDefaults();
 		UGCUserSettings::Get()->ApplyNonResolutionSettings();
-		
+#endif
 		GlobalJson.JsonObject->SetBoolField(TEXT("Finished_First_Launch"), true);
 
 		const TSharedRef<TJsonWriter<>> JsonWriter = TJsonWriterFactory<>::Create(&JsonStr, 0);
