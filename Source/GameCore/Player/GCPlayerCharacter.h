@@ -54,7 +54,6 @@ enum class EGCPlayerActiveState : uint8
 {
 	Normal,
 	Device,
-	Hiding,
 	Inventory,
 	Dialogue,
 	Cutscene,
@@ -229,6 +228,9 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Settings")
 		bool bCanPause;
+
+	UPROPERTY(/*EditAnywhere, */BlueprintReadOnly, Category = "Settings")
+		bool bHiding;
 	
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Settings|Interaction")
 		bool bCanInteract;
@@ -468,6 +470,9 @@ public:
 	
 	UFUNCTION(BlueprintPure, Category = "PlayerCharacter")
 		bool InMovementAction() const;
+
+	UFUNCTION(BlueprintCallable, Category = "PlayerCharacter")
+		void SetHiding(const bool bInIsHiding);
 	
 	UFUNCTION(BlueprintCallable, Category = "PlayerCharacter")
 		FORCEINLINE void SetCanPause(const bool bInCanPause) { bCanPause = bInCanPause; }

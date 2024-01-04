@@ -87,6 +87,7 @@ AGCPlayerCharacter::AGCPlayerCharacter(const FObjectInitializer& ObjectInitializ
 	ActiveState = EGCPlayerActiveState::Normal;
 	AbilityFlags = DEFAULT_PLAYER_ABILITIES;
 	bCanPause = true;
+	bHiding = false;
 	
 	bCanInteract = true;
 	InteractTraceChannel = ECC_Visibility;
@@ -165,15 +166,15 @@ AGCPlayerCharacter* AGCPlayerCharacter::Get(const UObject* WorldContext)
 
 void AGCPlayerCharacter::SetCustomBooleanValue_Implementation(const FString& Key, const bool Value)
 {
-	if (Key == TEXT("CanRun")) SetCanRun(Value);
-	else if (Key == TEXT("CanPause")) SetCanPause(Value);
+	if (Key == ValueIDs::CanRun) SetCanRun(Value);
+	else if (Key == ValueIDs::CanPause) SetCanPause(Value);
 }
 
 void AGCPlayerCharacter::SetCustomNumberValue_Implementation(const FString& Key, const float Value)
 {
-	if (Key == TEXT("MaxStamina")) MaxStamina = Value;
-	else if (Key == TEXT("WalkMulti")) AddWalkMultiplierModifier(TEXT("Level"), Value);
-	else if (Key == TEXT("RunSpeed")) RunningSpeed = Value;
+	if (Key == ValueIDs::MaxStamina) MaxStamina = Value;
+	else if (Key == ValueIDs::WalkMulti) AddWalkMultiplierModifier(TEXT("Level"), Value);
+	else if (Key == ValueIDs::RunSpeed) RunningSpeed = Value;
 }
 
 bool AGCPlayerCharacter::IsInInvincibleState() const
@@ -358,7 +359,7 @@ void AGCPlayerCharacter::InputBinding_Pause(const FInputActionValue& InValue)
 
 void AGCPlayerCharacter::InputBinding_Move(const FInputActionValue& InValue)
 {
-	if (IsGamePaused())
+	if (bHiding || IsGamePaused())
 		return;
 	
 	if (IS_AT_STATE(Normal) && bCanMove)
@@ -383,7 +384,7 @@ void AGCPlayerCharacter::InputBinding_Move(const FInputActionValue& InValue)
 
 void AGCPlayerCharacter::InputBinding_Turn(const FInputActionValue& InValue)
 {
-	if (!IsGamePaused() && IS_AT_STATE(Normal) && bCanTurn && !LockOnTarget)
+	if (!bHiding && !IsGamePaused() && IS_AT_STATE(Normal) && bCanTurn && !LockOnTarget)
 	{
 		const FVector2D Axis = InValue.Get<FVector2D>();
 		if (Axis.X != 0.0f)
@@ -399,7 +400,7 @@ void AGCPlayerCharacter::InputBinding_Turn(const FInputActionValue& InValue)
 
 void AGCPlayerCharacter::InputBinding_Run(const FInputActionValue& InValue)
 {
-	if (!IsGamePaused() && IS_AT_STATE(Normal))
+	if (!bHiding && !IsGamePaused() && IS_AT_STATE(Normal))
 	{
 		SetRunState(bCanRun && !bStaminaPunished && InValue.Get<bool>());
 	}
@@ -407,7 +408,7 @@ void AGCPlayerCharacter::InputBinding_Run(const FInputActionValue& InValue)
 
 void AGCPlayerCharacter::InputBinding_Crouch(const FInputActionValue& InValue)
 {
-	if (!IsGamePaused() && IS_AT_STATE(Normal))
+	if (!bHiding && !IsGamePaused() && IS_AT_STATE(Normal))
 	{
 		if (bCanCrouch && !bCrouching)
 		{
@@ -422,7 +423,7 @@ void AGCPlayerCharacter::InputBinding_Crouch(const FInputActionValue& InValue)
 
 void AGCPlayerCharacter::InputBinding_Lean(const FInputActionValue& InValue)
 {
-	if (!IsGamePaused() && IS_AT_STATE(Normal) && !LockOnTarget)
+	if (!bHiding && !IsGamePaused() && IS_AT_STATE(Normal) && !LockOnTarget)
 	{
 		const float Direction = InValue.Get<float>();
 		if (!bCanLean || Direction == 0.0f)
@@ -442,7 +443,7 @@ void AGCPlayerCharacter::InputBinding_Lean(const FInputActionValue& InValue)
 
 void AGCPlayerCharacter::InputBinding_Inventory(const FInputActionValue& InValue)
 {
-	if (!bHaveEyesClosed && !IsGamePaused())
+	if (!bHiding && !bHaveEyesClosed && !IsGamePaused())
 	{
 		if (IS_AT_STATE(Normal))
 		{
@@ -462,7 +463,7 @@ void AGCPlayerCharacter::InputBinding_HideQuests(const FInputActionValue& InValu
 
 void AGCPlayerCharacter::InputBinding_Interact(const FInputActionValue& InValue)
 {
-	if (!bHaveEyesClosed && !IsGamePaused() && IS_AT_STATE(Normal) && bCanInteract && InValue.Get<bool>()) // Is Interacting
+	if (!bHiding && !bHaveEyesClosed && !IsGamePaused() && IS_AT_STATE(Normal) && bCanInteract && InValue.Get<bool>()) // Is Interacting
 	{
 		if (bShouldBeInteracting)
 		{
@@ -494,7 +495,7 @@ void AGCPlayerCharacter::InputBinding_Interact(const FInputActionValue& InValue)
 
 void AGCPlayerCharacter::InputBinding_CloseEyes(const FInputActionValue& InValue)
 {
-	if (IS_AT_STATE(Normal))
+	if (!bHiding && IS_AT_STATE(Normal))
 	{
 		SetEyesCloseState(HAS_ABILITY(CloseEyes) && InValue.Get<bool>());
 	}
@@ -502,7 +503,7 @@ void AGCPlayerCharacter::InputBinding_CloseEyes(const FInputActionValue& InValue
 
 void AGCPlayerCharacter::InputBinding_Equipment_Toggle(const FInputActionValue& InValue)
 {
-	if (!IsGamePaused() && IS_AT_STATE(Normal))
+	if (!bHiding && !IsGamePaused() && IS_AT_STATE(Normal))
 	{
 		if (InValue.Get<bool>())
 		{
@@ -513,7 +514,7 @@ void AGCPlayerCharacter::InputBinding_Equipment_Toggle(const FInputActionValue& 
 
 void AGCPlayerCharacter::InputBinding_Equipment_Charge(const FInputActionValue& InValue)
 {
-	if (!IsGamePaused() && IS_AT_STATE(Normal))
+	if (!bHiding && !IsGamePaused() && IS_AT_STATE(Normal))
 	{
 		PlayerController->GetInventoryManager()->SetEquipmentCharging(InValue.Get<bool>());
 	}
@@ -680,6 +681,8 @@ bool AGCPlayerCharacter::TraceInteraction(FHitResult& OutHitResult, FGCInteracti
 {
 	OutData.Reset();
 	OutHitResult = {};
+
+	if (bHiding) return false;
 	
 	FVector Start, End = FVector::ZeroVector;
 	URCMathLibrary::GetCameraLineTraceVectors(this, ERCVectorDirection::Forward, ReachDistance, Start, End);
@@ -815,8 +818,27 @@ bool AGCPlayerCharacter::IsOnTaskOrDeviceActor() const
 
 bool AGCPlayerCharacter::InMovementAction() const
 {
-	return NOT_AT_STATE(Hiding) && !IsInInvincibleState()
+	return !bHiding && !IsInInvincibleState()
 	&& (IsMoving() || IsOnTaskOrDeviceActor() || IS_AT_STATE(Device));
+}
+
+void AGCPlayerCharacter::SetHiding(const bool bInIsHiding)
+{
+	if (bHiding != bInIsHiding)
+	{
+		bHiding = bInIsHiding;
+		SetActorHiddenInGame(bHiding);
+		if (PlayerController)
+		{
+			if (const UGCInventoryManager* Inventory = PlayerController->GetInventoryManager())
+			{
+				if (AActor* EquippedActor = Inventory->GetActiveEquipment().Actor)
+				{
+					EquippedActor->SetActorHiddenInGame(bHiding);
+				}
+			}
+		}
+	}
 }
 
 void AGCPlayerCharacter::SetStaminaPercent(const float InPercent)

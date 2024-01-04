@@ -10,6 +10,30 @@
 #include "PulldownStruct/PulldownStructBase.h"
 #include "GCSequenceTypes.generated.h"
 
+namespace ValueIDs
+{
+	static FString None(TEXT("None"));
+	
+	static FString CanRun(TEXT("CanRun"));
+	static FString CanPause(TEXT("CanPause"));
+
+	static FString MaxStamina(TEXT("MaxStamina"));
+	static FString WalkMulti(TEXT("WalkMulti"));
+	static FString RunSpeed(TEXT("RunSpeed"));
+	static FString LightIntensity(TEXT("LightIntensity"));
+
+	namespace Defaults
+	{
+		static bool CanRun(true);
+		static bool CanPause(true);
+
+		static float MaxStamina(100.0f);
+		static float WalkMulti(1.0f);
+		static float RunSpeed(650.0f);
+		static float LightIntensity(0.15f);
+	}
+}
+
 USTRUCT(BlueprintType, DisplayName = "Game Sequence ID")
 struct GAMECORE_API FGCSequenceID : public FPulldownStructBase
 {
@@ -56,10 +80,10 @@ struct GAMECORE_API FGCSequenceData : public FTableRowBase
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Player", meta = (Bitmask, BitmaskEnum = "/Script/GameCore.EGCPlayerAbilityFlags"))
 		int32 AbilityFlags;
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Player", meta = (GetOptions = "BoolTypes"))
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Player")
 		TMap<FString, bool> CustomBooleanData;
 	
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Player", meta = (GetOptions = "FloatTypes"))
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Player")
 		TMap<FString, float> CustomNumberData;
 	
 	FGCSequenceData()
@@ -74,15 +98,15 @@ struct GAMECORE_API FGCSequenceData : public FTableRowBase
 		, AbilityFlags(0)
 	{
 		CustomBooleanData = {
-			{TEXT("CanRun"), true},
-			{TEXT("CanPause"), true}
+			{ValueIDs::CanRun, ValueIDs::Defaults::CanRun},
+			{ValueIDs::CanPause, ValueIDs::Defaults::CanPause}
 		};
 		
 		CustomNumberData = {
-			{TEXT("MaxStamina"), 100.0f},
-			{TEXT("WalkMulti"), 1.0f},
-			{TEXT("RunSpeed"), 700.0f},
-			{TEXT("LightIntensity"), 0.15f}
+			{ValueIDs::MaxStamina, ValueIDs::Defaults::MaxStamina},
+			{ValueIDs::WalkMulti, ValueIDs::Defaults::WalkMulti},
+			{ValueIDs::RunSpeed, ValueIDs::Defaults::RunSpeed},
+			{ValueIDs::LightIntensity, ValueIDs::Defaults::LightIntensity}
 		};
 	}
 
@@ -103,11 +127,6 @@ struct GAMECORE_API FGCSequenceData : public FTableRowBase
 		return Backgrounds[FMath::RandRange(0, Backgrounds.Num() - 1)];
 	}
 
-#if WITH_EDITORONLY_DATA
-private:
-	UPROPERTY(meta = (TransientToolProperty)) TArray<FString> BoolTypes = {TEXT("None"), TEXT("CanRun"), TEXT("CanPause")};
-	UPROPERTY(meta = (TransientToolProperty)) TArray<FString> FloatTypes = {TEXT("None"), TEXT("MaxStamina"), TEXT("WalkMulti"), TEXT("RunSpeed"), TEXT("LightIntensity")};
-#endif
 #if WITH_EDITOR
 private:
 	virtual void OnDataTableChanged(const UDataTable* InDataTable, const FName InRowName) override
