@@ -24,6 +24,8 @@
 #include "Interfaces/GCDeviceInterface.h"
 #include "UserInterface/GCLoadingWidget.h"
 #include "UserInterface/Gameplay/GCGameplayWidget.h"
+#include "UserInterface/Gameplay/GCInventoryWidget.h"
+#include "UserInterface/Gameplay/GCNarrativeWidget.h"
 #if WITH_EDITOR
 #include "Components/BillboardComponent.h"
 #endif
@@ -1055,4 +1057,21 @@ const TArray<AActor*>& AGCPlayerCharacter::GetEnemyStack()
 {
 	EnemyStack.Remove(nullptr);
 	return EnemyStack;
+}
+
+bool AGCPlayerCharacter::TryJumpscare()
+{
+	if (IS_AT_STATE(Normal) || IS_AT_STATE(Device) || IS_AT_STATE(Inventory))
+	{
+		if (ActiveWorldDevice) GCDeviceInterface::ForceExitDevice(ActiveWorldDevice, TEXT("Jumpscare"));
+		PlayerController->ExitInventoryInternal(nullptr, true);
+		PlayerController->GetUserWidget<UGCInventoryWidget>()->SetVisibility(ESlateVisibility::Collapsed);
+		PlayerController->GetUserWidget<UGCGameplayWidget>()->SetVisibility(ESlateVisibility::Collapsed);
+		PlayerController->GetUserWidget<UGCMessageWidget>()->SetVisibility(ESlateVisibility::Collapsed);
+		PlayerController->GetUserWidget<UGCNarrativeWidget>()->SetVisibility(ESlateVisibility::Collapsed);
+		SetActiveState(EGCPlayerActiveState::Jumpscare);
+		return true;
+	}
+
+	return false;
 }

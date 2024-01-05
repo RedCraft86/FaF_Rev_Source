@@ -566,4 +566,7 @@ public:
 	
 	UFUNCTION(BlueprintPure, Category = "PlayerCharacter")
 		const TArray<AActor*>& GetEnemyStack();
+		
+	UFUNCTION(BlueprintCallable, Category = "PlayerCharacter")
+		bool TryJumpscare();
 };
