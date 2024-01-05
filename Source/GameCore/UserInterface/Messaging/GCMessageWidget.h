@@ -190,10 +190,10 @@ public:
 protected:
 
 	UPROPERTY(Transient, BlueprintReadOnly)
-		UGCAchievementManager* AchievementManager;
+		class UGCAchievementManager* AchievementManager;
 
 	UPROPERTY(Transient, BlueprintReadOnly)
-		UGCInventoryManager* InventoryManager;
+		class UGCInventoryManager* InventoryManager;
 
 	UPROPERTY(Transient, BlueprintReadOnly)
 		TMap<FName, UGCKeyHintWidget*> KeyHints;
