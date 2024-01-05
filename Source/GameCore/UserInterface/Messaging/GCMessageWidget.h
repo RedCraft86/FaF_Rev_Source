@@ -101,7 +101,7 @@ struct GAMECORE_API FGCSubtitleData : public FGCNoticeData
 };
 
 UCLASS(Abstract, DisplayName = "Key Hint Widget Base")
-class GAMECORE_API UGCKeyHintWidget : public UGCUserWidget
+class GAMECORE_API UGCKeyHintWidget : public UUserWidget
 {
 	GENERATED_BODY()
 	
@@ -115,10 +115,7 @@ public:
 	UPROPERTY(Transient, meta = (BindWidget))
 		UImage* KeyIcon;
 
-	UFUNCTION(BlueprintImplementableEvent)
-		UTexture2D* GetKeyImage(const FKey& InKey) const;
-
-	void SetData(const FText& InLabel, const FKey& InKey) const;
+	void SetData(const FText& InLabel, UTexture2D* InKey) const;
 };
 
 UCLASS(Abstract, DisplayName = "Message Widget Base")
@@ -182,7 +179,7 @@ public:
 		void RemoveKeyHint(const FName InID);
 
 	UFUNCTION(BlueprintCallable, Category = "MessageWidget")
-		void AddKeyHint(const FName InID, const FText InLabel, const FKey InKey);
+		void AddKeyHint(const FName InID, const FText InLabel, UTexture2D* InKey);
 	
 	void QueueNoticeByObject(const FGCNoticeData& InData, const UObject* InObject);
 	void QueueSubtitleByObject(const FGCSubtitleData& InData, const UObject* InObject);

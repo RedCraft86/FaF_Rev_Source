@@ -3,33 +3,31 @@
 #include "GCMessageWidget.h"
 #include "Components/Image.h"
 #include "Components/TextBlock.h"
-#include "Components/RichTextBlock.h"
 #include "Player/GCPlayerController.h"
 #include "Achievement/GCAchievementManager.h"
+#include "Components/HorizontalBoxSlot.h"
 #include "Inventory/GCInventoryManager.h"
 
 UGCKeyHintWidget::UGCKeyHintWidget(const FObjectInitializer& ObjectInitializer)
-	: UGCUserWidget(ObjectInitializer)
+	: UUserWidget(ObjectInitializer)
 {
 	LabelText = nullptr;
 	KeyIcon = nullptr;
 }
 
-void UGCKeyHintWidget::SetData(const FText& InLabel, const FKey& InKey) const
+void UGCKeyHintWidget::SetData(const FText& InLabel, UTexture2D* InKey) const
 {
 	LabelText->SetText(InLabel);
-	KeyIcon->SetBrushFromTexture(GetKeyImage(InKey));
+	KeyIcon->SetBrushFromTexture(InKey);
 }
 
 UGCMessageWidget::UGCMessageWidget(const FObjectInitializer& ObjectInitializer)
 	: UGCUserWidget(ObjectInitializer)
 {
-	WidgetZOrder = 14;
-	bAutoAddToViewport = true;
-	
 	SubtitleName = nullptr;
 	AchievementIcon = nullptr;
 	AchievementName = nullptr;
+	KeyHintBox = nullptr;
 	SubtitleAnim = nullptr;
 	NoticeAnim = nullptr;
 	AchievementAnim = nullptr;
@@ -109,27 +107,60 @@ void UGCMessageWidget::RemoveKeyHint(const FName InID)
 	if (InID.IsNone()) return;
 	if (UGCKeyHintWidget* Widget = KeyHints.FindRef(InID))
 	{
-		Widget->RemoveFromParent();
+		KeyHints.Remove(InID);
+		if (KeyHints.IsEmpty())
+		{
+			PlayAnimationReverse(KeyHintAnim);
+		
+			FTimerHandle Handle;
+			GetWorld()->GetTimerManager().SetTimer(Handle, [Widget]()
+			{
+				Widget->RemoveFromParent();
+			}, 0.5f, false);
+		}
+		else
+		{
+			Widget->RemoveFromParent();
+		}
 	}
-
-	KeyHints.Remove(InID);
-	if (KeyHints.IsEmpty())
-		PlayAnimationReverse(KeyHintAnim);
 }
 
-void UGCMessageWidget::AddKeyHint(const FName InID, const FText InLabel, const FKey InKey)
+void UGCMessageWidget::AddKeyHint(const FName InID, const FText InLabel, UTexture2D* InKey)
 {
 	if (InID.IsNone() || InLabel.IsEmptyOrWhitespace()
-		|| !InKey.IsValid() || !KeyHintWidgetClass) return;
+		|| !InKey || !KeyHintWidgetClass) return;
+
+	FSlateBrush DividerBrush;
+	DividerBrush.TintColor = FLinearColor::Gray;
+	DividerBrush.DrawAs = ESlateBrushDrawType::RoundedBox;
+	DividerBrush.ImageSize = FVector2D(4.0f, 32.0f);
+	DividerBrush.OutlineSettings.CornerRadii = FVector4(2.0f, 2.0f, 2.0f, 2.0f);
+	DividerBrush.OutlineSettings.RoundingType = ESlateBrushRoundingType::FixedRadius;
+	DividerBrush.OutlineSettings.bUseBrushTransparency = true;
+	EObjectFlags NewObjectFlags = RF_Transactional;
+	if (HasAnyFlags(RF_Transient))
+	{
+		NewObjectFlags |= RF_Transient;
+	}
 	
 	RemoveKeyHint(InID);
 	if (UGCKeyHintWidget* Widget = CreateWidget<UGCKeyHintWidget>(this, KeyHintWidgetClass))
 	{
 		Widget->SetData(InLabel, InKey);
+		if (!KeyHints.IsEmpty())
+		{
+			UImage* DividerImage = NewObject<UImage>(this, NAME_None, NewObjectFlags);
+			DividerImage->SetBrush(DividerBrush);
+						
+			UHorizontalBoxSlot* DividerSlot = Cast<UHorizontalBoxSlot>(KeyHintBox->AddChild(DividerImage));
+			DividerSlot->SetPadding(FMargin(5.0f, 0.0f));
+			DividerSlot->SetHorizontalAlignment(HAlign_Center);
+			DividerSlot->SetVerticalAlignment(VAlign_Fill);
+		}
 		KeyHintBox->AddChild(Widget);
 		KeyHints.Add(InID, Widget);
 		if (!KeyHints.IsEmpty())
-			PlayAnimationForward(KeyHintAnim);
+			PlayAnimation(KeyHintAnim);
 	}
 }
 
