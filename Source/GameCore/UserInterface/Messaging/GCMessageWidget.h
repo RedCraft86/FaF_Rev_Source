@@ -113,9 +113,9 @@ public:
 		UTextBlock* LabelText;
 
 	UPROPERTY(Transient, meta = (BindWidget))
-		UImage* KeyIcon;
+		UHorizontalBox* IconsBox;
 
-	void SetData(const FText& InLabel, UTexture2D* InKey) const;
+	void SetData(const FText& InLabel, const TArray<UTexture2D*> InKeys);
 };
 
 UCLASS(Abstract, DisplayName = "Message Widget Base")
@@ -179,7 +179,7 @@ public:
 		void RemoveKeyHint(const FName InID);
 
 	UFUNCTION(BlueprintCallable, Category = "MessageWidget")
-		void AddKeyHint(const FName InID, const FText InLabel, UTexture2D* InKey);
+		void AddKeyHint(const FName InID, const FText InLabel, const TArray<UTexture2D*> InKeys);
 	
 	void QueueNoticeByObject(const FGCNoticeData& InData, const UObject* InObject);
 	void QueueSubtitleByObject(const FGCSubtitleData& InData, const UObject* InObject);

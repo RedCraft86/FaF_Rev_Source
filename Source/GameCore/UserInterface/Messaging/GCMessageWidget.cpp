@@ -12,13 +12,28 @@ UGCKeyHintWidget::UGCKeyHintWidget(const FObjectInitializer& ObjectInitializer)
 	: UUserWidget(ObjectInitializer)
 {
 	LabelText = nullptr;
-	KeyIcon = nullptr;
+	IconsBox = nullptr;
 }
 
-void UGCKeyHintWidget::SetData(const FText& InLabel, UTexture2D* InKey) const
+void UGCKeyHintWidget::SetData(const FText& InLabel, const TArray<UTexture2D*> InKeys)
 {
 	LabelText->SetText(InLabel);
-	KeyIcon->SetBrushFromTexture(InKey);
+	IconsBox->ClearChildren();
+	EObjectFlags NewObjectFlags = RF_Transactional;
+	if (HasAnyFlags(RF_Transient))
+	{
+		NewObjectFlags |= RF_Transient;
+	}
+	for (UTexture2D* Image : InKeys)
+	{
+		if (!Image) continue;
+		UImage* IconImage = NewObject<UImage>(this, NAME_None, NewObjectFlags);
+		IconImage->SetBrushFromTexture(Image);
+					
+		UHorizontalBoxSlot* IconSlot = Cast<UHorizontalBoxSlot>(IconsBox->AddChild(IconImage));
+		IconSlot->SetHorizontalAlignment(HAlign_Center);
+		IconSlot->SetVerticalAlignment(VAlign_Center);
+	}
 }
 
 UGCMessageWidget::UGCMessageWidget(const FObjectInitializer& ObjectInitializer)
@@ -125,38 +140,15 @@ void UGCMessageWidget::RemoveKeyHint(const FName InID)
 	}
 }
 
-void UGCMessageWidget::AddKeyHint(const FName InID, const FText InLabel, UTexture2D* InKey)
+void UGCMessageWidget::AddKeyHint(const FName InID, const FText InLabel, const TArray<UTexture2D*> InKeys)
 {
 	if (InID.IsNone() || InLabel.IsEmptyOrWhitespace()
-		|| !InKey || !KeyHintWidgetClass) return;
-
-	FSlateBrush DividerBrush;
-	DividerBrush.TintColor = FLinearColor::Gray;
-	DividerBrush.DrawAs = ESlateBrushDrawType::RoundedBox;
-	DividerBrush.ImageSize = FVector2D(4.0f, 32.0f);
-	DividerBrush.OutlineSettings.CornerRadii = FVector4(2.0f, 2.0f, 2.0f, 2.0f);
-	DividerBrush.OutlineSettings.RoundingType = ESlateBrushRoundingType::FixedRadius;
-	DividerBrush.OutlineSettings.bUseBrushTransparency = true;
-	EObjectFlags NewObjectFlags = RF_Transactional;
-	if (HasAnyFlags(RF_Transient))
-	{
-		NewObjectFlags |= RF_Transient;
-	}
+		|| InKeys.IsEmpty() || !KeyHintWidgetClass) return;
 	
 	RemoveKeyHint(InID);
 	if (UGCKeyHintWidget* Widget = CreateWidget<UGCKeyHintWidget>(this, KeyHintWidgetClass))
 	{
-		Widget->SetData(InLabel, InKey);
-		if (!KeyHints.IsEmpty())
-		{
-			UImage* DividerImage = NewObject<UImage>(this, NAME_None, NewObjectFlags);
-			DividerImage->SetBrush(DividerBrush);
-						
-			UHorizontalBoxSlot* DividerSlot = Cast<UHorizontalBoxSlot>(KeyHintBox->AddChild(DividerImage));
-			DividerSlot->SetPadding(FMargin(5.0f, 0.0f));
-			DividerSlot->SetHorizontalAlignment(HAlign_Center);
-			DividerSlot->SetVerticalAlignment(VAlign_Fill);
-		}
+		Widget->SetData(InLabel, InKeys);
 		KeyHintBox->AddChild(Widget);
 		KeyHints.Add(InID, Widget);
 		if (!KeyHints.IsEmpty())

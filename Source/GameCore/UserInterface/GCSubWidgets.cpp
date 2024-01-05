@@ -64,14 +64,13 @@ void UGCKeybindRowBase::CreateIcons()
 	if (KeybindsBox)
 	{
 		KeybindsBox->ClearChildren();
+		EObjectFlags NewObjectFlags = RF_Transactional;
+		if (HasAnyFlags(RF_Transient))
+		{
+			NewObjectFlags |= RF_Transient;
+		}
 		for (int32 i = 0; i < Icons.Num(); i++)
 		{
-			EObjectFlags NewObjectFlags = RF_Transactional;
-			if (HasAnyFlags(RF_Transient))
-			{
-				NewObjectFlags |= RF_Transient;
-			}
-				
 			UImage* IconImage = NewObject<UImage>(this, NAME_None, NewObjectFlags);
 			IconImage->SetBrush(Icons[i]);
 					
