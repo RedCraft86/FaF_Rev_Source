@@ -8,6 +8,19 @@
 #include "Achievement/GCAchievementManager.h"
 #include "Inventory/GCInventoryManager.h"
 
+UGCKeyHintWidget::UGCKeyHintWidget(const FObjectInitializer& ObjectInitializer)
+	: UGCUserWidget(ObjectInitializer)
+{
+	LabelText = nullptr;
+	KeyIcon = nullptr;
+}
+
+void UGCKeyHintWidget::SetData(const FText& InLabel, const FKey& InKey) const
+{
+	LabelText->SetText(InLabel);
+	KeyIcon->SetBrushFromTexture(GetKeyImage(InKey));
+}
+
 UGCMessageWidget::UGCMessageWidget(const FObjectInitializer& ObjectInitializer)
 	: UGCUserWidget(ObjectInitializer)
 {
@@ -20,11 +33,13 @@ UGCMessageWidget::UGCMessageWidget(const FObjectInitializer& ObjectInitializer)
 	SubtitleAnim = nullptr;
 	NoticeAnim = nullptr;
 	AchievementAnim = nullptr;
+	KeyHintAnim = nullptr;
 	
 	DefaultAchievementIcon = nullptr;
+	KeyHintWidgetClass = NULL;
+	
 	AchievementManager = nullptr;
 	InventoryManager = nullptr;
-	
 	LastNoticeObject = nullptr;
 	LastSubtitleObject = nullptr;
 }
@@ -86,6 +101,35 @@ void UGCMessageWidget::QueueSubtitle(const FGCSubtitleData& InData, const bool b
 	if (!SubtitleTimer.IsValid())
 	{
 		UpdateSubtitle();
+	}
+}
+
+void UGCMessageWidget::RemoveKeyHint(const FName InID)
+{
+	if (InID.IsNone()) return;
+	if (UGCKeyHintWidget* Widget = KeyHints.FindRef(InID))
+	{
+		Widget->RemoveFromParent();
+	}
+
+	KeyHints.Remove(InID);
+	if (KeyHints.IsEmpty())
+		PlayAnimationReverse(KeyHintAnim);
+}
+
+void UGCMessageWidget::AddKeyHint(const FName InID, const FText InLabel, const FKey InKey)
+{
+	if (InID.IsNone() || InLabel.IsEmptyOrWhitespace()
+		|| !InKey.IsValid() || !KeyHintWidgetClass) return;
+	
+	RemoveKeyHint(InID);
+	if (UGCKeyHintWidget* Widget = CreateWidget<UGCKeyHintWidget>(this, KeyHintWidgetClass))
+	{
+		Widget->SetData(InLabel, InKey);
+		KeyHintBox->AddChild(Widget);
+		KeyHints.Add(InID, Widget);
+		if (!KeyHints.IsEmpty())
+			PlayAnimationForward(KeyHintAnim);
 	}
 }
 

@@ -3,6 +3,7 @@
 #pragma once
 
 #include "Core/GCSettings.h"
+#include "Components/HorizontalBox.h"
 #include "Asset/ExpressiveTextFields.h"
 #include "Styles/ExpressiveTextStyleBase.h"
 #include "Handles/ExpressiveTextSelector.h"
@@ -99,6 +100,27 @@ struct GAMECORE_API FGCSubtitleData : public FGCNoticeData
 	float GetDisplayTime() const { return FMath::Max(DisplayTime, 1.0f); }
 };
 
+UCLASS(Abstract, DisplayName = "Key Hint Widget Base")
+class GAMECORE_API UGCKeyHintWidget : public UGCUserWidget
+{
+	GENERATED_BODY()
+	
+public:
+
+	UGCKeyHintWidget(const FObjectInitializer& ObjectInitializer);
+
+	UPROPERTY(Transient, meta = (BindWidget))
+		UTextBlock* LabelText;
+
+	UPROPERTY(Transient, meta = (BindWidget))
+		UImage* KeyIcon;
+
+	UFUNCTION(BlueprintImplementableEvent)
+		UTexture2D* GetKeyImage(const FKey& InKey) const;
+
+	void SetData(const FText& InLabel, const FKey& InKey) const;
+};
+
 UCLASS(Abstract, DisplayName = "Message Widget Base")
 class GAMECORE_API UGCMessageWidget : public UGCUserWidget
 {
@@ -117,6 +139,9 @@ public:
 	UPROPERTY(Transient, meta = (BindWidget))
 		UTextBlock* AchievementName;
 
+	UPROPERTY(Transient, meta = (BindWidget))
+		UHorizontalBox* KeyHintBox;
+
 	UPROPERTY(Transient, meta = (BindWidgetAnim))
 		UWidgetAnimation* NoticeAnim;
 	
@@ -126,8 +151,14 @@ public:
 	UPROPERTY(Transient, meta = (BindWidgetAnim))
 		UWidgetAnimation* AchievementAnim;
 
+	UPROPERTY(Transient, meta = (BindWidgetAnim))
+		UWidgetAnimation* KeyHintAnim;
+
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "MessageWidget")
 		UTexture2D* DefaultAchievementIcon;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "MessageWidget")
+		TSubclassOf<UGCKeyHintWidget> KeyHintWidgetClass;
 
 	UFUNCTION(BlueprintImplementableEvent, meta = (ForceAsFunction = true))
 		void SetNoticeText(const FExpressiveTextSelector& InText);
@@ -147,16 +178,25 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "MessageWidget")
 		void QueueSubtitle(const FGCSubtitleData& InData, const bool bOverrideQueue = false);
 
+	UFUNCTION(BlueprintCallable, Category = "MessageWidget")
+		void RemoveKeyHint(const FName InID);
+
+	UFUNCTION(BlueprintCallable, Category = "MessageWidget")
+		void AddKeyHint(const FName InID, const FText InLabel, const FKey InKey);
+	
 	void QueueNoticeByObject(const FGCNoticeData& InData, const UObject* InObject);
 	void QueueSubtitleByObject(const FGCSubtitleData& InData, const UObject* InObject);
 	
 protected:
 
 	UPROPERTY(Transient, BlueprintReadOnly)
-		class UGCAchievementManager* AchievementManager;
+		UGCAchievementManager* AchievementManager;
 
 	UPROPERTY(Transient, BlueprintReadOnly)
-		class UGCInventoryManager* InventoryManager;
+		UGCInventoryManager* InventoryManager;
+
+	UPROPERTY(Transient, BlueprintReadOnly)
+		TMap<FName, UGCKeyHintWidget*> KeyHints;
 
 	TWeakObjectPtr<const UObject> LastNoticeObject;
 	TWeakObjectPtr<const UObject> LastSubtitleObject;
