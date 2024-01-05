@@ -12,6 +12,8 @@ class GAMECORE_API AGCPlayerController : public APlayerController
 {
 	GENERATED_BODY()
 
+	friend class AGCPlayerCharacter;
+	
 public:
 
 	AGCPlayerController();
@@ -91,7 +93,7 @@ public:
 	virtual void Tick(float DeltaTime) override;
 	class UEnhancedInputLocalPlayerSubsystem* GetInputSubsystem() const;
 
-protected:
+private:
 
 	UPROPERTY(Transient)
 		class UGCGameInstance* GameInstance;
@@ -118,7 +120,7 @@ protected:
 
 	void ExitScriptedEvent();
 	void EnterScriptedEvent(const bool bHidePlayer);
-	void ExitInventoryInternal(const TFunction<void()>& OnFinished);
+	void ExitInventoryInternal(const TFunction<void()>& OnFinished, const bool bImmediate = false);
 
 	void OnItemEquipped(AActor* Actor);
 	void OnItemUnequipped(AActor* Actor);

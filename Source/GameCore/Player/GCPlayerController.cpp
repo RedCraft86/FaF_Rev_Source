@@ -274,7 +274,7 @@ void AGCPlayerController::EnterScriptedEvent(const bool bHidePlayer)
 	}
 }
 
-void AGCPlayerController::ExitInventoryInternal(const TFunction<void()>& OnFinished)
+void AGCPlayerController::ExitInventoryInternal(const TFunction<void()>& OnFinished, const bool bImmediate)
 {
 	if (bInInventory)
 	{
@@ -288,7 +288,7 @@ void AGCPlayerController::ExitInventoryInternal(const TFunction<void()>& OnFinis
 			bInInventory = false;
 			if (OnFinished)
 				OnFinished();
-		}, true);
+		}, !bImmediate);
 	}
 }
 
