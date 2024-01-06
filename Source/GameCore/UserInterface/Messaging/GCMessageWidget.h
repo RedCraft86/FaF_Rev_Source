@@ -195,6 +195,7 @@ protected:
 	UPROPERTY(Transient, BlueprintReadOnly)
 		TMap<FName, UGCKeyHintWidget*> KeyHints;
 
+	bool bHasPlayedHintAnim;
 	TWeakObjectPtr<const UObject> LastNoticeObject;
 	TWeakObjectPtr<const UObject> LastSubtitleObject;
 	

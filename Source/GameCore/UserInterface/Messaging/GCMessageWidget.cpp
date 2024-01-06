@@ -53,6 +53,7 @@ UGCMessageWidget::UGCMessageWidget(const FObjectInitializer& ObjectInitializer)
 	
 	AchievementManager = nullptr;
 	InventoryManager = nullptr;
+	bHasPlayedHintAnim = false;
 	LastNoticeObject = nullptr;
 	LastSubtitleObject = nullptr;
 }
@@ -126,6 +127,7 @@ void UGCMessageWidget::RemoveKeyHint(const FName InID)
 		if (KeyHints.IsEmpty())
 		{
 			PlayAnimationReverse(KeyHintAnim);
+			bHasPlayedHintAnim = false;
 		
 			FTimerHandle Handle;
 			GetWorld()->GetTimerManager().SetTimer(Handle, [Widget]()
@@ -151,8 +153,11 @@ void UGCMessageWidget::AddKeyHint(const FName InID, const FText InLabel, const T
 		Widget->SetData(InLabel, InKeys);
 		KeyHintBox->AddChild(Widget);
 		KeyHints.Add(InID, Widget);
-		if (!KeyHints.IsEmpty())
+		if (!KeyHints.IsEmpty() && !bHasPlayedHintAnim)
+		{
+			bHasPlayedHintAnim = true;
 			PlayAnimation(KeyHintAnim);
+		}
 	}
 }
 
