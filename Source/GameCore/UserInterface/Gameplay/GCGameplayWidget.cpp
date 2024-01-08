@@ -94,7 +94,7 @@ void UGCGameplayWidget::NativeTick(const FGeometry& Geometry, float DeltaTime)
 	if (Player)
 	{
 		StaminaBar->SetPercent(FMath::FInterpConstantTo(StaminaBar->GetPercent(),
-			Player->GetStaminaPercent(), DeltaTime, 0.2f));
+			Player->GetStaminaPercent(), DeltaTime, 0.5f));
 		
 		StaminaBar->SetFillColorAndOpacity(FMath::CInterpTo(StaminaBar->GetFillColorAndOpacity(),
 			Player->IsStaminaPunished() ? FLinearColor::Red : FLinearColor::White, DeltaTime, 7.5f));
