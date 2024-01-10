@@ -421,6 +421,7 @@ protected:
 	FVector CamRelativePos;
 	float InternalFOVMod;
 	float CurrentStamina;
+	float StaminaDelta;
 	bool bStaminaPunished;
 	bool bHaveEyesClosed;
 	bool bShouldBeInteracting;
@@ -482,6 +483,9 @@ public:
 	
 	UFUNCTION(BlueprintCallable, Category = "PlayerCharacter")
 		FORCEINLINE float GetStaminaPercent() const { return CurrentStamina / MaxStamina; }
+
+	UFUNCTION(BlueprintCallable, Category = "PlayerCharacter")
+		FORCEINLINE float GetStaminaDelta() const { return StaminaDelta; }
 
 	UFUNCTION(BlueprintCallable, Category = "PlayerCharacter")
 		FORCEINLINE bool IsStaminaPunished() const { return bStaminaPunished; }

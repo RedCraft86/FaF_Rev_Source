@@ -151,6 +151,7 @@ AGCPlayerCharacter::AGCPlayerCharacter(const FObjectInitializer& ObjectInitializ
 	CamRelativePos = {0.0f, 0.0f, 70.0f};
 	InternalFOVMod = 0.0f;
 	CurrentStamina = MaxStamina;
+	StaminaDelta = 0.0f;
 	bStaminaPunished = false;
 	bHaveEyesClosed = false;
 	bShouldBeInteracting = true;
@@ -743,7 +744,7 @@ void AGCPlayerCharacter::TickWindowFocus()
 void AGCPlayerCharacter::TickStamina()
 {
 	const bool bShouldDrain = IsMoving() && bRunning && !GetCharacterMovement()->IsFalling();
-	const float StaminaDelta = bShouldDrain ? -StaminaDrain : IsMoving() ? StaminaGain.Y : StaminaGain.X;
+	StaminaDelta = bShouldDrain ? -StaminaDrain : IsMoving() ? StaminaGain.Y : StaminaGain.X;
 	CurrentStamina = FMath::Clamp(StaminaDelta + CurrentStamina, 0.0f, MaxStamina);
 	if (CurrentStamina < 1.0f && !bStaminaPunished)
 	{
