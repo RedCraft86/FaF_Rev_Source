@@ -4,12 +4,12 @@
 #include "Player/GCPlayerCharacter.h"
 #include "UserSettings/GCUserSettings.h"
 #include "Kismet/KismetSystemLibrary.h"
-#include "JsonObjectWrapper.h"
 #include "RCCVarLibrary.h"
 
 UGCGameInstance::UGCGameInstance()
 {
 	PlayerCharacter = nullptr;
+	bRanFirstSettingCheck = false;
 	bInvinciblePlayer = false;
 	bViewModeUnlit = false;
 }
@@ -52,33 +52,17 @@ void UGCGameInstance::Init()
 {
 	Super::Init();
 	UGCUserSettings::Get()->GameInstance = this;
-	
-	FString JsonStr;
-	FFileHelper::LoadFileToString(JsonStr, *(FPaths::ProjectSavedDir() / TEXT("Global.json")));
-	FJsonObjectWrapper GlobalJson;
-	GlobalJson.JsonObjectFromString(JsonStr);
-	if (!GlobalJson.JsonObject->GetBoolField(TEXT("Finished_First_Launch")))
-	{
-#if !WITH_EDITOR
-		UGCUserSettings* Settings = UGCUserSettings::Get();
-		Settings->SetToDefaults();
-		Settings->SetOverallQuality(3);
-		Settings->SetResScalePercent(50.0f);
-		Settings->ApplyNonResolutionSettings();
-#endif
-		GlobalJson.JsonObject->SetBoolField(TEXT("Finished_First_Launch"), true);
-
-		const TSharedRef<TJsonWriter<>> JsonWriter = TJsonWriterFactory<>::Create(&JsonStr, 0);
-		FJsonSerializer::Serialize(GlobalJson.JsonObject.ToSharedRef(), JsonWriter, true);
-		
-		FFileHelper::SaveStringToFile(JsonStr, *(FPaths::ProjectSavedDir() / TEXT("Global.json")));
-	}
 }
 
 void UGCGameInstance::WorldBeginPlay()
 {
 	EventWorldBeginPlay();
 	UGCUserSettings::Get()->GameInstance = this;
+	
+	if (!bRanFirstSettingCheck)
+	{
+		UGCUserSettings::Get()->InitializeSettings();
+	}
 }
 
 void UGCGameInstance::WorldTick(const float DeltaTime)

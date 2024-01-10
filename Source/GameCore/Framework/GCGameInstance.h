@@ -53,6 +53,7 @@ protected:
 	UPROPERTY(Transient)
 		AGCPlayerCharacter* PlayerCharacter;
 	
+	bool bRanFirstSettingCheck;
 	bool bInvinciblePlayer;
 	bool bViewModeUnlit;
 
