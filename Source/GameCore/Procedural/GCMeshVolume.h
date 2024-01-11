@@ -17,9 +17,6 @@ public:
 	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, Category = "DefaultSubobjects")
 		class UBoxComponent* BoundingBox;
 
-	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, Category = "DefaultSubobjects")
-		UInstancedStaticMeshComponent* InstancedMeshes;
-
 	UPROPERTY(EditAnywhere, Category = "Settings", meta = (ClampMin = 1, UIMin = 1))
 		int32 MeshCount;
 
@@ -32,10 +29,16 @@ public:
 	UPROPERTY(EditAnywhere, Category = "Settings")
 		FRCPrimitiveCollision Collision;
 
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Settings", meta = (MakeEditWidget = true))
+		FVector BoxExtent;
+
 	virtual void Construct() override;
 	
 private:
-
+	
+	UPROPERTY(Transient)
+		TArray<UStaticMeshComponent*> StaticMeshes;
+	
 #if WITH_EDITOR
 	virtual void OnConstruction(const FTransform& Transform) override
 	{
