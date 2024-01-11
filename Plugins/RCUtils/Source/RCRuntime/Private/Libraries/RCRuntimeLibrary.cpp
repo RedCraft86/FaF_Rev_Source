@@ -83,20 +83,21 @@ void URCRuntimeLibrary::ResetStaticMeshMaterials(UStaticMeshComponent* Target)
 	}
 }
 
-void URCRuntimeLibrary::SetStaticMeshProperties(UStaticMeshComponent* Target, FRCStaticMeshProperties Properties)
+void URCRuntimeLibrary::SetStaticMeshProperties(UStaticMeshComponent* Target, const FRCStaticMeshProperties& Properties)
 {
 	if (!Target || !Properties.IsValidMesh())
 		return;
 
-	Properties.FillMaterials();
+	FRCStaticMeshProperties Temp = Properties;
+	Temp.FillMaterials();
 
-	Target->SetStaticMesh(Properties.Mesh);
-	Target->SetCastShadow(Properties.bCastShadows);
-	if (!Properties.Materials.IsEmpty())
+	Target->SetStaticMesh(Temp.Mesh);
+	Target->SetCastShadow(Temp.bCastShadows);
+	if (!Temp.Materials.IsEmpty())
 	{
-		for (uint8 i = 0; i < Properties.Materials.Num(); i++)
+		for (uint8 i = 0; i < Temp.Materials.Num(); i++)
 		{
-			Target->SetMaterial(i, Properties.Materials[i]);
+			Target->SetMaterial(i, Temp.Materials[i]);
 		}
 	}
 }

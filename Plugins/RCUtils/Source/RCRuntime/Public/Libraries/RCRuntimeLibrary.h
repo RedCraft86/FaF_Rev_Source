@@ -48,7 +48,7 @@ public:
 	* @param Properties - New Static Mesh Properties
 	*/
 	UFUNCTION(BlueprintCallable, Category = "Components|StaticMesh", meta = (DefaultToSelf = "Target"))
-		static void SetStaticMeshProperties(UStaticMeshComponent* Target, FRCStaticMeshProperties Properties);
+		static void SetStaticMeshProperties(UStaticMeshComponent* Target, const FRCStaticMeshProperties& Properties);
 
 	/* Gets the static mesh component's mesh, material and shadows. 
 	* @param Target - Target to get the data from
