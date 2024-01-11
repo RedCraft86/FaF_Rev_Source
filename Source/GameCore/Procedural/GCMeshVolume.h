@@ -13,9 +13,6 @@ class GAMECORE_API AGCMeshVolume final : public AGCProceduralBase
 public:
 	
 	AGCMeshVolume();
-	
-	UPROPERTY(/*VisibleDefaultsOnly, */BlueprintReadOnly, Category = "DefaultSubobjects")
-		USceneComponent* SceneRoot;
 
 	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, Category = "DefaultSubobjects")
 		class UBoxComponent* BoundingBox;

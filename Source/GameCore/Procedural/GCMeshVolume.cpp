@@ -8,9 +8,6 @@
 AGCMeshVolume::AGCMeshVolume()
 {
 	PrimaryActorTick.bCanEverTick = false;
-
-	SceneRoot = CreateDefaultSubobject<USceneComponent>("SceneRoot");
-	SetRootComponent(SceneRoot);
 	
 	BoundingBox = CreateDefaultSubobject<UBoxComponent>("CollisionBox");
 	BoundingBox->SetCollisionEnabled(ECollisionEnabled::NoCollision);
