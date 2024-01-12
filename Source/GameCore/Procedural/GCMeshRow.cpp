@@ -20,7 +20,9 @@ AGCMeshRow::AGCMeshRow()
 
 void AGCMeshRow::Construct()
 {
+	for (UStaticMeshComponent* MC : StaticMeshes) { if (MC) { MC->DestroyComponent(); } }  
 	StaticMeshes.Empty(MeshCount);
+	
 	for (int i = 0; i < MeshCount; i++)
 	{
 		if (UStaticMeshComponent* MeshComp = NewObject<UStaticMeshComponent>(this))
@@ -41,6 +43,6 @@ void AGCMeshRow::Construct()
 			StaticMeshes.Add(MeshComp);
 		}
 	}
-	
+
 	Super::Construct();
 }

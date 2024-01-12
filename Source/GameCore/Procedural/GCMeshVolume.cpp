@@ -34,7 +34,9 @@ void AGCMeshVolume::Construct()
 		FMath::Max(FMath::Abs(BoxExtent.Z), 4.0f)
 	});
 
+	for (UStaticMeshComponent* MC : StaticMeshes) { if (MC) { MC->DestroyComponent(); } }  
 	StaticMeshes.Empty(MeshCount);
+	
 	if (!MeshData.IsValidMesh()) return;
 	for (int i = 0; i < MeshCount; i++)
 	{
@@ -55,6 +57,8 @@ void AGCMeshVolume::Construct()
 			StaticMeshes.Add(MeshComp);
 		}
 	}
+
+	Super::Construct();
 }
 
 FVector AGCMeshVolume::GetRandomLocation() const
