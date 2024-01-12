@@ -19,9 +19,9 @@ public:
 
 	UPROPERTY(EditAnywhere, Category = "Settings", meta = (ClampMin = 1, UIMin = 1))
 		int32 MeshCount;
-
+	
 	UPROPERTY(EditAnywhere, Category = "Settings")
-	FTransform MeshTransform;
+		FTransform MeshTransform;
 	
 	UPROPERTY(EditAnywhere, Category = "Settings")
 		FRCStaticMeshProperties MeshData;
@@ -29,15 +29,20 @@ public:
 	UPROPERTY(EditAnywhere, Category = "Settings")
 		FRCPrimitiveCollision Collision;
 
+	UPROPERTY(EditAnywhere, Category = "Settings")
+		TSet<AActor*> Blocking;
+
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Settings", meta = (MakeEditWidget = true))
 		FVector BoxExtent;
-
+	
 	virtual void Construct() override;
 	
 private:
 	
 	UPROPERTY(Transient)
 		TArray<UStaticMeshComponent*> StaticMeshes;
+
+	FVector GetRandomLocation() const;
 	
 #if WITH_EDITOR
 	virtual void OnConstruction(const FTransform& Transform) override

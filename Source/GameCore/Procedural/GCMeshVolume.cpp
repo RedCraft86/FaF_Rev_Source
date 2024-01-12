@@ -3,6 +3,7 @@
 #include "GCMeshVolume.h"
 #include "RCRuntimeLibrary.h"
 #include "Components/BoxComponent.h"
+#include "Kismet/KismetMathLibrary.h"
 
 AGCMeshVolume::AGCMeshVolume()
 {
@@ -13,8 +14,8 @@ AGCMeshVolume::AGCMeshVolume()
 	BoundingBox->SetCollisionObjectType(ECC_WorldDynamic);
 	BoundingBox->SetupAttachment(GetRootComponent());
 
+	SetHidden(false);
 #if WITH_EDITORONLY_DATA
-	BoundingBox->SetLineThickness(0.5f);
 	SceneRoot->bVisualizeComponent = true;
 #endif
 
@@ -34,25 +35,58 @@ void AGCMeshVolume::Construct()
 	});
 
 	StaticMeshes.Empty(MeshCount);
+	if (!MeshData.IsValidMesh()) return;
 	for (int i = 0; i < MeshCount; i++)
 	{
-		const FVector RandomLocation = FMath::RandPointInBox(BoundingBox->Bounds.GetBox());
 		if (UStaticMeshComponent* MeshComp = NewObject<UStaticMeshComponent>(this))
 		{
 			MeshComp->CreationMethod = EComponentCreationMethod::UserConstructionScript;
 			MeshComp->OnComponentCreated();
 			MeshComp->RegisterComponent();
-			MeshComp->SetRelativeTransform({
-				MeshTransform.Rotator(),
-				MeshTransform.GetTranslation() + RandomLocation,
+			MeshComp->AttachToComponent(GetRootComponent(), FAttachmentTransformRules::KeepRelativeTransform);
+			MeshComp->SetWorldTransform({
+				MeshTransform.Rotator() + FRotator{0.0f, FMath::RandRange(0.0f, 359.0f), 0.0f},
+				MeshTransform.GetTranslation() + GetRandomLocation(),
 				MeshTransform.GetScale3D()
 			});
 			
 			URCRuntimeLibrary::SetStaticMeshProperties(MeshComp, MeshData);
 			URCRuntimeLibrary::SetPrimitiveCollision(MeshComp, Collision);
-
-			MeshComp->AttachToComponent(GetRootComponent(), FAttachmentTransformRules::KeepRelativeTransform);
 			StaticMeshes.Add(MeshComp);
 		}
 	}
+}
+
+FVector AGCMeshVolume::GetRandomLocation() const
+{
+	uint8 Idx = 0;
+	while (Idx < 25)
+	{
+		const FVector RandomLocation{UKismetMathLibrary::RandomPointInBoundingBox(
+			GetActorLocation(), BoundingBox->GetUnscaledBoxExtent())};
+
+		FVector Rand = RandomLocation;
+		Rand.Z = 0.0f;
+
+		bool HasNoOverlaps = true;
+		for (const AActor* Actor : Blocking)
+		{
+			if (!Actor) continue;
+			FVector Origin, Extent = FVector::ZeroVector;
+			Actor->GetActorBounds(false, Origin, Extent);
+			Origin.Z = 0.0f;
+			
+			if (UKismetMathLibrary::IsPointInBox(Rand, Origin, Extent))
+			{
+				HasNoOverlaps = false;
+			}
+		}
+
+		if (HasNoOverlaps)
+			return RandomLocation;
+		
+		Idx++;
+	}
+	
+	return UKismetMathLibrary::RandomPointInBoundingBox(GetActorLocation(), BoundingBox->GetUnscaledBoxExtent());
 }
