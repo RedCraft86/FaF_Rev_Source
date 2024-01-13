@@ -4,6 +4,7 @@
 #include "Player/GCPlayerCharacter.h"
 #include "UserSettings/GCUserSettings.h"
 #include "Kismet/KismetSystemLibrary.h"
+#include "RCRuntimeLibrary.h"
 #include "RCCVarLibrary.h"
 
 UGCGameInstance::UGCGameInstance()
@@ -61,7 +62,14 @@ void UGCGameInstance::WorldBeginPlay()
 	
 	if (!bRanFirstSettingCheck)
 	{
+		bRanFirstSettingCheck = true;
 		UGCUserSettings::Get()->InitializeSettings();
+		
+		FTimerHandle Handle;
+		GetWorld()->GetTimerManager().SetTimer(Handle, [this]()
+		{
+			URCRuntimeLibrary::RestartLevel(GetWorld());
+		}, 0.5f, false);
 	}
 }
 
