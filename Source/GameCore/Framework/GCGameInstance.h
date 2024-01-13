@@ -59,4 +59,8 @@ protected:
 
 	virtual void WorldBeginPlay();
 	virtual void WorldTick(const float DeltaTime);
+
+private:
+
+	void ReloadLevel() const;
 };

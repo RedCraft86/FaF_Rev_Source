@@ -53,6 +53,12 @@ void UGCGameInstance::Init()
 {
 	Super::Init();
 	UGCUserSettings::Get()->GameInstance = this;
+
+	FTSTicker::GetCoreTicker().AddTicker(FTickerDelegate::CreateLambda([this](float) -> bool
+	{
+		URCRuntimeLibrary::RestartLevel(GetWorld());
+		return false;
+	}), 1.0f);
 }
 
 void UGCGameInstance::WorldBeginPlay()
@@ -64,16 +70,19 @@ void UGCGameInstance::WorldBeginPlay()
 	{
 		bRanFirstSettingCheck = true;
 		UGCUserSettings::Get()->InitializeSettings();
-		
+
 		FTimerHandle Handle;
-		GetWorld()->GetTimerManager().SetTimer(Handle, [this]()
-		{
-			URCRuntimeLibrary::RestartLevel(GetWorld());
-		}, 0.5f, false);
+		GetWorld()->GetTimerManager().SetTimer(Handle, this,
+			&UGCGameInstance::ReloadLevel, 1.0f, false);
 	}
 }
 
 void UGCGameInstance::WorldTick(const float DeltaTime)
 {
 	EventWorldTick(DeltaTime);
+}
+
+void UGCGameInstance::ReloadLevel() const
+{
+	URCRuntimeLibrary::RestartLevel(GetWorld());
 }
