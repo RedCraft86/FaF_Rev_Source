@@ -610,11 +610,13 @@ void AGCPlayerCharacter::BeginPlay()
 	bCanPause = false;
 	
 	FTimerHandle Handle;
-	GetWorldTimerManager().SetTimer(Handle, [this, bCachedCanPause](){
-		bCanPause = bCachedCanPause;
-		if (LoadingWidget->IsInViewport())
+	GetWorldTimerManager().SetTimer(Handle, [WEAK_THIS, bCachedCanPause](){
+		if (!WeakThis.IsValid()) return;
+		
+		WeakThis->bCanPause = bCachedCanPause;
+		if (WeakThis->LoadingWidget && WeakThis->LoadingWidget->IsInViewport())
 		{
-			PlayerController->PlayerCameraManager->StartCameraFade(
+			WeakThis->PlayerController->PlayerCameraManager->StartCameraFade(
 				1.0f, 0.0f, 1.0f, FColor::Black, true);
 		}
 	}, 1.0f, false);
