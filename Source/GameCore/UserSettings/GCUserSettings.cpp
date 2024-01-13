@@ -430,13 +430,14 @@ float UGCUserSettings::IntToFrameRate(const int32 InValue)
 	case 0: return 30.0f;
 	case 1: return 60.0f;
 	case 2: return 120.0f;
-	default: return 200.0f;
+	default: return 0.0f;
 	}
 }
 
 int32 UGCUserSettings::FrameRateToInt(const float InFramerate)
 {
 
+	if (InFramerate <= 0.0f) return 3;
 	if (InFramerate < 35.0f)
 	{
 		return 0;
