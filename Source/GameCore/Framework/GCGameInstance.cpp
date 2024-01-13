@@ -53,12 +53,7 @@ void UGCGameInstance::Init()
 {
 	Super::Init();
 	UGCUserSettings::Get()->GameInstance = this;
-
-	FTSTicker::GetCoreTicker().AddTicker(FTickerDelegate::CreateLambda([this](float) -> bool
-	{
-		URCRuntimeLibrary::RestartLevel(GetWorld());
-		return false;
-	}), 1.0f);
+	FSlateApplication::Get().OnApplicationActivationStateChanged().AddUObject(this, &UGCGameInstance::OnWindowFocusChanged);
 }
 
 void UGCGameInstance::WorldBeginPlay()
@@ -73,7 +68,7 @@ void UGCGameInstance::WorldBeginPlay()
 
 		FTimerHandle Handle;
 		GetWorld()->GetTimerManager().SetTimer(Handle, this,
-			&UGCGameInstance::ReloadLevel, 1.0f, false);
+			&UGCGameInstance::ReloadLevel, 0.5f, false);
 	}
 }
 
@@ -85,4 +80,20 @@ void UGCGameInstance::WorldTick(const float DeltaTime)
 void UGCGameInstance::ReloadLevel() const
 {
 	URCRuntimeLibrary::RestartLevel(GetWorld());
+}
+
+// ReSharper disable once CppMemberFunctionMayBeStatic
+void UGCGameInstance::OnWindowFocusChanged(bool bFocused) const
+{
+	if (IConsoleVariable* CVar = URCCVarLibrary::FindCVar(TEXT("t.MaxFPS")))
+	{
+		if (bFocused)
+		{
+			CVar->Set(UGCUserSettings::Get()->GetFrameRateLimit());
+		}
+		else
+		{
+			CVar->Set(10.0f);
+		}
+	}
 }
