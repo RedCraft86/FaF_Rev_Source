@@ -198,6 +198,17 @@ void UGCSequenceManager::BeginLoadWorld()
 		UE_LOG(GameSequence, Log, TEXT("Loading level '%s'"), *Data.Level.GetAssetName());
 		UGameplayStatics::LoadStreamLevel(this, Data.GetLevelName(),
 			true, false, ActionInfo);
+
+		for (const TSoftObjectPtr<UWorld>& Lvl : Data.PreloadLevels)
+		{
+			FLatentActionInfo Info;
+			Info.CallbackTarget = nullptr;
+			Info.ExecutionFunction = NAME_None;
+			Info.UUID = GetNextUUID();
+			Info.Linkage = 0;
+			UGameplayStatics::LoadStreamLevel(this, *FPackageName::ObjectPathToPackageName(Lvl.ToString()),
+				true, false, Info);
+		}
 	}
 	else
 	{
@@ -230,6 +241,15 @@ void UGCSequenceManager::OnWorldLoaded()
 		{
 			UE_LOG(GameSequence, Log, TEXT("Calling load event for level '%s'"), *Data.Level.GetAssetName());
 			GCSequence::OnLoadWorld(ThisLevel->GetLevelScriptActor());
+		}
+		for (const TSoftObjectPtr<UWorld>& Lvl : Data.PreloadLevels)
+		{
+			ULevelStreaming* LevelLoaded = UGameplayStatics::GetStreamingLevel(this,
+				*FPackageName::ObjectPathToPackageName(Lvl.ToString()));
+			if (LevelLoaded && LevelLoaded->IsLevelLoaded())
+			{
+				GCSequence::OnLoadWorld(LevelLoaded->GetLevelScriptActor());
+			}
 		}
 
 		if (UGCGameMusicManager* MusicManager = UGCGameMusicManager::Get(this))
