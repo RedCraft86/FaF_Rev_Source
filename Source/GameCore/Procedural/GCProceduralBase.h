@@ -82,7 +82,7 @@ public:
 		static void MakeStaticMesh() { FGlobalTabmanager::Get()->TryInvokeTab(FName("MergeActors")); }
 #endif
 
-private:
+protected:
 	
 	virtual void OnConstruction(const FTransform& Transform) override;
 };
