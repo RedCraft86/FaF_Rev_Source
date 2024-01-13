@@ -58,7 +58,7 @@ private:
 
 	FORCEINLINE int32 GetNextUUID()
 	{
-		if (NextUUID > 10000) { NextUUID = 0; }
+		if (NextUUID > 100000) { NextUUID = 0; }
 		return NextUUID++;
 	}
 	
