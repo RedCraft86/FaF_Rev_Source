@@ -206,6 +206,8 @@ void UGCSequenceManager::BeginLoadWorld()
 			Info.ExecutionFunction = NAME_None;
 			Info.UUID = GetNextUUID();
 			Info.Linkage = 0;
+
+			UE_LOG(GameSequence, Log, TEXT("Loading additional level '%s'"), *Lvl.GetAssetName());
 			UGameplayStatics::LoadStreamLevel(this, *FPackageName::ObjectPathToPackageName(Lvl.ToString()),
 				true, false, Info);
 		}
@@ -248,6 +250,7 @@ void UGCSequenceManager::OnWorldLoaded()
 				*FPackageName::ObjectPathToPackageName(Lvl.ToString()));
 			if (LevelLoaded && LevelLoaded->IsLevelLoaded())
 			{
+				UE_LOG(GameSequence, Log, TEXT("Calling load event for additional level '%s'"), *Lvl.GetAssetName());
 				GCSequence::OnLoadWorld(LevelLoaded->GetLevelScriptActor());
 			}
 		}
