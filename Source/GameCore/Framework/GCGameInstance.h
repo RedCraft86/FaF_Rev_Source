@@ -63,4 +63,5 @@ protected:
 private:
 
 	void ReloadLevel() const;
+	void OnWindowFocusChanged(bool bFocused) const;
 };
