@@ -853,6 +853,10 @@ void AGCPlayerCharacter::SetHiding(const bool bInIsHiding)
 				}
 			}
 		}
+		if (bHiding)
+		{
+			ResetStates();
+		}
 	}
 }
 
