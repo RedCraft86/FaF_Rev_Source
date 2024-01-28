@@ -827,6 +827,16 @@ bool AGCPlayerCharacter::InMovementAction() const
 	&& (IsMoving() || IsOnTaskOrDeviceActor() || IS_AT_STATE(Device));
 }
 
+void AGCPlayerCharacter::ResetStates()
+{
+	SetRunState(false);
+	SetCrouchState(false);
+	SetLeanState(EGCLeanState::None);
+	SetStaminaPercent(1.0f);
+
+	SetEyesCloseState(false);
+}
+
 void AGCPlayerCharacter::SetHiding(const bool bInIsHiding)
 {
 	if (bHiding != bInIsHiding)

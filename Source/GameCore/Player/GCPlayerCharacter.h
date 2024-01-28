@@ -473,6 +473,9 @@ public:
 		bool InMovementAction() const;
 
 	UFUNCTION(BlueprintCallable, Category = "PlayerCharacter")
+		void ResetStates();
+	
+	UFUNCTION(BlueprintCallable, Category = "PlayerCharacter")
 		void SetHiding(const bool bInIsHiding);
 	
 	UFUNCTION(BlueprintCallable, Category = "PlayerCharacter")
