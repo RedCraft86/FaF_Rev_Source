@@ -26,5 +26,6 @@ protected:
 
 	float ProgressedTime;
 	
+	FLinearColor GetFrameRateColor(const float InFrameRate) const;
 	virtual void NativeTick(const FGeometry& InGeometry, float DeltaTime) override;
 };
