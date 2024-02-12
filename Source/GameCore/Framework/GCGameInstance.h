@@ -28,6 +28,9 @@ public:
 	
 	UFUNCTION(BlueprintPure, Category = "GameInstance")
 		AGCPlayerCharacter* GetPlayerCharacter() const { return PlayerCharacter; }
+
+	UFUNCTION(BlueprintPure, Category = "GameInstance")
+		bool IsFirstLaunch() const;
 	
 	UFUNCTION(BlueprintCallable, Category = "GameInstance")
 		void UpdatePlayerInvincible() const;
@@ -45,6 +48,7 @@ public:
 	FPlayerInvincibleStateChanged OnInvincibleStateChanged;
 	
 	virtual void Init() override;
+	virtual void Shutdown() override;
 	bool GetPlayerInvincible() const { return bInvinciblePlayer; }
 	bool GetViewModeUnlit() const { return bViewModeUnlit; }
 	

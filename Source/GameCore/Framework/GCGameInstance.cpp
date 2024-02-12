@@ -1,6 +1,7 @@
 ﻿// Copyright (C) RedCraft86 (Tayzar). All Rights Reserved.
 
 #include "GCGameInstance.h"
+#include "JsonObjectWrapper.h"
 #include "Player/GCPlayerCharacter.h"
 #include "UserSettings/GCUserSettings.h"
 #include "Kismet/KismetSystemLibrary.h"
@@ -19,6 +20,30 @@ UGCGameInstance* UGCGameInstance::Get(const UObject* WorldContext)
 {
 	const UWorld* World = GEngine->GetWorldFromContextObject(WorldContext, EGetWorldErrorMode::LogAndReturnNull);
 	return World ? World->GetGameInstance<UGCGameInstance>() : nullptr;
+}
+
+bool UGCGameInstance::IsFirstLaunch() const
+{
+	static TOptional<bool> FirstLaunch;
+	if (!FirstLaunch.IsSet())
+	{
+		FString JsonStr;
+		FFileHelper::LoadFileToString(JsonStr, *(FPaths::ProjectSavedDir() / TEXT("Global.json")));
+		FJsonObjectWrapper GlobalJson;
+		GlobalJson.JsonObjectFromString(JsonStr);
+
+		bool bFirstLaunch;
+		if (GlobalJson.JsonObject->TryGetBoolField(TEXT("first_launch"), bFirstLaunch))
+		{
+			FirstLaunch = bFirstLaunch;
+		}
+		else
+		{
+			FirstLaunch = true;
+		}
+	}
+
+	return FirstLaunch.Get(false);
 }
 
 void UGCGameInstance::UpdatePlayerInvincible() const
@@ -54,6 +79,22 @@ void UGCGameInstance::Init()
 	Super::Init();
 	UGCUserSettings::Get()->GameInstance = this;
 	FSlateApplication::Get().OnApplicationActivationStateChanged().AddUObject(this, &UGCGameInstance::OnWindowFocusChanged);
+}
+
+void UGCGameInstance::Shutdown()
+{
+	Super::Shutdown();
+	
+	FString JsonStr;
+	FFileHelper::LoadFileToString(JsonStr, *(FPaths::ProjectSavedDir() / TEXT("Global.json")));
+	
+	FJsonObjectWrapper GlobalJson;
+	GlobalJson.JsonObjectFromString(JsonStr);
+	GlobalJson.JsonObject->SetBoolField(TEXT("first_launch"), false);
+
+	const TSharedRef<TJsonWriter<>> JsonWriter = TJsonWriterFactory<>::Create(&JsonStr, 0);
+	FJsonSerializer::Serialize(GlobalJson.JsonObject.ToSharedRef(), JsonWriter, true);
+	FFileHelper::SaveStringToFile(JsonStr, *(FPaths::ProjectSavedDir() / TEXT("Global.json")));
 }
 
 void UGCGameInstance::WorldBeginPlay()
