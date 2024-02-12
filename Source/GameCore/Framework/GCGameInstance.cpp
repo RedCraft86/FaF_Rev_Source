@@ -83,8 +83,6 @@ void UGCGameInstance::Init()
 
 void UGCGameInstance::Shutdown()
 {
-	Super::Shutdown();
-	
 	FString JsonStr;
 	FFileHelper::LoadFileToString(JsonStr, *(FPaths::ProjectSavedDir() / TEXT("Global.json")));
 	
@@ -95,6 +93,8 @@ void UGCGameInstance::Shutdown()
 	const TSharedRef<TJsonWriter<>> JsonWriter = TJsonWriterFactory<>::Create(&JsonStr, 0);
 	FJsonSerializer::Serialize(GlobalJson.JsonObject.ToSharedRef(), JsonWriter, true);
 	FFileHelper::SaveStringToFile(JsonStr, *(FPaths::ProjectSavedDir() / TEXT("Global.json")));
+
+	Super::Shutdown();
 }
 
 void UGCGameInstance::WorldBeginPlay()
