@@ -123,6 +123,8 @@ void UGCSettingsWidget::RefreshDisplay()
 void UGCSettingsWidget::NativeConstruct()
 {
 	Super::NativeConstruct();
+	
+	RefreshResolutions();
 	OnRefreshDisplay.Broadcast();
 }
 
@@ -150,15 +152,7 @@ void UGCSettingsWidget::NativeOnInitialized()
 	
 	/* Graphics */
 	// Video
-	ResolutionBox->ClearOptions();
-	Resolutions = UGCUserSettings::GetAllResolutions();
-	for (int i = 0; i < Resolutions.Num(); i++)
-	{
-		ResolutionBox->AddOption(FString::Printf(TEXT("%d x %d%s"), Resolutions[i].X, Resolutions[i].Y,
-			i == 0 ? TEXT(" (Fullscreen)") : TEXT("")));
-	}
-	ResolutionBox->SetSelectedIndex(0);
-	ResolutionBox->OnSelectionChanged.AddDynamic(this, &UGCSettingsWidget::OnResolutionChanged);
+	RefreshResolutions();
 	OnRefreshDisplay.AddUObject(this, &UGCSettingsWidget::OnUpdateResolution);
 	SETUP_SLIDER(ResScaleRow, true, GetResScalePercent, SetResScalePercent);
 	SETUP_TOGGLE(VSyncRow, IsVSyncEnabled, SetVSyncEnabled);
@@ -251,6 +245,20 @@ void UGCSettingsWidget::SetScreenIndex(const int32 InIndex)
 		ScreenIndex = InIndex;
 		PlayAnimation(SwapScreenAnim);
 	}
+}
+
+void UGCSettingsWidget::RefreshResolutions()
+{
+	ResolutionBox->OnSelectionChanged.RemoveAll(this);
+	ResolutionBox->ClearOptions();
+	Resolutions = UGCUserSettings::GetAllResolutions();
+	for (int i = 0; i < Resolutions.Num(); i++)
+	{
+		ResolutionBox->AddOption(FString::Printf(TEXT("%d x %d%s"), Resolutions[i].X, Resolutions[i].Y,
+			i == 0 ? TEXT(" (Fullscreen)") : TEXT("")));
+	}
+	ResolutionBox->OnSelectionChanged.AddDynamic(this, &UGCSettingsWidget::OnResolutionChanged);
+	ResolutionBox->SetSelectedIndex(FMath::Max(0, Resolutions.Find(SettingsObject->GetScreenResolution())));
 }
 
 void UGCSettingsWidget::OnUpdateResolution()
