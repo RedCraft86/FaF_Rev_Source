@@ -24,6 +24,7 @@
 UGCUserSettings::UGCUserSettings()
 {
 	bInitializing = false;
+	bLaunchWork = false;
 	GameInstance = nullptr;
 	SoundMixObject = nullptr;
 	SoundTypeToClass = {};
@@ -42,24 +43,15 @@ void UGCUserSettings::InitializeSettings()
 	{
 		SoundTypeToClass.Add(Type, Settings->SoundClasses.FindOrAdd(Type).LoadSynchronous());
 	}
-
-	FString JsonStr;
-	FFileHelper::LoadFileToString(JsonStr, *(FPaths::ProjectSavedDir() / TEXT("Global.json")));
-	FJsonObjectWrapper GlobalJson;
-	GlobalJson.JsonObjectFromString(JsonStr);
-	if (!GlobalJson.JsonObject->GetBoolField(TEXT("Finished_First_Launch")))
+	
+	if (GameInstance->IsFirstLaunch() && !bLaunchWork)
 	{
+		bLaunchWork = true;
 #if !WITH_EDITOR
 		this->SetToDefaults();
 		this->SetOverallQuality(3);
 		this->SetResScalePercent(50.0f);
 #endif
-		GlobalJson.JsonObject->SetBoolField(TEXT("Finished_First_Launch"), true);
-    
-		const TSharedRef<TJsonWriter<>> JsonWriter = TJsonWriterFactory<>::Create(&JsonStr, 0);
-		FJsonSerializer::Serialize(GlobalJson.JsonObject.ToSharedRef(), JsonWriter, true);
-    		
-		FFileHelper::SaveStringToFile(JsonStr, *(FPaths::ProjectSavedDir() / TEXT("Global.json")));
 	}
 	else
 	{

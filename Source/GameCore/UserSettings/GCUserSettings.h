@@ -200,6 +200,7 @@ private:
 	void ApplyAudioSettings();
 
 	bool bInitializing;
+	bool bLaunchWork;
 	
 	UPROPERTY(Transient)
 		UGCGameInstance* GameInstance;
