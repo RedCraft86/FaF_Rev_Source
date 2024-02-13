@@ -31,7 +31,7 @@ void UGCFrameRateWidget::NativeTick(const FGeometry& InGeometry, float DeltaTime
 	ProgressedTime += DeltaTime;
 	if (ProgressedTime >= 0.25f)
 	{
-		const float FrameRate = FMath::RoundToInt(1.0f / DeltaTime);
+		const int FrameRate = FMath::RoundToInt(1.0f / DeltaTime);
 		FrameRateText->SetText(FText::FromString(FString::Printf(TEXT("%d FPS"), FrameRate)));
 		DeltaTimeText->SetText(FText::FromString(FString::Printf(TEXT("%.2f ms"), DeltaTime * 1000.0f)));
 
