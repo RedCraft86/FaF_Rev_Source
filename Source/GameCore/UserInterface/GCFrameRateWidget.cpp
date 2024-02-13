@@ -21,7 +21,7 @@ FLinearColor UGCFrameRateWidget::GetFrameRateColor(const float InFrameRate) cons
 	if (FMath::IsNearlyZero(Limit)) Limit = 144.0f;
 
 	return FMath::Lerp(FLinearColor::Red, FLinearColor::Green,
-		FMath::GetMappedRangeValueClamped(FVector2D{25.0f, Limit},
+		FMath::GetMappedRangeValueClamped(FVector2D{Limit * 0.25f, Limit},
 			FVector2D{0.0f, 1.0f}, InFrameRate));
 }
 
