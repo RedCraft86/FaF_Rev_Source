@@ -2,8 +2,8 @@
 
 #pragma once
 
-#include "Components/ArrowComponent.h"
 #include "GameFramework/Character.h"
+#include "Components/ArrowComponent.h"
 #include "Interfaces/GCCharacterInterface.h"
 #include "Interfaces/GCInteractionInterface.h"
 #include "NPCBase.generated.h"
@@ -20,7 +20,7 @@ public:
 	UPROPERTY(VisibleDefaultsOnly, Category = "DefaultSubobjects")
 		UArrowComponent* EyePosition;
 
-	UPROPERTY(BlueprintReadOnly, Category = "NPC")
+	UPROPERTY(BlueprintReadOnly, Category = "DefaultSubobjects")
 		USceneComponent* LookAtComponent;
 	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "NPC")
