@@ -46,6 +46,7 @@ public class GameCore : ModuleRules
 				"PulldownStruct",
 				"ExpressiveText",
 				"Narrative",
+				"SMSystem",
 				"RCRuntime",
 			}
 		);
