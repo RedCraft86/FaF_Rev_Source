@@ -9,9 +9,8 @@ class FGCEnemyAICustomization final : public IDetailCustomization
 {
 public:
 
-	const TSet<FName> VisibleCategories = {TEXT("AI_Logic"), TEXT("StateMachineComponents"),
-		TEXT("Transform"), TEXT("TransformCommon"), TEXT("Actor"),
-		TEXT("Input"), TEXT("Pawn"), TEXT("Tick")};
+	const TSet<FName> VisibleCategories = {TEXT("Settings"), TEXT("AI_Logic"), TEXT("StateMachineComponents"),
+		TEXT("Transform"), TEXT("TransformCommon"), TEXT("Actor"), TEXT("Pawn"), TEXT("Tick")};
  
 	static TSharedRef<IDetailCustomization> MakeInstance()
 	{

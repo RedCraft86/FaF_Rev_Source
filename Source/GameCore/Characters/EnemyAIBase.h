@@ -16,7 +16,7 @@ public:
 
 	AEnemyAIBase();
 
-	UPROPERTY(VisibleAnywhere, Category = "DefaultSubobjects")
+	UPROPERTY(VisibleDefaultsOnly, Category = "DefaultSubobjects")
 		USMStateMachineComponent* LogicComponent;
 
 	UFUNCTION(BlueprintImplementableEvent)
@@ -25,14 +25,4 @@ public:
 	virtual FVector GetEyeWorldLocation_Implementation() override;
 	virtual FVector GetEyeForwardVector_Implementation() override;
 	virtual USceneComponent* GetLookAtComponent_Implementation() override { return nullptr; } 
-
-protected:
-
-	virtual void BeginPlay() override;
-
-public:
-
-	virtual void Tick(float DeltaTime) override;
-
-	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 };

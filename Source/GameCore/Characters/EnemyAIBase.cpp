@@ -10,7 +10,6 @@ AEnemyAIBase::AEnemyAIBase()
 	PrimaryActorTick.bStartWithTickEnabled = false;
 
 	GetCapsuleComponent()->SetCollisionProfileName(UCollisionProfile::Pawn_ProfileName);
-	GetCapsuleComponent()->SetCollisionResponseToChannel(ECC_GameTraceChannel1, ECR_Block);
 	GetCapsuleComponent()->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
 	GetCapsuleComponent()->SetCollisionObjectType(ECC_Pawn);
 
@@ -39,20 +38,3 @@ FVector AEnemyAIBase::GetEyeForwardVector_Implementation()
 	
 	return GetActorForwardVector();
 }
-
-void AEnemyAIBase::BeginPlay()
-{
-	Super::BeginPlay();
-	
-}
-
-void AEnemyAIBase::Tick(float DeltaTime)
-{
-	Super::Tick(DeltaTime);
-}
-
-void AEnemyAIBase::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
-{
-	Super::SetupPlayerInputComponent(PlayerInputComponent);
-}
-
