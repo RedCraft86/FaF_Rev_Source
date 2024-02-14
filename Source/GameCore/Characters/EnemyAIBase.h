@@ -16,7 +16,7 @@ public:
 
 	AEnemyAIBase();
 
-	UPROPERTY(VisibleDefaultsOnly, Category = "DefaultSubobjects")
+	UPROPERTY(VisibleAnywhere, Category = "DefaultSubobjects")
 		USMStateMachineComponent* LogicComponent;
 
 	UFUNCTION(BlueprintImplementableEvent)
