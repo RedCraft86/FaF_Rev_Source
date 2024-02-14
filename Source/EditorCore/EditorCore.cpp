@@ -2,14 +2,15 @@
 
 #include "UnrealEd.h"
 #include "PropertyEditorModule.h"
+#include "ComponentVisualization/PlayerSensingVisualizer.h"
+#include "ComponentVisualization/ElectronicActorVisualizer.h"
+#include "ComponentVisualization/TaskActorManagerVisualizer.h"
 #include "DetailsCustomization/PlayerCharacterCustomization.h"
 #include "DetailsCustomization/MovableNPCCustomization.h"
-#include "ComponentVisualization/PlayerSensingVisualizer.h"
-#include "ComponentVisualization/TaskActorManagerVisualizer.h"
-#include "ComponentVisualization/ElectronicActorVisualizer.h"
-
+#include "DetailsCustomization/EnemyAICustomization.h"
 #include "Player/GCPlayerCharacter.h"
-//#include "AICharacter/NPC/GCNPCMovableBase.h"
+#include "Characters/EnemyAIBase.h"
+#include "Characters/NPCBase.h"
 
 #define LOCTEXT_NAMESPACE "FEditorCoreModule"
 
@@ -20,8 +21,11 @@ void FEditorCoreModule::StartupModule()
 	PropertyModule.RegisterCustomClassLayout(AGCPlayerCharacter::StaticClass()->GetFName(),
 		FOnGetDetailCustomizationInstance::CreateStatic(&FGCPlayerCharacterCustomization::MakeInstance));
 
-	// PropertyModule.RegisterCustomClassLayout(AGCMovableNPCBase::StaticClass()->GetFName(),
-	// 	FOnGetDetailCustomizationInstance::CreateStatic(&FGCMovableNPCCustomization::MakeInstance));
+	PropertyModule.RegisterCustomClassLayout(ANPCBase::StaticClass()->GetFName(),
+		FOnGetDetailCustomizationInstance::CreateStatic(&FGCMovableNPCCustomization::MakeInstance));
+
+	PropertyModule.RegisterCustomClassLayout(AEnemyAIBase::StaticClass()->GetFName(),
+		FOnGetDetailCustomizationInstance::CreateStatic(&FGCEnemyAICustomization::MakeInstance));
 
 	if (GUnrealEd)
 	{
@@ -36,7 +40,7 @@ void FEditorCoreModule::ShutdownModule()
 	if (FPropertyEditorModule* PropertyModule = FModuleManager::GetModulePtr<FPropertyEditorModule>("PropertyEditor"))
 	{
 		PropertyModule->UnregisterCustomClassLayout(AGCPlayerCharacter::StaticClass()->GetFName());
-		//PropertyModule->UnregisterCustomClassLayout(AGCMovableNPCBase::StaticClass()->GetFName());
+		PropertyModule->UnregisterCustomClassLayout(ANPCBase::StaticClass()->GetFName());
 	}
 
 	if (GUnrealEd)
