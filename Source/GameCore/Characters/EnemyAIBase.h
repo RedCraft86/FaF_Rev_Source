@@ -3,7 +3,6 @@
 #pragma once
 
 #include "GameFramework/Character.h"
-#include "SMStateMachineComponent.h"
 #include "Interfaces/GCCharacterInterface.h"
 #include "EnemyAIBase.generated.h"
 
@@ -17,12 +16,20 @@ public:
 	AEnemyAIBase();
 
 	UPROPERTY(VisibleAnywhere, Category = "DefaultSubobjects")
-		USMStateMachineComponent* LogicComponent;
+		class UPlayerSensing* SensingComponent;
 
-	UFUNCTION(BlueprintImplementableEvent)
-		const UArrowComponent* GetEyeArrowComponent() const;
+	UPROPERTY(VisibleAnywhere, Category = "DefaultSubobjects")
+		class USMStateMachineComponent* LogicComponent;
+
+	UFUNCTION(BlueprintNativeEvent)
+		FName GetEyeAttachBone() const;
+	FName GetEyeAttachBone_Implementation() const { return TEXT("head"); }
 	
 	virtual FVector GetEyeWorldLocation_Implementation() override;
 	virtual FVector GetEyeForwardVector_Implementation() override;
-	virtual USceneComponent* GetLookAtComponent_Implementation() override { return nullptr; } 
+	virtual USceneComponent* GetLookAtComponent_Implementation() override { return nullptr; }
+
+private:
+
+	virtual void OnConstruction(const FTransform& Transform) override;
 };
