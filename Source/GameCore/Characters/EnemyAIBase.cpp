@@ -1,7 +1,7 @@
 ﻿// Copyright (C) RedCraft86 (Tayzar). All Rights Reserved.
 
 #include "EnemyAIBase.h"
-#include "PlayerSensing.h"
+#include "PlayerSensingComponent.h"
 #include "Components/CapsuleComponent.h"
 #include "SMStateMachineComponent.h"
 
@@ -17,9 +17,12 @@ AEnemyAIBase::AEnemyAIBase()
 	GetMesh()->SetRelativeLocation(FVector{0.0f, 0.0f, -90.0f});
 	GetMesh()->SetRelativeRotation(FRotator{0.0f, -90.0f, 0.0f});
 
-	LogicComponent = CreateDefaultSubobject<USMStateMachineComponent>("LogicComponent");
-	SensingComponent = CreateDefaultSubobject<UPlayerSensing>("SensingComponent");
+	SensingComponent = CreateDefaultSubobject<UPlayerSensingComponent>("SensingComponent");
+	SensingComponent->SetRelativeRotation(FRotator{0.0f, -90.0f, 0.0f});
+	SensingComponent->SetRelativeScale3D(FVector{0.5f});
 	SensingComponent->SetupAttachment(GetMesh());
+	
+	LogicComponent = CreateDefaultSubobject<USMStateMachineComponent>("LogicComponent");
 }
 
 FVector AEnemyAIBase::GetEyeWorldLocation_Implementation()

@@ -29,7 +29,7 @@ void FEditorCoreModule::StartupModule()
 
 	if (GUnrealEd)
 	{
-		//RegisterVisualizer(UGCPlayerSensingComponent::StaticClass()->GetFName(), FPlayerSensingVisualizer::MakeInstance());
+		RegisterVisualizer(UPlayerSensingComponent::StaticClass()->GetFName(), FPlayerSensingVisualizer::MakeInstance());
 		RegisterVisualizer(UGCTaskActorManagerComponent::StaticClass()->GetFName(), FTaskActorManagerVisualizer::MakeInstance());
 		RegisterVisualizer(UGCElectronicVisualizer::StaticClass()->GetFName(), FElectronicActorVisualizer::MakeInstance());
 	}
@@ -45,7 +45,7 @@ void FEditorCoreModule::ShutdownModule()
 
 	if (GUnrealEd)
 	{
-		//GUnrealEd->UnregisterComponentVisualizer(UGCPlayerSensingComponent::StaticClass()->GetFName());
+		GUnrealEd->UnregisterComponentVisualizer(UPlayerSensingComponent::StaticClass()->GetFName());
 		GUnrealEd->UnregisterComponentVisualizer(UGCTaskActorManagerComponent::StaticClass()->GetFName());
 		GUnrealEd->UnregisterComponentVisualizer(UGCElectronicVisualizer::StaticClass()->GetFName());
 	}

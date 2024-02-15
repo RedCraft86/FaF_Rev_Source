@@ -16,7 +16,7 @@ public:
 	AEnemyAIBase();
 
 	UPROPERTY(VisibleAnywhere, Category = "DefaultSubobjects")
-		class UPlayerSensing* SensingComponent;
+		class UPlayerSensingComponent* SensingComponent;
 
 	UPROPERTY(VisibleAnywhere, Category = "DefaultSubobjects")
 		class USMStateMachineComponent* LogicComponent;
