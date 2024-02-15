@@ -7,6 +7,7 @@
 UPlayerSensingComponent::UPlayerSensingComponent()
 {
 	PrimaryComponentTick.bCanEverTick = true;
+	PrimaryComponentTick.bStartWithTickEnabled = false;
 	PrimaryComponentTick.TickInterval = 0.1f;
 
 	bEnabled = true;

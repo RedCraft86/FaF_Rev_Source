@@ -21,9 +21,22 @@ public:
 	UPROPERTY(VisibleAnywhere, Category = "DefaultSubobjects")
 		class USMStateMachineComponent* LogicComponent;
 
+	UPROPERTY(EditAnywhere, Category = "Settings")
+		bool bStartEnabled;
+
 	UFUNCTION(BlueprintNativeEvent)
 		FName GetEyeAttachBone() const;
 	FName GetEyeAttachBone_Implementation() const { return TEXT("head"); }
+
+	UFUNCTION(BlueprintNativeEvent)
+		void GetRequirements(bool& Sensing, bool& StateMachine, bool& Ticking) const;
+	void GetRequirements_Implementation(bool& Sensing, bool& StateMachine, bool& Ticking) const;
+
+	UFUNCTION(BlueprintCallable, Category = "EnemyAI")
+		void SetEnabled(const bool bInEnabled);
+
+	UFUNCTION(BlueprintPure, Category = "EnemyAI")
+		bool GetEnabled() const { return bEnabled; }
 	
 	virtual FVector GetEyeWorldLocation_Implementation() override;
 	virtual FVector GetEyeForwardVector_Implementation() override;
@@ -31,5 +44,8 @@ public:
 
 private:
 
+	bool bEnabled;
+
+	virtual void BeginPlay() override;
 	virtual void OnConstruction(const FTransform& Transform) override;
 };

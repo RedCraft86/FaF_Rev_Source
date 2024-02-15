@@ -21,8 +21,42 @@ AEnemyAIBase::AEnemyAIBase()
 	SensingComponent->SetRelativeRotation(FRotator{0.0f, -90.0f, 0.0f});
 	SensingComponent->SetRelativeScale3D(FVector{0.5f});
 	SensingComponent->SetupAttachment(GetMesh());
+	SensingComponent->bEnabled = false;
 	
 	LogicComponent = CreateDefaultSubobject<USMStateMachineComponent>("LogicComponent");
+	LogicComponent->bStartOnBeginPlay = false;
+
+	bStartEnabled = true;
+	bEnabled = false;
+}
+
+void AEnemyAIBase::GetRequirements_Implementation(bool& Sensing, bool& StateMachine, bool& Ticking) const
+{
+	Sensing = true;
+	StateMachine = true;
+	Ticking = true;
+}
+
+void AEnemyAIBase::SetEnabled(const bool bInEnabled)
+{
+	if (bEnabled != bInEnabled)
+	{
+		bEnabled = bInEnabled;
+
+		bool Sensing, StateMachine, Ticking = false;
+		GetRequirements(Sensing, StateMachine, Ticking);
+		SetActorTickEnabled(Ticking ? bEnabled : false);
+		
+		SensingComponent->SetEnabled(Sensing ? bEnabled : false);
+		if (!StateMachine || !bEnabled)
+		{
+			LogicComponent->Stop();
+		}
+		else
+		{
+			LogicComponent->Start();
+		}
+	}
 }
 
 FVector AEnemyAIBase::GetEyeWorldLocation_Implementation()
@@ -33,6 +67,12 @@ FVector AEnemyAIBase::GetEyeWorldLocation_Implementation()
 FVector AEnemyAIBase::GetEyeForwardVector_Implementation()
 {
 	return SensingComponent->GetForwardVector();
+}
+
+void AEnemyAIBase::BeginPlay()
+{
+	Super::BeginPlay();
+	SetEnabled(bStartEnabled);
 }
 
 void AEnemyAIBase::OnConstruction(const FTransform& Transform)

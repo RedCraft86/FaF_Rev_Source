@@ -49,6 +49,9 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "PlayerSensing")
 		void SetEnabled(const bool bInEnabled);
 
+	UFUNCTION(BlueprintPure, Category = "PlayerSensing")
+		bool GetEnabled() const { return bEnabled; }
+
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 
 private:
