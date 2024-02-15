@@ -5,6 +5,8 @@
 #include "Components/ArrowComponent.h"
 #include "PlayerSensingComponent.generated.h"
 
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FPlayerSensingEventSignature);
+
 UCLASS(ClassGroup = (AI), meta = (BlueprintSpawnableComponent))
 class GAMECORE_API UPlayerSensingComponent : public UArrowComponent
 {
@@ -38,11 +40,35 @@ public:
 	UPROPERTY(EditAnywhere, Category = "SensingLogic", meta = (ClampMin = 0.1f, UIMin = 0.1f))
 		float LoseTime;
 
-protected:
+	UPROPERTY(BlueprintAssignable)
+		FPlayerSensingEventSignature OnSeen;
 
-	virtual void BeginPlay() override;
+	UPROPERTY(BlueprintAssignable)
+		FPlayerSensingEventSignature OnLost;
 
-public:
+	UFUNCTION(BlueprintCallable, Category = "PlayerSensing")
+		void SetEnabled(const bool bInEnabled);
 
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
+
+private:
+
+	UPROPERTY(Transient)
+		APawn* PlayerChar;
+	
+	UPROPERTY(Transient)
+		class UGCGameInstance* GameInst;
+
+	bool bDetected;
+	FTimerHandle AnnounceTimer;
+
+	bool MoveCheck() const;
+	bool TraceCheck() const;
+	bool InOuterAngle() const;
+	bool InInnerAngle() const;
+	float AngleToPlayer() const;
+	float DistanceToPlayer() const;
+	void BroadcastEvent() const;
+	
+	virtual void BeginPlay() override;
 };
