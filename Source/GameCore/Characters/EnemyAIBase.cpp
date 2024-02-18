@@ -16,12 +16,6 @@ AEnemyAIBase::AEnemyAIBase()
 
 	GetMesh()->SetRelativeLocation(FVector{0.0f, 0.0f, -90.0f});
 	GetMesh()->SetRelativeRotation(FRotator{0.0f, -90.0f, 0.0f});
-
-	SensingComponent = CreateDefaultSubobject<UPlayerSensingComponent>("SensingComponent");
-	SensingComponent->SetRelativeRotation(FRotator{0.0f, -90.0f, 0.0f});
-	SensingComponent->SetRelativeScale3D(FVector{0.5f});
-	SensingComponent->SetupAttachment(GetMesh());
-	SensingComponent->bEnabled = false;
 	
 	LogicComponent = CreateDefaultSubobject<USMStateMachineComponent>("LogicComponent");
 	LogicComponent->bStartOnBeginPlay = false;
@@ -46,8 +40,12 @@ void AEnemyAIBase::SetEnabled(const bool bInEnabled)
 		bool Sensing, StateMachine, Ticking = false;
 		GetRequirements(Sensing, StateMachine, Ticking);
 		SetActorTickEnabled(Ticking ? bEnabled : false);
+
+		if (UPlayerSensingComponent* SensingComponent = GetSensingComponent())
+		{
+			SensingComponent->SetEnabled(Sensing ? bEnabled : false);
+		}
 		
-		SensingComponent->SetEnabled(Sensing ? bEnabled : false);
 		if (!StateMachine || !bEnabled)
 		{
 			LogicComponent->Stop();
@@ -61,12 +59,23 @@ void AEnemyAIBase::SetEnabled(const bool bInEnabled)
 
 FVector AEnemyAIBase::GetEyeWorldLocation_Implementation()
 {
-	return SensingComponent->GetComponentLocation();
+	if (const UPlayerSensingComponent* SensingComponent = GetSensingComponent())
+	{
+		return SensingComponent->GetComponentLocation();
+	}
+
+	return GetActorLocation();
 }
 
 FVector AEnemyAIBase::GetEyeForwardVector_Implementation()
 {
-	return SensingComponent->GetForwardVector();
+	if (const UPlayerSensingComponent* SensingComponent = GetSensingComponent())
+	{
+		return SensingComponent->GetForwardVector();
+	}
+
+	return GetActorForwardVector() +
+		FVector{0.0f, 0.0f, GetCapsuleComponent()->GetScaledCapsuleHalfHeight_WithoutHemisphere()};
 }
 
 void AEnemyAIBase::BeginPlay()
@@ -78,6 +87,8 @@ void AEnemyAIBase::BeginPlay()
 void AEnemyAIBase::OnConstruction(const FTransform& Transform)
 {
 	Super::OnConstruction(Transform);
-	SensingComponent->AttachToComponent(GetMesh(),
-		FAttachmentTransformRules::KeepRelativeTransform, GetEyeAttachBone());
+	if (UPlayerSensingComponent* SensingComponent = GetSensingComponent())
+	{
+		SensingComponent->bEnabled = false;
+	}
 }
