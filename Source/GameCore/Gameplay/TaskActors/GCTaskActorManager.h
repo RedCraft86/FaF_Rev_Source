@@ -33,6 +33,8 @@ private:
 	}
 };
 
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FOnTaskProgressUpdate, uint8, Completed, uint8, Required);
+
 UCLASS(NotBlueprintable, DisplayName = "Task Actor Manager")
 class GAMECORE_API AGCTaskActorManager final : public AActor
 {
@@ -54,6 +56,9 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "TaskActorManager")
 		TSet<class AGCTaskActorBase*> TaskActors;
 
+	UPROPERTY(BlueprintAssignable)
+		FOnTaskProgressUpdate OnProgressMade;
+
 private:
 #if WITH_EDITORONLY_DATA
 	UGCTaskActorManagerComponent* Visualizer;
@@ -65,4 +70,5 @@ private:
 	
 	virtual void BeginPlay() override;
 	void OnSequenceLoaded(const FName& ID);
+	void OnTaskComplete(AGCTaskActorBase* TaskActor);
 };

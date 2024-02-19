@@ -80,14 +80,13 @@ void UGCSequenceManager::SetGameSequence(const FGCSequenceID InSequenceID)
 	OnSequenceChangeStart.Broadcast(ThisSequenceID);
 	BeginUnloadWorld();
 
-	if (InSequenceID.IsValid())
+	if (ThisSequenceID.IsValid())
 	{
 		if (const UGCSaveManager* SaveManager = UGCSaveManager::Get(this))
 		{
 			SaveManager->GetGameSaveObject()->GameSequenceID = ThisSequenceID;
-			SaveManager->SaveGameData(nullptr);
-
 			SubsequenceIndex = SaveManager->GetGameSaveObject()->SubsequenceIndexes.FindOrAdd(ThisSequenceID, 0);
+			SaveManager->SaveGameData(nullptr);
 		}
 	}
 	else

@@ -68,6 +68,12 @@ void AGCTaskActorManager::BeginPlay()
 	if (UGCSequenceManager* Manager = GetWorld()->GetSubsystem<UGCSequenceManager>())
 	{
 		Manager->OnSequenceChangeFinish.AddUObject(this, &AGCTaskActorManager::OnSequenceLoaded);
+		OnSequenceLoaded(*Manager->GetCurrentSequence());
+	}
+
+	for (AGCTaskActorBase* Actor : TaskActors)
+	{
+		if (Actor) Actor->OnTaskCompleted.AddUObject(this, &AGCTaskActorManager::OnTaskComplete);
 	}
 }
 
@@ -80,11 +86,23 @@ void AGCTaskActorManager::OnSequenceLoaded(const FName& ID)
 		{
 			for (AGCTaskActorBase* Actor : TaskActors)
 			{
-				if (Actor)
-				{
-					Actor->CompleteTask();
-				}
+				if (Actor && !Actor->IsCompleted()) Actor->CompleteTask();
 			}
 		}
 	}
+}
+
+void AGCTaskActorManager::OnTaskComplete(AGCTaskActorBase* TaskActor)
+{
+	uint8 Completed = 0, Total = 0;
+	for (const AGCTaskActorBase* Actor : TaskActors)
+	{
+		if (Actor)
+		{
+			Total++;
+			if (Actor->IsCompleted()) Completed++;
+		}
+	}
+
+	OnProgressMade.Broadcast(Completed, Total);
 }
