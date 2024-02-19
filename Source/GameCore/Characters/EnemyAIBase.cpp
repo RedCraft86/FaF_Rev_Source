@@ -3,8 +3,8 @@
 #include "EnemyAIBase.h"
 #include "PlayerSensingComponent.h"
 #include "Components/CapsuleComponent.h"
-#include "SMStateMachineComponent.h"
 #include "GameFramework/PawnMovementComponent.h"
+#include "SMStateMachineComponent.h"
 
 AEnemyAIBase::AEnemyAIBase()
 {
