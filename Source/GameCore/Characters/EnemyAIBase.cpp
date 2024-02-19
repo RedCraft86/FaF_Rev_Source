@@ -4,6 +4,7 @@
 #include "PlayerSensingComponent.h"
 #include "Components/CapsuleComponent.h"
 #include "SMStateMachineComponent.h"
+#include "GameFramework/PawnMovementComponent.h"
 
 AEnemyAIBase::AEnemyAIBase()
 {
@@ -39,6 +40,7 @@ void AEnemyAIBase::SetEnabled(const bool bInEnabled)
 
 		bool Sensing, StateMachine, Ticking = false;
 		GetRequirements(Sensing, StateMachine, Ticking);
+		
 		SetActorTickEnabled(Ticking ? bEnabled : false);
 
 		if (UPlayerSensingComponent* SensingComponent = GetSensingComponent())
@@ -53,6 +55,11 @@ void AEnemyAIBase::SetEnabled(const bool bInEnabled)
 		else
 		{
 			LogicComponent->Start();
+		}
+
+		if (!bEnabled)
+		{
+			GetMovementComponent()->StopMovementImmediately();
 		}
 	}
 }
