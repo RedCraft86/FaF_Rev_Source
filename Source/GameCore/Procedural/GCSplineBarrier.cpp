@@ -3,6 +3,7 @@
 #include "GCSplineBarrier.h"
 #include "Components/SplineComponent.h"
 #include "KismetProceduralMeshLibrary.h"
+#include "PhysicsEngine/BodySetup.h"
 #include "ProceduralMeshComponent.h"
 #include "RCRuntimeLibrary.h"
 #if WITH_EDITORONLY_DATA
@@ -89,6 +90,11 @@ void AGCSplineBarrier::Construct()
 	ProceduralMesh->CreateMeshSection(0, Vertices, Triangles, Normals, {}, {}, Tangents, true);
 	URCRuntimeLibrary::SetPrimitiveCollision(ProceduralMesh, Collision);
 	ProceduralMesh->SetMaterial(0, Material);
+
+	if (ProceduralMesh->GetBodySetup())
+	{
+		ProceduralMesh->GetBodySetup()->bGenerateMirroredCollision = true;
+	}
 
 	Super::Construct();
 
