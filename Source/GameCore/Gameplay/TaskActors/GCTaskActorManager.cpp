@@ -27,7 +27,7 @@ AGCTaskActorManager::AGCTaskActorManager()
 		VisualIcon->SetRelativeScale3D_Direct(FVector(0.5f, 0.5f, 0.5f));
 		VisualIcon->bIsScreenSizeScaled = true;
 		VisualIcon->SetupAttachment(GetRootComponent());
-		ConstructorHelpers::FObjectFinder<UTexture2D> IconFinder(
+		const ConstructorHelpers::FObjectFinder<UTexture2D> IconFinder(
 			TEXT("/Engine/EditorResources/S_ForceFeedbackComponent.S_ForceFeedbackComponent"));
 		if (IconFinder.Succeeded())
 		{
