@@ -79,10 +79,9 @@ void URCAsyncAwaitActorEnterView::TaskTick()
 	}
 }
 
-void URCAsyncAwaitActorEnterView::FinishTask(bool bFailed)
+void URCAsyncAwaitActorEnterView::FinishTask(const bool bFailed)
 {
 	if (!Active) return;
-	
 	if (const UWorld* World = GetWorld())
 	{
 		World->GetTimerManager().ClearTimer(WaitTimer);
@@ -92,10 +91,8 @@ void URCAsyncAwaitActorEnterView::FinishTask(bool bFailed)
 		TaskTimer.Invalidate();
 	}
 
-	if (bFailed)
-		NeverEnteredScreen.Broadcast();
-	else
-		EnteredScreen.Broadcast();
+	if (bFailed) NeverEnteredScreen.Broadcast();
+	else EnteredScreen.Broadcast();
 
 	Active = false;
 }

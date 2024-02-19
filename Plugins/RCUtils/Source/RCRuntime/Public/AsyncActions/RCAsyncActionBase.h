@@ -18,22 +18,23 @@ public:
 	FORCEINLINE UObject* GetWorldContext() const { return WorldContext; }
 	FORCEINLINE bool IsValidWorldContext() const
 	{
-		if (GEngine->GetWorldFromContextObject(WorldContext, EGetWorldErrorMode::LogAndReturnNull))
+		if (IsValid(WorldContext) && GEngine->GetWorldFromContextObject(WorldContext, EGetWorldErrorMode::ReturnNull))
 			return true;
 
-		FFrame::KismetExecutionMessage(TEXT("Invalid World Context Object!"), ELogVerbosity::Error);
+		FFrame::KismetExecutionMessage(TEXT("Invalid World Context Object!"), ELogVerbosity::Warning);
 		return false;
 	}
 
 	virtual UWorld* GetWorld() const override
 	{
+		if (!GEngine) return nullptr; // How can this happen?
 #if WITH_EDITOR
 		if (FApp::IsGame())
 #endif
 		{
 			if (IsValidWorldContext())
 			{
-				return GEngine->GetWorldFromContextObject(WorldContext, EGetWorldErrorMode::LogAndReturnNull);
+				return GEngine->GetWorldFromContextObject(WorldContext, EGetWorldErrorMode::ReturnNull);
 			}
 			
 			FFrame::KismetExecutionMessage(TEXT("Cannot get world from context using last resort solution"),
