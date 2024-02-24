@@ -38,17 +38,6 @@ enum class EGCPlayerInputTypes : uint8
 };
 ENUM_RANGE_BY_COUNT(EGCPlayerInputTypes, EGCPlayerInputTypes::Max);
 
-UENUM(BlueprintType, DisplayName = "Player Ability Flags", meta = (Bitflags, UseEnumValuesAsMaskValuesInEditor = "true"))
-enum class EGCPlayerAbilityFlags : uint8
-{
-	None		= 0 UMETA(Hidden),
-	CloseEyes	= 1 << 0
-};
-
-ENUM_CLASS_FLAGS(EGCPlayerAbilityFlags);
-ENUM_RANGE_BY_FIRST_AND_LAST(EGCPlayerAbilityFlags, EGCPlayerAbilityFlags::CloseEyes, EGCPlayerAbilityFlags::CloseEyes)
-#define DEFAULT_PLAYER_ABILITIES /*(uint8)(EGCPlayerAbilityFlags::Foo)*/ 0
-
 UENUM(BlueprintType, DisplayName = "Player Active State")
 enum class EGCPlayerActiveState : uint8
 {
@@ -223,9 +212,6 @@ public:
 	UPROPERTY(/*EditAnywhere, */BlueprintReadOnly, Category = "Settings")
 		EGCPlayerActiveState ActiveState;
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Settings", meta = (Bitmask, BitmaskEnum = "/Script/GameCore.EGCPlayerAbilityFlags"))
-		int32 AbilityFlags;
-
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Settings")
 		bool bCanPause;
 
@@ -321,6 +307,9 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Settings|Leaning", meta = (ClampMin = 0.1f, UIMin = 0.1f))
 		float LeanInterpSpeed;
+	
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Settings|Ability")
+		bool bCanCloseEyes;
 	
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "References")
 		class AGCPhotoModeActor* PhotoModeActor;
@@ -500,17 +489,11 @@ public:
 		FORCEINLINE EGCPlayerActiveState GetActiveState() const { return ActiveState; }
 
 	UFUNCTION(BlueprintCallable, Category = "PlayerCharacter")
-		void SetAbilityFlags(UPARAM(meta = (Bitmask, BitmaskEnum = "/Script/GameCore.EGCPlayerAbilityFlags")) const int32 InFlags);
-	
-	UFUNCTION(BlueprintCallable, Category = "PlayerCharacter")
-		void EnableAbility(const EGCPlayerAbilityFlags InAbility);
-
-	UFUNCTION(BlueprintCallable, Category = "PlayerCharacter")
-		void DisableAbility(const EGCPlayerAbilityFlags InAbility);
+		void SetCanCloseEyes(const bool InCanCloseEyes);
 
 	UFUNCTION(BlueprintPure, Category = "PlayerCharacter")
-		FORCEINLINE bool HasAbility(const EGCPlayerAbilityFlags Ability) const { return AbilityFlags & static_cast<uint8>(Ability); }
-
+		FORCEINLINE bool GetCanCloseEyes() const { return bCanCloseEyes; }
+	
 	UFUNCTION(BlueprintCallable, Category = "PlayerCharacter")
 		void SetCanInteract(const bool bInValue);
 	

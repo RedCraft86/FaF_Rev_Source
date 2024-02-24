@@ -294,7 +294,7 @@ void UGCSequenceManager::OnWorldLoaded()
 			Teleporter->TeleportPlayer();
 		}
 
-		PlayerCharacter->SetAbilityFlags(Data.AbilityFlags);
+		PlayerCharacter->SetCanCloseEyes(Data.bCanCloseEyes);
 
 		for (const TPair<FString, bool>& CustomBool : Data.CustomBooleanData)
 		{

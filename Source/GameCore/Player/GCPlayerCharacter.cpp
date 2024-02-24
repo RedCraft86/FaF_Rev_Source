@@ -87,7 +87,6 @@ AGCPlayerCharacter::AGCPlayerCharacter(const FObjectInitializer& ObjectInitializ
 
 	StartingState = EGCPlayerActiveState::Normal;
 	ActiveState = EGCPlayerActiveState::Normal;
-	AbilityFlags = DEFAULT_PLAYER_ABILITIES;
 	bCanPause = true;
 	bHiding = false;
 	
@@ -121,6 +120,7 @@ AGCPlayerCharacter::AGCPlayerCharacter(const FObjectInitializer& ObjectInitializ
 	WallTraceLength = 125.0f;
 	LeanInterpSpeed = 7.5f;
 	LeanOffsets = {75.0f, 25.0f};
+	bCanCloseEyes = false;
 	
 	PhotoModeActor = nullptr;
 	InspectionActor = nullptr;
@@ -500,7 +500,7 @@ void AGCPlayerCharacter::InputBinding_CloseEyes(const FInputActionValue& InValue
 {
 	if (!bHiding && IS_AT_STATE(Normal))
 	{
-		SetEyesCloseState(HAS_ABILITY(CloseEyes) && InValue.Get<bool>());
+		SetEyesCloseState(bCanCloseEyes && InValue.Get<bool>());
 	}
 }
 
@@ -884,37 +884,15 @@ void AGCPlayerCharacter::SetActiveState(const EGCPlayerActiveState InState)
 	}
 }
 
-void AGCPlayerCharacter::SetAbilityFlags(const int32 InFlags)
+void AGCPlayerCharacter::SetCanCloseEyes(const bool InCanCloseEyes)
 {
-	for (const EGCPlayerAbilityFlags& Flag : TEnumRange<EGCPlayerAbilityFlags>())
+	if (bCanCloseEyes != InCanCloseEyes)
 	{
-		if (InFlags & static_cast<uint8>(Flag))
+		bCanCloseEyes = InCanCloseEyes;
+		if (!bCanCloseEyes)
 		{
-			EnableAbility(Flag);
+			SetEyesCloseState(false);
 		}
-		else
-		{
-			DisableAbility(Flag);
-		}
-	}
-}
-
-void AGCPlayerCharacter::EnableAbility(const EGCPlayerAbilityFlags InAbility)
-{
-	AbilityFlags |= static_cast<uint8>(InAbility);
-}
-
-void AGCPlayerCharacter::DisableAbility(const EGCPlayerAbilityFlags InAbility)
-{
-	AbilityFlags &= ~static_cast<uint8>(InAbility);
-	
-	switch (InAbility)
-	{
-	case EGCPlayerAbilityFlags::CloseEyes:
-		SetEyesCloseState(false);
-		break;
-
-	default: break;
 	}
 }
 
@@ -1001,7 +979,6 @@ void AGCPlayerCharacter::RemoveWalkMultiplierModifier(const FName InKey)
 void AGCPlayerCharacter::ResetPlayer()
 {
 	ActiveState = EGCPlayerActiveState::Normal;
-	AbilityFlags = DEFAULT_PLAYER_ABILITIES;
 	bCanPause = true;
 
 	WalkMultiplier.ClearModifiers();
@@ -1016,12 +993,13 @@ void AGCPlayerCharacter::ResetPlayer()
 	SetCanRun(true);
 	SetCanCrouch(true);
 	SetCanLean(true);
-	SetEyesCloseState(false);
-
+	SetCanCloseEyes(false);
+	
 	SetRunState(false);
 	SetCrouchState(false);
 	SetLeanState(EGCLeanState::None);
 	SetStaminaPercent(1.0f);
+	SetEyesCloseState(false);
 }
 
 void AGCPlayerCharacter::SetWorldDevice(AActor* InActor)

@@ -77,8 +77,8 @@ struct GAMECORE_API FGCSequenceData : public FTableRowBase
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "SequenceData")
 		TSet<FGCInvItemID> EnsureItems;
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Player", meta = (Bitmask, BitmaskEnum = "/Script/GameCore.EGCPlayerAbilityFlags"))
-		int32 AbilityFlags;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Player|Abilities")
+		bool bCanCloseEyes;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Player")
 		TMap<FString, bool> CustomBooleanData;
@@ -95,7 +95,7 @@ struct GAMECORE_API FGCSequenceData : public FTableRowBase
 		, MainMusic(nullptr)
 		, ChaseMusic(nullptr)
 		, EnsureItems({})
-		, AbilityFlags(0)
+		, bCanCloseEyes(false)
 	{
 		CustomBooleanData = {
 			{ValueIDs::CanRun, ValueIDs::Defaults::CanRun},
