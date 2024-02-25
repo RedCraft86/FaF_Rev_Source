@@ -25,53 +25,42 @@ struct GAMECORE_API FGCInfoPageData : public FTableRowBase
 {
 	GENERATED_BODY()
 	
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "InfoPageData", meta = (MultiLine = true))
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "InfoPageData")
 		FText Label;
-	
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "InfoPageData")
+		TSubclassOf<UUserWidget> Widget;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "InfoPageData|Override", meta = (EditCondition = "Widget == nullptr", MultiLine = true))
+		FText Message;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "InfoPageData|Override", meta = (EditCondition = "Widget == nullptr"))
+		TSoftObjectPtr<UTexture2D> Image;
+
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "InfoPageData", meta = (ClampMin = 0.1f, UIMin = 0.1f))
 		bool bShowBackground;
 	
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "InfoPageData", meta = (ClampMin = 0.1f, UIMin = 0.1f))
 		float MinWaitTime;
-
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "InfoPageData")
-		TSubclassOf<UUserWidget> Widget;
-
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "InfoPageData|Override", meta = (EditCondition = "Widget == nullptr"))
-		FExpressiveTextFields Message;
-
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "InfoPageData|Override", meta = (EditCondition = "Widget == nullptr"))
-		TSoftObjectPtr<UTexture2D> Image;
 	
 	FGCInfoPageData()
 		: Label(FText::FromString("Placeholder"))
+		, Message(FText::FromString("Placeholder"))
+		, Image(nullptr)
 		, bShowBackground(false)
 		, MinWaitTime(1.0f)
-		, Image(nullptr)
-	{
-		Message.Text = FText::FromString("Placeholder");
-		Message.Alignment = {EExpressiveTextVerticalAlignment::Top, EExpressiveTextHorizontalAlignment::Center};
-		Message.Justification = ETextJustify::Center;
-		Message.UseDefaultFontSize = true;
-		Message.DefaultFontSize = 24;
+	{}
 
-#if WITH_EDITOR
-		if (const TSoftObjectPtr<UExpressiveTextStyleBase> Object = UGCSettings::Get()->BaseTextStyle; !Object.IsNull())
-		{
-			Message.DefaultStyle = Object.LoadSynchronous();
-		}
-#endif
-	}
-
-	bool HasEmptyMessage() const { return Message.Text.IsEmptyOrWhitespace(); }
+	bool HasEmptyMessage() const { return Message.IsEmptyOrWhitespace(); }
 	FExpressiveTextSelector GetMessage() const
 	{
 		FExpressiveTextSelector RetVal;
-		RetVal.InlinedExpressiveText = Message;
-		if (!RetVal.InlinedExpressiveText.DefaultStyle)
-		{
-			RetVal.InlinedExpressiveText.DefaultStyle = UGCSettings::Get()->BaseTextStyle.LoadSynchronous();
-		}
+		RetVal.InlinedExpressiveText.DefaultStyle = UGCSettings::Get()->BaseTextStyle.LoadSynchronous();
+		RetVal.InlinedExpressiveText.Alignment = {EExpressiveTextVerticalAlignment::Top, EExpressiveTextHorizontalAlignment::Center};
+		RetVal.InlinedExpressiveText.Justification = ETextJustify::Center;
+		RetVal.InlinedExpressiveText.UseDefaultFontSize = true;
+		RetVal.InlinedExpressiveText.DefaultFontSize = 24;
+		RetVal.InlinedExpressiveText.Text = Message;
 		return RetVal;
 	}
 };
