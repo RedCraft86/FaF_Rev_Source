@@ -29,6 +29,6 @@ private:
 	UPROPERTY(EditAnywhere, Category = "MapWidget")
 		TArray<FGameplayTag> MapIndexes;
 
-	UPROPERTY()
+	UFUNCTION()
 		void ExitMapWidget();
 };
