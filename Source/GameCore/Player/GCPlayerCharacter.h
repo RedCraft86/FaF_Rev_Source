@@ -2,6 +2,7 @@
 
 #pragma once
 
+#include "GameplayTagContainer.h"
 #include "Sound/SoundBase.h"
 #include "Core/GCMiscTypes.h"
 #include "InputActionValue.h"
@@ -9,7 +10,6 @@
 #include "GameFramework/Character.h"
 #include "GameFramework/WorldSettings.h"
 #include "Interfaces/GCCharacterInterface.h"
-#include "Interfaces/GCDeviceInterface.h"
 #include "Interfaces/GCInteractionInterface.h"
 #include "GCPlayerCharacter.generated.h"
 
@@ -31,6 +31,7 @@ enum class EGCPlayerInputTypes : uint8
 	HideQuests,
 	Interact,
 	CloseEyes,
+	OpenMap, 
 	Equipment_Toggle,
 	Equipment_Charge,
 
@@ -128,6 +129,15 @@ struct GAMECORE_API FGCPlayerFootstepSounds
 		USoundBase* Sound = FoundPtr ? FoundPtr->LoadSynchronous() : nullptr;
 		return Sound ? Sound : DefaultSound.LoadSynchronous();
 	}
+
+	void LoadAndCache()
+	{
+		DefaultSound.LoadSynchronous();
+		for (TPair<TEnumAsByte<EPhysicalSurface>, TSoftObjectPtr<USoundBase>>& SoundMap : SurfaceSounds)
+		{
+			SoundMap.Value.LoadSynchronous();
+		}
+	}
 };
 
 USTRUCT(BlueprintType, DisplayName = "Player Footstep Settings")
@@ -177,6 +187,13 @@ struct GAMECORE_API FGCPlayerFootstepSettings
 	USoundBase* GetAudio(const bool bRun, const bool bSneak, const EPhysicalSurface Surface) const
 	{
 		return bRun ? RunSounds.GetSound(Surface) : bSneak ? SneakSounds.GetSound(Surface) : WalkSounds.GetSound(Surface);
+	}
+
+	void LoadAndCacheEverything()
+	{
+		WalkSounds.LoadAndCache();
+		RunSounds.LoadAndCache();
+		SneakSounds.LoadAndCache();
 	}
 };
 
@@ -310,6 +327,9 @@ public:
 	
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Settings|Ability")
 		bool bCanCloseEyes;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Settings|Ability")
+		FGameplayTag WorldMapID;
 	
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "References")
 		class AGCPhotoModeActor* PhotoModeActor;
@@ -365,6 +385,7 @@ public:
 	virtual void InputBinding_HideQuests(const FInputActionValue& InValue);
 	virtual void InputBinding_Interact(const FInputActionValue& InValue);
 	virtual void InputBinding_CloseEyes(const FInputActionValue& InValue);
+	virtual void InputBinding_OpenMap(const FInputActionValue& InValue);
 	virtual void InputBinding_Equipment_Toggle(const FInputActionValue& InValue);
 	virtual void InputBinding_Equipment_Charge(const FInputActionValue& InValue);
 
@@ -396,7 +417,7 @@ protected:
 		UGCLoadingWidget* LoadingWidget;
 
 	UPROPERTY(Transient)
-		class AGCPlayerController* PlayerController;
+		AGCPlayerController* PlayerController;
 	
 	bool bRunning;
 	bool bCrouching;
@@ -413,6 +434,7 @@ protected:
 	float StaminaDelta;
 	bool bStaminaPunished;
 	bool bHaveEyesClosed;
+	bool bOnWorldMap;
 	bool bShouldBeInteracting;
 
 	FTimerHandle WindowFocusTimer;

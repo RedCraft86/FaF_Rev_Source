@@ -318,6 +318,9 @@ void AGCPlayerCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputC
 		BIND_INPUT_ACTION(EnhancedInputComponent, CloseEyes, Started, InputBinding_CloseEyes);
 		BIND_INPUT_ACTION(EnhancedInputComponent, CloseEyes, Completed, InputBinding_CloseEyes);
 		BIND_INPUT_ACTION(EnhancedInputComponent, CloseEyes, Canceled, InputBinding_CloseEyes);
+		BIND_INPUT_ACTION(EnhancedInputComponent, OpenMap, Started, InputBinding_OpenMap);
+		BIND_INPUT_ACTION(EnhancedInputComponent, OpenMap, Completed, InputBinding_OpenMap);
+		BIND_INPUT_ACTION(EnhancedInputComponent, OpenMap, Canceled, InputBinding_OpenMap);
 		BIND_INPUT_ACTION(EnhancedInputComponent, Equipment_Toggle, Started, InputBinding_Equipment_Toggle);
 		BIND_INPUT_ACTION(EnhancedInputComponent, Equipment_Charge, Started, InputBinding_Equipment_Charge);
 		BIND_INPUT_ACTION(EnhancedInputComponent, Equipment_Charge, Completed, InputBinding_Equipment_Charge);
@@ -348,7 +351,8 @@ void AGCPlayerCharacter::InputBinding_Pause(const FInputActionValue& InValue)
 	
 	if (!PlayerController->IsPaused())
 	{
-		if (bCanPause && !LoadingWidget->IsInViewport() &&!bHaveEyesClosed && (IS_AT_STATE(Normal) || IS_AT_STATE(Inventory)))
+		if (bCanPause && !LoadingWidget->IsInViewport() && !bHaveEyesClosed && !bOnWorldMap
+			&& (IS_AT_STATE(Normal) || IS_AT_STATE(Inventory)))
 		{
 			PlayerController->PauseGame();
 		}
@@ -504,6 +508,27 @@ void AGCPlayerCharacter::InputBinding_CloseEyes(const FInputActionValue& InValue
 	}
 }
 
+void AGCPlayerCharacter::InputBinding_OpenMap(const FInputActionValue& InValue)
+{
+	if (!WorldMapID.IsValid())
+	{
+		PlayerController->GetUserWidget<UGCMessageWidget>()->QueueNotice(
+			FGCNoticeData{ INVTEXT("You do not have a map for this location"), 3.0f }, true);
+	}
+	
+	if (!bHiding && !bHaveEyesClosed && !IsGamePaused())
+	{
+		if (bOnWorldMap)
+		{
+			PlayerController->CloseMap();
+		}
+		else
+		{
+			PlayerController->OpenMap(WorldMapID);
+		}
+	}
+}
+
 void AGCPlayerCharacter::InputBinding_Equipment_Toggle(const FInputActionValue& InValue)
 {
 	if (!bHiding && !IsGamePaused() && IS_AT_STATE(Normal))
@@ -599,6 +624,7 @@ void AGCPlayerCharacter::SetEyesCloseState(const bool bNewState)
 void AGCPlayerCharacter::BeginPlay()
 {
 	Super::BeginPlay();
+	FootstepSounds.LoadAndCacheEverything();
 	UGCGameInstance::Get(this)->PlayerCharacter = this;
 	PlayerController = AGCPlayerController::Get(this);
 	PlayerController->PlayerCameraManager->SetManualCameraFade(

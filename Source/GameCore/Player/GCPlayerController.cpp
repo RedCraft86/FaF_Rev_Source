@@ -13,6 +13,7 @@
 #include "UserInterface/Gameplay/GCInventoryWidget.h"
 #include "UserInterface/Gameplay/GCNarrativeWidget.h"
 #include "UserInterface/Messaging/GCMessageWidget.h"
+#include "UserInterface/Gameplay/GCMapWidget.h"
 #include "UserSettings/GCUserSettings.h"
 #include "PhotoMode/GCPhotoModeActor.h"
 #include "Inventory/GCInspectionActor.h"
@@ -112,6 +113,32 @@ void AGCPlayerController::OpenInventory()
 void AGCPlayerController::CloseInventory()
 {
 	ExitInventoryInternal(nullptr);
+}
+
+void AGCPlayerController::OpenMap(const FGameplayTag MapID)
+{
+	UGCMapWidget* MapWidget = GetUserWidget<UGCMapWidget>();
+	if (!IsPaused() && !MapWidget->IsInViewport())
+	{
+		SetShowMouseCursor(true);
+		UWidgetBlueprintLibrary::SetInputMode_GameAndUIEx(this, MapWidget, EMouseLockMode::LockAlways);
+		MapWidget->SetMap(MapID);
+		MapWidget->AddWidget(nullptr, true);
+		GetUserWidget<UGCMessageWidget>()->SetWidgetHidden(true);
+		SetPause(true);
+	}
+}
+
+void AGCPlayerController::CloseMap()
+{
+	if (IsPaused())
+	{
+		SetPause(false);
+		SetShowMouseCursor(false);
+		UWidgetBlueprintLibrary::SetInputMode_GameOnly(this);
+		GetUserWidget<UGCMapWidget>()->RemoveWidget(nullptr, true);
+		GetUserWidget<UGCMessageWidget>()->SetWidgetHidden(false);
+	}
 }
 
 void AGCPlayerController::PauseGame()
