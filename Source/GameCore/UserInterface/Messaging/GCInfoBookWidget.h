@@ -25,7 +25,7 @@ struct GAMECORE_API FGCInfoPageData : public FTableRowBase
 {
 	GENERATED_BODY()
 	
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "InfoPageData")
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "InfoPageData", meta = (MultiLine = true))
 		FText Label;
 	
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "InfoPageData", meta = (ClampMin = 0.1f, UIMin = 0.1f))
