@@ -13,7 +13,6 @@
 #include "UserInterface/Gameplay/GCInventoryWidget.h"
 #include "UserInterface/Gameplay/GCNarrativeWidget.h"
 #include "UserInterface/Messaging/GCMessageWidget.h"
-#include "UserInterface/Gameplay/GCMapWidget.h"
 #include "UserSettings/GCUserSettings.h"
 #include "PhotoMode/GCPhotoModeActor.h"
 #include "Inventory/GCInspectionActor.h"
