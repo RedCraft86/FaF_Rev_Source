@@ -247,6 +247,7 @@ protected:
 		case EGCEventChangeType::Set:
 			for (AActor* Target : Targets)
 			{
+				if (!IsValid(Target)) continue;
 				Target->SetActorHiddenInGame(!ToState);
 			}
 			break;
@@ -254,6 +255,7 @@ protected:
 		case EGCEventChangeType::Toggle:
 			for (AActor* Target : Targets)
 			{
+				if (!IsValid(Target)) continue;
 				Target->SetActorHiddenInGame(!Target->IsHidden());
 			}
 			break;
@@ -290,6 +292,7 @@ protected:
 		case EGCEventChangeType::Set:
 			for (AActor* Target : Targets)
 			{
+				if (!IsValid(Target)) continue;
 				Target->SetActorEnableCollision(ToState);
 			}
 			break;
@@ -297,9 +300,50 @@ protected:
 		case EGCEventChangeType::Toggle:
 			for (AActor* Target : Targets)
 			{
+				if (!IsValid(Target)) continue;
 				Target->SetActorEnableCollision(!Target->GetActorEnableCollision());
 			}
 			break;
+		}
+	}
+};
+
+USTRUCT(BlueprintType, DisplayName = "Modify Tag")
+struct GAMECORE_API FGCActorTagEvent : public FGCEvent
+{
+	GENERATED_BODY()
+
+	FGCActorTagEvent()
+		: Tag(NAME_None)
+		, bRemoval(false)
+		, Targets({})
+	{}
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "ModifyTag")
+		FName Tag;
+		
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "ModifyTag")
+		bool bRemoval;
+	
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "ModifyTag")
+		TSet<AActor*> Targets;
+	
+protected:
+
+	virtual void RunEvent(const UObject* WorldContext) override
+	{
+		if (Tag.IsNone()) return;
+		for (AActor* Target : Targets)
+		{
+			if (!IsValid(Target)) continue;
+			if (bRemoval)
+			{
+				Target->Tags.Remove(Tag);
+			}
+			else
+			{
+				Target->Tags.AddUnique(Tag);
+			}
 		}
 	}
 };
