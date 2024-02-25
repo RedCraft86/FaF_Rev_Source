@@ -127,7 +127,7 @@ void UGCInfoBookWidget::OnContinueClicked()
 				ActiveWidget = nullptr;
 			}
 			
-			if (!Data->Widget)
+			if (Data->Widget)
 			{
 				if (ActiveWidget)
 				{
