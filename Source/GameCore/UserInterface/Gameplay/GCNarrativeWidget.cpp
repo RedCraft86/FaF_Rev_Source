@@ -179,6 +179,7 @@ UGCNarrativeWidget::UGCNarrativeWidget(const FObjectInitializer& ObjectInitializ
 	ReplyWidgetClass = NULL;
 	DialoguePlayerColor = FLinearColor::Yellow;
 	DialogueNPCColor = FLinearColor::White;
+	DialogueReplyPadding = {0.0f};
 	DialogueTextSettings.Text = FText::FromString(TEXT("Line"));
 	DialogueTextSettings.Alignment = {EExpressiveTextVerticalAlignment::Top, EExpressiveTextHorizontalAlignment::Center};
 	DialogueTextSettings.Justification = ETextJustify::Center;
@@ -398,6 +399,7 @@ void UGCNarrativeWidget::OnDialogueRepliesAvailable(UDialogue* Dialogue, const T
 	for (UDialogueNode_Player* Reply : TempReplies)
 	{
 		UGCDialogueOptionWidget* Widget = CreateWidget<UGCDialogueOptionWidget>(this, ReplyWidgetClass);
+		Widget->SetPadding(DialogueReplyPadding);
 		Widget->InitWidget(this, Dialogue, Reply);
 
 		DialogueReplies.Add(Reply->GetID(), Widget);

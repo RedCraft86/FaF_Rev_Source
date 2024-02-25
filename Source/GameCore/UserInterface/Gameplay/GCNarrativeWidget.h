@@ -154,6 +154,9 @@ public:
 		FLinearColor DialogueNPCColor;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "NarrativeWidget")
+		FMargin DialogueReplyPadding;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "NarrativeWidget")
 		FExpressiveTextFields DialogueTextSettings;
 
 	UFUNCTION(BlueprintImplementableEvent, meta = (ForceAsFunction = true))
