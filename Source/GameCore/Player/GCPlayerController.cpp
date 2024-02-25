@@ -131,13 +131,14 @@ void AGCPlayerController::OpenMap(const FGameplayTag MapID)
 
 void AGCPlayerController::CloseMap()
 {
-	if (IsPaused())
+	UGCMapWidget* MapWidget = GetUserWidget<UGCMapWidget>();
+	if (IsPaused() && MapWidget->IsInViewport())
 	{
 		SetPause(false);
 		SetShowMouseCursor(false);
 		UWidgetBlueprintLibrary::SetInputMode_GameOnly(this);
-		GetUserWidget<UGCMapWidget>()->RemoveWidget(nullptr, true);
 		GetUserWidget<UGCMessageWidget>()->SetWidgetHidden(false);
+		MapWidget->RemoveWidget(nullptr, true);
 	}
 }
 

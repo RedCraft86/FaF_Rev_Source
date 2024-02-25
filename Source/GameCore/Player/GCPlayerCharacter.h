@@ -328,7 +328,7 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Settings|Ability")
 		bool bCanCloseEyes;
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Settings|Ability")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Settings|Ability")
 		FGameplayTag WorldMapID;
 	
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "References")
@@ -385,7 +385,7 @@ public:
 	virtual void InputBinding_HideQuests(const FInputActionValue& InValue);
 	virtual void InputBinding_Interact(const FInputActionValue& InValue);
 	virtual void InputBinding_CloseEyes(const FInputActionValue& InValue);
-	virtual void InputBinding_OpenMap(const FInputActionValue& InValue);
+	virtual void InputBinding_WorldMap(const FInputActionValue& InValue);
 	virtual void InputBinding_Equipment_Toggle(const FInputActionValue& InValue);
 	virtual void InputBinding_Equipment_Charge(const FInputActionValue& InValue);
 
