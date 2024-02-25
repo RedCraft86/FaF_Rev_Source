@@ -39,7 +39,7 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Settings", meta = (BaseStruct = "/Script/GameCore.GCEvent", ExcludeBaseStruct))
 		TArray<FInstancedStruct> Events;
 
-	UPROPERTY(BlueprintAssignable, meta = (DisplayName = "On Interacted"))
+	UPROPERTY(BlueprintAssignable, meta = (DisplayName = "On Triggered"))
 		FBPOnTriggered OnTriggeredBP;
 	
 	UFUNCTION(BlueprintCallable, Category = "Interaction Field")
