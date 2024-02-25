@@ -115,33 +115,6 @@ void AGCPlayerController::CloseInventory()
 	ExitInventoryInternal(nullptr);
 }
 
-void AGCPlayerController::OpenMap(const FGameplayTag MapID)
-{
-	UGCMapWidget* MapWidget = GetUserWidget<UGCMapWidget>();
-	if (!IsPaused() && !MapWidget->IsInViewport())
-	{
-		SetShowMouseCursor(true);
-		UWidgetBlueprintLibrary::SetInputMode_GameAndUIEx(this, MapWidget, EMouseLockMode::LockAlways);
-		MapWidget->SetMap(MapID);
-		MapWidget->AddWidget(nullptr, true);
-		GetUserWidget<UGCMessageWidget>()->SetWidgetHidden(true);
-		SetPause(true);
-	}
-}
-
-void AGCPlayerController::CloseMap()
-{
-	UGCMapWidget* MapWidget = GetUserWidget<UGCMapWidget>();
-	if (IsPaused() && MapWidget->IsInViewport())
-	{
-		SetPause(false);
-		SetShowMouseCursor(false);
-		UWidgetBlueprintLibrary::SetInputMode_GameOnly(this);
-		GetUserWidget<UGCMessageWidget>()->SetWidgetHidden(false);
-		MapWidget->RemoveWidget(nullptr, true);
-	}
-}
-
 void AGCPlayerController::PauseGame()
 {
 	UGCPauseWidget* PauseWidget = GetUserWidget<UGCPauseWidget>();

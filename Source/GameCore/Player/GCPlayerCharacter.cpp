@@ -318,9 +318,6 @@ void AGCPlayerCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputC
 		BIND_INPUT_ACTION(EnhancedInputComponent, CloseEyes, Started, InputBinding_CloseEyes);
 		BIND_INPUT_ACTION(EnhancedInputComponent, CloseEyes, Completed, InputBinding_CloseEyes);
 		BIND_INPUT_ACTION(EnhancedInputComponent, CloseEyes, Canceled, InputBinding_CloseEyes);
-		BIND_INPUT_ACTION(EnhancedInputComponent, OpenMap, Started, InputBinding_WorldMap);
-		BIND_INPUT_ACTION(EnhancedInputComponent, OpenMap, Completed, InputBinding_WorldMap);
-		BIND_INPUT_ACTION(EnhancedInputComponent, OpenMap, Canceled, InputBinding_WorldMap);
 		BIND_INPUT_ACTION(EnhancedInputComponent, Equipment_Toggle, Started, InputBinding_Equipment_Toggle);
 		BIND_INPUT_ACTION(EnhancedInputComponent, Equipment_Charge, Started, InputBinding_Equipment_Charge);
 		BIND_INPUT_ACTION(EnhancedInputComponent, Equipment_Charge, Completed, InputBinding_Equipment_Charge);
@@ -351,7 +348,7 @@ void AGCPlayerCharacter::InputBinding_Pause(const FInputActionValue& InValue)
 	
 	if (!PlayerController->IsPaused())
 	{
-		if (bCanPause && !LoadingWidget->IsInViewport() && !bHaveEyesClosed && !bOnWorldMap
+		if (bCanPause && !LoadingWidget->IsInViewport() && !bHaveEyesClosed
 			&& (IS_AT_STATE(Normal) || IS_AT_STATE(Inventory)))
 		{
 			PlayerController->PauseGame();
@@ -505,27 +502,6 @@ void AGCPlayerCharacter::InputBinding_CloseEyes(const FInputActionValue& InValue
 	if (!bHiding && IS_AT_STATE(Normal))
 	{
 		SetEyesCloseState(bCanCloseEyes && InValue.Get<bool>());
-	}
-}
-
-void AGCPlayerCharacter::InputBinding_WorldMap(const FInputActionValue& InValue)
-{
-	if (!WorldMapID.IsValid())
-	{
-		PlayerController->GetUserWidget<UGCMessageWidget>()->QueueNotice(
-			FGCNoticeData{ INVTEXT("You do not have a map for this location"), 3.0f }, true);
-	}
-	
-	if (!bHiding && !bHaveEyesClosed && !IsGamePaused())
-	{
-		if (bOnWorldMap)
-		{
-			PlayerController->CloseMap();
-		}
-		else
-		{
-			PlayerController->OpenMap(WorldMapID);
-		}
 	}
 }
 
@@ -1011,7 +987,6 @@ void AGCPlayerCharacter::ResetPlayer()
 	FieldOfView.ClearModifiers();
 	FieldOfViewValue.SetTarget(FieldOfView.GetValue());
 	TargetCameraSway = FVector2D::ZeroVector;
-	WorldMapID = {};
 	
 	SetCanInteract(true);
 	SetCanTurn(true);
@@ -1026,8 +1001,6 @@ void AGCPlayerCharacter::ResetPlayer()
 	SetLeanState(EGCLeanState::None);
 	SetStaminaPercent(1.0f);
 	SetEyesCloseState(false);
-	
-	PlayerController->CloseMap();
 }
 
 void AGCPlayerCharacter::SetWorldDevice(AActor* InActor)

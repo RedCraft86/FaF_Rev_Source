@@ -78,12 +78,6 @@ public:
 
 	UFUNCTION(BlueprintCallable, Category = "PlayerController")
 		void CloseInventory();
-
-	UFUNCTION(BlueprintCallable, Category = "PlayerController")
-		void OpenMap(const FGameplayTag MapID);
-
-	UFUNCTION(BlueprintCallable, Category = "PlayerController")
-		void CloseMap();
 	
 	UFUNCTION(BlueprintCallable, Category = "PlayerController")
 		void PauseGame();

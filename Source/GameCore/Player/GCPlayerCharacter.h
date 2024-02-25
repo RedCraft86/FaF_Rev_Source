@@ -327,9 +327,6 @@ public:
 	
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Settings|Ability")
 		bool bCanCloseEyes;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Settings|Ability")
-		FGameplayTag WorldMapID;
 	
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "References")
 		class AGCPhotoModeActor* PhotoModeActor;
@@ -385,7 +382,6 @@ public:
 	virtual void InputBinding_HideQuests(const FInputActionValue& InValue);
 	virtual void InputBinding_Interact(const FInputActionValue& InValue);
 	virtual void InputBinding_CloseEyes(const FInputActionValue& InValue);
-	virtual void InputBinding_WorldMap(const FInputActionValue& InValue);
 	virtual void InputBinding_Equipment_Toggle(const FInputActionValue& InValue);
 	virtual void InputBinding_Equipment_Charge(const FInputActionValue& InValue);
 
@@ -434,7 +430,6 @@ protected:
 	float StaminaDelta;
 	bool bStaminaPunished;
 	bool bHaveEyesClosed;
-	bool bOnWorldMap;
 	bool bShouldBeInteracting;
 
 	FTimerHandle WindowFocusTimer;
