@@ -2,7 +2,6 @@
 
 #pragma once
 
-#include "GameplayTagContainer.h"
 #include "Sound/SoundBase.h"
 #include "Core/GCMiscTypes.h"
 #include "InputActionValue.h"
@@ -31,7 +30,6 @@ enum class EGCPlayerInputTypes : uint8
 	HideQuests,
 	Interact,
 	CloseEyes,
-	OpenMap, 
 	Equipment_Toggle,
 	Equipment_Charge,
 
