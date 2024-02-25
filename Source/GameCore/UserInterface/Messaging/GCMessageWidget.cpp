@@ -61,7 +61,7 @@ UGCMessageWidget::UGCMessageWidget(const FObjectInitializer& ObjectInitializer)
 void UGCMessageWidget::QueueNoticeText(const FText InText, const float InTime, const bool bOverrideQueue)
 {
 	FGCNoticeData Data;
-	Data.Text.Text = InText;
+	Data.TextBasic = InText;
 	Data.DisplayTime = InTime;
 	LastNoticeObject = nullptr;
 	QueueNotice(Data, bOverrideQueue);
