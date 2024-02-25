@@ -61,7 +61,8 @@ private:
 		if (NextUUID > 100000) { NextUUID = 0; }
 		return NextUUID++;
 	}
-	
+
+	bool DoesMapExistInNewData(const TSoftObjectPtr<UWorld>& Map) const;
 	void BeginUnloadWorld();
 	void BeginLoadWorld();
 

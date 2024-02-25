@@ -121,6 +121,19 @@ bool UGCSequenceManager::DoesSupportWorldType(const EWorldType::Type WorldType) 
 		WorldType == EWorldType::GamePreview || WorldType == EWorldType::GameRPC;
 }
 
+bool UGCSequenceManager::DoesMapExistInNewData(const TSoftObjectPtr<UWorld>& Map) const
+{
+	const FGCSequenceData NewData = GetGameSequenceData(ThisSequenceID);
+	if (NewData.GetLevelName() == *FPackageName::ObjectPathToPackageName(Map.ToString())) return true;
+	for (const TSoftObjectPtr<UWorld> Level : NewData.PreloadLevels)
+	{
+		if (*FPackageName::ObjectPathToPackageName(Level.ToString()) == *FPackageName::ObjectPathToPackageName(Map.ToString())) 
+			return true;
+	}
+
+	return false;
+}
+
 void UGCSequenceManager::BeginUnloadWorld()
 {
 	if (UGCGameMusicManager* MusicManager = UGCGameMusicManager::Get(this))
@@ -136,11 +149,9 @@ void UGCSequenceManager::BeginUnloadWorld()
 		if (Data.InventoryKey.IsValid() && IsValid(Inventory))
 		{
 			UE_LOG(GameSequence, Log, TEXT("Saving inventory"));
-		
-			const FGCInvSaveData InvData = Inventory->SaveData();
 			if (const UGCSaveManager* SaveManager = UGCSaveManager::Get(this))
 			{
-				SaveManager->GetGameSaveObject()->InventoryData.Add(Data.InventoryKey, InvData);
+				SaveManager->GetGameSaveObject()->InventoryData.Add(Data.InventoryKey, Inventory->SaveData());
 			}
 		}
 		
@@ -150,10 +161,24 @@ void UGCSequenceManager::BeginUnloadWorld()
 			Narrative->ForgetQuest(Data.QuestClass.LoadSynchronous());
 		}
 
-		LoadPackageAsync(Data.Level.GetLongPackageName());
-		for (const TSoftObjectPtr<UWorld>& Lvl : Data.PreloadLevels)
+		for (const TSoftObjectPtr<UWorld> Level : Data.PreloadLevels)
 		{
-			LoadPackageAsync(Lvl.GetLongPackageName());
+			if (DoesMapExistInNewData(Level))
+			{
+				UE_LOG(GameSequence, Log, TEXT("Skipping unload of additional level '%s'"), *Level.GetAssetName());
+			}
+			else
+			{
+				FLatentActionInfo Info;
+				Info.CallbackTarget = nullptr;
+				Info.ExecutionFunction = NAME_None;
+				Info.UUID = GetNextUUID();
+				Info.Linkage = 0;
+
+				UE_LOG(GameSequence, Log, TEXT("Unloading additional level '%s'"), *Level.GetAssetName());
+				UGameplayStatics::LoadStreamLevel(this, *FPackageName::ObjectPathToPackageName(Level.ToString()),
+					true, false, Info);
+			}
 		}
 
 		ULevelStreaming* LastLevel = UGameplayStatics::GetStreamingLevel(this, Data.GetLevelName());
@@ -161,7 +186,18 @@ void UGCSequenceManager::BeginUnloadWorld()
 		{
 			UE_LOG(GameSequence, Log, TEXT("Calling unload event for level '%s'"), *Data.Level.GetAssetName());
 			GCSequence::OnUnloadWorld(LastLevel->GetLevelScriptActor());
+		}
 		
+		if (DoesMapExistInNewData(Data.Level))
+		{
+			FTimerHandle Handle;
+			GetWorld()->GetTimerManager().SetTimer(Handle, [this, Data]()
+			{
+				UE_LOG(GameSequence, Log, TEXT("Skipping unload of level '%s'"), *Data.Level.GetAssetName());
+			}, 1.0f, false);
+		}
+		else
+		{
 			FTimerHandle Handle;
 			GetWorld()->GetTimerManager().SetTimer(Handle, [this, Data]()
 			{
