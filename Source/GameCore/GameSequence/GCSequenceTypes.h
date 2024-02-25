@@ -21,7 +21,8 @@ namespace ValueIDs
 	static FString WalkMulti(TEXT("WalkMulti"));
 	static FString RunSpeed(TEXT("RunSpeed"));
 	static FString LightIntensity(TEXT("LightIntensity"));
-
+	static FString LightRange(TEXT("LightRange"));
+	
 	namespace Defaults
 	{
 		static bool CanRun(true);
@@ -31,6 +32,7 @@ namespace ValueIDs
 		static float WalkMulti(1.0f);
 		static float RunSpeed(650.0f);
 		static float LightIntensity(0.15f);
+		static float LightRange(400);
 	}
 }
 
@@ -77,14 +79,17 @@ struct GAMECORE_API FGCSequenceData : public FTableRowBase
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "SequenceData")
 		TSet<FGCInvItemID> EnsureItems;
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Player|Abilities")
-		bool bCanCloseEyes;
-
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Player")
 		TMap<FString, bool> CustomBooleanData;
 	
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Player")
 		TMap<FString, float> CustomNumberData;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Player|Abilities")
+		bool bCanCloseEyes;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Player|Abilities")
+		TSubclassOf<UUserWidget> MapWidget;
 	
 	FGCSequenceData()
 		: Label(TEXT(""))
@@ -96,6 +101,7 @@ struct GAMECORE_API FGCSequenceData : public FTableRowBase
 		, ChaseMusic(nullptr)
 		, EnsureItems({})
 		, bCanCloseEyes(false)
+		, MapWidget(NULL)
 	{
 		CustomBooleanData = {
 			{ValueIDs::CanRun, ValueIDs::Defaults::CanRun},
@@ -106,7 +112,8 @@ struct GAMECORE_API FGCSequenceData : public FTableRowBase
 			{ValueIDs::MaxStamina, ValueIDs::Defaults::MaxStamina},
 			{ValueIDs::WalkMulti, ValueIDs::Defaults::WalkMulti},
 			{ValueIDs::RunSpeed, ValueIDs::Defaults::RunSpeed},
-			{ValueIDs::LightIntensity, ValueIDs::Defaults::LightIntensity}
+			{ValueIDs::LightIntensity, ValueIDs::Defaults::LightIntensity},
+			{ValueIDs::LightRange, ValueIDs::Defaults::LightRange}
 		};
 	}
 
