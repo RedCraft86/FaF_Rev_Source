@@ -258,7 +258,7 @@ void UGCSequenceManager::OnWorldUnloaded()
 	const FGCSequenceData Data = GetGameSequenceData(LastSequenceID);
 	if (Data.IsValidData())
 	{
-		UE_LOG(GameSequence, Log, TEXT("Unloaded level '%s'"), *Data.Level.GetAssetName());
+		UE_LOG(GameSequence, Log, TEXT("Unloaded (or skipped unloading) level '%s'"), *Data.Level.GetAssetName());
 	}
 
 	PlayerController->PlayerCameraManager->SetManualCameraFade(1.0f, FLinearColor::Black, true);
