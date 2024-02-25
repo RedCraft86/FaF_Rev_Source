@@ -1,7 +1,6 @@
 ﻿// Copyright (C) RedCraft86 (Tayzar). All Rights Reserved.
 
 #include "GCMapWidget.h"
-
 #include "Components/Button.h"
 #include "Components/WidgetSwitcher.h"
 #include "Player/GCPlayerController.h"
