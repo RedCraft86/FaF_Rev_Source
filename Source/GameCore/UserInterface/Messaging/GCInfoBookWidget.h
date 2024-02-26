@@ -57,7 +57,7 @@ struct GAMECORE_API FGCInfoPageData : public FTableRowBase
 		FExpressiveTextSelector RetVal;
 		RetVal.InlinedExpressiveText.DefaultStyle = UGCSettings::Get()->BaseTextStyle.LoadSynchronous();
 		RetVal.InlinedExpressiveText.Alignment = {EExpressiveTextVerticalAlignment::Top, EExpressiveTextHorizontalAlignment::Left};
-		RetVal.InlinedExpressiveText.Justification = ETextJustify::Center;
+		RetVal.InlinedExpressiveText.Justification = ETextJustify::Left;
 		RetVal.InlinedExpressiveText.UseDefaultFontSize = true;
 		RetVal.InlinedExpressiveText.DefaultFontSize = 24;
 		RetVal.InlinedExpressiveText.Text = Message;

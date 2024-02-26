@@ -14,11 +14,12 @@
 #include "GCMessageWidget.h"
 
 UGCInfoBookWidget::UGCInfoBookWidget(const FObjectInitializer& ObjectInitializer)
-	: UGCUserWidget(ObjectInitializer)
+	: UGCUserWidget(ObjectInitializer), WidgetBox(nullptr), ContinueText(nullptr), BackgroundContent(nullptr),
+	  ContinueFadeAnim(nullptr)
 {
 	WidgetZOrder = 14;
 	bAutoAddToViewport = false;
-	
+
 	ContinueButton = nullptr;
 	LabelText = nullptr;
 	MessageBox = nullptr;
