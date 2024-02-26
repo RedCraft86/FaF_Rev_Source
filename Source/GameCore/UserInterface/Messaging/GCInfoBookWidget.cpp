@@ -27,6 +27,7 @@ UGCInfoBookWidget::UGCInfoBookWidget(const FObjectInitializer& ObjectInitializer
 	ContentFadeAnim = nullptr;
 	ImageMsgHeight = 200.0f;
 
+	bHasPrev = false;
 	PageTable = nullptr;
 	ActiveWidget = nullptr;
 	CurrentPage = NAME_None;
@@ -61,11 +62,17 @@ void UGCInfoBookWidget::NativeConstruct()
 	PlayerController->GetUserWidget<UGCMessageWidget>()->SetWidgetHidden(true);
 	PlayerController->GetUserWidget<UGCGameplayWidget>()->SetWidgetHidden(true);
 	PlayerController->GetUserWidget<UGCNarrativeWidget>()->SetWidgetHidden(true);
-			
-	UWidgetBlueprintLibrary::SetInputMode_GameAndUIEx(PlayerController, this,
-		EMouseLockMode::LockAlways, false);
-			
-	PlayerController->SetShowMouseCursor(true);
+
+	bHasPrev = false;
+	if (!PlayerController->bShowMouseCursor)
+	{
+		UWidgetBlueprintLibrary::SetInputMode_GameAndUIEx(PlayerController, this,
+			EMouseLockMode::LockAlways, false);
+				
+		PlayerController->SetShowMouseCursor(true);
+	}
+	else bHasPrev = true;
+	
 	PlayerController->SetPause(true);
 }
 
@@ -101,9 +108,12 @@ void UGCInfoBookWidget::RemoveWidget(const TFunction<void()>& OnFinished, const 
 		PlayerController->GetUserWidget<UGCMessageWidget>()->SetWidgetHidden(false);
 		PlayerController->GetUserWidget<UGCGameplayWidget>()->SetWidgetHidden(false);
 		PlayerController->GetUserWidget<UGCNarrativeWidget>()->SetWidgetHidden(false);
-		
-		UWidgetBlueprintLibrary::SetInputMode_GameOnly(PlayerController);
-		PlayerController->SetShowMouseCursor(false);
+
+		if (!bHasPrev)
+		{
+			UWidgetBlueprintLibrary::SetInputMode_GameOnly(PlayerController);
+			PlayerController->SetShowMouseCursor(false);
+		}
 		PlayerController->SetPause(false);
 	}
 }

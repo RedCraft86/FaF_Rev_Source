@@ -131,7 +131,8 @@ protected:
 
 	UPROPERTY(Transient)
 		UUserWidget* ActiveWidget;
-	
+
+	bool bHasPrev;
 	FName CurrentPage;
 	TQueue<FName> Pages;
 	float ContinueWaitTime;
