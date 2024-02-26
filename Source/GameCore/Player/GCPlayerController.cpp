@@ -324,8 +324,10 @@ void AGCPlayerController::OnDynamicSettingsApply(UGCUserSettings* InUserSettings
 void AGCPlayerController::OnDialogueStarted(UDialogue* Dialogue)
 {
 	EnterScriptedEvent(false);
-	GCCharacter::OnEnteredDialogue(Dialogue->Instigator.Get());
-	PlayerCharacter->SetLockOnTarget(GCCharacter::GetLookAtComponent(Dialogue->Instigator.Get()));
+	AActor* DialogueActor = Dialogue->Instigator;
+	GCCharacter::OnEnteredDialogue(DialogueActor);
+	PlayerCharacter->AddFieldOfViewModifier(TEXT("Dialogue"), -10.0f);
+	PlayerCharacter->SetLockOnTarget(GCCharacter::GetLookAtComponent(DialogueActor));
 	GetUserWidget<UGCGameplayWidget>()->SetWidgetHidden(true);
 	GetUserWidget<UGCMessageWidget>()->SetWidgetHidden(true);
 	
@@ -337,7 +339,8 @@ void AGCPlayerController::OnDialogueStarted(UDialogue* Dialogue)
 void AGCPlayerController::OnDialogueFinished(UDialogue* Dialogue)
 {
 	ExitScriptedEvent();
-	GCCharacter::OnExitedDialogue(Dialogue->Instigator.Get());
+	GCCharacter::OnExitedDialogue(Dialogue->Instigator);
+	PlayerCharacter->RemoveFieldOfViewModifier(TEXT("Dialogue"));
 	PlayerCharacter->SetLockOnTarget(nullptr);
 	GetUserWidget<UGCGameplayWidget>()->SetWidgetHidden(false);
 	GetUserWidget<UGCMessageWidget>()->SetWidgetHidden(false);
