@@ -126,10 +126,12 @@ void UGCInfoBookWidget::OnContinueClicked()
 	ContinueText->SetVisibility(ESlateVisibility::Collapsed);
 	if (Pages.Dequeue(CurrentPage) && PageTable)
 	{
-		if (const FGCInfoPageData* Data = PageTable->FindRow<FGCInfoPageData>(CurrentPage, GetName()))
+		if (const FGCInfoPageData* DataPtr = PageTable->FindRow<FGCInfoPageData>(CurrentPage, GetName()))
 		{
-			LabelText->SetText(Data->Label);
-			BackgroundContent->SetVisibility(Data->bShowBackground ? ESlateVisibility::Visible : ESlateVisibility::Collapsed);
+			const FGCInfoPageData Data = DataPtr ? *DataPtr : FGCInfoPageData{};
+			
+			LabelText->SetText(Data.Label);
+			BackgroundContent->SetVisibility(Data.bShowBackground ? ESlateVisibility::Visible : ESlateVisibility::Collapsed);
 
 			WidgetBox->ClearChildren();
 			if (ActiveWidget)
@@ -138,7 +140,7 @@ void UGCInfoBookWidget::OnContinueClicked()
 				ActiveWidget = nullptr;
 			}
 			
-			if (Data->Widget)
+			if (Data.Widget)
 			{
 				if (ActiveWidget)
 				{
@@ -146,19 +148,22 @@ void UGCInfoBookWidget::OnContinueClicked()
 					ActiveWidget = nullptr;
 				}
 				
-				ActiveWidget = CreateWidget<UUserWidget>(this, Data->Widget);
+				ActiveWidget = CreateWidget<UUserWidget>(this, Data.Widget);
 				WidgetBox->AddChild(ActiveWidget);
 			}
 			else
 			{
-				ContentImage->SetBrushFromTexture(Data->Image.LoadSynchronous(), true);
-				ContentBox->SetVisibility(IsValid(ContentImage->GetBrush().GetResourceObject()) ?
-					ESlateVisibility::SelfHitTestInvisible : ESlateVisibility::Collapsed);
+				if (UTexture2D* Tex = Data.Image.LoadSynchronous())
+				{
+					ContentImage->SetBrushFromTexture(Tex, true);
+					ContentImage->SetDesiredSizeOverride({(float)Tex->GetSizeX(), (float)Tex->GetSizeY()});
+				}
+				ContentBox->SetVisibility(Data.Image.IsValid() ? ESlateVisibility::Visible : ESlateVisibility::Collapsed);
 
-				const bool bEmptyText = Data->HasEmptyMessage();
-				SetMessageText(Data->GetMessage(), bEmptyText ? ESlateVisibility::Collapsed : ESlateVisibility::Visible);
+				const bool bEmptyText = Data.HasEmptyMessage();
+				SetMessageText(Data.GetMessage(), bEmptyText ? ESlateVisibility::Collapsed : ESlateVisibility::Visible);
 			
-				if (Data->Image && !bEmptyText)
+				if (Data.Image && !bEmptyText)
 				{
 					MessageBox->SetHeightOverride(ImageMsgHeight);
 				}
@@ -169,7 +174,7 @@ void UGCInfoBookWidget::OnContinueClicked()
 			}
 
 			PlayAnimation(ContentFadeAnim);
-			ContinueWaitTime = FMath::Max(Data->MinWaitTime, 0.1f);
+			ContinueWaitTime = FMath::Max(Data.MinWaitTime, 0.1f);
 		}
 		else
 		{
