@@ -47,7 +47,7 @@ struct GAMECORE_API FGCInfoPageData : public FTableRowBase
 		: Label(FText::FromString("Placeholder"))
 		, Message(FText::FromString("Placeholder"))
 		, Image(nullptr)
-		, bShowBackground(false)
+		, bShowBackground(true)
 		, MinWaitTime(1.0f)
 	{}
 
