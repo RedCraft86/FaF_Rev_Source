@@ -151,7 +151,7 @@ void UGCInfoBookWidget::OnContinueClicked()
 			}
 			else
 			{
-				ContentImage->SetBrushFromTexture(Data->Image.LoadSynchronous());
+				ContentImage->SetBrushFromTexture(Data->Image.LoadSynchronous(), true);
 				ContentBox->SetVisibility(IsValid(ContentImage->GetBrush().GetResourceObject()) ?
 					ESlateVisibility::SelfHitTestInvisible : ESlateVisibility::Collapsed);
 
