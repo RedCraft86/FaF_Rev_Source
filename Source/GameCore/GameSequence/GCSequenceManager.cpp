@@ -132,6 +132,8 @@ bool UGCSequenceManager::DoesMapExistInNewData(const TSoftObjectPtr<UWorld>& Map
 
 void UGCSequenceManager::BeginUnloadWorld()
 {
+	PreloadedObjects.Empty();
+	
 	if (UGCGameMusicManager* MusicManager = UGCGameMusicManager::Get(this))
 	{
 		UE_LOG(GameSequence, Log, TEXT("Stopping world music..."));
@@ -172,8 +174,8 @@ void UGCSequenceManager::BeginUnloadWorld()
 				Info.Linkage = 0;
 
 				UE_LOG(GameSequence, Log, TEXT("Unloading additional level '%s'"), *Level.GetAssetName());
-				UGameplayStatics::LoadStreamLevel(this, *FPackageName::ObjectPathToPackageName(Level.ToString()),
-					true, false, Info);
+				UGameplayStatics::UnloadStreamLevel(this, *FPackageName::ObjectPathToPackageName(Level.ToString()),
+					Info, false);
 			}
 		}
 
@@ -220,6 +222,11 @@ void UGCSequenceManager::BeginLoadWorld()
 	const FGCSequenceData Data = GetGameSequenceData(ThisSequenceID);
 	if (Data.IsValidData())
 	{
+		for (const TSoftObjectPtr<UObject>& ObjPtr : Data.PreloadObjects)
+		{
+			PreloadedObjects.Add(ObjPtr.LoadSynchronous());
+		}
+		
 		FLatentActionInfo ActionInfo;
 		ActionInfo.CallbackTarget = this;
 		ActionInfo.ExecutionFunction = FName("OnWorldLoaded");

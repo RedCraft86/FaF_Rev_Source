@@ -60,6 +60,9 @@ struct GAMECORE_API FGCSequenceData : public FTableRowBase
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "SequenceData")
 		TSet<TSoftObjectPtr<UWorld>> PreloadLevels;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "SequenceData")
+		TSet<TSoftObjectPtr<UObject>> PreloadObjects;
 	
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "SequenceData")
 		FGameplayTag TeleporterTag;

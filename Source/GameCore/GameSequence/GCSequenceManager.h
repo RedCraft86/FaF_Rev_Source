@@ -50,6 +50,9 @@ private:
 	UPROPERTY(Transient)
 		class AGCPlayerController* PlayerController;
 
+	UPROPERTY(Transient)
+		TSet<UObject*> PreloadedObjects;
+
 	int32 NextUUID;
 	bool bInProgress;
 	FName ThisSequenceID;
