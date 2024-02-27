@@ -750,7 +750,7 @@ void AGCPlayerCharacter::TickStamina()
 	const bool bShouldDrain = IsMoving() && bRunning && !GetCharacterMovement()->IsFalling();
 	StaminaDelta = bShouldDrain ? -StaminaDrain : IsMoving() ? StaminaGain.Y : StaminaGain.X;
 	CurrentStamina = FMath::Clamp(StaminaDelta + CurrentStamina, 0.0f, MaxStamina);
-	if (CurrentStamina < 1.0f && !bStaminaPunished)
+	if (CurrentStamina < 0.1f && !bStaminaPunished)
 	{
 		SetRunState(false);
 		bStaminaPunished = true;
