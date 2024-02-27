@@ -14,6 +14,7 @@ class GAMECORE_API AGCPlayerController : public APlayerController
 	GENERATED_BODY()
 
 	friend class AGCPlayerCharacter;
+	friend class UGCInfoBookWidget;
 	
 public:
 
@@ -84,6 +85,12 @@ public:
 
 	UFUNCTION(BlueprintCallable, Category = "PlayerController")
 		void UnpauseGame();
+
+	UFUNCTION(BlueprintCallable, Category = "InfoBookWidget")
+		void QueuePage(const FGCInfoPageID PageID);
+	
+	UFUNCTION(BlueprintCallable, Category = "InfoBookWidget", meta = (AutoCreateRefTerm = "PageIDs"))
+		void QueuePages(const TArray<FGCInfoPageID>& PageIDs);
 	
 	template<typename T = UGCUserWidget>
 	FORCEINLINE T* GetUserWidget() const

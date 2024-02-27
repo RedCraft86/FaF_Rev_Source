@@ -13,6 +13,7 @@
 #include "UserInterface/Gameplay/GCInventoryWidget.h"
 #include "UserInterface/Gameplay/GCNarrativeWidget.h"
 #include "UserInterface/Messaging/GCMessageWidget.h"
+#include "UserInterface/Messaging/GCInfoBookWidget.h"
 #include "UserSettings/GCUserSettings.h"
 #include "PhotoMode/GCPhotoModeActor.h"
 #include "Inventory/GCInspectionActor.h"
@@ -148,6 +149,36 @@ void AGCPlayerController::UnpauseGame()
 		GetUserWidget<UGCPauseWidget>()->RemoveWidget(nullptr, true);
 		GetUserWidget<UGCMessageWidget>()->SetWidgetHidden(false);
 	}
+}
+
+void AGCPlayerController::QueuePage(const FGCInfoPageID PageID)
+{ 
+	TSubclassOf<UGCUserWidget> Class;
+	for (const TSubclassOf<UGCUserWidget> Widget : WidgetClasses)
+	{
+		if (Widget && Widget->IsChildOf(UGCInfoBookWidget::StaticClass()))
+			Class = Widget;
+	}
+	
+	WidgetObjects.Remove(GetUserWidget<UGCInfoBookWidget>());
+	UGCInfoBookWidget* Widget = UGCInfoBookWidget::Create<UGCInfoBookWidget>(this, Class);
+	Widget->QueuePage(PageID);
+	WidgetObjects.Add(Widget);
+}
+
+void AGCPlayerController::QueuePages(const TArray<FGCInfoPageID>& PageIDs)
+{
+	TSubclassOf<UGCUserWidget> Class;
+	for (const TSubclassOf<UGCUserWidget> Widget : WidgetClasses)
+	{
+		if (Widget && (*Widget)->IsChildOf(UGCInfoBookWidget::StaticClass()))
+			Class = Widget;
+	}
+	
+	WidgetObjects.Remove(GetUserWidget<UGCInfoBookWidget>());
+	UGCInfoBookWidget* Widget = UGCInfoBookWidget::Create<UGCInfoBookWidget>(this, Class);
+	Widget->QueuePages(PageIDs);
+	WidgetObjects.Add(Widget);
 }
 
 void AGCPlayerController::Tick(float DeltaTime)

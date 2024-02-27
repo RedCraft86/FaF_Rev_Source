@@ -103,6 +103,7 @@ void UGCInfoBookWidget::RemoveWidget(const TFunction<void()>& OnFinished, const 
 {
 	Super::RemoveWidget(OnFinished, bFade);
 
+	PlayerController->WidgetObjects.Remove(this);
 	if (bIsRemoving)
 	{
 		PlayerController->GetUserWidget<UGCMessageWidget>()->SetWidgetHidden(false);
@@ -117,18 +118,6 @@ void UGCInfoBookWidget::RemoveWidget(const TFunction<void()>& OnFinished, const 
 		
 		PlayerController->SetPause(false);
 	}
-}
-
-void UGCInfoBookWidget::RemoveFromParent()
-{
-	WidgetBox->ClearChildren();
-	WidgetBox->SetVisibility(ESlateVisibility::Collapsed);
-	ManualBox->SetVisibility(ESlateVisibility::Collapsed);
-	SetImageTexture(ESlateVisibility::Collapsed, FVector2D::ZeroVector, nullptr);
-	SetMessageText({}, ESlateVisibility::Collapsed);
-	MessageBox->ClearHeightOverride();
-	
-	Super::RemoveFromParent();
 }
 
 // ReSharper disable once CppMemberFunctionMayBeConst

@@ -117,12 +117,9 @@ public:
 
 	UFUNCTION(BlueprintImplementableEvent, meta = (ForceAsFunction = true))
 		void SetImageTexture(const ESlateVisibility& InVisibility, const FVector2D& InSize, const UTexture* InImage);
-	
-	UFUNCTION(BlueprintCallable, Category = "InfoBookWidget")
-		void QueuePage(const FGCInfoPageID PageID);
-	
-	UFUNCTION(BlueprintCallable, Category = "InfoBookWidget", meta = (AutoCreateRefTerm = "PageIDs"))
-		void QueuePages(const TArray<FGCInfoPageID>& PageIDs);
+
+	void QueuePage(const FGCInfoPageID PageID);
+	void QueuePages(const TArray<FGCInfoPageID>& PageIDs);
 
 	DECLARE_MULTICAST_DELEGATE(FOnExited)
 	FOnExited OnInfoBookExited;
@@ -144,7 +141,6 @@ protected:
 	virtual void NativeOnInitialized() override;
 	virtual void NativeTick(const FGeometry& InGeometry, float InDeltaTime) override;
 	virtual void RemoveWidget(const TFunction<void()>& OnFinished, const bool bFade) override;
-	virtual void RemoveFromParent() override;
 	
 	UFUNCTION()
 		void OnContinueClicked();
