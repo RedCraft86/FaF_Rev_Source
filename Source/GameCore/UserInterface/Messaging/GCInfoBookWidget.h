@@ -86,6 +86,9 @@ public:
 		class UTextBlock* LabelText;
 
 	UPROPERTY(Transient, meta = (BindWidget))
+		UPanelWidget* ManualBox;
+
+	UPROPERTY(Transient, meta = (BindWidget))
 		UPanelWidget* WidgetBox;
 	
 	UPROPERTY(Transient, meta = (BindWidget))

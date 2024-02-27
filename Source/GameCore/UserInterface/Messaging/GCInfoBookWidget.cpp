@@ -128,6 +128,9 @@ void UGCInfoBookWidget::OnContinueClicked()
 		if (const FGCInfoPageData* DataPtr = PageTable->FindRow<FGCInfoPageData>(CurrentPage, GetName()))
 		{
 			const FGCInfoPageData Data = DataPtr ? *DataPtr : FGCInfoPageData{};
+
+			ManualBox->SetVisibility(ESlateVisibility::Collapsed);
+			WidgetBox->SetVisibility(ESlateVisibility::Collapsed);
 			
 			LabelText->SetText(Data.Label);
 			BackgroundContent->SetVisibility(Data.bShowBackground ? ESlateVisibility::Visible : ESlateVisibility::Collapsed);
@@ -149,6 +152,8 @@ void UGCInfoBookWidget::OnContinueClicked()
 				
 				ActiveWidget = CreateWidget<UUserWidget>(this, Data.Widget);
 				WidgetBox->AddChild(ActiveWidget);
+
+				WidgetBox->SetVisibility(ESlateVisibility::Visible);
 			}
 			else
 			{
@@ -167,6 +172,8 @@ void UGCInfoBookWidget::OnContinueClicked()
 				{
 					MessageBox->ClearHeightOverride();
 				}
+
+				ManualBox->SetVisibility(ESlateVisibility::Visible);
 			}
 
 			PlayAnimation(ContentFadeAnim);
