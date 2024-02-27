@@ -98,7 +98,7 @@ public:
 		UTextBlock* ContinueText;
 
 	UPROPERTY(Transient, meta = (BindWidget))
-		UImage* BackgroundContent;
+		class UImage* BackgroundContent;
 
 	UPROPERTY(Transient, meta = (BindWidgetAnim))
 		UWidgetAnimation* ContentFadeAnim;
@@ -113,7 +113,7 @@ public:
 		void SetMessageText(const FExpressiveTextSelector& InText, const ESlateVisibility& InVisibility);
 
 	UFUNCTION(BlueprintImplementableEvent, meta = (ForceAsFunction = true))
-		void SetImageTexture(const UTexture* InImage, const ESlateVisibility& InVisibility);
+		void SetImageTexture(const ESlateVisibility& InVisibility, const FVector2D& InSize, const UTexture* InImage);
 	
 	UFUNCTION(BlueprintCallable, Category = "InfoBookWidget")
 		void QueuePage(const FGCInfoPageID PageID);

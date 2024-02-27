@@ -152,8 +152,9 @@ void UGCInfoBookWidget::OnContinueClicked()
 			}
 			else
 			{
-				SetImageTexture(Data.Image.LoadSynchronous(),
-					Data.Image.IsValid() ? ESlateVisibility::Visible : ESlateVisibility::Collapsed);
+				const UTexture2D* Tex = Data.Image.LoadSynchronous();
+				SetImageTexture(IsValid(Tex) ? ESlateVisibility::Visible : ESlateVisibility::Collapsed,
+					IsValid(Tex) ? FVector2D{(float)Tex->GetSizeX(), (float)Tex->GetSizeY()} : FVector2D::ZeroVector, Tex);
 
 				const bool bEmptyText = Data.HasEmptyMessage();
 				SetMessageText(Data.GetMessage(), bEmptyText ? ESlateVisibility::Collapsed : ESlateVisibility::Visible);
