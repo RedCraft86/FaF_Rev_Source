@@ -11,6 +11,9 @@ class RCRUNTIME_API URCLoadUtilsLibrary : public UBlueprintFunctionLibrary
 	GENERATED_BODY()
 	
 public:
+	
+	UFUNCTION(BlueprintCallable, Category = "LoadUtils", meta = (WorldContext = "WorldContextObject"))
+		static void LoadAssets(const UObject* WorldContextObject, const TArray<TSoftObjectPtr<UObject>>& InAssets);
 
 	UFUNCTION(BlueprintCallable, Category = "LoadUtils")
 		static void ForceGarbageCollection();

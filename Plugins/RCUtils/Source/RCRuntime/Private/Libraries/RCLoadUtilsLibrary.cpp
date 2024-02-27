@@ -3,11 +3,26 @@
 #include "RCLoadUtilsLibrary.h"
 #include "Engine/CoreSettings.h"
 #include "GameFramework/WorldSettings.h"
+#include "Kismet/KismetSystemLibrary.h"
 
 float URCLoadUtilsLibrary::DefaultLevelStreamingComponentsRegistrationGranularity;
 float URCLoadUtilsLibrary::DefaultLevelStreamingActorsUpdateTimeLimit;
 float URCLoadUtilsLibrary::DefaultAsyncLoadingTimeLimit;
 bool URCLoadUtilsLibrary::HasCapturedDefaults = false;
+
+void URCLoadUtilsLibrary::LoadAssets(const UObject* WorldContextObject, const TArray<TSoftObjectPtr<UObject>>& InAssets)
+{
+	for (const TSoftObjectPtr<UObject>& Asset : InAssets)
+	{
+		FLatentActionInfo LatentActionInfo;
+		LatentActionInfo.CallbackTarget = nullptr;
+		LatentActionInfo.ExecutionFunction = NAME_None;
+		LatentActionInfo.UUID = InAssets.Num() * (InAssets.Find(Asset) + 1); // should be random enough
+		LatentActionInfo.Linkage = 0;
+		
+		UKismetSystemLibrary::LoadAsset(WorldContextObject, Asset, {}, LatentActionInfo);
+	}
+}
 
 void URCLoadUtilsLibrary::ForceGarbageCollection()
 {
