@@ -91,7 +91,7 @@ public:
 	UPROPERTY(Transient, meta = (BindWidget))
 		class USizeBox* MessageBox;
 
-	UPROPERTY(Transient, meta = (BindWidget))
+	UPROPERTY(Transient, BlueprintReadOnly, meta = (BindWidget))
 		class UImage* ContentImage;
 
 	UPROPERTY(Transient, meta = (BindWidget))
