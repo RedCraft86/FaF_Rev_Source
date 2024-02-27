@@ -114,6 +114,9 @@ public:
 
 	UFUNCTION(BlueprintImplementableEvent, meta = (ForceAsFunction = true))
 		void SetMessageText(const FExpressiveTextSelector& InText, const ESlateVisibility& InVisibility);
+
+	UFUNCTION(BlueprintImplementableEvent, meta = (ForceAsFunction = true))
+		void SetImageTexture(const UTexture* InImage);
 	
 	UFUNCTION(BlueprintCallable, Category = "InfoBookWidget")
 		void QueuePage(const FGCInfoPageID PageID);

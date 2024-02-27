@@ -153,11 +153,7 @@ void UGCInfoBookWidget::OnContinueClicked()
 			}
 			else
 			{
-				if (UTexture2D* Tex = Data.Image.LoadSynchronous())
-				{
-					ContentImage->SetBrushFromTexture(Tex, true);
-					ContentImage->SetDesiredSizeOverride({(float)Tex->GetSizeX(), (float)Tex->GetSizeY()});
-				}
+				SetImageTexture(Data.Image.LoadSynchronous());
 				ContentBox->SetVisibility(Data.Image.IsValid() ? ESlateVisibility::Visible : ESlateVisibility::Collapsed);
 
 				const bool bEmptyText = Data.HasEmptyMessage();
