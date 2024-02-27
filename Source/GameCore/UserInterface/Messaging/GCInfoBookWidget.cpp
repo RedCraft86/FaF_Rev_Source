@@ -114,8 +114,21 @@ void UGCInfoBookWidget::RemoveWidget(const TFunction<void()>& OnFinished, const 
 			UWidgetBlueprintLibrary::SetInputMode_GameOnly(PlayerController);
 			PlayerController->SetShowMouseCursor(false);
 		}
+		
 		PlayerController->SetPause(false);
 	}
+}
+
+void UGCInfoBookWidget::RemoveFromParent()
+{
+	WidgetBox->ClearChildren();
+	WidgetBox->SetVisibility(ESlateVisibility::Collapsed);
+	ManualBox->SetVisibility(ESlateVisibility::Collapsed);
+	SetImageTexture(ESlateVisibility::Collapsed, FVector2D::ZeroVector, nullptr);
+	SetMessageText({}, ESlateVisibility::Collapsed);
+	MessageBox->ClearHeightOverride();
+	
+	Super::RemoveFromParent();
 }
 
 // ReSharper disable once CppMemberFunctionMayBeConst

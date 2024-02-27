@@ -144,7 +144,8 @@ protected:
 	virtual void NativeOnInitialized() override;
 	virtual void NativeTick(const FGeometry& InGeometry, float InDeltaTime) override;
 	virtual void RemoveWidget(const TFunction<void()>& OnFinished, const bool bFade) override;
-
+	virtual void RemoveFromParent() override;
+	
 	UFUNCTION()
 		void OnContinueClicked();
 };
