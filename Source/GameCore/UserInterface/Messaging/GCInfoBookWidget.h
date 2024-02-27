@@ -91,9 +91,6 @@ public:
 	UPROPERTY(Transient, meta = (BindWidget))
 		class USizeBox* MessageBox;
 
-	UPROPERTY(Transient, BlueprintReadOnly, meta = (BindWidget))
-		class UImage* ContentImage;
-
 	UPROPERTY(Transient, meta = (BindWidget))
 		UPanelWidget* ContentBox;
 
@@ -116,7 +113,7 @@ public:
 		void SetMessageText(const FExpressiveTextSelector& InText, const ESlateVisibility& InVisibility);
 
 	UFUNCTION(BlueprintImplementableEvent, meta = (ForceAsFunction = true))
-		void SetImageTexture(const UTexture* InImage);
+		void SetImageTexture(const UTexture* InImage, const ESlateVisibility& InVisibility);
 	
 	UFUNCTION(BlueprintCallable, Category = "InfoBookWidget")
 		void QueuePage(const FGCInfoPageID PageID);

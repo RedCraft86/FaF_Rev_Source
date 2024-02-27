@@ -23,7 +23,6 @@ UGCInfoBookWidget::UGCInfoBookWidget(const FObjectInitializer& ObjectInitializer
 	ContinueButton = nullptr;
 	LabelText = nullptr;
 	MessageBox = nullptr;
-	ContentImage = nullptr;
 	ContentBox = nullptr;
 	ContentFadeAnim = nullptr;
 	ImageMsgHeight = 200.0f;
@@ -153,8 +152,8 @@ void UGCInfoBookWidget::OnContinueClicked()
 			}
 			else
 			{
-				SetImageTexture(Data.Image.LoadSynchronous());
-				ContentBox->SetVisibility(Data.Image.IsValid() ? ESlateVisibility::Visible : ESlateVisibility::Collapsed);
+				SetImageTexture(Data.Image.LoadSynchronous(),
+					Data.Image.IsValid() ? ESlateVisibility::Visible : ESlateVisibility::Collapsed);
 
 				const bool bEmptyText = Data.HasEmptyMessage();
 				SetMessageText(Data.GetMessage(), bEmptyText ? ESlateVisibility::Collapsed : ESlateVisibility::Visible);
