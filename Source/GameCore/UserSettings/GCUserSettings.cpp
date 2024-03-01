@@ -50,7 +50,7 @@ void UGCUserSettings::InitializeSettings()
 #if !WITH_EDITOR
 		this->SetToDefaults();
 		this->SetOverallQuality(3);
-		this->SetResScalePercent(50.0f);
+		this->SetResScalePercent(100.0f);
 #endif
 	}
 	else
@@ -312,7 +312,7 @@ void UGCUserSettings::SetToDefaults()
 	SetFullscreenMode(EWindowMode::Fullscreen);
 #endif
 	SetOverallQuality(2);
-	SetResScalePercent(50.0f);
+	SetResScalePercent(100.0f);
 	SetVSyncEnabled(true);
 	FrameRateLimit = 60.0f;
 	Culture = FInternationalization::Get().GetDefaultCulture()->GetName();
