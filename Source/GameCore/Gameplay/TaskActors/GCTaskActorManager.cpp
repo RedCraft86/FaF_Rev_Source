@@ -16,6 +16,7 @@ AGCTaskActorManager::AGCTaskActorManager()
 	SceneRoot = CreateDefaultSubobject<USceneComponent>("SceneRoot");
 	SetRootComponent(SceneRoot);
 
+	bCompleted = false;
 #if WITH_EDITORONLY_DATA
 	bIsSpatiallyLoaded = false;
 	Visualizer = CreateEditorOnlyDefaultSubobject<UGCTaskActorManagerComponent>("Visualizer");
@@ -77,17 +78,27 @@ void AGCTaskActorManager::BeginPlay()
 	}
 }
 
+void AGCTaskActorManager::AutoCompleteAllTasks()
+{
+	for (AGCTaskActorBase* Actor : TaskActors)
+	{
+		if (Actor && !Actor->IsCompleted()) Actor->CompleteTask();
+	}
+}
+
 // ReSharper disable once CppParameterMayBeConstPtrOrRef
 void AGCTaskActorManager::OnSequenceLoaded(const FName& ID)
 {
+	if (bCompleted) return;
 	if (const UGCSequenceManager* Manager = GetWorld()->GetSubsystem<UGCSequenceManager>())
 	{
 		if (ID.ToString() == Sequence.ToString() && Manager->GetSubsequenceIndex() > SubsequenceIndex)
 		{
-			for (AGCTaskActorBase* Actor : TaskActors)
-			{
-				if (Actor && !Actor->IsCompleted()) Actor->CompleteTask();
-			}
+			FTimerHandle Handle;
+			GetWorldTimerManager().SetTimer(Handle, this, &AGCTaskActorManager::AutoCompleteAllTasks,
+				SubsequenceIndex * 0.1f, false, 0.0f);
+
+			bCompleted = true;
 		}
 	}
 }

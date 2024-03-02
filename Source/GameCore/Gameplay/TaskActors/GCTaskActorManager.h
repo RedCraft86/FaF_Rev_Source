@@ -67,8 +67,12 @@ private:
 	UBillboardComponent* VisualIcon;
 	virtual void OnConstruction(const FTransform& Transform) override;
 #endif
+
+	bool bCompleted;
 	
 	virtual void BeginPlay() override;
+	
+	void AutoCompleteAllTasks();
 	void OnSequenceLoaded(const FName& ID);
 	void OnTaskComplete(AGCTaskActorBase* TaskActor);
 };
