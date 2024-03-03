@@ -67,6 +67,9 @@ void UGCQuestBranchWidget::InitWidget(const UQuestBranch* Branch)
 		DisplayText->SetVisibility(BranchObject->OwningQuest->QuestName.IsEmptyOrWhitespace() ?
 			ESlateVisibility::Collapsed : ESlateVisibility::HitTestInvisible);
 
+		// Turn these texts off
+		DisplayText->SetVisibility(ESlateVisibility::Collapsed);
+
 		bool bShouldBeHidden = true;
 		for (const UNarrativeTask* Task : BranchObject->QuestTasks)
 		{
