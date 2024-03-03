@@ -37,7 +37,7 @@ struct GAMECORE_API FGCInfoPageData : public FTableRowBase
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "InfoPageData|Override", meta = (EditCondition = "Widget == nullptr"))
 		TSoftObjectPtr<UTexture2D> Image;
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "InfoPageData", DisplayName = "Hide Background", meta = (ClampMin = 0.1f, UIMin = 0.1f))
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "InfoPageData", meta = (ClampMin = 0.1f, UIMin = 0.1f))
 		bool bShowBackground;
 	
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "InfoPageData", meta = (ClampMin = 0.1f, UIMin = 0.1f))
