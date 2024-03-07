@@ -10,8 +10,8 @@ struct FTimingGameStruct
 	FString ID;
 	FKey Key;
 	
-	FTimingGameStruct() : ID({}), Key(FKey{}) {}
-	FTimingGameStruct(const FString InID, const FKey& InKey) : ID(InID), Key(InKey) {}
+	FTimingGameStruct() : ID(TEXT("")), Key(FKey{}) {}
+	FTimingGameStruct(const FString& InID, const FKey& InKey) : ID(InID), Key(InKey) {}
 };
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FTimingGameManagerEvent, const FString&, ID);
