@@ -39,10 +39,10 @@ public:
 		uint8 MovePerPhase;
 	
 	UPROPERTY(BlueprintReadOnly, Category = "Settings")
-		TSet<FString> SucceededKeys;
+		TSet<FGuid> SucceededKeys;
 
 	UPROPERTY(BlueprintReadOnly, Category = "Settings")
-		TSet<FString> FailedKeys;
+		TSet<FGuid> FailedKeys;
 
 	UPROPERTY(BlueprintAssignable)
 		FTimingGameManagerEvent OnAdded;

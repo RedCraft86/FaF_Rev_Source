@@ -69,7 +69,7 @@ void UGCTimingGameManager::BeginNewGame(const float InMaxProgress)
 
 void UGCTimingGameManager::OnKeySuccess(const FGuid& ID)
 {
-	SucceededKeys.Add(ID.ToString());
+	SucceededKeys.Add(ID);
 	RemoveInstance(ID);
 
 	Progress += BumpSpeed.X;
@@ -81,7 +81,7 @@ void UGCTimingGameManager::OnKeySuccess(const FGuid& ID)
 
 void UGCTimingGameManager::OnKeyFailed(const FGuid& ID)
 {
-	FailedKeys.Add(ID.ToString());
+	FailedKeys.Add(ID);
 	RemoveInstance(ID);
 
 	Progress -= BumpSpeed.Y; 
