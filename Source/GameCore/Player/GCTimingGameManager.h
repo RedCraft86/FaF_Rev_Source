@@ -12,7 +12,7 @@ struct FTimingGameStruct
 		: ID(InID), Key(InKey), Time(InTime), MaxTime(InTime)
 	{}
 
-	void Tick(float DeltaTime);
+	void Tick(float Delta);
 	void MarkCompleted();
 	void MarkFailed();
 
@@ -43,7 +43,7 @@ public:
 		TArray<FKey> KeyList;
 
 	UPROPERTY(EditAnywhere, Category = "Settings")
-		FVector2D Multipliers;
+		FVector SpeedMultipliers;
 
 	UPROPERTY(EditAnywhere, Category = "Settings")
 		uint8 MovePerPhase;

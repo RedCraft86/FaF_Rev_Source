@@ -3,10 +3,10 @@
 #include "GCTimingGameManager.h"
 #include "Algo/RandomShuffle.h"
 
-void FTimingGameStruct::Tick(const float DeltaTime)
+void FTimingGameStruct::Tick(const float Delta)
 {
 	if (bStopTick) return;
-	Time -= DeltaTime;
+	Time -= Delta;
 	
 	if (Time < 0)
 	{
@@ -33,7 +33,7 @@ UGCTimingGameManager::UGCTimingGameManager()
 {
 	PrimaryComponentTick.bCanEverTick = true;
 	PrimaryComponentTick.bStartWithTickEnabled = false;
-	Multipliers = FVector2D{10.0f};
+	SpeedMultipliers = FVector{20.0f, 15.0f, 0.01f};
 	MovePerPhase = 10;
 	bInGame = false;
 	NumMoves = 0;
@@ -105,7 +105,7 @@ void UGCTimingGameManager::OnKeySuccess(const FGuid& ID)
 	SucceededKeys.Add(ID.ToString());
 	RemoveInstance(ID);
 
-	Progress += Multipliers.X;
+	Progress += SpeedMultipliers.X;
 	if (Progress > MaxProgress)
 	{
 		StopGame(false);
@@ -134,8 +134,7 @@ void UGCTimingGameManager::CreateInstance()
 	const FGuid ID(FGuid::NewGuid());
 	const FKey Key(KeyList[0]);
 	
-	const TSharedPtr<FTimingGameStruct> Struct = MakeShareable(
-		new FTimingGameStruct(ID, Key, 5.0f + Instances.Num() * 2.0f));
+	const TSharedPtr<FTimingGameStruct> Struct = MakeShareable(new FTimingGameStruct(ID, Key, Instances.Num() + 1.0f));
 	
 	Struct->OnSuccess.AddUObject(this, &UGCTimingGameManager::OnKeySuccess);
 	Struct->OnFailed.AddUObject(this, &UGCTimingGameManager::OnKeyFailed);
@@ -222,12 +221,12 @@ void UGCTimingGameManager::TickComponent(float DeltaTime, ELevelTick TickType, F
 	Instances.GenerateValueArray(Values);
 	for (const TSharedPtr<FTimingGameStruct>& Value : Values)
 	{
-		if (Value.IsValid()) Value->Tick(DeltaTime);
+		if (Value.IsValid()) Value->Tick(SpeedMultipliers.Z);
 	}
 
 	if (Progress > 0)
 	{
-		Progress -= FMath::Min(DeltaTime * Multipliers.Y, 2.0f);
+		Progress -= FMath::Min(DeltaTime * SpeedMultipliers.Y, 2.0f);
 	}
 	else
 	{
