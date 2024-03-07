@@ -78,8 +78,8 @@ void UGCTimingGameManager::BeginNewGame(const float InMaxProgress)
 	SucceededKeys.Empty();
 	
 	bInGame = true;
-	Progress = 0.0f;
 	MaxProgress = FMath::Max(10, InMaxProgress);
+	Progress = MaxProgress;
 	Instances.Empty();
 
 	GetWorld()->GetTimerManager().UnPauseTimer(TickTimer);
