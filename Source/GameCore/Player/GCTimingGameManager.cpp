@@ -121,12 +121,19 @@ void UGCTimingGameManager::OnKeyFailed(const FGuid& ID)
 void UGCTimingGameManager::CreateInstance()
 {
 	if (KeyList.IsEmpty()) return;
-	
+
+	uint8 Attempts = 0;
+	const FKey LastKey(KeyList[0]);
 	Algo::RandomShuffle(KeyList);
+	while (LastKey == KeyList[0] && Attempts < 5)
+	{
+		Algo::RandomShuffle(KeyList);
+		Attempts++;
+	}
 
 	const FGuid ID(FGuid::NewGuid());
 	const FKey Key(KeyList[0]);
-
+	
 	const TSharedPtr<FTimingGameStruct> Struct = MakeShareable(
 		new FTimingGameStruct(ID, Key, 5.0f + Instances.Num() * 2.0f));
 	
@@ -212,15 +219,11 @@ void UGCTimingGameManager::TickComponent(float DeltaTime, ELevelTick TickType, F
 {
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
 
-	TArray<FString> Keys;
-	Instances.GenerateKeyArray(Keys);
-	for (const FString& Str : Keys)
+	TArray<TSharedPtr<FTimingGameStruct>> Values;
+	Instances.GenerateValueArray(Values);
+	for (const TSharedPtr<FTimingGameStruct>& Value : Values)
 	{
-		const TSharedPtr<FTimingGameStruct> Ptr = Instances.FindRef(Str);
-		if (Ptr.IsValid())
-		{
-			Ptr->Tick(DeltaTime);
-		}
+		if (Value.IsValid()) Value->Tick(DeltaTime);
 	}
 
 	if (Progress > 0)

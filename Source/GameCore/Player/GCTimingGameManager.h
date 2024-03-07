@@ -67,7 +67,7 @@ public:
 		FTimingGameManagerSuccessEvent OnStarted;
 
 	UFUNCTION(BlueprintPure, Category = "TimingGame")
-		float GetProgress() const { return 0.05f + Progress / MaxProgress; }
+		float GetProgress() const { return 0.01f + Progress / MaxProgress; }
 
 	UFUNCTION(BlueprintPure, Category = "TimingGame")
 		float GetProgressFromID(const FGuid& InID) const;
