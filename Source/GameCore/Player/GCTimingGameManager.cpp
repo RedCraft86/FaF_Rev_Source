@@ -121,8 +121,8 @@ void UGCTimingGameManager::CreateInstance()
 	const TSharedPtr<FTimingGameStruct> Struct = MakeShareable(
 		new FTimingGameStruct(ID, Key, 5.0f + Instances.Num() * 2.0f));
 	
-	Struct->OnSuccess.AddUObject(this, &UGCTimingGameManager::OnKeyFailed);
-	Struct->OnFailed.AddUObject(this, &UGCTimingGameManager::OnKeySuccess);
+	Struct->OnSuccess.AddUObject(this, &UGCTimingGameManager::OnKeySuccess);
+	Struct->OnFailed.AddUObject(this, &UGCTimingGameManager::OnKeyFailed);
 	Instances.Add(ID.ToString(), Struct);
 
 	OnAdded.Broadcast(ID);
