@@ -35,6 +35,7 @@ UGCTimingGameManager::UGCTimingGameManager()
 {
 	PrimaryComponentTick.bCanEverTick = true;
 	PrimaryComponentTick.bStartWithTickEnabled = false;
+	Multipliers = FVector2D{10.0f};
 	bInGame = false;
 	Phase = 0;
 	Progress = 0.0f;
@@ -81,7 +82,7 @@ void UGCTimingGameManager::BeginNewGame(const float InMaxProgress)
 	Phase = 0;
 	bInGame = true;
 	MaxProgress = FMath::Max(10, InMaxProgress);
-	Progress = MaxProgress;
+	Progress = MaxProgress * 0.5f;
 	Instances.Empty();
 
 	GetWorld()->GetTimerManager().UnPauseTimer(TickTimer);
@@ -95,7 +96,7 @@ void UGCTimingGameManager::OnKeySuccess(const FGuid& ID)
 	SucceededKeys.Add(ID.ToString());
 	RemoveInstance(ID);
 
-	Progress += 10.0f;
+	Progress += Multipliers.X;
 	if (Progress > MaxProgress)
 	{
 		StopGame(false);
@@ -192,17 +193,21 @@ void UGCTimingGameManager::BeginPlay()
 void UGCTimingGameManager::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
 {
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
-	if (!Instances.IsEmpty())
+
+	TArray<FString> Keys;
+	Instances.GenerateKeyArray(Keys);
+	for (const FString& Str : Keys)
 	{
-		for (const TPair<FString, TSharedPtr<FTimingGameStruct>>& Pair : Instances)
+		const TSharedPtr<FTimingGameStruct> Ptr = Instances.FindRef(Str);
+		if (Ptr.IsValid())
 		{
-			if (Pair.Value.IsValid()) Pair.Value->Tick(DeltaTime);
+			Ptr->Tick(DeltaTime);
 		}
 	}
 
 	if (Progress > 0)
 	{
-		Progress -= FMath::Min(DeltaTime * 100.0f, 2.0f);
+		Progress -= FMath::Min(DeltaTime * Multipliers.Y, 2.0f);
 	}
 	else
 	{

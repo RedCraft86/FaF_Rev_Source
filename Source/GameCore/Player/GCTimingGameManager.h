@@ -39,6 +39,9 @@ public:
 	UPROPERTY(EditAnywhere, Category = "Settings")
 		TArray<FKey> KeyList;
 
+	UPROPERTY(EditAnywhere, Category = "Settings")
+		FVector2D Multipliers;
+	
 	UPROPERTY(BlueprintReadOnly, Category = "Settings")
 		TSet<FString> SucceededKeys;
 
