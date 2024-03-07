@@ -20,30 +20,27 @@ UGCTimingGameManager::UGCTimingGameManager()
 
 FKey UGCTimingGameManager::GetKeyFromID(const FString& InID) const
 {
-	const TSharedPtr<FTimingGameStruct> Found = Instances.FindRef(InID);
-	if (Found.IsValid()) return Found->Key;
-
-	return FKey{};
+	return Instances.FindRef(InID);
 }
 
 void UGCTimingGameManager::RegisterKeyPress(const FKey& InKey)
 {
-	for (const TPair<FString, TSharedPtr<FTimingGameStruct>>& Pair : Instances)
+	TArray<FString> Keys;
+	Instances.GenerateKeyArray(Keys);
+	
+	for (const FString& Key : Keys)
 	{
-		if (Pair.Value.IsValid() && Pair.Value->Key == InKey)
+		if (Instances.FindRef(Key) == InKey)
 		{
-			OnKeySuccess(Pair.Value->ID);
+			OnKeySuccess(Key);
 			return;
 		}
 	}
-
-	TArray<FString> Keys;
-	Instances.GenerateKeyArray(Keys);
+	
 	if (!Keys.IsEmpty())
 	{
 		Algo::RandomShuffle(Keys);
-		const TSharedPtr<FTimingGameStruct> Found = Instances.FindRef(Keys[0]);
-		if (Found.IsValid()) OnKeyFailed(Found->ID);
+		OnKeyFailed(Keys[0]);
 	}
 }
 
@@ -101,10 +98,7 @@ void UGCTimingGameManager::CreateInstance()
 	}
 
 	const FString ID(FGuid::NewGuid().ToString());
-	const FKey Key(KeyList[0]);
-	
-	const TSharedPtr<FTimingGameStruct> Struct = MakeShareable(new FTimingGameStruct(ID, Key));
-	Instances.Add(ID, Struct);
+	Instances.Add(ID, KeyList[0]);
 	OnAdded.Broadcast(ID);
 }
 

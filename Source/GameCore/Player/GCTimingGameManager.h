@@ -81,7 +81,7 @@ private:
 	int32 NumMoves;
 	float Progress;
 	float MaxProgress;
-	TMap<FString, TSharedPtr<FTimingGameStruct>> Instances;
+	TMap<FString, FKey> Instances;
 	FTimerHandle TickTimer;
 
 	void OnKeySuccess(const FString& ID);
