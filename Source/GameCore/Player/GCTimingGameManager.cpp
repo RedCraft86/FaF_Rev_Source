@@ -84,6 +84,8 @@ void UGCTimingGameManager::BeginNewGame(const float InMaxProgress)
 
 	GetWorld()->GetTimerManager().UnPauseTimer(TickTimer);
 	SetComponentTickEnabled(true);
+
+	OnStarted.Broadcast();
 }
 
 void UGCTimingGameManager::OnKeySuccess(const FGuid& ID)

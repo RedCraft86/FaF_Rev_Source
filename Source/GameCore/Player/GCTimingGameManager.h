@@ -57,6 +57,9 @@ public:
 	UPROPERTY(BlueprintAssignable)
 		FTimingGameManagerSuccessEvent OnFailed;
 
+	UPROPERTY(BlueprintAssignable)
+		FTimingGameManagerSuccessEvent OnStarted;
+
 	UFUNCTION(BlueprintPure, Category = "TimingGame")
 		float GetProgress() const { return 0.1f + Progress / MaxProgress; }
 	
