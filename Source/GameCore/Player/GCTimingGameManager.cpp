@@ -7,8 +7,8 @@ UGCTimingGameManager::UGCTimingGameManager()
 {
 	PrimaryComponentTick.bCanEverTick = true;
 	PrimaryComponentTick.bStartWithTickEnabled = false;
-	BumpSpeed = FVector2D{20.0f, 5.0f};
-	DrainSpeed = 10.0f;
+	BumpSpeed = FVector2D{20.0f, 10.0f};
+	DrainSpeed = 15.0f;
 	MovePerPhase = 10;
 	bInGame = false;
 	NumMoves = 0;
