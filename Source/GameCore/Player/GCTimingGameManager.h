@@ -5,15 +5,6 @@
 #include "Components/ActorComponent.h"
 #include "GCTimingGameManager.generated.h"
 
-struct FTimingGameStruct
-{
-	FString ID;
-	FKey Key;
-	
-	FTimingGameStruct() : ID(TEXT("")), Key(FKey{}) {}
-	FTimingGameStruct(const FString& InID, const FKey& InKey) : ID(InID), Key(InKey) {}
-};
-
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FTimingGameManagerEvent, const FString&, ID);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FTimingGameManagerSuccessEvent);
 
