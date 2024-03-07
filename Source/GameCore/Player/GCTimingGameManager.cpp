@@ -79,6 +79,7 @@ void UGCTimingGameManager::BeginNewGame(const float InMaxProgress)
 	FailedKeys.Empty();
 	SucceededKeys.Empty();
 
+	NumMoves = 0;
 	Phase = 0;
 	bInGame = true;
 	MaxProgress = FMath::Max(10, InMaxProgress);
@@ -125,6 +126,8 @@ void UGCTimingGameManager::CreateInstance()
 	Struct->OnFailed.AddUObject(this, &UGCTimingGameManager::OnKeyFailed);
 	Instances.Add(ID.ToString(), Struct);
 
+	NumMoves++;
+
 	OnAdded.Broadcast(ID);
 }
 
@@ -136,6 +139,12 @@ void UGCTimingGameManager::RemoveInstance(const FGuid& ID)
 
 void UGCTimingGameManager::ConsistentTick()
 {
+	if (NumMoves > 5)
+	{
+		Phase++;
+		NumMoves = 0;
+	}
+	
 	switch (Phase)
 	{
 	case 0:
@@ -173,6 +182,7 @@ void UGCTimingGameManager::StopGame(const bool bFailed)
 	GetWorld()->GetTimerManager().PauseTimer(TickTimer);
 	SetComponentTickEnabled(false);
 
+	NumMoves = 0;
 	Phase = 0;
 	Progress = 0.0f;
 	Instances.Empty();

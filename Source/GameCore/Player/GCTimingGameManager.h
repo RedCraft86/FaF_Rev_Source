@@ -82,6 +82,7 @@ private:
 
 	bool bInGame;
 	uint8 Phase;
+	int32 NumMoves;
 	float Progress;
 	float MaxProgress;
 	TMap<FString, TSharedPtr<FTimingGameStruct>> Instances;
