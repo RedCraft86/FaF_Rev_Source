@@ -6,11 +6,9 @@
 void FTimingGameStruct::Tick(const float DeltaTime)
 {
 	if (bStopTick) return;
-	if (Time >= 0)
-	{
-		Time -= DeltaTime;
-	}
-	else if (!bStopTick)
+	Time -= DeltaTime;
+	
+	if (Time < 0)
 	{
 		bStopTick = true;
 		OnFailed.Broadcast(ID);
@@ -36,7 +34,9 @@ UGCTimingGameManager::UGCTimingGameManager()
 	PrimaryComponentTick.bCanEverTick = true;
 	PrimaryComponentTick.bStartWithTickEnabled = false;
 	Multipliers = FVector2D{10.0f};
+	MovePerPhase = 10;
 	bInGame = false;
+	NumMoves = 0;
 	Phase = 0;
 	Progress = 0.0f;
 	MaxProgress = 0.0f;
@@ -141,8 +141,6 @@ void UGCTimingGameManager::CreateInstance()
 	Struct->OnFailed.AddUObject(this, &UGCTimingGameManager::OnKeyFailed);
 	Instances.Add(ID.ToString(), Struct);
 
-	NumMoves++;
-
 	OnAdded.Broadcast(ID);
 }
 
@@ -150,11 +148,12 @@ void UGCTimingGameManager::RemoveInstance(const FGuid& ID)
 {
 	Instances.Remove(ID.ToString());
 	OnRemoved.Broadcast(ID);
+	NumMoves++;
 }
 
 void UGCTimingGameManager::ConsistentTick()
 {
-	if (NumMoves > 5)
+	if (NumMoves > MovePerPhase)
 	{
 		Phase++;
 		NumMoves = 0;

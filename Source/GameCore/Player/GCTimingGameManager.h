@@ -44,6 +44,9 @@ public:
 
 	UPROPERTY(EditAnywhere, Category = "Settings")
 		FVector2D Multipliers;
+
+	UPROPERTY(EditAnywhere, Category = "Settings")
+		uint8 MovePerPhase;
 	
 	UPROPERTY(BlueprintReadOnly, Category = "Settings")
 		TSet<FString> SucceededKeys;
