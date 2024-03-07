@@ -3,7 +3,7 @@
 #include "GCTimingGameManager.h"
 #include "Algo/RandomShuffle.h"
 
-void FTimingGameStruct::Tick(float DeltaTime)
+void FTimingGameStruct::Tick(const float DeltaTime)
 {
 	if (bStopTick) return;
 	if (Time >= 0)
@@ -36,6 +36,7 @@ UGCTimingGameManager::UGCTimingGameManager()
 	PrimaryComponentTick.bCanEverTick = true;
 	PrimaryComponentTick.bStartWithTickEnabled = false;
 	bInGame = false;
+	Phase = 0;
 	Progress = 0.0f;
 	MaxProgress = 0.0f;
 	Instances = {};
@@ -76,7 +77,8 @@ void UGCTimingGameManager::BeginNewGame(const float InMaxProgress)
 	
 	FailedKeys.Empty();
 	SucceededKeys.Empty();
-	
+
+	Phase = 0;
 	bInGame = true;
 	MaxProgress = FMath::Max(10, InMaxProgress);
 	Progress = MaxProgress;
@@ -115,7 +117,9 @@ void UGCTimingGameManager::CreateInstance()
 	const FGuid ID(FGuid::NewGuid());
 	const FKey Key(KeyList[0]);
 
-	const TSharedPtr<FTimingGameStruct> Struct = MakeShareable(new FTimingGameStruct(ID, Key, Instances.Num() * 2.0f));
+	const TSharedPtr<FTimingGameStruct> Struct = MakeShareable(
+		new FTimingGameStruct(ID, Key, 5.0f + Instances.Num() * 2.0f));
+	
 	Struct->OnSuccess.AddUObject(this, &UGCTimingGameManager::OnKeyFailed);
 	Struct->OnFailed.AddUObject(this, &UGCTimingGameManager::OnKeySuccess);
 	Instances.Add(ID.ToString(), Struct);
@@ -168,6 +172,7 @@ void UGCTimingGameManager::StopGame(const bool bFailed)
 	GetWorld()->GetTimerManager().PauseTimer(TickTimer);
 	SetComponentTickEnabled(false);
 
+	Phase = 0;
 	Progress = 0.0f;
 	Instances.Empty();
 	FailedKeys.Empty();
@@ -187,9 +192,12 @@ void UGCTimingGameManager::BeginPlay()
 void UGCTimingGameManager::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
 {
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
-	for (const TPair<FString, TSharedPtr<FTimingGameStruct>>& Pair : Instances)
+	if (!Instances.IsEmpty())
 	{
-		if (Pair.Value.IsValid()) Pair.Value->Tick(DeltaTime);
+		for (const TPair<FString, TSharedPtr<FTimingGameStruct>>& Pair : Instances)
+		{
+			if (Pair.Value.IsValid()) Pair.Value->Tick(DeltaTime);
+		}
 	}
 
 	if (Progress > 0)
