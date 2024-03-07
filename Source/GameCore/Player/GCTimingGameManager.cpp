@@ -32,7 +32,7 @@ void UGCTimingGameManager::RegisterKeyPress(const FKey& InKey)
 	{
 		if (Pair.Value.IsValid() && Pair.Value->Key == InKey)
 		{
-			OnKeySuccess(Pair.Key);
+			OnKeySuccess(Pair.Value->ID);
 			return;
 		}
 	}
@@ -43,7 +43,7 @@ void UGCTimingGameManager::RegisterKeyPress(const FKey& InKey)
 	{
 		Algo::RandomShuffle(Keys);
 		const TSharedPtr<FTimingGameStruct> Found = Instances.FindRef(Keys[0]);
-		if (Found.IsValid()) OnKeyFailed(Keys[0]);
+		if (Found.IsValid()) OnKeyFailed(Found->ID);
 	}
 }
 
@@ -105,7 +105,6 @@ void UGCTimingGameManager::CreateInstance()
 	
 	const TSharedPtr<FTimingGameStruct> Struct = MakeShareable(new FTimingGameStruct(ID, Key));
 	Instances.Add(ID, Struct);
-
 	OnAdded.Broadcast(ID);
 }
 
