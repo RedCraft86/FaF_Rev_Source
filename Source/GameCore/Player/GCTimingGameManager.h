@@ -7,24 +7,11 @@
 
 struct FTimingGameStruct
 {
-	FTimingGameStruct() : ID({}), Key(FKey{}), Time(0.0f), MaxTime(0.0f) {}
-	FTimingGameStruct(const FGuid InID, const FKey& InKey, const float InTime)
-		: ID(InID), Key(InKey), Time(InTime), MaxTime(InTime)
-	{}
-
-	void Tick(float Delta);
-	void MarkCompleted();
-	void MarkFailed();
-
-	DECLARE_MULTICAST_DELEGATE_OneParam(FTimingGameStructEvent, const FGuid&);
-	FTimingGameStructEvent OnSuccess;
-	FTimingGameStructEvent OnFailed;
-	
 	FGuid ID;
 	FKey Key;
-	float Time;
-	float MaxTime;
-	bool bStopTick = false;
+	
+	FTimingGameStruct() : ID({}), Key(FKey{}) {}
+	FTimingGameStruct(const FGuid InID, const FKey& InKey) : ID(InID), Key(InKey) {}
 };
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FTimingGameManagerEvent, const FGuid&, ID);
@@ -43,7 +30,10 @@ public:
 		TArray<FKey> KeyList;
 
 	UPROPERTY(EditAnywhere, Category = "Settings")
-		FVector SpeedMultipliers;
+		FVector2D BumpSpeed;
+
+	UPROPERTY(EditAnywhere, Category = "Settings")
+		float DrainSpeed;
 
 	UPROPERTY(EditAnywhere, Category = "Settings")
 		uint8 MovePerPhase;
@@ -71,9 +61,6 @@ public:
 
 	UFUNCTION(BlueprintPure, Category = "TimingGame")
 		float GetProgress() const { return 0.01f + Progress / MaxProgress; }
-
-	UFUNCTION(BlueprintPure, Category = "TimingGame")
-		float GetProgressFromID(const FGuid& InID) const;
 	
 	UFUNCTION(BlueprintPure, Category = "TimingGame")
 		FKey GetKeyFromID(const FGuid& InID) const;
@@ -94,7 +81,7 @@ private:
 	int32 NumMoves;
 	float Progress;
 	float MaxProgress;
-	TMap<FString, TSharedPtr<FTimingGameStruct>> Instances;
+	TMap<FGuid, TSharedPtr<FTimingGameStruct>> Instances;
 	FTimerHandle TickTimer;
 
 	void OnKeySuccess(const FGuid& ID);

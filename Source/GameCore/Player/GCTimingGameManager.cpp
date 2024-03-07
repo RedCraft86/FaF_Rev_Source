@@ -3,37 +3,12 @@
 #include "GCTimingGameManager.h"
 #include "Algo/RandomShuffle.h"
 
-void FTimingGameStruct::Tick(const float Delta)
-{
-	if (bStopTick) return;
-	Time -= Delta;
-	
-	if (Time < 0)
-	{
-		bStopTick = true;
-		OnFailed.Broadcast(ID);
-	}
-}
-
-void FTimingGameStruct::MarkCompleted()
-{
-	bStopTick = true;
-	OnSuccess.Broadcast(ID);
-}
-
-void FTimingGameStruct::MarkFailed()
-{
-	if (!bStopTick)
-	{
-		Time = 0.01f;
-	}
-}
-
 UGCTimingGameManager::UGCTimingGameManager()
 {
 	PrimaryComponentTick.bCanEverTick = true;
 	PrimaryComponentTick.bStartWithTickEnabled = false;
-	SpeedMultipliers = FVector{20.0f, 15.0f, 0.01f};
+	BumpSpeed = FVector2D{20.0f, 5.0f};
+	DrainSpeed = 10.0f;
 	MovePerPhase = 10;
 	bInGame = false;
 	NumMoves = 0;
@@ -43,17 +18,9 @@ UGCTimingGameManager::UGCTimingGameManager()
 	Instances = {};
 }
 
-float UGCTimingGameManager::GetProgressFromID(const FGuid& InID) const
-{
-	const TSharedPtr<FTimingGameStruct> Found = Instances.FindRef(InID.ToString());
-	if (Found.IsValid()) return Found->Time / Found->MaxTime;
-
-	return 0.0f;
-}
-
 FKey UGCTimingGameManager::GetKeyFromID(const FGuid& InID) const
 {
-	const TSharedPtr<FTimingGameStruct> Found = Instances.FindRef(InID.ToString());
+	const TSharedPtr<FTimingGameStruct> Found = Instances.FindRef(InID);
 	if (Found.IsValid()) return Found->Key;
 
 	return FKey{};
@@ -61,22 +28,22 @@ FKey UGCTimingGameManager::GetKeyFromID(const FGuid& InID) const
 
 void UGCTimingGameManager::RegisterKeyPress(const FKey& InKey)
 {
-	for (const TPair<FString, TSharedPtr<FTimingGameStruct>>& Pair : Instances)
+	for (const TPair<FGuid, TSharedPtr<FTimingGameStruct>>& Pair : Instances)
 	{
 		if (Pair.Value.IsValid() && Pair.Value->Key == InKey)
 		{
-			Pair.Value->MarkCompleted();
+			OnKeySuccess(Pair.Key);
 			return;
 		}
 	}
 
-	TArray<FString> Keys;
+	TArray<FGuid> Keys;
 	Instances.GenerateKeyArray(Keys);
 	if (!Keys.IsEmpty())
 	{
 		Algo::RandomShuffle(Keys);
 		const TSharedPtr<FTimingGameStruct> Found = Instances.FindRef(Keys[0]);
-		if (Found.IsValid()) Found->MarkFailed();
+		if (Found.IsValid()) OnKeyFailed(Keys[0]);
 	}
 }
 
@@ -105,7 +72,7 @@ void UGCTimingGameManager::OnKeySuccess(const FGuid& ID)
 	SucceededKeys.Add(ID.ToString());
 	RemoveInstance(ID);
 
-	Progress += SpeedMultipliers.X;
+	Progress += BumpSpeed.X;
 	if (Progress > MaxProgress)
 	{
 		StopGame(false);
@@ -116,6 +83,8 @@ void UGCTimingGameManager::OnKeyFailed(const FGuid& ID)
 {
 	FailedKeys.Add(ID.ToString());
 	RemoveInstance(ID);
+
+	Progress -= BumpSpeed.Y; 
 }
 
 void UGCTimingGameManager::CreateInstance()
@@ -134,18 +103,15 @@ void UGCTimingGameManager::CreateInstance()
 	const FGuid ID(FGuid::NewGuid());
 	const FKey Key(KeyList[0]);
 	
-	const TSharedPtr<FTimingGameStruct> Struct = MakeShareable(new FTimingGameStruct(ID, Key, Instances.Num() + 1.0f));
-	
-	Struct->OnSuccess.AddUObject(this, &UGCTimingGameManager::OnKeySuccess);
-	Struct->OnFailed.AddUObject(this, &UGCTimingGameManager::OnKeyFailed);
-	Instances.Add(ID.ToString(), Struct);
+	const TSharedPtr<FTimingGameStruct> Struct = MakeShareable(new FTimingGameStruct(ID, Key));
+	Instances.Add(ID, Struct);
 
 	OnAdded.Broadcast(ID);
 }
 
 void UGCTimingGameManager::RemoveInstance(const FGuid& ID)
 {
-	Instances.Remove(ID.ToString());
+	Instances.Remove(ID);
 	OnRemoved.Broadcast(ID);
 	NumMoves++;
 }
@@ -217,16 +183,9 @@ void UGCTimingGameManager::TickComponent(float DeltaTime, ELevelTick TickType, F
 {
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
 
-	TArray<TSharedPtr<FTimingGameStruct>> Values;
-	Instances.GenerateValueArray(Values);
-	for (const TSharedPtr<FTimingGameStruct>& Value : Values)
-	{
-		if (Value.IsValid()) Value->Tick(SpeedMultipliers.Z);
-	}
-
 	if (Progress > 0)
 	{
-		Progress -= FMath::Min(DeltaTime * SpeedMultipliers.Y, 2.0f);
+		Progress -= FMath::Min(DeltaTime * DrainSpeed, 2.0f);
 	}
 	else
 	{
