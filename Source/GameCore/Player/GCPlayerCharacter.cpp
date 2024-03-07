@@ -21,6 +21,7 @@
 #include "InputAction.h"
 #include "EngineUtils.h"
 #include "RCMathLibrary.h"
+#include "GCQuickTimeEventManager.h"
 #include "Interfaces/GCDeviceInterface.h"
 #include "UserInterface/GCLoadingWidget.h"
 #include "UserInterface/Gameplay/GCGameplayWidget.h"
@@ -65,7 +66,7 @@ AGCPlayerCharacter::AGCPlayerCharacter(const FObjectInitializer& ObjectInitializ
 	FootstepAudio->SetRelativeLocation(FVector(0.0f, 0.0f, -60.0f));
 	FootstepAudio->SetupAttachment(GetCapsuleComponent());
 
-	TimingGame = CreateDefaultSubobject<UGCTimingGameManager>("TimingGame");
+	QuickTimeEvent = CreateDefaultSubobject<UGCQuickTimeEventManager>("QuickTimeEvent");
 
 #if WITH_EDITOR
 	VisualIcon = CreateEditorOnlyDefaultSubobject<UBillboardComponent>("VisualIcon");
@@ -754,7 +755,7 @@ bool AGCPlayerCharacter::IsStandingBlocked() const
 
 bool AGCPlayerCharacter::LockingConditions() const
 {
-	if (TimingGame->IsInGame())
+	if (QuickTimeEvent->IsPlaying())
 		return true;
 	
 	const TSet<bool> Conditions = GetLockingConditions();

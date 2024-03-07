@@ -2,7 +2,6 @@
 
 #pragma once
 
-#include "GCTimingGameManager.h"
 #include "Sound/SoundBase.h"
 #include "Core/GCMiscTypes.h"
 #include "InputActionValue.h"
@@ -223,7 +222,7 @@ public:
 		UAudioComponent* FootstepAudio;
 
 	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, Category = "DefaultSubobjects")
-		UGCTimingGameManager* TimingGame;
+		class UGCQuickTimeEventManager* QuickTimeEvent;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Settings")
 		EGCPlayerActiveState StartingState;
