@@ -2,6 +2,7 @@
 
 #pragma once
 
+#include "GCTimingGameManager.h"
 #include "Sound/SoundBase.h"
 #include "Core/GCMiscTypes.h"
 #include "InputActionValue.h"
@@ -221,6 +222,9 @@ public:
 	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, Category = "DefaultSubobjects")
 		UAudioComponent* FootstepAudio;
 
+	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, Category = "DefaultSubobjects")
+		UGCTimingGameManager* TimingGame;
+
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Settings")
 		EGCPlayerActiveState StartingState;
 	
@@ -344,6 +348,10 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "References", meta = (ReadOnlyKeys))
 		TMap<EGCPlayerInputTypes, UInputAction*> InputActions;
 
+	UFUNCTION(BlueprintNativeEvent)
+		TSet<bool> GetLockingConditions() const;
+	TSet<bool> GetLockingConditions_Implementation() const { return {}; }
+	
 	UFUNCTION(BlueprintNativeEvent, meta = (ForceAsFunction = true))
 		void SetCustomBooleanValue(const FString& Key, const bool Value);
 	void SetCustomBooleanValue_Implementation(const FString& Key, const bool Value);
@@ -444,6 +452,7 @@ protected:
 	bool TraceInteraction(FHitResult& OutHitResult, FGCInteractionData& OutData) const;
 	bool IsLeaningBlocked(const float Direction) const;
 	bool IsStandingBlocked() const;
+	bool LockingConditions() const;
 
 	void TickWindowFocus();
 	void TickStamina();

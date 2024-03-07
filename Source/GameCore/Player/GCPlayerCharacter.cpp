@@ -65,6 +65,8 @@ AGCPlayerCharacter::AGCPlayerCharacter(const FObjectInitializer& ObjectInitializ
 	FootstepAudio->SetRelativeLocation(FVector(0.0f, 0.0f, -60.0f));
 	FootstepAudio->SetupAttachment(GetCapsuleComponent());
 
+	TimingGame = CreateDefaultSubobject<UGCTimingGameManager>("TimingGame");
+
 #if WITH_EDITOR
 	VisualIcon = CreateEditorOnlyDefaultSubobject<UBillboardComponent>("VisualIcon");
 	if (VisualIcon)
@@ -340,6 +342,9 @@ bool AGCPlayerCharacter::TeleportTo(const FVector& DestLocation, const FRotator&
 
 void AGCPlayerCharacter::InputBinding_Pause(const FInputActionValue& InValue)
 {
+	if (LockingConditions())
+		return;
+	
 	if (IS_AT_STATE(Device) && ActiveWorldDevice)
 	{
 		GCDeviceInterface::ForceExitDevice(ActiveWorldDevice, TEXT("Exiting"));
@@ -363,7 +368,7 @@ void AGCPlayerCharacter::InputBinding_Pause(const FInputActionValue& InValue)
 
 void AGCPlayerCharacter::InputBinding_Move(const FInputActionValue& InValue)
 {
-	if (bHiding || IsGamePaused())
+	if (bHiding || IsGamePaused() || LockingConditions())
 		return;
 	
 	if (IS_AT_STATE(Normal) && bCanMove)
@@ -388,6 +393,7 @@ void AGCPlayerCharacter::InputBinding_Move(const FInputActionValue& InValue)
 
 void AGCPlayerCharacter::InputBinding_Turn(const FInputActionValue& InValue)
 {
+	if (LockingConditions()) return;
 	if (!bHiding && !IsGamePaused() && IS_AT_STATE(Normal) && bCanTurn && !LockOnTarget)
 	{
 		const FVector2D Axis = InValue.Get<FVector2D>();
@@ -404,6 +410,7 @@ void AGCPlayerCharacter::InputBinding_Turn(const FInputActionValue& InValue)
 
 void AGCPlayerCharacter::InputBinding_Run(const FInputActionValue& InValue)
 {
+	if (LockingConditions()) return;
 	if (!bHiding && !IsGamePaused() && IS_AT_STATE(Normal))
 	{
 		SetRunState(bCanRun && !bStaminaPunished && InValue.Get<bool>());
@@ -412,6 +419,7 @@ void AGCPlayerCharacter::InputBinding_Run(const FInputActionValue& InValue)
 
 void AGCPlayerCharacter::InputBinding_Crouch(const FInputActionValue& InValue)
 {
+	if (LockingConditions()) return;
 	if (!bHiding && !IsGamePaused() && IS_AT_STATE(Normal))
 	{
 		if (bCanCrouch && !bCrouching)
@@ -427,6 +435,7 @@ void AGCPlayerCharacter::InputBinding_Crouch(const FInputActionValue& InValue)
 
 void AGCPlayerCharacter::InputBinding_Lean(const FInputActionValue& InValue)
 {
+	if (LockingConditions()) return;
 	if (!bHiding && !IsGamePaused() && IS_AT_STATE(Normal) && !LockOnTarget)
 	{
 		const float Direction = InValue.Get<float>();
@@ -447,6 +456,7 @@ void AGCPlayerCharacter::InputBinding_Lean(const FInputActionValue& InValue)
 
 void AGCPlayerCharacter::InputBinding_Inventory(const FInputActionValue& InValue)
 {
+	if (LockingConditions()) return;
 	if (!bHiding && !bHaveEyesClosed && !IsGamePaused())
 	{
 		if (IS_AT_STATE(Normal))
@@ -462,11 +472,13 @@ void AGCPlayerCharacter::InputBinding_Inventory(const FInputActionValue& InValue
 
 void AGCPlayerCharacter::InputBinding_HideQuests(const FInputActionValue& InValue)
 {
+	if (LockingConditions()) return;
 	PlayerController->ToggleQuestsHidden();
 }
 
 void AGCPlayerCharacter::InputBinding_Interact(const FInputActionValue& InValue)
 {
+	if (LockingConditions()) return;
 	if (!bHiding && !bHaveEyesClosed && !IsGamePaused() && IS_AT_STATE(Normal) && bCanInteract && InValue.Get<bool>()) // Is Interacting
 	{
 		if (bShouldBeInteracting)
@@ -499,6 +511,7 @@ void AGCPlayerCharacter::InputBinding_Interact(const FInputActionValue& InValue)
 
 void AGCPlayerCharacter::InputBinding_CloseEyes(const FInputActionValue& InValue)
 {
+	if (LockingConditions()) return;
 	if (!bHiding && IS_AT_STATE(Normal))
 	{
 		SetEyesCloseState(bCanCloseEyes && InValue.Get<bool>());
@@ -507,6 +520,7 @@ void AGCPlayerCharacter::InputBinding_CloseEyes(const FInputActionValue& InValue
 
 void AGCPlayerCharacter::InputBinding_Equipment_Toggle(const FInputActionValue& InValue)
 {
+	if (LockingConditions()) return;
 	if (!bHiding && !IsGamePaused() && IS_AT_STATE(Normal))
 	{
 		if (InValue.Get<bool>())
@@ -518,6 +532,7 @@ void AGCPlayerCharacter::InputBinding_Equipment_Toggle(const FInputActionValue& 
 
 void AGCPlayerCharacter::InputBinding_Equipment_Charge(const FInputActionValue& InValue)
 {
+	if (LockingConditions()) return;
 	if (!bHiding && !IsGamePaused() && IS_AT_STATE(Normal))
 	{
 		PlayerController->GetInventoryManager()->SetEquipmentCharging(InValue.Get<bool>());
@@ -735,6 +750,21 @@ bool AGCPlayerCharacter::IsStandingBlocked() const
 	FHitResult HitResult;
 	return GetWorld()->SweepSingleByChannel(HitResult, Start, End, FQuat::Identity, CeilingTraceChannel,
 		FCollisionShape::MakeSphere(10.0f), FCollisionQueryParams(TEXT("GCTrace_Stand"), false, this));
+}
+
+bool AGCPlayerCharacter::LockingConditions() const
+{
+	if (TimingGame->IsInGame())
+		return true;
+	
+	const TSet<bool> Conditions = GetLockingConditions();
+	for (const bool Condition : Conditions)
+	{
+		if (Condition)
+			return true;
+	}
+
+	return false;
 }
 
 void AGCPlayerCharacter::TickWindowFocus()
