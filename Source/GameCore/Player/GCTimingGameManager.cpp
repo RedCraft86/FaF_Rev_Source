@@ -43,6 +43,14 @@ UGCTimingGameManager::UGCTimingGameManager()
 	Instances = {};
 }
 
+float UGCTimingGameManager::GetProgressFromID(const FGuid& InID) const
+{
+	const TSharedPtr<FTimingGameStruct> Found = Instances.FindRef(InID.ToString());
+	if (Found.IsValid()) return Found->Time / Found->MaxTime;
+
+	return 0.0f;
+}
+
 FKey UGCTimingGameManager::GetKeyFromID(const FGuid& InID) const
 {
 	const TSharedPtr<FTimingGameStruct> Found = Instances.FindRef(InID.ToString());

@@ -7,8 +7,10 @@
 
 struct FTimingGameStruct
 {
-	FTimingGameStruct() : ID({}), Key(FKey{}), Time(0.0f) {}
-	FTimingGameStruct(const FGuid InID, const FKey& InKey, const float InTime) : ID(InID), Key(InKey), Time(InTime) {}
+	FTimingGameStruct() : ID({}), Key(FKey{}), Time(0.0f), MaxTime(0.0f) {}
+	FTimingGameStruct(const FGuid InID, const FKey& InKey, const float InTime)
+		: ID(InID), Key(InKey), Time(InTime), MaxTime(InTime)
+	{}
 
 	void Tick(float DeltaTime);
 	void MarkCompleted();
@@ -21,6 +23,7 @@ struct FTimingGameStruct
 	FGuid ID;
 	FKey Key;
 	float Time;
+	float MaxTime;
 	bool bStopTick = false;
 };
 
@@ -64,7 +67,10 @@ public:
 		FTimingGameManagerSuccessEvent OnStarted;
 
 	UFUNCTION(BlueprintPure, Category = "TimingGame")
-		float GetProgress() const { return 0.1f + Progress / MaxProgress; }
+		float GetProgress() const { return 0.05f + Progress / MaxProgress; }
+
+	UFUNCTION(BlueprintPure, Category = "TimingGame")
+		float GetProgressFromID(const FGuid& InID) const;
 	
 	UFUNCTION(BlueprintPure, Category = "TimingGame")
 		FKey GetKeyFromID(const FGuid& InID) const;
