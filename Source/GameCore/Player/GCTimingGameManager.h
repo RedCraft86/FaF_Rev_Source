@@ -7,14 +7,14 @@
 
 struct FTimingGameStruct
 {
-	FGuid ID;
+	FString ID;
 	FKey Key;
 	
 	FTimingGameStruct() : ID({}), Key(FKey{}) {}
-	FTimingGameStruct(const FGuid InID, const FKey& InKey) : ID(InID), Key(InKey) {}
+	FTimingGameStruct(const FString InID, const FKey& InKey) : ID(InID), Key(InKey) {}
 };
 
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FTimingGameManagerEvent, const FGuid&, ID);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FTimingGameManagerEvent, const FString&, ID);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FTimingGameManagerSuccessEvent);
 
 UCLASS(ClassGroup = (Custom), meta = (BlueprintSpawnableComponent))
@@ -39,10 +39,10 @@ public:
 		uint8 MovePerPhase;
 	
 	UPROPERTY(BlueprintReadOnly, Category = "Settings")
-		TSet<FGuid> SucceededKeys;
+		TSet<FString> SucceededKeys;
 
 	UPROPERTY(BlueprintReadOnly, Category = "Settings")
-		TSet<FGuid> FailedKeys;
+		TSet<FString> FailedKeys;
 
 	UPROPERTY(BlueprintAssignable)
 		FTimingGameManagerEvent OnAdded;
@@ -63,7 +63,7 @@ public:
 		float GetProgress() const { return 0.01f + Progress / MaxProgress; }
 	
 	UFUNCTION(BlueprintPure, Category = "TimingGame")
-		FKey GetKeyFromID(const FGuid& InID) const;
+		FKey GetKeyFromID(const FString& InID) const;
 
 	UFUNCTION(BlueprintCallable, Category = "TimingGame")
 		void RegisterKeyPress(const FKey& InKey);
@@ -81,13 +81,13 @@ private:
 	int32 NumMoves;
 	float Progress;
 	float MaxProgress;
-	TMap<FGuid, TSharedPtr<FTimingGameStruct>> Instances;
+	TMap<FString, TSharedPtr<FTimingGameStruct>> Instances;
 	FTimerHandle TickTimer;
 
-	void OnKeySuccess(const FGuid& ID);
-	void OnKeyFailed(const FGuid& ID);
+	void OnKeySuccess(const FString& ID);
+	void OnKeyFailed(const FString& ID);
 	void CreateInstance();
-	void RemoveInstance(const FGuid& ID);
+	void RemoveInstance(const FString& ID);
 	void ConsistentTick();
 	void StopGame(const bool bFailed);
 	

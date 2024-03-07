@@ -18,7 +18,7 @@ UGCTimingGameManager::UGCTimingGameManager()
 	Instances = {};
 }
 
-FKey UGCTimingGameManager::GetKeyFromID(const FGuid& InID) const
+FKey UGCTimingGameManager::GetKeyFromID(const FString& InID) const
 {
 	const TSharedPtr<FTimingGameStruct> Found = Instances.FindRef(InID);
 	if (Found.IsValid()) return Found->Key;
@@ -28,7 +28,7 @@ FKey UGCTimingGameManager::GetKeyFromID(const FGuid& InID) const
 
 void UGCTimingGameManager::RegisterKeyPress(const FKey& InKey)
 {
-	for (const TPair<FGuid, TSharedPtr<FTimingGameStruct>>& Pair : Instances)
+	for (const TPair<FString, TSharedPtr<FTimingGameStruct>>& Pair : Instances)
 	{
 		if (Pair.Value.IsValid() && Pair.Value->Key == InKey)
 		{
@@ -37,7 +37,7 @@ void UGCTimingGameManager::RegisterKeyPress(const FKey& InKey)
 		}
 	}
 
-	TArray<FGuid> Keys;
+	TArray<FString> Keys;
 	Instances.GenerateKeyArray(Keys);
 	if (!Keys.IsEmpty())
 	{
@@ -67,7 +67,7 @@ void UGCTimingGameManager::BeginNewGame(const float InMaxProgress)
 	OnStarted.Broadcast();
 }
 
-void UGCTimingGameManager::OnKeySuccess(const FGuid& ID)
+void UGCTimingGameManager::OnKeySuccess(const FString& ID)
 {
 	SucceededKeys.Add(ID);
 	RemoveInstance(ID);
@@ -79,7 +79,7 @@ void UGCTimingGameManager::OnKeySuccess(const FGuid& ID)
 	}
 }
 
-void UGCTimingGameManager::OnKeyFailed(const FGuid& ID)
+void UGCTimingGameManager::OnKeyFailed(const FString& ID)
 {
 	FailedKeys.Add(ID);
 	RemoveInstance(ID);
@@ -100,7 +100,7 @@ void UGCTimingGameManager::CreateInstance()
 		Attempts++;
 	}
 
-	const FGuid ID(FGuid::NewGuid());
+	const FString ID(FGuid::NewGuid().ToString());
 	const FKey Key(KeyList[0]);
 	
 	const TSharedPtr<FTimingGameStruct> Struct = MakeShareable(new FTimingGameStruct(ID, Key));
@@ -108,7 +108,7 @@ void UGCTimingGameManager::CreateInstance()
 	OnAdded.Broadcast(ID);
 }
 
-void UGCTimingGameManager::RemoveInstance(const FGuid& ID)
+void UGCTimingGameManager::RemoveInstance(const FString& ID)
 {
 	Instances.Remove(ID);
 	OnRemoved.Broadcast(ID);
