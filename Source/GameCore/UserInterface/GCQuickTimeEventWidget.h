@@ -62,10 +62,10 @@ public:
 		TSubclassOf<UGCQuickTimeKeyWidget> KeyWidgetClass;
 
 	UFUNCTION(BlueprintImplementableEvent)
-		void OnSuccess(const FString& ID);
+		void OnKeySuccess(const FString& ID);
 
 	UFUNCTION(BlueprintImplementableEvent)
-		void OnFailed(const FString& ID);
+		void OnKeyFailed(const FString& ID);
 
 private:
 

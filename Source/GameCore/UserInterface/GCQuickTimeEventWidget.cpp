@@ -20,8 +20,8 @@ void UGCQuickTimeEventWidget::Setup(UGCQuickTimeEventManager* InManager)
 	Manager = InManager;
 	Manager->OnKeyAdded.AddDynamic(this, &UGCQuickTimeEventWidget::OnKeyAdd);
 	Manager->OnKeyRemoved.AddDynamic(this, &UGCQuickTimeEventWidget::OnKeyRemove);
-	Manager->OnKeySuccess.AddDynamic(this, &UGCQuickTimeEventWidget::OnSuccess);
-	Manager->OnKeyFailed.AddDynamic(this, &UGCQuickTimeEventWidget::OnFailed);
+	Manager->OnKeySuccess.AddDynamic(this, &UGCQuickTimeEventWidget::OnKeySuccess);
+	Manager->OnKeyFailed.AddDynamic(this, &UGCQuickTimeEventWidget::OnKeyFailed);
 }
 
 void UGCQuickTimeEventWidget::NativeTick(const FGeometry& MyGeometry, float InDeltaTime)
