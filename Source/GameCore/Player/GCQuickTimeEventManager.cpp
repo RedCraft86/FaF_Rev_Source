@@ -5,6 +5,10 @@
 #include "GCPlayerController.h"
 #include "Algo/RandomShuffle.h"
 
+#define BUMP Speeds.X
+#define PENALTY Speeds.Y
+#define CONSTANT Speeds.Z
+
 UGCQuickTimeEventManager::UGCQuickTimeEventManager()
 {
 	PrimaryComponentTick.bCanEverTick = true;
@@ -12,7 +16,7 @@ UGCQuickTimeEventManager::UGCQuickTimeEventManager()
 	
 	WidgetClass = NULL;
 	Keylist = {EKeys::W, EKeys::S, EKeys::A, EKeys::D};
-	Speeds = FVector(15.0f, 20.0f, 10.0f);
+	Speeds = FVector(20.0f, 10.0f, 10.0f);
 	MovesPerPhase = 5;
 	WidgetObject = nullptr;
 	ResetData();
@@ -36,22 +40,19 @@ void UGCQuickTimeEventManager::BeginNewQTE(const float InMaxProgress)
 void UGCQuickTimeEventManager::RegisterKeyPress(const FKey& InKey)
 {
 	if (!InKey.IsValid()) return;
-	
-	TArray<FString> IDs;
-	Instances.GenerateKeyArray(IDs);
-	for (const FString& ID : IDs)
+
+	for (const FString& ID : InstanceKeys)
 	{
 		if (Instances.FindRef(ID) == InKey)
 		{
-			OnKeySuccess(ID);
+			MarkKeySuccess(ID);
 			return;
 		}
 	}
 
-	if (!IDs.IsEmpty())
+	if (!InstanceKeys.IsEmpty())
 	{
-		Algo::RandomShuffle(IDs);
-		OnKeyFailed(IDs[0]);
+		MarkKeyFailed(InstanceKeys[0]);
 	}
 }
 
@@ -68,11 +69,13 @@ void UGCQuickTimeEventManager::CreateInstance()
 
 	const FString ID(FGuid::NewGuid().ToString());
 	Instances.Add(ID, Keylist[0]);
+	InstanceKeys.Add(ID);
 	OnKeyAdded.Broadcast(ID);
 }
 
 void UGCQuickTimeEventManager::RemoveInstance(const FString& InID)
 {
+	InstanceKeys.Remove(InID);
 	if (Instances.Remove(InID) > 0)
 	{
 		OnKeyRemoved.Broadcast(InID);
@@ -80,22 +83,24 @@ void UGCQuickTimeEventManager::RemoveInstance(const FString& InID)
 	}
 }
 
-void UGCQuickTimeEventManager::OnKeySuccess(const FString& InID)
+void UGCQuickTimeEventManager::MarkKeySuccess(const FString& InID)
 {
+	OnKeySuccess.Broadcast(InID);
 	SucceededKeys.Add(InID);
 	RemoveInstance(InID);
-	Progress += Speeds.Y;
+	Progress += BUMP;
 	if (Progress > MaxProgress)
 	{
 		StopQTE(false);
 	}
 }
 
-void UGCQuickTimeEventManager::OnKeyFailed(const FString& InID)
+void UGCQuickTimeEventManager::MarkKeyFailed(const FString& InID)
 {
+	OnKeyFailed.Broadcast(InID);
 	FailedKeys.Add(InID);
 	RemoveInstance(InID);
-	Progress -= Speeds.Z;
+	Progress -= PENALTY;
 }
 
 void UGCQuickTimeEventManager::StopQTE(const bool bFailed)
@@ -116,13 +121,14 @@ void UGCQuickTimeEventManager::ResetData()
 	SucceededKeys = {};
 	FailedKeys = {};
 	Instances = {};
+	InstanceKeys = {};
 }
 
 void UGCQuickTimeEventManager::TimedTick()
 {
 	if (Progress > 0.0f)
 	{
-		Progress -= Speeds.X;
+		Progress -= CONSTANT * 0.05f;
 	}
 	else
 	{

@@ -25,7 +25,7 @@ public:
 	UPROPERTY(EditAnywhere, Category = "Settings")
 		TArray<FKey> Keylist;
 
-	// Drain - Bump - Penalty
+	// BUMP - PENALTY - CONSTANT
 	UPROPERTY(EditAnywhere, Category = "Settings")
 		FVector Speeds;
 
@@ -40,6 +40,12 @@ public:
 
 	UPROPERTY(BlueprintAssignable)
 		FQuickTimeEventSignature OnStarted;
+
+	UPROPERTY(BlueprintAssignable)
+		FQuickTimeKeyEventSignature OnKeySuccess;
+
+	UPROPERTY(BlueprintAssignable)
+		FQuickTimeKeyEventSignature OnKeyFailed;
 
 	UPROPERTY(BlueprintAssignable)
 		FQuickTimeKeyEventSignature OnKeyAdded;
@@ -78,12 +84,13 @@ private:
 	float Progress, MaxProgress;
 	TSet<FString> SucceededKeys, FailedKeys;
 	TMap<FString, FKey> Instances;
+	TArray<FString> InstanceKeys;
 	FTimerHandle TickTimer;
 
 	void CreateInstance();
 	void RemoveInstance(const FString& InID);
-	void OnKeySuccess(const FString& InID);
-	void OnKeyFailed(const FString& InID);
+	void MarkKeySuccess(const FString& InID);
+	void MarkKeyFailed(const FString& InID);
 	void StopQTE(const bool bFailed);
 	void ResetData();
 	

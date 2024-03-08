@@ -6,20 +6,22 @@
 #include "Components/ProgressBar.h"
 #include "Components/TextBlock.h"
 
-void UGCQuickTimeKeyWidget::Setup(UGCQuickTimeEventManager* InManager, const FString& InID)
+void UGCQuickTimeKeyWidget::Setup(UGCQuickTimeEventManager* InManager, const FString& InID, UPanelSlot* InSlot)
 {
 	Manager = InManager;
 	KeyID = InID;
 	Key = Manager->GetKeyFromID(KeyID);
-
 	KeyText->SetText(FText::FromName(Key.GetFName()));
+	OnSetup(InSlot);
 }
 
 void UGCQuickTimeEventWidget::Setup(UGCQuickTimeEventManager* InManager)
 {
 	Manager = InManager;
 	Manager->OnKeyAdded.AddDynamic(this, &UGCQuickTimeEventWidget::OnKeyAdd);
-	Manager->OnKeyAdded.AddDynamic(this, &UGCQuickTimeEventWidget::OnKeyRemove);
+	Manager->OnKeyRemoved.AddDynamic(this, &UGCQuickTimeEventWidget::OnKeyRemove);
+	Manager->OnKeySuccess.AddDynamic(this, &UGCQuickTimeEventWidget::OnSuccess);
+	Manager->OnKeyFailed.AddDynamic(this, &UGCQuickTimeEventWidget::OnFailed);
 }
 
 void UGCQuickTimeEventWidget::NativeTick(const FGeometry& MyGeometry, float InDeltaTime)
@@ -42,9 +44,8 @@ void UGCQuickTimeEventWidget::NativeDestruct()
 void UGCQuickTimeEventWidget::OnKeyAdd(const FString& InID)
 {
 	UGCQuickTimeKeyWidget* Widget = CreateWidget<UGCQuickTimeKeyWidget>(this, KeyWidgetClass);
-	Widget->Setup(Manager, InID);
+	Widget->Setup(Manager, InID, KeySlots->AddChild(Widget));
 	KeyWidgetMap.Add(InID, Widget);
-	KeySlots->AddChild(Widget);
 }
 
 void UGCQuickTimeEventWidget::OnKeyRemove(const FString& InID)

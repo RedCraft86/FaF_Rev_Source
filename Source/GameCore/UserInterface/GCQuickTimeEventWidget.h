@@ -32,9 +32,12 @@ public:
 	UFUNCTION(BlueprintImplementableEvent)
 		void OnFailed();
 
+	UFUNCTION(BlueprintImplementableEvent)
+		void OnSetup(UPanelSlot* InSlot);
+	
 private:
 
-	void Setup(UGCQuickTimeEventManager* InManager, const FString& InID);
+	void Setup(UGCQuickTimeEventManager* InManager, const FString& InID, UPanelSlot* InSlot);
 };
 
 UCLASS(Abstract)
@@ -49,7 +52,7 @@ public:
 	UPROPERTY(Transient, meta = (BindWidget))
 		UPanelWidget* KeySlots;
 
-	UPROPERTY(Transient, meta = (BindWidget))
+	UPROPERTY(Transient, BlueprintReadOnly, Category = "QTEWidget", meta = (BindWidget))
 		class UProgressBar* FillBar;
 
 	UPROPERTY(Transient, BlueprintReadOnly, Category = "QTEWidget")
@@ -57,6 +60,12 @@ public:
 
 	UPROPERTY(EditAnywhere, Category = "Settings")
 		TSubclassOf<UGCQuickTimeKeyWidget> KeyWidgetClass;
+
+	UFUNCTION(BlueprintImplementableEvent)
+		void OnSuccess(const FString& ID);
+
+	UFUNCTION(BlueprintImplementableEvent)
+		void OnFailed(const FString& ID);
 
 private:
 
