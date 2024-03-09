@@ -123,10 +123,7 @@ void UGCQuickTimeEventManager::StopQTE(const bool bFailed)
 	FTimerHandle TempHandle;
 	GetWorld()->GetTimerManager().SetTimer(TempHandle, [WEAK_THIS]()
 	{
-		if (WeakThis.IsValid())
-		{
-			WeakThis->bPlaying = false;
-		}
+		if (WeakThis.IsValid()) WeakThis->bPlaying = false;
 	}, 0.25f, false);
 }
 
