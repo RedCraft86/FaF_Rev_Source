@@ -12,7 +12,7 @@
 
 UGCQuickTimeEventManager::UGCQuickTimeEventManager()
 {
-	PrimaryComponentTick.bCanEverTick = true;
+	PrimaryComponentTick.bCanEverTick = false;
 	PrimaryComponentTick.bStartWithTickEnabled = false;
 	
 	WidgetClass = NULL;
