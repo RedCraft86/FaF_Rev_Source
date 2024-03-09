@@ -85,12 +85,14 @@ private:
 	TSet<FString> SucceededKeys, FailedKeys;
 	TMap<FString, FKey> Instances;
 	TArray<FString> InstanceKeys;
-	FTimerHandle TickTimer;
+	
+	FTimerHandle StartTimer, TickTimer;
 
 	void CreateInstance();
 	void RemoveInstance(const FString& InID);
 	void MarkKeySuccess(const FString& InID);
 	void MarkKeyFailed(const FString& InID);
+	void StartQTE(const float InProgress);
 	void StopQTE(const bool bFailed);
 	void ResetData();
 	

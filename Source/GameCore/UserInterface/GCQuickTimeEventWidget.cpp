@@ -18,10 +18,13 @@ void UGCQuickTimeKeyWidget::Setup(UGCQuickTimeEventManager* InManager, const FSt
 void UGCQuickTimeEventWidget::Setup(UGCQuickTimeEventManager* InManager)
 {
 	Manager = InManager;
+	Manager->OnFailed.AddDynamic(this, &UGCQuickTimeEventWidget::OnFailed);
+	Manager->OnSuccess.AddDynamic(this, &UGCQuickTimeEventWidget::OnSuccess);
 	Manager->OnKeyAdded.AddDynamic(this, &UGCQuickTimeEventWidget::OnKeyAdd);
 	Manager->OnKeyRemoved.AddDynamic(this, &UGCQuickTimeEventWidget::OnKeyRemove);
 	Manager->OnKeySuccess.AddDynamic(this, &UGCQuickTimeEventWidget::OnKeySuccess);
 	Manager->OnKeyFailed.AddDynamic(this, &UGCQuickTimeEventWidget::OnKeyFailed);
+	FillBar->SetPercent(0.5f);
 }
 
 void UGCQuickTimeEventWidget::NativeTick(const FGeometry& MyGeometry, float InDeltaTime)
@@ -29,8 +32,13 @@ void UGCQuickTimeEventWidget::NativeTick(const FGeometry& MyGeometry, float InDe
 	Super::NativeTick(MyGeometry, InDeltaTime);
 	if (IsInViewport())
 	{
-		FillBar->SetPercent(Manager->GetPercent());
+		FillBar->SetPercent(FMath::FInterpConstantTo(FillBar->GetPercent(), TargetPercent, InDeltaTime, 0.5f));
 	}
+}
+
+void UGCQuickTimeEventWidget::NativeConstruct()
+{
+	Super::NativeConstruct();
 }
 
 void UGCQuickTimeEventWidget::NativeDestruct()
@@ -38,7 +46,18 @@ void UGCQuickTimeEventWidget::NativeDestruct()
 	Super::NativeDestruct();
 	FillBar->SetPercent(0.5f);
 	KeySlots->ClearChildren();
+	TargetPercent = 0.5f;
 	KeyWidgetMap.Empty();
+}
+
+void UGCQuickTimeEventWidget::OnFailed()
+{
+	TargetPercent = 0.0f;
+}
+
+void UGCQuickTimeEventWidget::OnSuccess()
+{
+	TargetPercent = 1.0f;
 }
 
 void UGCQuickTimeEventWidget::OnKeyAdd(const FString& InID)

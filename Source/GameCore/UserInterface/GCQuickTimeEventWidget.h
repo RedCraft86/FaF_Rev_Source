@@ -72,9 +72,15 @@ private:
 	UPROPERTY(Transient)
 		TMap<FString, UGCQuickTimeKeyWidget*> KeyWidgetMap;
 
+	float TargetPercent = 0.5f;
+
 	void Setup(UGCQuickTimeEventManager* InManager);
 	virtual void NativeTick(const FGeometry& MyGeometry, float InDeltaTime) override;
+	virtual void NativeConstruct() override;
 	virtual void NativeDestruct() override;
+
+	UFUNCTION() void OnFailed();
+	UFUNCTION() void OnSuccess();
 	
 	UFUNCTION() void OnKeyAdd(const FString& InID);
 	UFUNCTION() void OnKeyRemove(const FString& InID);
