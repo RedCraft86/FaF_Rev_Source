@@ -20,7 +20,7 @@ UGCQuickTimeEventManager::UGCQuickTimeEventManager()
 	Speeds = FVector(20.0f, 10.0f, 15.0f);
 	MovesPerPhase = 5;
 	WidgetObject = nullptr;
-	bPlaying = false;
+	bOverridePlayer = false;
 	ResetData();
 }
 
@@ -105,6 +105,7 @@ void UGCQuickTimeEventManager::StartQTE(const float InProgress)
 {
 	ResetData();
 	bPlaying = true;
+	bOverridePlayer = true;
 	MaxProgress = FMath::Max(10.0f, InProgress);
 	Progress = MaxProgress * 0.5f;
 
@@ -123,12 +124,13 @@ void UGCQuickTimeEventManager::StopQTE(const bool bFailed)
 	FTimerHandle TempHandle;
 	GetWorld()->GetTimerManager().SetTimer(TempHandle, [WEAK_THIS]()
 	{
-		if (WeakThis.IsValid()) WeakThis->bPlaying = false;
+		if (WeakThis.IsValid()) WeakThis->bOverridePlayer = false;
 	}, 0.25f, false);
 }
 
 void UGCQuickTimeEventManager::ResetData()
 {
+	bPlaying = false;
 	Phase = 0;
 	NumMoves = 0;
 	Progress = 0.0f;

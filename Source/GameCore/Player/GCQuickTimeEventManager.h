@@ -15,6 +15,8 @@ class GAMECORE_API UGCQuickTimeEventManager final : public UActorComponent
 {
 	GENERATED_BODY()
 
+	friend class AGCPlayerCharacter;
+
 public:
 
 	UGCQuickTimeEventManager();
@@ -80,6 +82,7 @@ private:
 		UGCQuickTimeEventWidget* WidgetObject;
 
 	bool bPlaying;
+	bool bOverridePlayer;
 	uint8 Phase, NumMoves;
 	float Progress, MaxProgress;
 	TSet<FString> SucceededKeys, FailedKeys;

@@ -755,7 +755,7 @@ bool AGCPlayerCharacter::IsStandingBlocked() const
 
 bool AGCPlayerCharacter::LockingConditions() const
 {
-	if (QuickTimeEvent->IsPlaying())
+	if (QuickTimeEvent->bOverridePlayer)
 		return true;
 	
 	const TSet<bool> Conditions = GetLockingConditions();
