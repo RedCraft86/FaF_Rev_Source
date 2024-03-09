@@ -37,7 +37,7 @@ void UGCQuickTimeEventManager::BeginNewQTE(const float InMaxProgress)
 
 void UGCQuickTimeEventManager::RegisterKeyPress(const FKey& InKey)
 {
-	if (!bPlaying && !InKey.IsValid()) return;
+	if (!bPlaying || !InKey.IsValid()) return;
 
 	for (const FString& ID : InstanceKeys)
 	{
