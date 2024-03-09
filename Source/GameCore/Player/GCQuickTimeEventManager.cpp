@@ -156,7 +156,7 @@ void UGCQuickTimeEventManager::TimedTick()
 		NumMoves = 0;
 	}
 
-	if (InstanceKeys.Num() < FMath::Max(1, Phase * 2))
+	if (InstanceKeys.Num() < Phase + 1)
 	{
 		CreateInstance();
 	}
