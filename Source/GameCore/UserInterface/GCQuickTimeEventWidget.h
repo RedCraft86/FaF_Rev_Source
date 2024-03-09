@@ -71,7 +71,7 @@ private:
 
 	UPROPERTY(Transient)
 		TMap<FString, UGCQuickTimeKeyWidget*> KeyWidgetMap;
-
+	
 	float TargetPercent = 0.5f;
 
 	void Setup(UGCQuickTimeEventManager* InManager);

@@ -30,6 +30,10 @@ void UGCQuickTimeEventWidget::Setup(UGCQuickTimeEventManager* InManager)
 void UGCQuickTimeEventWidget::NativeTick(const FGeometry& MyGeometry, float InDeltaTime)
 {
 	Super::NativeTick(MyGeometry, InDeltaTime);
+	if (Manager->IsPlaying())
+	{
+		TargetPercent = Manager->GetPercent();
+	}
 	if (IsInViewport())
 	{
 		FillBar->SetPercent(FMath::FInterpConstantTo(FillBar->GetPercent(), TargetPercent, InDeltaTime, 0.5f));
