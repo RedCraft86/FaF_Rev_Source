@@ -72,7 +72,6 @@ void UGCQuickTimeEventManager::RemoveInstance(const FString& InID)
 {
 	Instances.Remove(InID);
 	OnKeyRemoved.Broadcast(InID);
-	InstanceKeys.RemoveAt(0);
 	if (InstanceKeys.IsValidIndex(0))
 	{
 		InstanceKeys.RemoveAt(0);
