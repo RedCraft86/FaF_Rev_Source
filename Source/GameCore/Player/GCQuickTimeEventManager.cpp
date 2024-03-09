@@ -70,10 +70,12 @@ void UGCQuickTimeEventManager::CreateInstance()
 
 void UGCQuickTimeEventManager::RemoveInstance(const FString& InID)
 {
+	Instances.Remove(InID);
 	OnKeyRemoved.Broadcast(InID);
 	InstanceKeys.RemoveAt(0);
-	if (Instances.Remove(InID) > 0)
+	if (InstanceKeys.IsValidIndex(0))
 	{
+		InstanceKeys.RemoveAt(0);
 		NumMoves++;
 	}
 }
