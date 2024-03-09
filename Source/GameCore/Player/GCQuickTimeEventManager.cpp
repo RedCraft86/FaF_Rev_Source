@@ -38,19 +38,16 @@ void UGCQuickTimeEventManager::BeginNewQTE(const float InMaxProgress)
 void UGCQuickTimeEventManager::RegisterKeyPress(const FKey& InKey)
 {
 	if (!bPlaying || !InKey.IsValid()) return;
-
-	for (const FString& ID : InstanceKeys)
-	{
-		if (Instances.FindRef(ID) == InKey)
-		{
-			MarkKeySuccess(ID);
-			return;
-		}
-	}
-
 	if (!InstanceKeys.IsEmpty())
 	{
-		MarkKeyFailed(InstanceKeys[0]);
+		if (Instances.FindRef(InstanceKeys[0]) == InKey)
+		{
+			MarkKeySuccess(InstanceKeys[0]);
+		}
+		else
+		{
+			MarkKeyFailed(InstanceKeys[0]);
+		}
 	}
 }
 
@@ -73,9 +70,9 @@ void UGCQuickTimeEventManager::CreateInstance()
 
 void UGCQuickTimeEventManager::RemoveInstance(const FString& InID)
 {
-	Instances.Remove(InID);
 	OnKeyRemoved.Broadcast(InID);
-	if (InstanceKeys.Remove(FString(InID)) > 0)
+	InstanceKeys.RemoveAt(0);
+	if (Instances.Remove(InID) > 0)
 	{
 		NumMoves++;
 	}

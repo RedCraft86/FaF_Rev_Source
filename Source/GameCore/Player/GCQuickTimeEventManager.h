@@ -87,7 +87,7 @@ private:
 	float Progress, MaxProgress;
 	TSet<FString> SucceededKeys, FailedKeys;
 	TMap<FString, FKey> Instances;
-	TArray<FString> InstanceKeys;
+	TArray<FString> InstanceKeys; // To preserve order
 	
 	FTimerHandle StartTimer, TickTimer;
 
