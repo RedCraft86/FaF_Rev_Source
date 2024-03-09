@@ -75,10 +75,10 @@ void UGCQuickTimeEventManager::CreateInstance()
 
 void UGCQuickTimeEventManager::RemoveInstance(const FString& InID)
 {
-	InstanceKeys.Remove(InID);
-	if (Instances.Remove(InID) > 0)
+	Instances.Remove(InID);
+	OnKeyRemoved.Broadcast(InID);
+	if (InstanceKeys.Remove(FString(InID)) > 0)
 	{
-		OnKeyRemoved.Broadcast(InID);
 		NumMoves++;
 	}
 }
@@ -141,7 +141,7 @@ void UGCQuickTimeEventManager::TimedTick()
 		NumMoves = 0;
 	}
 
-	if (Instances.Num() < FMath::Max(1, Phase * 2))
+	if (InstanceKeys.Num() < FMath::Max(1, Phase * 2))
 	{
 		CreateInstance();
 	}
