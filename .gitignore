@@ -1,4 +1,3 @@
-*.vsconfig
 *.slo
 *.lo
 *.o
@@ -27,6 +26,8 @@
 *.VC.opendb
 *.png
 *.tga
+*.vsconfig
+*.uproject
 
 .idea/
 .vs/
