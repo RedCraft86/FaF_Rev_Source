@@ -32,17 +32,16 @@
 .idea/
 .vs/
 Binaries/
+DerivedDataCache/
+Intermediate/
+/Config/
+/Content/
+/Plugins/
+/Saved/
+/Source/
 
 Build/*
 !Build/*/
 Build/*/**
 !/Build/*/PakBlacklist*.txt
 !/Build/**/*.ico
-
-Config/
-Content/
-DerivedDataCache/
-Intermediate/
-Plugins/
-Saved/
-Source/
