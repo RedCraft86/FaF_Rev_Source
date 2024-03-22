@@ -38,19 +38,10 @@ Build/*/**
 !/Build/*/PakBlacklist*.txt
 !/Build/**/*.ico
 
+Config/
 Content/
-
 DerivedDataCache/
 Intermediate/
 Plugins/
-!Plugins/RCUtils/Source/
-!Plugins/RCUtils/*.uplugin
-
 Saved/
-
-/Source/GameCore/GameKeys.h
-/Config/DefaultCrypto.ini
-/Config/DefaultEngine.ini
-FaF_Rev.uproject
-FaF_Rev.sln.DotSettings.user
-/Content/
+Source/
