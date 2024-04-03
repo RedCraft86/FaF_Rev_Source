@@ -1,4 +1,4 @@
-// Copyright (C) Tayzar L. All Rights Reserved.
+// Copyright (C) RedCraft86. All Rights Reserved.
 
 #include "FaF_Rev.h"
 #include "Modules/ModuleManager.h"
