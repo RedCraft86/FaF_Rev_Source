@@ -38,10 +38,16 @@ Intermediate/
 /Content/
 /Plugins/
 /Saved/
-/Source/
+# /Source/
 
 Build/*
 !Build/*/
 Build/*/**
 !/Build/*/PakBlacklist*.txt
 !/Build/**/*.ico
+
+!/Config/DefaultEngine.ini
+!/Config/DefaultGame.ini
+
+!/Saved/Config/WindowsEditor/Game.ini
+!/Saved/Config/WindowsEditor/GameUserSettings.ini
