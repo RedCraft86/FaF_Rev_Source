@@ -1,6 +1,18 @@
 // Copyright (C) RedCraft86. All Rights Reserved.
 
 #include "FaF_Rev.h"
-#include "Modules/ModuleManager.h"
+#include "Inventory/InventoryItemData.h"
+#include "GameSection/GameSectionData.h"
 
-IMPLEMENT_PRIMARY_GAME_MODULE(FDefaultGameModuleImpl, FaF_Rev, "FaF_Rev");
+void FFRGameModule::StartupModule()
+{
+	UInventoryItemDataBase::DefaultSpawnClass = UInventoryItemData::StaticClass();
+	UGameSectionDataBase::DefaultSpawnClass = UGameSectionData::StaticClass();
+}
+
+void FFRGameModule::ShutdownModule()
+{
+
+}
+
+IMPLEMENT_PRIMARY_GAME_MODULE(FFRGameModule, FaF_Rev, "FaF_Rev");
