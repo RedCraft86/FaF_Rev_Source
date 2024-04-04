@@ -12,5 +12,5 @@ class FAF_REV_API UGameSectionManager final : public UGameSectionManagerBase
 
 private:
 
-	virtual bool ShouldCreateSubsystem(UObject* Outer) const override { UGameInstanceSubsystem::ShouldCreateSubsystem(Outer); }
+	virtual bool ShouldCreateSubsystem(UObject* Outer) const override { return UGameInstanceSubsystem::ShouldCreateSubsystem(Outer); }
 };
