@@ -22,6 +22,8 @@ protected:
 
 public: // Statics
 
+	template <typename T = AFRPlayer>
+	static T* Get(const UObject* WorldContextObject);
 	UFUNCTION(BlueprintPure, Category = "Game", DisplayName = "Get Player (Smart)", meta = (DynamicOutputParam = "ReturnValue", DeterminesOutputType = "Class", WorldContext = "WorldContextObject"))
-		static APawn* GetPlayerPawnSmart(const UObject* WorldContextObject, const TSubclassOf<APawn> Class);
+		static ACharacter* GetPlayerPawnSmart(const UObject* WorldContextObject, const TSubclassOf<ACharacter> Class);
 };

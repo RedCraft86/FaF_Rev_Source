@@ -24,8 +24,15 @@ void AFRPlayer::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
 }
 
-APawn* AFRPlayer::GetPlayerPawnSmart(const UObject* WorldContextObject, const TSubclassOf<APawn> Class)
+template <typename T>
+T* AFRPlayer::Get(const UObject* WorldContextObject)
 {
-	APawn* Obj = UGameplayStatics::GetPlayerPawn(WorldContextObject, 0);
+	static_assert(TIsDerivedFrom<T, ACharacter>::IsDerived, "AFRPlayer::Get can only be used to find ACharacter instances.");
+	return Cast<T>(UGameplayStatics::GetPlayerCharacter(WorldContextObject, 0));
+}
+
+ACharacter* AFRPlayer::GetPlayerPawnSmart(const UObject* WorldContextObject, const TSubclassOf<ACharacter> Class)
+{
+	ACharacter* Obj = UGameplayStatics::GetPlayerCharacter(WorldContextObject, 0);
 	return Obj && Obj->IsA(Class) ? Obj : nullptr;
 }
