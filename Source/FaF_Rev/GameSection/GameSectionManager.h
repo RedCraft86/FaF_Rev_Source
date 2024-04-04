@@ -9,4 +9,8 @@ UCLASS()
 class FAF_REV_API UGameSectionManager final : public UGameSectionManagerBase
 {
 	GENERATED_BODY()
+
+private:
+
+	virtual bool ShouldCreateSubsystem(UObject* Outer) const override { UGameInstanceSubsystem::ShouldCreateSubsystem(Outer); }
 };
