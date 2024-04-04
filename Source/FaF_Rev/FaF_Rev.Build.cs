@@ -15,7 +15,8 @@ public class FaF_Rev : ModuleRules
 				"Engine", 
 				"InputCore", 
 				"EnhancedInput",
-				"GTRuntime"
+				"GTRuntime",
+				"GTCore"
 			}
 		);
 	}
