@@ -10,7 +10,7 @@ class AFRPlayer;
 #define DefaultInteractionLabel NSLOCTEXT("Interaction", "GenericLabel", "Interact");
 
 UINTERFACE()
-class UInteractionInterface final : public UInterface
+class UInteractionInterface : public UInterface
 {
 	GENERATED_BODY()
 };
