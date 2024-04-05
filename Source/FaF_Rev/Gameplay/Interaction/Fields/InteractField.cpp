@@ -16,9 +16,9 @@ AInteractField::AInteractField()
 	DisplayLabel = DefaultInteractionLabel;
 }
 
-void AInteractField::OnEnableStateChange(const bool bEnabled)
+void AInteractField::OnEnableStateChange(const bool bIsEnabled)
 {
-	SetActorEnableCollision(bEnabled);
+	SetActorEnableCollision(bIsEnabled);
 }
 
 void AInteractField::OnConstruction(const FTransform& Transform)
