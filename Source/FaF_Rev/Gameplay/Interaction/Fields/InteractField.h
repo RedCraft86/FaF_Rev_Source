@@ -7,7 +7,7 @@
 #include "WorldEvents/WorldEventComponent.h"
 #include "InteractField.generated.h"
 
-UCLASS()
+UCLASS(meta = (AllowedCategories = "Collision, BrushSettings"))
 class FAF_REV_API AInteractField final : public AGTVolume, public IInteractionInterface
 {
 	GENERATED_BODY()

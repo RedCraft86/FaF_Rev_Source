@@ -6,7 +6,7 @@
 #include "WorldEvents/WorldEventComponent.h"
 #include "TriggerField.generated.h"
 
-UCLASS()
+UCLASS(meta = (AllowedCategories = "Collision, BrushSettings"))
 class FAF_REV_API ATriggerField final : public AGTVolume
 {
 	GENERATED_BODY()
