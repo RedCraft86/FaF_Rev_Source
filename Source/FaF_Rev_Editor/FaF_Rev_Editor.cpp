@@ -3,8 +3,8 @@
 #include "FaF_Rev_Editor.h"
 #include "Interaction/Fields/InteractField.h"
 #include "Interaction/Fields/TriggerField.h"
-#include "DetailsCustomization/GTActorDetails.h"
-#include "GTEditor.h"
+#include "GTEditor/Public/DetailsCustomization/GTActorDetails.h"
+#include "GTEditor/Public/GTEditor.h"
 
 #define LOCTEXT_NAMESPACE "FFaF_Rev_EditorModule"
 
