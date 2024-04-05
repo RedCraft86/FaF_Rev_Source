@@ -21,7 +21,7 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Settings", meta = (DisplayPriority = -1))
 		bool bSingleUse;
 
-protected:
+private:
 
 	virtual void NotifyActorBeginOverlap(AActor* OtherActor) override;
 };
