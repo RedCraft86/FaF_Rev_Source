@@ -21,6 +21,15 @@ void AInteractField::OnEnableStateChange(const bool bEnabled)
 	SetActorEnableCollision(bEnabled);
 }
 
+void AInteractField::OnConstruction(const FTransform& Transform)
+{
+	Super::OnConstruction(Transform);
+	if (DisplayLabel.IsEmptyOrWhitespace())
+	{
+		DisplayLabel = DefaultInteractionLabel;
+	}
+}
+
 void AInteractField::OnBeginInteract_Implementation(AFRPlayer* Player, const FHitResult& HitResult)
 {
 	if (!bEnabled) return;

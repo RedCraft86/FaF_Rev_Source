@@ -32,6 +32,8 @@ public:
 private:
 
 	virtual void OnEnableStateChange(const bool bEnabled) override;
+	virtual void OnConstruction(const FTransform& Transform) override;
+	
 	virtual void OnBeginInteract_Implementation(AFRPlayer* Player, const FHitResult& HitResult);
 	virtual bool GetInteractionInfo_Implementation(FText& DisplayName);
 };
