@@ -1,24 +1,15 @@
 ﻿// Copyright (C) RedCraft86. All Rights Reserved.
 
 #include "InteractField.h"
+#include "Components/BrushComponent.h"
 
 AInteractField::AInteractField()
 {
-	CollisionBox = CreateDefaultSubobject<UBoxComponent>("CollisionBox");
-	CollisionBox->SetupAttachment(GetRootComponent());
-	CollisionBox->SetCollisionResponseToAllChannels(ECR_Ignore);
-	CollisionBox->SetCollisionResponseToChannel(ECC_Visibility, ECR_Overlap);
-	CollisionBox->SetCollisionObjectType(ECC_WorldDynamic);
-
 	WorldEventComponent = CreateDefaultSubobject<UWorldEventComponent>("WorldEvents");
+	GetBrushComponent()->SetCollisionResponseToChannel(ECC_Visibility, ECR_Block);
 	
 	bSingleUse = true;
 	DisplayLabel = DefaultInteractionLabel;
-}
-
-void AInteractField::OnEnableStateChange(const bool bIsEnabled)
-{
-	SetActorEnableCollision(bIsEnabled);
 }
 
 void AInteractField::OnConstruction(const FTransform& Transform)
