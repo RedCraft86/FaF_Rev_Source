@@ -5,7 +5,7 @@
 #include "Inventory/InventoryComponentBase.h"
 #include "InventoryComponent.generated.h"
 
-UCLASS()
+UCLASS(ClassGroup = (Game), meta = (BlueprintSpawnableComponent))
 class FAF_REV_API UInventoryComponent : public UInventoryComponentBase
 {
 	GENERATED_BODY()
