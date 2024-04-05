@@ -2,7 +2,7 @@
 
 #include "TriggerField.h"
 #include "Components/BrushComponent.h"
-#include "FRPlayer.h"
+#include "Kismet/GameplayStatics.h"
 
 ATriggerField::ATriggerField()
 {
@@ -16,7 +16,7 @@ void ATriggerField::NotifyActorBeginOverlap(AActor* OtherActor)
 	Super::NotifyActorBeginOverlap(OtherActor);
 	
 	if (!bEnabled) return;
-	if (OtherActor->IsA(AFRPlayer::StaticClass()))
+	if (OtherActor == UGameplayStatics::GetPlayerPawn(this, 0))
 	{
 		WorldEventComponent->RunEvents();
 		if (bSingleUse) SetEnabled(false);
