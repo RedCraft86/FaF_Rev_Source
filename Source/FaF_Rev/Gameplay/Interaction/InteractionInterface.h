@@ -29,9 +29,9 @@ public:
 		void OnEndInteract(AFRPlayer* Player);
 	virtual void OnEndInteract_Implementation(AFRPlayer* Player) {}
 
-	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Interaction", DisplayName = "Begin AI Interact")
-		void OnBeginAIInteract(APawn* Character, const FHitResult& HitResult);
-	virtual void OnBeginAIInteract_Implementation(APawn* Character, const FHitResult& HitResult) {}
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Interaction", DisplayName = "Begin Pawn Interact")
+		void OnBeginPawnInteract(APawn* Pawn, const FHitResult& HitResult);
+	virtual void OnBeginPawnInteract_Implementation(APawn* Pawn, const FHitResult& HitResult) {}
 
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Interaction")
 		bool GetInteractionInfo(FText& DisplayName);
@@ -49,7 +49,7 @@ namespace Interaction
 		return IsValid(Target) ? Target->Implements<UInteractionInterface>() : false; 
 	} 
 	
-	static void OnBeginInteract(UObject* Target, AFRPlayer* Player, const FHitResult& HitResult)
+	static void BeginInteract(UObject* Target, AFRPlayer* Player, const FHitResult& HitResult)
 	{
 		if (ImplementedBy(Target))
 		{
@@ -57,7 +57,7 @@ namespace Interaction
 		}
 	}
 	
-	static void OnEndInteract(UObject* Target, AFRPlayer* Player)
+	static void EndInteract(UObject* Target, AFRPlayer* Player)
 	{
 		if (ImplementedBy(Target))
 		{
@@ -65,11 +65,11 @@ namespace Interaction
 		}
 	}
 
-	static void OnBeginAIInteract(UObject* Target, APawn* Character, const FHitResult& HitResult)
+	static void BeginPawnInteract(UObject* Target, APawn* Pawn, const FHitResult& HitResult)
 	{
 		if (ImplementedBy(Target))
 		{
-			IInteractionInterface::Execute_OnBeginAIInteract(Target, Character, HitResult);
+			IInteractionInterface::Execute_OnBeginPawnInteract(Target, Pawn, HitResult);
 		}
 	}
 
