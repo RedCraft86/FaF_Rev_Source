@@ -2,12 +2,14 @@
 
 #pragma once
 
-#include "Modules/ModuleManager.h"
-
-class FFaF_Rev_EditorModule final : public IModuleInterface
+class FFaF_RevEditorModule final : public IModuleInterface
 {
 public:
     
     virtual void StartupModule() override;
     virtual void ShutdownModule() override;
+    
+private:
+	
+    TSet<TSharedPtr<class IAssetTypeActions>> AssetTypeActions;
 };

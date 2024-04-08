@@ -2,9 +2,9 @@
 
 using UnrealBuildTool;
 
-public class FaF_Rev_Editor : ModuleRules
+public class FaF_RevEditor : ModuleRules
 {
-    public FaF_Rev_Editor(ReadOnlyTargetRules Target) : base(Target)
+    public FaF_RevEditor(ReadOnlyTargetRules Target) : base(Target)
     {
         PCHUsage = PCHUsageMode.UseExplicitOrSharedPCHs;
 
@@ -13,7 +13,10 @@ public class FaF_Rev_Editor : ModuleRules
             {
                 "Core",
                 "CoreUObject",
-                "GTEditor",
+                "AssetTools",
+                "UnrealEd",
+                "Engine",
+                "GTEditor", 
                 "FaF_Rev"
             }
         );

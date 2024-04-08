@@ -10,6 +10,6 @@ public class FaF_RevEditorTarget : TargetRules
 		Type = TargetType.Editor;
 		DefaultBuildSettings = BuildSettingsVersion.V5;
 		IncludeOrderVersion = EngineIncludeOrderVersion.Unreal5_4;
-		ExtraModuleNames.AddRange(new[] {"FaF_Rev", "FaF_Rev_Editor"});
+		ExtraModuleNames.AddRange(new[] {"FaF_Rev", "FaF_RevEditor"});
 	}
 }
