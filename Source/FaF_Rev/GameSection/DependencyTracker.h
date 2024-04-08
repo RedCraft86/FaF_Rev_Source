@@ -21,8 +21,8 @@ public:
 	UPROPERTY(EditAnywhere, Category = "Tracker")
 		TSet<FName> Dependencies;
 
-	UFUNCTION(BlueprintPure, Category = "DependencyTracker", meta = (DynamicOutputParam = "ReturnValue", DeterminesOutputType = "AsType"))
-		TSoftObjectPtr<UObject> GetBaseObject(const TSubclassOf<UObject> AsType = UWorld::StaticClass());
+	UFUNCTION(BlueprintPure, Category = "DependencyTracker", meta = (DynamicOutputParam = "ReturnValue", DeterminesOutputType = "AsType", AsType = "World"))
+		TSoftObjectPtr<UObject> GetBaseObject(const TSubclassOf<UObject> AsType);
 	
 	UFUNCTION(BlueprintPure, Category = "DependencyTracker")
 		TSet<FAssetData> GetDependencies();
@@ -37,7 +37,7 @@ private:
 #endif
 #if WITH_EDITOR
 private:
-	TSoftObjectPtr<UWorld> CachedObject = nullptr;
+	TSoftObjectPtr<UObject> CachedObject = nullptr;
 	virtual void PostEditChangeProperty(FPropertyChangedEvent& PropertyChangedEvent) override;
 #endif
 };

@@ -71,8 +71,10 @@ void UDependencyTracker::PostEditChangeProperty(FPropertyChangedEvent& PropertyC
 {
 	Super::PostEditChangeProperty(PropertyChangedEvent);
 #if WITH_EDITORONLY_DATA
-	if (bRefresh || BaseObject != CachedObject)
+	if (bRefresh || CachedObject != BaseObject)
 	{
+		bRefresh = false;
+		CachedObject != BaseObject;
 		Dependencies = GetAllDependencies(*BaseObject.GetLongPackageName());
 	}
 #endif
