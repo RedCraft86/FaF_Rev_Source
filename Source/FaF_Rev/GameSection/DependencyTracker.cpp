@@ -74,7 +74,7 @@ void UDependencyTracker::PostEditChangeProperty(FPropertyChangedEvent& PropertyC
 	if (bRefresh || CachedObject != BaseObject)
 	{
 		bRefresh = false;
-		CachedObject != BaseObject;
+		CachedObject = BaseObject;
 		Dependencies = GetAllDependencies(*BaseObject.GetLongPackageName());
 	}
 #endif
