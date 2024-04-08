@@ -3,6 +3,11 @@
 #include "DependencyTracker.h"
 #include "AssetRegistry/IAssetRegistry.h"
 
+TSoftObjectPtr<UObject> UDependencyTracker::GetBaseObject(const TSubclassOf<UObject> AsType)
+{
+	return BaseObject;
+}
+
 TSet<FAssetData> UDependencyTracker::GetDependencies()
 {
 	TSet<FAssetData> Result;
@@ -66,11 +71,11 @@ void UDependencyTracker::PostEditChangeProperty(FPropertyChangedEvent& PropertyC
 {
 	Super::PostEditChangeProperty(PropertyChangedEvent);
 #if WITH_EDITORONLY_DATA
-	if (bRefresh || CachedMap != BaseMap)
+	if (bRefresh || CachedObject != BaseObject)
 	{
 		bRefresh = false;
-		CachedMap = BaseMap;
-		Dependencies = GetAllDependencies(*BaseMap.GetLongPackageName());
+		CachedObject = BaseObject;
+		Dependencies = GetAllDependencies(*BaseObject.GetLongPackageName());
 	}
 #endif
 }
