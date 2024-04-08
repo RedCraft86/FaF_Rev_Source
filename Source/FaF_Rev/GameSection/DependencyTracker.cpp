@@ -15,7 +15,7 @@ TSet<FAssetData> UDependencyTracker::GetDependencies()
 	{
 		TArray<FAssetData> Assets;
 		GetAssetRegistry()->GetAssetsByPackageName(Package, Assets);
-		if (!Assets.IsEmpty() && !Assets[0].IsAssetLoaded())
+		if (!Assets.IsEmpty() && !Assets[0].IsValid() && !Assets[0].IsAssetLoaded())
 		{
 			Result.Add(Assets[0]);
 		}
