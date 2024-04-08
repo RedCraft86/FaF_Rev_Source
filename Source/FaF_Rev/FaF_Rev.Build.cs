@@ -23,6 +23,7 @@ public class FaF_Rev : ModuleRules
 				"Engine", 
 				"InputCore", 
 				"EnhancedInput",
+				"AssetRegistry",
 				"GTRuntime",
 				"GTCore"
 			}
