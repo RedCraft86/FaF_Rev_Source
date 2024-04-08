@@ -21,7 +21,7 @@ public:
 	UPROPERTY(EditAnywhere, Category = "Tracker")
 		TSet<FName> Dependencies;
 
-	UFUNCTION(BlueprintPure, Category = "DependencyTracker", meta = (DynamicOutputParam = "ReturnValue", DeterminesOutputType = "AsType", AsType = "World"))
+	UFUNCTION(BlueprintPure, Category = "DependencyTracker", meta = (DynamicOutputParam = "ReturnValue", DeterminesOutputType = "AsType"))
 		TSoftObjectPtr<UObject> GetBaseObject(const TSubclassOf<UObject> AsType);
 	
 	UFUNCTION(BlueprintPure, Category = "DependencyTracker")
