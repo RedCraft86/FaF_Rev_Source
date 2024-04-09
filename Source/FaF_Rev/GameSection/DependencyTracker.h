@@ -14,11 +14,15 @@ class FAF_REV_API UDependencyTracker final : public UDataAsset
 	GENERATED_BODY()
 
 public:
+
+	// How far to look down the reference chain
+	UPROPERTY(EditAnywhere, Category = "Tracker", meta = (ClampMin = 1, UIMin = 1, ClampMax = 5, UIMax = 5))
+		uint8 MaxDepth = 3;
 	
 	UPROPERTY(EditAnywhere, Category = "Tracker")
 		TSoftObjectPtr<UObject> BaseObject;
 
-	UPROPERTY(EditAnywhere, Category = "Tracker")
+	UPROPERTY(VisibleAnywhere, Category = "Tracker")
 		TSet<FName> Dependencies;
 
 	UFUNCTION(BlueprintPure, Category = "DependencyTracker", meta = (DynamicOutputParam = "ReturnValue", DeterminesOutputType = "AsType"))
@@ -28,7 +32,7 @@ public:
 		TSet<FAssetData> GetDependencies();
 	
 	static IAssetRegistry* GetAssetRegistry();
-	static TSet<FName> GetAllDependencies(const FName& BasePackage);
+	TSet<FName> GetAllDependencies(const FName& BasePackage) const;
 
 #if WITH_EDITORONLY_DATA
 private:

@@ -31,10 +31,9 @@ IAssetRegistry* UDependencyTracker::GetAssetRegistry()
 	return AssetRegistry;
 }
 
-TSet<FName> UDependencyTracker::GetAllDependencies(const FName& BasePackage)
+TSet<FName> UDependencyTracker::GetAllDependencies(const FName& BasePackage) const
 {
 	TSet<FName> Result;
-	
 	TArray<FName> BasePackages;
 	GetAssetRegistry()->GetDependencies(BasePackage, BasePackages);
 	BasePackages.RemoveAll([](const FName& Package) -> bool
@@ -42,7 +41,7 @@ TSet<FName> UDependencyTracker::GetAllDependencies(const FName& BasePackage)
 		return !Package.ToString().StartsWith(TEXT("/Game/"));
 	});
 
-	uint8 Depth = 3;
+	uint8 Depth = MaxDepth;
 	TSet<FName> Packages = TSet(BasePackages);
 	while (Depth)
 	{
@@ -71,7 +70,8 @@ void UDependencyTracker::PostEditChangeProperty(FPropertyChangedEvent& PropertyC
 {
 	Super::PostEditChangeProperty(PropertyChangedEvent);
 #if WITH_EDITORONLY_DATA
-	if (bRefresh || CachedObject != BaseObject)
+	if (PropertyChangedEvent.GetPropertyName() == GET_MEMBER_NAME_CHECKED(UDependencyTracker, MaxDepth)
+		|| bRefresh || CachedObject != BaseObject)
 	{
 		bRefresh = false;
 		CachedObject = BaseObject;
