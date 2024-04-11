@@ -7,10 +7,13 @@
 
 DECLARE_LOG_CATEGORY_EXTERN(FaFRev, All, All);
 
-#define SMART_LOG(Verbosity, Format, ...) \
-	UE_LOG(FaFRev, Verbosity, TEXT("%s Log: [File: %hs] [Line: %d]"), TEXT(#Verbosity), __FILE__, __LINE__); \
-	/* UE_LOG(FaFRev, Verbosity, Format, __VA_ARGS__) */ \
-	UE_LOG_KISMET(Verbosity, Format, __VA_ARGS__)
+#define SMART_LOG(Verbosity, Format) \
+	LOG_THIS_LINE(FaFRev, Verbosity); \
+	UE_LOG(FaFRev, Verbosity, Format)
+
+#define SMART_LOG_P(Verbosity, Format, ...) \
+	LOG_THIS_LINE(FaFRev, Verbosity); \
+	UE_LOG(FaFRev, Verbosity, Format, __VA_ARGS__)
 
 class FFRGameModule final : public IModuleInterface
 {
