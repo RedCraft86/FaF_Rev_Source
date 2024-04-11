@@ -3,7 +3,7 @@
 #pragma once
 
 #include "Engine/DeveloperSettings.h"
-#include "Asset/ExpressiveTextFields.h"
+#include "Styles/ExpressiveTextStyleBase.h"
 #include "FRSettings.generated.h"
 
 UCLASS(Config = Game, DefaultConfig, DisplayName = "Game Project")
@@ -17,10 +17,14 @@ public:
 	{
 		CategoryName = TEXT("Project");
 		SectionName = TEXT("Game Project");
-	}
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Defaults")
-		FExpressiveTextFields DefaultExpressiveTextFields;
+		DefaultExpressiveTextStyle = nullptr;
+	}
+	
+	UPROPERTY(Config, EditAnywhere, Category = "Defaults")
+		TSoftObjectPtr<UExpressiveTextStyleBase> DefaultExpressiveTextStyle;
+
+public: // Statics
 	
 	static UFRSettings* Get() { return GetMutableDefault<UFRSettings>(); }
 	static const UFRSettings* GetConst() { return GetDefault<UFRSettings>(); }

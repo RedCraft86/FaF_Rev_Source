@@ -3,12 +3,35 @@
 #include "ExprTextBlock.h"
 #include "Components/Border.h"
 #include "Blueprint/WidgetTree.h"
+#include "Widgets/ExpressiveTextRendererWidget.h"
 
 // REQUIRES: EXPRESSIVETEXT_API being added to FExpressiveTextSelector
 
+#define LOCTEXT_NAMESPACE "UMG"
+
+UExprTextBlock::UExprTextBlock(const FObjectInitializer& ObjectInitializer) : UUserWidget(ObjectInitializer)
+{
+	RootBorder = nullptr;
+	Renderer = nullptr;
+	CachedChecksum = 0;
+#if WITH_EDITORONLY_DATA
+	PaletteCategory = LOCTEXT("Common", "Common");
+#endif
+}
+
+void UExprTextBlock::UpdateText()
+{
+	CachedSize = CurrentSize;
+	CachedChecksum = ExpressiveText.CalcChecksum();
+
+	FExpressiveText GenExprText = ExpressiveText.GetExpressiveText();
+	GenExprText.DefineWorldContext(this);
+	if (Renderer) Renderer->SetExpressiveText(GenExprText);
+}
+
 bool UExprTextBlock::IsCacheInvalid() const
 {
-	return CachedChecksum != ExprText.CalcChecksum() || CachedSize.Equals(CurrentSize, 0.001f);
+	return CachedChecksum != ExpressiveText.CalcChecksum() || !CachedSize.Equals(CurrentSize, 0.001f);
 }
 
 void UExprTextBlock::NativePreConstruct()
@@ -18,28 +41,6 @@ void UExprTextBlock::NativePreConstruct()
 	UpdateText();
 }
 
-void UExprTextBlock::UpdateText()
-{
-	CachedSize = CurrentSize;
-	CachedChecksum = ExprText.CalcChecksum();
-
-	FExpressiveText GenExprText = ExprText.GenerateExpressiveText();
-	GenExprText.DefineWorldContext(this);
-	Renderer->SetExpressiveText(GenExprText);
-}
-
-void UExprTextBlock::NativeOnInitialized()
-{
-	Super::NativeOnInitialized();
-	
-	UPanelWidget* RootWidget = Cast<UPanelWidget>(GetRootWidget());
-	Border = WidgetTree->ConstructWidget<UBorder>();
-	RootWidget->AddChild(Border);
-	
-	Renderer = WidgetTree->ConstructWidget<UExpressiveTextRendererWidget>();
-	Border->AddChild(Renderer);
-}
-
 void UExprTextBlock::NativeTick(const FGeometry& MyGeometry, float InDeltaTime)
 {
 	Super::NativeTick(MyGeometry, InDeltaTime);
@@ -47,3 +48,29 @@ void UExprTextBlock::NativeTick(const FGeometry& MyGeometry, float InDeltaTime)
 	if (!IsCacheInvalid()) return;
 	UpdateText();
 }
+
+bool UExprTextBlock::Initialize()
+{
+	const bool bResult = Super::Initialize();
+	
+	RootBorder = Cast<UBorder>(GetRootWidget());
+	if (!RootBorder && WidgetTree)
+	{
+		RootBorder = WidgetTree->ConstructWidget<UBorder>(UBorder::StaticClass(), TEXT("RootBorder"));
+		RootBorder->Background.DrawAs = ESlateBrushDrawType::NoDrawType;
+		RootBorder->SetVisibility(ESlateVisibility::Visible);
+		WidgetTree->RootWidget = RootBorder;
+	}
+	
+	if (!Renderer && RootBorder && WidgetTree)
+	{
+		Renderer = WidgetTree->ConstructWidget<UExpressiveTextRendererWidget>(
+			UExpressiveTextRendererWidget::StaticClass(), TEXT("Renderer"));
+		Renderer->SetVisibility(ESlateVisibility::HitTestInvisible);
+		RootBorder->AddChild(Renderer);
+	}
+	
+	UpdateText();
+	return bResult;
+}
+#undef LOCTEXT_NAMESPACE

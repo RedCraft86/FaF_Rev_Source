@@ -2,23 +2,32 @@
 
 #pragma once
 
+#include "ExpressiveTextData.h"
 #include "Blueprint/UserWidget.h"
-#include "Handles/ExpressiveTextSelector.h"
-#include "Widgets/ExpressiveTextRendererWidget.h"
 #include "ExprTextBlock.generated.h"
 
-UCLASS(DisplayName = "Expressive Text")
+class UBorder;
+class UExpressiveTextRendererWidget;
+
+UCLASS(NotBlueprintable, DisplayName = "Expressive Text Block")
 class FAF_REV_API UExprTextBlock final : public UUserWidget
 {
 	GENERATED_BODY()
 
+public:
+
+	UExprTextBlock(const FObjectInitializer& ObjectInitializer);
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Content", meta = (ShowOnlyInnerProperties))
+		FExpressiveTextData ExpressiveText;
+
+	UBorder* GetRootBorder() const { return RootBorder; } 
+	UExpressiveTextRendererWidget* GetRenderer() const { return Renderer; }
+
 private:
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Text", meta = (AllowPrivateAccess = true))
-		FExpressiveTextSelector ExprText;
-
 	UPROPERTY(BlueprintReadOnly, Category = "Elements", meta = (AllowPrivateAccess = true))
-		class UBorder* Border;
+		UBorder* RootBorder;
 	
 	UPROPERTY(BlueprintReadOnly, Category = "Elements", meta = (AllowPrivateAccess = true))
 		UExpressiveTextRendererWidget* Renderer;
@@ -29,6 +38,6 @@ private:
 	void UpdateText();
 	bool IsCacheInvalid() const;
 	virtual void NativePreConstruct() override;
-	virtual void NativeOnInitialized() override;
 	virtual void NativeTick(const FGeometry& MyGeometry, float InDeltaTime) override;
+	virtual bool Initialize() override;
 };
