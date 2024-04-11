@@ -31,7 +31,7 @@ IAssetRegistry* UDependencyTracker::GetAssetRegistry()
 	return AssetRegistry;
 }
 
-TSet<FName> UDependencyTracker::GetAllDependencies(const FName& BasePackage) const
+TSet<FName> UDependencyTracker::GetAllDependencies(const FName& BasePackage, const uint8 Depth)
 {
 	TSet<FName> Result;
 	TArray<FName> BasePackages;
@@ -41,11 +41,11 @@ TSet<FName> UDependencyTracker::GetAllDependencies(const FName& BasePackage) con
 		return !Package.ToString().StartsWith(TEXT("/Game/"));
 	});
 
-	uint8 Depth = MaxDepth;
+	uint8 CurrentDepth = Depth;
 	TSet<FName> Packages = TSet(BasePackages);
-	while (Depth)
+	while (CurrentDepth)
 	{
-		Depth--;
+		CurrentDepth--;
 		TSet<FName> SubPackages;
 		for (const FName& Package : Packages)
 		{
@@ -75,7 +75,7 @@ void UDependencyTracker::PostEditChangeProperty(FPropertyChangedEvent& PropertyC
 	{
 		bRefresh = false;
 		CachedObject = BaseObject;
-		Dependencies = GetAllDependencies(*BaseObject.GetLongPackageName());
+		Dependencies = GetAllDependencies(*BaseObject.GetLongPackageName(), MaxDepth);
 	}
 #endif
 }

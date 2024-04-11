@@ -32,7 +32,7 @@ public:
 		TSet<FAssetData> GetDependencies();
 	
 	static IAssetRegistry* GetAssetRegistry();
-	TSet<FName> GetAllDependencies(const FName& BasePackage) const;
+	static TSet<FName> GetAllDependencies(const FName& BasePackage, const uint8 Depth);
 
 #if WITH_EDITORONLY_DATA
 private:
