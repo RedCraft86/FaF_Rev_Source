@@ -10,6 +10,8 @@ public class FaF_Rev : ModuleRules
 		
 		PublicIncludePaths.AddRange(
 			new[] {
+				"FaF_Rev/",
+				"FaF_Rev/Data",
 				"FaF_Rev/Framework/",
 				"FaF_Rev/Gameplay/",
 			}
@@ -24,6 +26,7 @@ public class FaF_Rev : ModuleRules
 				"UMG",
 				"InputCore", 
 				"EnhancedInput",
+				"DeveloperSettings",
 				"AssetRegistry",
 				"GTRuntime",
 				"GTCore",
