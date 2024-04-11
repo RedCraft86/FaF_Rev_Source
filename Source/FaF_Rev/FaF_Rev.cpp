@@ -4,6 +4,8 @@
 #include "Inventory/InventoryItemData.h"
 #include "GameSection/GameSectionData.h"
 
+DEFINE_LOG_CATEGORY(FaFRev);
+
 void FFRGameModule::StartupModule()
 {
 	UInventoryItemDataBase::DefaultSpawnClass = UInventoryItemData::StaticClass();
