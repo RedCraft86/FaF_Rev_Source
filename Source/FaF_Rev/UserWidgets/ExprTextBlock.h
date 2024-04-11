@@ -4,14 +4,13 @@
 
 #include "Blueprint/UserWidget.h"
 #include "Handles/ExpressiveTextSelector.h"
+#include "Widgets/ExpressiveTextRendererWidget.h"
 #include "ExprTextBlock.generated.h"
 
 UCLASS(DisplayName = "Expressive Text")
 class FAF_REV_API UExprTextBlock final : public UUserWidget
 {
 	GENERATED_BODY()
-
-	typedef class UExpressiveTextRendererWidget UExprTextRenderer;
 
 private:
 
@@ -22,7 +21,7 @@ private:
 		class UBorder* Border;
 	
 	UPROPERTY(BlueprintReadOnly, Category = "Elements", meta = (AllowPrivateAccess = true))
-		UExprTextRenderer* Renderer;
+		UExpressiveTextRendererWidget* Renderer;
 
 	FVector2D CurrentSize, CachedSize;
 	int64 CachedChecksum;

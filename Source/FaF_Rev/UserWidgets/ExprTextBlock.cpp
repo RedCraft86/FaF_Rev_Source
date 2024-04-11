@@ -3,7 +3,8 @@
 #include "ExprTextBlock.h"
 #include "Components/Border.h"
 #include "Blueprint/WidgetTree.h"
-#include "Widgets/ExpressiveTextRendererWidget.h"
+
+// REQUIRES: EXPRESSIVETEXT_API being added to FExpressiveTextSelector
 
 bool UExprTextBlock::IsCacheInvalid() const
 {
@@ -32,10 +33,10 @@ void UExprTextBlock::NativeOnInitialized()
 	Super::NativeOnInitialized();
 	
 	UPanelWidget* RootWidget = Cast<UPanelWidget>(GetRootWidget());
-	Border = WidgetTree->ConstructWidget<UBorder>(UBorder::StaticClass(), TEXT("Border"));
+	Border = WidgetTree->ConstructWidget<UBorder>();
 	RootWidget->AddChild(Border);
 	
-	Renderer = WidgetTree->ConstructWidget<UExprTextRenderer>(UExprTextRenderer::StaticClass(), TEXT("Renderer"));
+	Renderer = WidgetTree->ConstructWidget<UExpressiveTextRendererWidget>();
 	Border->AddChild(Renderer);
 }
 
