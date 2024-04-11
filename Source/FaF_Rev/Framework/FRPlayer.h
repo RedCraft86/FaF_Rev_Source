@@ -5,6 +5,13 @@
 #include "GameFramework/Character.h"
 #include "FRPlayer.generated.h"
 
+UENUM(BlueprintType, meta = (Bitflags, UseEnumValuesAsMaskValuesInEditor = "true"))
+enum class EPlayerFlags : uint8
+{
+	Locked,
+};
+ENUM_CLASS_FLAGS(EPlayerFlags);
+
 UCLASS()
 class FAF_REV_API AFRPlayer : public ACharacter
 {

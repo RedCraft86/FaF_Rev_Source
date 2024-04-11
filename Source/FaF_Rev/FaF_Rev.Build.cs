@@ -21,11 +21,19 @@ public class FaF_Rev : ModuleRules
 				"Core", 
 				"CoreUObject", 
 				"Engine", 
+				"UMG",
 				"InputCore", 
 				"EnhancedInput",
 				"AssetRegistry",
 				"GTRuntime",
-				"GTCore"
+				"GTCore",
+			}
+		);
+		
+		PrivateDependencyModuleNames.AddRange(
+			new[]
+			{
+				"ExpressiveText"
 			}
 		);
 	}
