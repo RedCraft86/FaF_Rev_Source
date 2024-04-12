@@ -11,12 +11,28 @@
 
 UExprTextBlock::UExprTextBlock(const FObjectInitializer& ObjectInitializer) : UUserWidget(ObjectInitializer)
 {
+	ExpressiveText = {};
 	RootBorder = nullptr;
 	Renderer = nullptr;
 	CachedChecksum = 0;
 #if WITH_EDITORONLY_DATA
 	PaletteCategory = LOCTEXT("Common", "Common");
 #endif
+}
+
+void UExprTextBlock::SetText(const FText InText, const bool bUseFieldsFromAsset)
+{
+	ExpressiveText.SetText(InText, bUseFieldsFromAsset);
+}
+
+void UExprTextBlock::SetTextFields(const FExpressiveTextFields& InFields)
+{
+	ExpressiveText.SetTextFields(InFields);
+}
+
+void UExprTextBlock::SetTextAsset(UExpressiveTextAsset* InAsset)
+{
+	ExpressiveText.SetTextAsset(InAsset);
 }
 
 void UExprTextBlock::UpdateText()
