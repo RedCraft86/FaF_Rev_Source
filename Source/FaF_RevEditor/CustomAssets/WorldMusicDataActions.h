@@ -12,5 +12,5 @@ public:
 	explicit FWorldMusicDataActions() {}
 	virtual FColor GetTypeColor() const override { return FColor(160, 25, 140); }
 	virtual UClass* GetSupportedClass() const override { return UWorldMusicData::StaticClass(); }
-	virtual FText GetName() const override { return NSLOCTEXT("FaF_Rev_Editor", "DependencyTrackerName", "Dependency Tracker"); }
+	virtual FText GetName() const override { return NSLOCTEXT("FaF_Rev_Editor", "WorldMusicDataName", "World Music Data"); }
 };

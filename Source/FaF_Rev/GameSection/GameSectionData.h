@@ -42,10 +42,10 @@ public:
 	UPROPERTY(EditAnywhere, Category = "WorldData")
 		TSoftObjectPtr<UWorldMusicData> Theme;
 
-	UPROPERTY(EditAnywhere, Category = "WorldData")
+	UPROPERTY(EditAnywhere, Category = "WorldData", DisplayName = "Weather")
 		FUDSSettings WeatherSettings;
 	
-	UPROPERTY(EditAnywhere, Category = "Dependencies", meta = (ClampMin = 1, UIMin = 1, ClampMax = 8, UIMax = 8))
+	UPROPERTY(EditAnywhere, Category = "Dependencies", meta = (ClampMin = 1, UIMin = 1, ClampMax = 8, UIMax = 8, DisplayName = "Search Depth"))
 		uint8 DependencyDepth;
 
 	UPROPERTY(VisibleAnywhere, Category = "Dependencies", meta = (NoResetToDefault))
