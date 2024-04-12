@@ -3,8 +3,10 @@
 #pragma once
 
 #include "FRPlayer.h"
-#include "AssetRegistry/IAssetRegistry.h"
+#include "UltraDynamicSky.h"
+#include "WorldMusic/WorldMusicData.h"
 #include "GameSection/GameSectionDataBase.h"
+#include "AssetRegistry/IAssetRegistry.h"
 #include "GameSectionData.generated.h"
 
 UCLASS()
@@ -38,7 +40,10 @@ public:
 		TSoftClassPtr<UObject> Quest;
 
 	UPROPERTY(EditAnywhere, Category = "WorldData")
-		TSoftObjectPtr<UObject> Theme;
+		TSoftObjectPtr<UWorldMusicData> Theme;
+
+	UPROPERTY(EditAnywhere, Category = "WorldData")
+		FUDSSettings WeatherSettings;
 	
 	UPROPERTY(EditAnywhere, Category = "Dependencies", meta = (ClampMin = 1, UIMin = 1, ClampMax = 8, UIMax = 8))
 		uint8 DependencyDepth;
