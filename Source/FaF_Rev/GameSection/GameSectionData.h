@@ -22,7 +22,7 @@ public:
 		FText DisplayLabel;
 	
 	UPROPERTY(EditAnywhere, Category = "SectionData")
-		TSet<TSoftObjectPtr<UWorld>> Levels;
+		TMap<TSoftObjectPtr<UWorld>, bool> Levels;
 
 	UPROPERTY(EditAnywhere, Category = "SectionData")
 		TSet<TSoftObjectPtr<UTexture2D>> Backgrounds;

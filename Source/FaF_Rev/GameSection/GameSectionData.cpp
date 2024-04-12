@@ -29,9 +29,9 @@ TSet<FAssetData> UGameSectionData::GetDependencies()
 uint64 UGameSectionData::CalcChecksum()
 {
 	uint64 Hash = GetTypeHash(DependencyDepth);
-	for (const TSoftObjectPtr<UWorld>& Obj : Levels)
+	for (const TPair<TSoftObjectPtr<UWorld>, bool>& Pair : Levels)
 	{
-		if (!Obj.IsNull()) Hash = HashCombine(Hash, GetTypeHash(Obj));
+		if (!Pair.Key.IsNull()) Hash = HashCombine(Hash, GetTypeHash(Pair));
 	}
 	for (const TSoftObjectPtr<UTexture2D>& Obj : Backgrounds)
 	{
@@ -56,21 +56,21 @@ void UGameSectionData::CheckDisplayName()
 void UGameSectionData::FindAllDependencies()
 {
 	TArray<FName> Packages;
-	for (const TSoftObjectPtr<UWorld>& Obj : Levels)
+	for (const TPair<TSoftObjectPtr<UWorld>, bool>& Pair : Levels)
 	{
-		Packages.AddUnique(*Obj.GetLongPackageName());
+		if (!Pair.Key.IsNull()) Packages.AddUnique(*Pair.Key.GetLongPackageName());
 	}
 	for (const TSoftObjectPtr<UTexture2D>& Obj : Backgrounds)
 	{
-		Packages.AddUnique(*Obj.GetLongPackageName());
+		if (!Obj.IsNull()) Packages.AddUnique(*Obj.GetLongPackageName());
 	}
 	for (const TSoftObjectPtr<UObject>& Obj : PreloadObjects)
 	{
-		Packages.AddUnique(*Obj.GetLongPackageName());
+		if (!Obj.IsNull()) Packages.AddUnique(*Obj.GetLongPackageName());
 	}
 	Packages.RemoveAll([](const FName& InPackage) -> bool
 	{
-		return !InPackage.ToString().StartsWith(TEXT("/Game/"));
+		return InPackage.IsNone() || !InPackage.ToString().StartsWith(TEXT("/Game/"));
 	});
 	Dependencies = TSet(Packages);
 	
