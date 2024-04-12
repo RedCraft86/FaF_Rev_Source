@@ -12,6 +12,17 @@ enum class EPlayerFlags : uint8
 };
 ENUM_CLASS_FLAGS(EPlayerFlags);
 
+USTRUCT(BlueprintType)
+struct FPlayerSettings
+{
+	GENERATED_BODY()
+	
+	UPROPERTY(EditAnywhere, meta = (Bitmask, BitmaskEnum = "/Script/FaF_Rev.EPlayerFlags"))
+		uint8 PlayerFlags;
+
+	FPlayerSettings() : PlayerFlags(0) {}
+};
+
 UCLASS()
 class FAF_REV_API AFRPlayer : public ACharacter
 {
