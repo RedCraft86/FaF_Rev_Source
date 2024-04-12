@@ -5,7 +5,7 @@
 #include "Interaction/Fields/InteractField.h"
 #include "Interaction/Fields/TriggerField.h"
 #include "DetailsCustomization/GTActorDetails.h"
-#include "CustomAssets/DependencyTrackerActions.h"
+#include "CustomAssets/WorldMusicDataActions.h"
 #include "GTEditor.h"
 
 #define LOCTEXT_NAMESPACE "FFaF_RevEditorModule"
@@ -20,7 +20,7 @@ void FFaF_RevEditorModule::StartupModule()
 
     if (const FAssetToolsModule* AssetToolsModule = FModuleManager::LoadModulePtr<FAssetToolsModule>("AssetTools"))
     {
-        AssetTypeActions.Add(MakeShareable(new FDependencyTrackerActions()));
+        AssetTypeActions.Add(MakeShareable(new FWorldMusicDataActions()));
         for (const TSharedPtr<IAssetTypeActions>& Action : AssetTypeActions)
         {
             AssetToolsModule->Get().RegisterAssetTypeActions(Action.ToSharedRef());
