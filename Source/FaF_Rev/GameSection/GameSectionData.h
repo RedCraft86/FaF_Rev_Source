@@ -4,7 +4,7 @@
 
 #include "FRPlayer.h"
 #include "UltraDynamicSky.h"
-#include "WorldMusic/WorldMusicData.h"
+#include "GameMusic/GameMusicData.h"
 #include "GameSection/GameSectionDataBase.h"
 #include "AssetRegistry/IAssetRegistry.h"
 #include "GameSectionData.generated.h"
@@ -40,7 +40,7 @@ public:
 		TSoftClassPtr<UObject> Quest;
 
 	UPROPERTY(EditAnywhere, Category = "WorldData")
-		TSoftObjectPtr<UWorldMusicData> Theme;
+		TSoftObjectPtr<UGameMusicData> Theme;
 
 	UPROPERTY(EditAnywhere, Category = "WorldData", DisplayName = "Weather")
 		FUDSSettings WeatherSettings;
