@@ -170,6 +170,7 @@ void UGameSectionManager::OnObjectLoaded()
 			TArray<UObject*> Assets;
 			StreamObjs[i]->GetLoadedAssets(Assets);
 			LoadedObjs.Append(Assets);
+			StreamObjs.RemoveAt(i);
 		}
 	}
 }
