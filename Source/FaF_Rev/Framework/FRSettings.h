@@ -2,8 +2,10 @@
 
 #pragma once
 
-#include "Engine/DeveloperSettings.h"
+#include "GameMusic/GameMusicData.h"
+#include "GameSection/Graph/GameSectionGraph.h"
 #include "Styles/ExpressiveTextStyleBase.h"
+#include "Engine/DeveloperSettings.h"
 #include "FRSettings.generated.h"
 
 UCLASS(Config = Game, DefaultConfig, DisplayName = "Game Project")
@@ -18,10 +20,17 @@ public:
 		CategoryName = TEXT("Project");
 		SectionName = TEXT("Game Project");
 
+		GameSectionGraph = nullptr;
 		DefaultExpressiveTextStyle = nullptr;
 	}
+
+	UPROPERTY(Config, EditAnywhere, Category = "Settings")
+		TSoftObjectPtr<UGameSectionGraph> GameSectionGraph;
+
+	UPROPERTY(Config, EditAnywhere, Category = "Settings")
+		TSoftObjectPtr<UGameMusicData> DefaultGameMusicData;
 	
-	UPROPERTY(Config, EditAnywhere, Category = "Defaults")
+	UPROPERTY(Config, EditAnywhere, Category = "Settings")
 		TSoftObjectPtr<UExpressiveTextStyleBase> DefaultExpressiveTextStyle;
 
 public: // Statics
