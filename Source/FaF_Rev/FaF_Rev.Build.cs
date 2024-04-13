@@ -26,8 +26,9 @@ public class FaF_Rev : ModuleRules
 				"UMG",
 				"InputCore", 
 				"EnhancedInput",
-				"DeveloperSettings",
 				"AssetRegistry",
+				"DeveloperSettings",
+				"DataGraphRuntime",
 				"GTRuntime",
 				"GTCore",
 			}
