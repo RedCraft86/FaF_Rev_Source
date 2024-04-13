@@ -3,10 +3,10 @@
 #pragma once
 
 #include "Engine/DataAsset.h"
-#include "WorldMusicData.generated.h"
+#include "GameMusicData.generated.h"
 
 UCLASS()
-class FAF_REV_API UWorldMusicData : public UDataAsset
+class FAF_REV_API UGameMusicData : public UDataAsset
 {
 	GENERATED_BODY()
 };
