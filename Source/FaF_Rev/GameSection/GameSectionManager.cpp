@@ -80,18 +80,15 @@ void UGameSectionManager::LoadCurrentData()
 			if (LoadLevel(Pair.Key)) bHasLevels = true;
 		}
 
-		FStreamableDelegate Callback;
-		Callback.BindUObject(this, &UGameSectionManager::OnObjectLoaded);
-		FStreamableManager& StreamManager = UAssetManager::GetStreamableManager();
+		// For the sake of simplicity, these are synchronously loaded.
+		// They should be light enough to do a blocking load without trouble.
 		for (const TSoftObjectPtr<UTexture2D>& Obj : ThisData->Backgrounds)
 		{
-			StreamObjs.AddUnique(StreamManager.RequestAsyncLoad(
-				Obj.ToSoftObjectPath(), Callback));
+			LoadedObjs.Add(Obj.LoadSynchronous());
 		}
 		for (const TSoftObjectPtr<UObject>& Obj : ThisData->PreloadObjects)
 		{
-			StreamObjs.AddUnique(StreamManager.RequestAsyncLoad(
-				Obj.ToSoftObjectPath(), Callback));
+			LoadedObjs.Add(Obj.LoadSynchronous());
 		}
 	}
 
@@ -159,20 +156,6 @@ bool UGameSectionManager::LoadLevel(const TSoftObjectPtr<UWorld>& Level)
 	}
 
 	return false;
-}
-
-void UGameSectionManager::OnObjectLoaded()
-{
-	for (int i = StreamObjs.Num() - 1; i >= 0; i--)
-	{
-		if (StreamObjs[i]->HasLoadCompleted())
-		{
-			TArray<UObject*> Assets;
-			StreamObjs[i]->GetLoadedAssets(Assets);
-			LoadedObjs.Append(Assets);
-			StreamObjs.RemoveAt(i);
-		}
-	}
 }
 
 void UGameSectionManager::OnLevelUnloaded()

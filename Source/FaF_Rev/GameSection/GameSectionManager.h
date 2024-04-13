@@ -3,7 +3,6 @@
 #pragma once
 
 #include "GameSectionData.h"
-#include "Engine/StreamableManager.h"
 #include "GameSection/Graph/GameSectionGraph.h"
 #include "Subsystems/WorldSubsystem.h"
 #include "GameSectionManager.generated.h"
@@ -26,7 +25,6 @@ private:
 	bool bLoading;
 	
 	TArray<int32> Sequence;
-	TArray<TSharedPtr<FStreamableHandle>> StreamObjs;
 	UPROPERTY(Transient) TSet<UObject*> LoadedObjs;
 	UPROPERTY(Transient) UGameSectionData* ThisData;
 	UPROPERTY(Transient) UGameSectionData* LastData;
@@ -47,8 +45,7 @@ private:
 		ThisUUID = ThisUUID > 1000000 ? 0 : ThisUUID + 1;
 		return ThisUUID;
 	}
-
-	UFUNCTION() void OnObjectLoaded();
+	
 	UFUNCTION() void OnLevelUnloaded();
 	UFUNCTION() void OnLevelLoaded();
 	
