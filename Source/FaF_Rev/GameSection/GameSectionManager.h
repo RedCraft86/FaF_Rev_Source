@@ -38,7 +38,7 @@ private:
 	void FinishTransition();
 
 	bool UnloadLevel(const TSoftObjectPtr<UWorld>& InMap);
-	bool LoadLevel(const TTuple<TSoftObjectPtr<UWorld>, bool>& InMap);
+	bool LoadLevel(const TPair<TSoftObjectPtr<UWorld>, bool>& InMap);
 	uint8 GetLatentID() { return LatentID++; }
 
 	UFUNCTION() void OnLevelUnloaded();

@@ -192,7 +192,7 @@ bool UGameSectionManager::UnloadLevel(const TSoftObjectPtr<UWorld>& InMap)
 	return false;
 }
 
-bool UGameSectionManager::LoadLevel(const TTuple<TSoftObjectPtr<UWorld>, bool>& InMap)
+bool UGameSectionManager::LoadLevel(const TPair<TSoftObjectPtr<UWorld>, bool>& InMap)
 {
 	const FName MapName(InMap.Key.GetLongPackageName());
 	ULevelStreaming* Level = UGameplayStatics::GetStreamingLevel(this, MapName);
