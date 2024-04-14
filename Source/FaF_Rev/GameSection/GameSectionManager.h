@@ -6,7 +6,7 @@
 #include "Subsystems/WorldSubsystem.h"
 #include "GameSectionManager.generated.h"
 
-UCLASS()
+UCLASS(DisplayName = "Section Manager")
 class FAF_REV_API UGameSectionManager : public UWorldSubsystem
 {
 	GENERATED_BODY()
@@ -43,6 +43,7 @@ private:
 	UFUNCTION() void OnLevelLoaded();
 	
 	virtual void Initialize(FSubsystemCollectionBase& Collection);
+	virtual bool ShouldCreateSubsystem(UObject* Outer) const override;
 	virtual bool DoesSupportWorldType(const EWorldType::Type WorldType) const override
 	{
 		return WorldType == EWorldType::Game || WorldType == EWorldType::PIE ||

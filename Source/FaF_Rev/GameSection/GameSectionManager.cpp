@@ -11,13 +11,13 @@ void UGameSectionManager::Step(const int32 Index)
 {
 	if (!SectionGraph)
 	{
-		SMART_LOG(Error, TEXT("Attempting to Step with a null SectionGraph."))
+		SMART_LOG(Error, TEXT("Attempting to Step with a null Section Graph."))
 		return;
 	}
 	
 	if (IsBusy())
 	{
-		SMART_LOG(Warning, TEXT("GameSectionManager is busy, the Step will be ignored."));
+		SMART_LOG(Warning, TEXT("Game Section Manager is busy, the Step will be ignored."));
 		return;
 	}
 
@@ -82,7 +82,7 @@ void UGameSectionManager::UnloadLastData()
 void UGameSectionManager::LoadCurrentData()
 {
 	UGTLoadUtilsLibrary::ForceGarbageCollection();
-	checkf(ThisData, TEXT("Trying to load using null data."))
+	checkf(ThisData, TEXT("Trying to load without any valid data."))
 
 	LoadingLevels = 0;
 	bool bHasMaps = false;
@@ -195,4 +195,14 @@ void UGameSectionManager::Initialize(FSubsystemCollectionBase& Collection)
 {
 	Super::Initialize(Collection);
 	SectionGraph = UFRSettings::Get()->GameSectionGraph.LoadSynchronous();
+	if (!SectionGraph)
+	{
+		SMART_LOG(Error, TEXT("Game Section Manager initialized without any valid Section Graph."))
+	}
+}
+
+bool UGameSectionManager::ShouldCreateSubsystem(UObject* Outer) const
+{
+	const bool bSuper = Super::ShouldCreateSubsystem(Outer);
+	return bSuper && UFRSettings::Get()->GameplayMap.GetAssetName() == Outer->GetOutermostObject()->GetName();
 }
