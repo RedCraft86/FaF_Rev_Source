@@ -8,6 +8,45 @@
 #include "FRSettings.h"
 #include "FaF_Rev.h"
 
+// void UGameSectionManager::Step(const int32 Index)
+// {
+// 	if (!SectionGraph)
+// 	{
+// 		SMART_LOG(Error, TEXT("Attempting to Step with a null SectionGraph."))
+// 		return;
+// 	}
+//
+// 	if (bLoading)
+// 	{
+// 		SMART_LOG(Error, TEXT("Attempting to Step while GameSectionManager is busy."))
+// 		return;
+// 	}
+//
+// 	const TArray<int32> PreUpdate = Sequence;
+// 	Sequence.Add(Sequence.IsEmpty() ? 0 : Index);
+// 	Sequence = SectionGraph->ValidateSequence(Sequence);
+//
+// 	if (PreUpdate != Sequence)
+// 	{
+// 		BeginTransition();
+// 	}
+// }
+//
+// void UGameSectionManager::BeginTransition()
+// {
+// 	bLoading = true;
+// 	LastData = ThisData;
+// 	const UGameSectionNode* Node = SectionGraph->GetNodeBySequence<UGameSectionNode>(Sequence);
+// 	if (!Node || !Node->Sequence || !Node->Sequence->IsA(UGameSectionData::StaticClass()))
+// 	{
+// 		SMART_LOG(Error, TEXT("Cannot begin transition. Node or sequence is null."))
+// 		return;
+// 	}
+// 	ThisData = Cast<UGameSectionData>(Node->Sequence);
+// 	
+// 	LastData ? UnloadLastData() : LoadCurrentData();
+// }
+
 void UGameSectionManager::Step(const int32 Index)
 {
 	if (!SectionGraph)
@@ -15,17 +54,17 @@ void UGameSectionManager::Step(const int32 Index)
 		SMART_LOG(Error, TEXT("Attempting to Step with a null SectionGraph."))
 		return;
 	}
-
-	if (bLoading)
+	
+	if (IsBusy())
 	{
-		SMART_LOG(Error, TEXT("Attempting to Step while GameSectionManager is busy."))
+		SMART_LOG(Warning, TEXT("GameSectionManager is busy, the Step will be ignored."));
 		return;
 	}
 
-	const TArray<int32> PreUpdate = Sequence;
+	const TArray<uint8> PreUpdate = Sequence;
 	Sequence.Add(Sequence.IsEmpty() ? 0 : Index);
 	Sequence = SectionGraph->ValidateSequence(Sequence);
-
+	
 	if (PreUpdate != Sequence)
 	{
 		BeginTransition();
@@ -44,57 +83,69 @@ void UGameSectionManager::BeginTransition()
 	}
 	ThisData = Cast<UGameSectionData>(Node->Sequence);
 	
-	LastData ? UnloadLastData() : LoadCurrentData();
+	FTimerHandle Handle;
+	if (LastData)
+	{
+		
+		GetWorld()->GetTimerManager().SetTimer(Handle, this,
+			&UGameSectionManager::UnloadLastData, 0.1f, false);
+	}
+	else
+	{
+		GetWorld()->GetTimerManager().SetTimer(Handle, this,
+			&UGameSectionManager::LoadCurrentData, 0.1f, false);
+	}
 }
 
 void UGameSectionManager::UnloadLastData()
 {
-	UnloadLevels = 0;
-	LoadedObjs.Empty(ThisData ? ThisData->Backgrounds.Num() + ThisData->PreloadObjects.Num() : 0);
-	
-	bool bHasLevels = false;
+	LoadedObjs.Empty(ThisData ? ThisData->PreloadObjects.Num() : 0);
+
+	UnloadingLevels = 0;
+	bool bHasMaps = false;
 	if (LastData)
 	{
 		for (const TPair<TSoftObjectPtr<UWorld>, bool>& Pair : LastData->Levels)
 		{
-			if (UnloadLevel(Pair.Key)) bHasLevels = true;
+			if (UnloadLevel(Pair.Key)) bHasMaps = true;
 		}
 	}
 
-	if (!bHasLevels)
+	if (!bHasMaps)
 	{
-		LoadCurrentData();
+		FTimerHandle Handle;
+		GetWorld()->GetTimerManager().SetTimer(Handle, this,
+			&UGameSectionManager::LoadCurrentData, 0.1f, false);
 	}
 }
 
 void UGameSectionManager::LoadCurrentData()
 {
 	UGTLoadUtilsLibrary::ForceGarbageCollection();
-	
-	LoadLevels = 0;
-	bool bHasLevels = false;
+	checkf(ThisData, TEXT("Trying to load using null data."))
+
+	LoadingLevels = 0;
+	bool bHasMaps = false;
 	if (ThisData)
 	{
 		for (const TPair<TSoftObjectPtr<UWorld>, bool>& Pair : ThisData->Levels)
 		{
-			if (LoadLevel(Pair.Key)) bHasLevels = true;
+			if (LoadLevel(Pair)) bHasMaps = true;
 		}
 
-		// For the sake of simplicity, these are synchronously loaded.
-		// They should be light enough to do a blocking load without trouble.
-		for (const TSoftObjectPtr<UTexture2D>& Obj : ThisData->Backgrounds)
-		{
-			LoadedObjs.Add(Obj.LoadSynchronous());
-		}
-		for (const TSoftObjectPtr<UObject>& Obj : ThisData->PreloadObjects)
+		// For the sake of simplicity, synchronously load these.
+		// They should be light enough to not do any blocking loads.
+		for (TSoftObjectPtr<UObject>& Obj : ThisData->PreloadObjects)
 		{
 			LoadedObjs.Add(Obj.LoadSynchronous());
 		}
 	}
-
-	if (!bHasLevels)
+	
+	if (!bHasMaps)
 	{
-		FinishLoading();
+		FTimerHandle Handle;
+		GetWorld()->GetTimerManager().SetTimer(Handle, this,
+			&UGameSectionManager::FinishLoading, 0.1f, false);
 	}
 }
 
@@ -112,22 +163,25 @@ void UGameSectionManager::FinishTransition()
 	bLoading = false;
 }
 
-bool UGameSectionManager::UnloadLevel(const TSoftObjectPtr<UWorld>& Level)
+bool UGameSectionManager::UnloadLevel(const TSoftObjectPtr<UWorld>& InMap)
 {
-	// Let's not unload something only to load it again right after...
-	if (ThisData && ThisData->Levels.Contains(Level))
+	const FName MapName(InMap.GetLongPackageName());
+	ULevelStreaming* Level = UGameplayStatics::GetStreamingLevel(this, MapName);
+	if (!Level || !Level->IsLevelLoaded()) return false;
+
+	// Let's not unload something only to load it again...
+	if (ThisData && ThisData->Levels.Contains(InMap))
 	{
+		Level->SetShouldBeVisible(ThisData->Levels.FindRef(InMap));
 		return false;
 	}
 	
-	const FName MapName(Level.GetLongPackageName());
-	const ULevelStreaming* Lvl = UGameplayStatics::GetStreamingLevel(this, MapName);
-	if (Lvl && (Lvl->IsLevelVisible() || Lvl->IsLevelLoaded()))
+	if (Level->IsLevelVisible() || Level->IsLevelLoaded())
 	{
-		UnloadLevels++;
+		UnloadingLevels++;
 		FLatentActionInfo Info;
 		Info.Linkage = 0;
-		Info.UUID = GetNextUUID();
+		Info.UUID = GetLatentID();
 		Info.CallbackTarget = this;
 		Info.ExecutionFunction = TEXT("OnLevelUnloaded");
 		UGameplayStatics::UnloadStreamLevel(this, MapName,
@@ -138,30 +192,31 @@ bool UGameSectionManager::UnloadLevel(const TSoftObjectPtr<UWorld>& Level)
 	return false;
 }
 
-bool UGameSectionManager::LoadLevel(const TSoftObjectPtr<UWorld>& Level)
+bool UGameSectionManager::LoadLevel(const TTuple<TSoftObjectPtr<UWorld>, bool>& InMap)
 {
-	const FName MapName(Level.GetLongPackageName());
-	const ULevelStreaming* Lvl = UGameplayStatics::GetStreamingLevel(this, MapName);
-	if (Lvl ? !Lvl->IsLevelVisible() || !Lvl->IsLevelLoaded() : true)
+	const FName MapName(InMap.Key.GetLongPackageName());
+	ULevelStreaming* Level = UGameplayStatics::GetStreamingLevel(this, MapName);
+	if (Level && Level->IsLevelLoaded())
 	{
-		LoadLevels++;
-		FLatentActionInfo Info;
-		Info.Linkage = 0;
-		Info.UUID = GetNextUUID();
-		Info.CallbackTarget = this;
-		Info.ExecutionFunction = TEXT("OnLevelLoaded");
-		UGameplayStatics::LoadStreamLevel(this, MapName,
-			true, false, Info);
-		return true;
+		Level->SetShouldBeVisible(InMap.Value);
+		return false;
 	}
-
-	return false;
+	
+	LoadingLevels++;
+	FLatentActionInfo Info;
+	Info.Linkage = 0;
+	Info.UUID = GetLatentID();
+	Info.CallbackTarget = this;
+	Info.ExecutionFunction = TEXT("OnLevelLoaded");
+	UGameplayStatics::LoadStreamLevel(this, MapName,
+		InMap.Value, false, Info);
+	return true;
 }
 
 void UGameSectionManager::OnLevelUnloaded()
 {
-	UnloadLevels--;
-	if (UnloadLevels < 1)
+	UnloadingLevels--;
+	if (UnloadingLevels == 0)
 	{
 		LoadCurrentData();
 	}
@@ -169,8 +224,8 @@ void UGameSectionManager::OnLevelUnloaded()
 
 void UGameSectionManager::OnLevelLoaded()
 {
-	LoadLevels--;
-	if (LoadLevels < 1)
+	LoadingLevels--;
+	if (LoadingLevels == 0)
 	{
 		FinishLoading();
 	}

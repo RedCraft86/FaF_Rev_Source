@@ -26,20 +26,12 @@ TSet<FAssetData> UGameSectionData::GetDependencies()
 	return Result;
 }
 
-uint64 UGameSectionData::CalcChecksum()
+uint32 UGameSectionData::CalcChecksum()
 {
-	uint64 Hash = GetTypeHash(DependencyDepth);
+	uint32 Hash = GetTypeHash(DependencyDepth);
 	for (const TPair<TSoftObjectPtr<UWorld>, bool>& Pair : Levels)
 	{
-		if (!Pair.Key.IsNull()) Hash = HashCombine(Hash, GetTypeHash(Pair));
-	}
-	for (const TSoftObjectPtr<UTexture2D>& Obj : Backgrounds)
-	{
-		if (!Obj.IsNull()) Hash = HashCombine(Hash, GetTypeHash(Obj));
-	}
-	for (const TSoftObjectPtr<UObject>& Obj : PreloadObjects)
-	{
-		if (!Obj.IsNull()) Hash = HashCombine(Hash, GetTypeHash(Obj));
+		if (!Pair.Key.IsNull()) Hash = HashCombineFast(Hash, GetTypeHash(Pair));
 	}
 	return Hash;
 }
@@ -59,14 +51,6 @@ void UGameSectionData::FindAllDependencies()
 	for (const TPair<TSoftObjectPtr<UWorld>, bool>& Pair : Levels)
 	{
 		if (!Pair.Key.IsNull()) Packages.AddUnique(*Pair.Key.GetLongPackageName());
-	}
-	for (const TSoftObjectPtr<UTexture2D>& Obj : Backgrounds)
-	{
-		if (!Obj.IsNull()) Packages.AddUnique(*Obj.GetLongPackageName());
-	}
-	for (const TSoftObjectPtr<UObject>& Obj : PreloadObjects)
-	{
-		if (!Obj.IsNull()) Packages.AddUnique(*Obj.GetLongPackageName());
 	}
 	Packages.RemoveAll([](const FName& InPackage) -> bool
 	{
@@ -104,7 +88,7 @@ void UGameSectionData::PostInitProperties()
 void UGameSectionData::PostEditChangeProperty(FPropertyChangedEvent& PropertyChangedEvent)
 {
 	Super::PostEditChangeProperty(PropertyChangedEvent);
-	const uint64 TempChecksum = CalcChecksum();
+	const uint32 TempChecksum = CalcChecksum();
 	if (Checksum != TempChecksum)
 	{
 		Checksum = TempChecksum;

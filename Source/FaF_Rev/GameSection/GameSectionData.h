@@ -59,8 +59,8 @@ private:
 		void QueryDependencies() { FindAllDependencies(); }
 #endif
 #if WITH_EDITOR
-	uint64 Checksum = 0;
-	uint64 CalcChecksum();
+	uint32 Checksum = 0;
+	uint32 CalcChecksum();
 	void CheckDisplayName();
 	void FindAllDependencies();
 	virtual void PostInitProperties() override;

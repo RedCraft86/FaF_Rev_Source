@@ -3,6 +3,7 @@
 #pragma once
 
 #include "GameSectionData.h"
+#include "Engine/StreamableManager.h"
 #include "GameSection/Graph/GameSectionGraph.h"
 #include "Subsystems/WorldSubsystem.h"
 #include "GameSectionManager.generated.h"
@@ -16,15 +17,15 @@ public:
 
 	UFUNCTION(BlueprintCallable, Category = "GameSectionManager")
 		void Step(const int32 Index);
-
+	
 	UFUNCTION(BlueprintPure, Category = "GameSectionManager")
 		bool IsBusy() const { return bLoading; }
 
 private:
-
-	bool bLoading;
 	
-	TArray<int32> Sequence;
+	bool bLoading;
+	TArray<uint8> Sequence;
+	uint8 LatentID, UnloadingLevels, LoadingLevels;
 	UPROPERTY(Transient) TSet<UObject*> LoadedObjs;
 	UPROPERTY(Transient) UGameSectionData* ThisData;
 	UPROPERTY(Transient) UGameSectionData* LastData;
@@ -36,16 +37,10 @@ private:
 	void FinishLoading();
 	void FinishTransition();
 
-	int32 ThisUUID;
-	uint8 UnloadLevels, LoadLevels;
-	bool UnloadLevel(const TSoftObjectPtr<UWorld>& Level);
-	bool LoadLevel(const TSoftObjectPtr<UWorld>& Level);
-	int32 GetNextUUID()
-	{
-		ThisUUID = ThisUUID > 1000000 ? 0 : ThisUUID + 1;
-		return ThisUUID;
-	}
-	
+	bool UnloadLevel(const TSoftObjectPtr<UWorld>& InMap);
+	bool LoadLevel(const TTuple<TSoftObjectPtr<UWorld>, bool>& InMap);
+	uint8 GetLatentID() { return LatentID++; }
+
 	UFUNCTION() void OnLevelUnloaded();
 	UFUNCTION() void OnLevelLoaded();
 	
