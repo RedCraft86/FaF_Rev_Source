@@ -44,11 +44,12 @@ void UGameSectionManager::BeginTransition()
 		return;
 	}
 	ThisData = Cast<UGameSectionData>(Node->Sequence);
+
+	ShowLoadingWidget();
 	
 	FTimerHandle Handle;
 	if (LastData)
 	{
-		
 		GetWorld()->GetTimerManager().SetTimer(Handle, this,
 			&UGameSectionManager::UnloadLastData, 0.1f, false);
 	}
