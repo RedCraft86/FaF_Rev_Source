@@ -8,7 +8,7 @@
 class UExprTextBlock;
 
 UCLASS(Abstract)
-class FAF_REV_API UGameWidget final : public UGTUserWidget
+class FAF_REV_API UGameWidgetBase final : public UGTUserWidget
 {
 	GENERATED_BODY()
 
