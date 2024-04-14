@@ -23,12 +23,15 @@ public:
 	
 	UPROPERTY(EditAnywhere, Category = "SectionData")
 		TMap<TSoftObjectPtr<UWorld>, bool> Levels;
-
-	UPROPERTY(EditAnywhere, Category = "SectionData")
-		TSet<TSoftObjectPtr<UTexture2D>> Backgrounds;
 	
 	UPROPERTY(EditAnywhere, Category = "SectionData")
 		TSet<TSoftObjectPtr<UObject>> PreloadObjects;
+
+	UPROPERTY(EditAnywhere, Category = "LoadingScreen")
+		TSet<TSoftObjectPtr<UTexture2D>> Backgrounds;
+	
+	UPROPERTY(EditAnywhere, Category = "LoadingScreen", meta = (NoElementDuplicate))
+		TArray<FText> LoadingTips;
 
 	UPROPERTY(EditAnywhere, Category = "PlayerData")
 		TSoftObjectPtr<AActor> Teleporter;
