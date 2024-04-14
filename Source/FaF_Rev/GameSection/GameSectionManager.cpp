@@ -124,7 +124,10 @@ void UGameSectionManager::FinishLoading()
 
 void UGameSectionManager::FinishTransition()
 {
-	bLoading = false;
+	HideLoadingWidget([this]()
+	{
+		bLoading = false;	
+	});
 }
 
 bool UGameSectionManager::UnloadLevel(const TSoftObjectPtr<UWorld>& InMap)

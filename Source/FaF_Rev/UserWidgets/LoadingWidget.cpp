@@ -48,6 +48,7 @@ void ULoadingWidgetBase::Update(const bool bFinish) const
 void ULoadingWidgetBase::FinishLoading(const TFunction<void()>& OnFinished)
 {
 	GetWorld()->GetTimerManager().PauseTimer(SlowTickHandle);
+	Background = nullptr;
 	LoadingObjs.Empty();
 	Update(true);
 
@@ -63,7 +64,7 @@ void ULoadingWidgetBase::BeginLoading(const TSet<FAssetData>& InObjects, const T
 	bUnloading = true;
 	TotalObjs = InObjects.Num();
 	LoadingObjs = InObjects.Array();
-	Background = InBackground.LoadSynchronous();
+	Background = InBackground.IsNull() ? DefaultBackground.LoadSynchronous() : InBackground.LoadSynchronous();
 	
 	LoadingBar->SetPercent(0.0f);
 	LoadingLabel->SetText(INVTEXT("Starting Load..."));
@@ -81,4 +82,10 @@ void ULoadingWidgetBase::NativeOnInitialized()
 	Super::NativeOnInitialized();
 	GetWorld()->GetTimerManager().SetTimer(SlowTickHandle, this, &ULoadingWidgetBase::SlowTick, 0.05, true);
 	GetWorld()->GetTimerManager().PauseTimer(SlowTickHandle);
+}
+
+void ULoadingWidgetBase::NativeDestruct()
+{
+	Super::NativeDestruct();
+	BackgroundImage->SetBrushFromTexture(DefaultBackground.LoadSynchronous());
 }

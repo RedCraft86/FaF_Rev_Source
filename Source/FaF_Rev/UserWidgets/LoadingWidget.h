@@ -31,6 +31,9 @@ public:
 	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, Category = "Elements", meta = (BindWidget))
 		UTextBlock* TipText;
 
+	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, Category = "Elements")
+		TSoftObjectPtr<UTexture2D> DefaultBackground;
+	
 private:
 
 	UPROPERTY(Transient)
@@ -47,4 +50,5 @@ private:
 	void FinishLoading(const TFunction<void()>& OnFinished);
 	void BeginLoading(const TSet<FAssetData>& InObjects, const TSoftObjectPtr<UTexture2D>& InBackground, const TPair<FString, FText>& InTip);
 	virtual void NativeOnInitialized() override;
+	virtual void NativeDestruct() override;
 };
