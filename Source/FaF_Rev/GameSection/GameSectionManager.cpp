@@ -192,7 +192,8 @@ void UGameSectionManager::ShowLoadingWidget() const
 {
 	if (LoadingWidget && ThisData)
 	{
-		LoadingWidget->BeginLoading(ThisData->GetDependencies(), ThisData->GetBackground(), ThisData->GetTip());
+		LoadingWidget->BeginLoading(ThisData->GetDependencies(),
+			ThisData->GetBackground(), ThisData->GetTip());
 	}
 }
 
