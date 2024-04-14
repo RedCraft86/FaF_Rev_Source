@@ -3,8 +3,6 @@
 #pragma once
 
 #include "GameSectionData.h"
-#include "Engine/StreamableManager.h"
-#include "GameSection/Graph/GameSectionGraph.h"
 #include "Subsystems/WorldSubsystem.h"
 #include "GameSectionManager.generated.h"
 
@@ -29,7 +27,7 @@ private:
 	UPROPERTY(Transient) TSet<UObject*> LoadedObjs;
 	UPROPERTY(Transient) UGameSectionData* ThisData;
 	UPROPERTY(Transient) UGameSectionData* LastData;
-	UPROPERTY(Transient) UGameSectionGraph* SectionGraph;
+	UPROPERTY(Transient) class UGameSectionGraph* SectionGraph;
 	
 	void BeginTransition();
 	void UnloadLastData();

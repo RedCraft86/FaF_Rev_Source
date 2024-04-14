@@ -7,7 +7,11 @@
 
 DECLARE_LOG_CATEGORY_EXTERN(FaFRev, All, All);
 
-#define SMART_LOG(Verbosity, Format, ...) \
+#define SMART_LOG(Verbosity, Format) \
+	LOG_THIS_LINE(FaFRev, Verbosity); \
+	UE_LOG(FaFRev, Verbosity, Format)
+
+#define SMART_LOG_P(Verbosity, Format, ...) \
 	LOG_THIS_LINE(FaFRev, Verbosity); \
 	UE_LOG(FaFRev, Verbosity, Format, __VA_ARGS__)
 

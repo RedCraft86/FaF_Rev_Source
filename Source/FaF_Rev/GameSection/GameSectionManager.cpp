@@ -1,51 +1,11 @@
 ﻿// Copyright (C) RedCraft86. All Rights Reserved.
 
 #include "GameSectionManager.h"
-#include "Engine/AssetManager.h"
 #include "Kismet/GameplayStatics.h"
 #include "GameSection/Graph/GameSectionNode.h"
 #include "Libraries/GTLoadUtilsLibrary.h"
 #include "FRSettings.h"
 #include "FaF_Rev.h"
-
-// void UGameSectionManager::Step(const int32 Index)
-// {
-// 	if (!SectionGraph)
-// 	{
-// 		SMART_LOG(Error, TEXT("Attempting to Step with a null SectionGraph."))
-// 		return;
-// 	}
-//
-// 	if (bLoading)
-// 	{
-// 		SMART_LOG(Error, TEXT("Attempting to Step while GameSectionManager is busy."))
-// 		return;
-// 	}
-//
-// 	const TArray<int32> PreUpdate = Sequence;
-// 	Sequence.Add(Sequence.IsEmpty() ? 0 : Index);
-// 	Sequence = SectionGraph->ValidateSequence(Sequence);
-//
-// 	if (PreUpdate != Sequence)
-// 	{
-// 		BeginTransition();
-// 	}
-// }
-//
-// void UGameSectionManager::BeginTransition()
-// {
-// 	bLoading = true;
-// 	LastData = ThisData;
-// 	const UGameSectionNode* Node = SectionGraph->GetNodeBySequence<UGameSectionNode>(Sequence);
-// 	if (!Node || !Node->Sequence || !Node->Sequence->IsA(UGameSectionData::StaticClass()))
-// 	{
-// 		SMART_LOG(Error, TEXT("Cannot begin transition. Node or sequence is null."))
-// 		return;
-// 	}
-// 	ThisData = Cast<UGameSectionData>(Node->Sequence);
-// 	
-// 	LastData ? UnloadLastData() : LoadCurrentData();
-// }
 
 void UGameSectionManager::Step(const int32 Index)
 {
