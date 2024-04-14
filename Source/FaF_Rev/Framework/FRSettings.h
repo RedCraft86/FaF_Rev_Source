@@ -3,10 +3,13 @@
 #pragma once
 
 #include "GameMusic/GameMusicData.h"
+#include "UserWidgets/LoadingWidget.h"
 #include "GameSection/Graph/GameSectionGraph.h"
 #include "Styles/ExpressiveTextStyleBase.h"
 #include "Engine/DeveloperSettings.h"
 #include "FRSettings.generated.h"
+
+#define FRSettings UFRSettings::Get()
 
 UCLASS(Config = Game, DefaultConfig, DisplayName = "Game Project")
 class FAF_REV_API UFRSettings : public UDeveloperSettings
@@ -26,6 +29,9 @@ public:
 	
 	UPROPERTY(Config, EditAnywhere, Category = "GameSection")
 		TSoftObjectPtr<UGameSectionGraph> GameSectionGraph;
+		
+	UPROPERTY(Config, EditAnywhere, Category = "GameSection")
+		TSoftClassPtr<ULoadingWidgetBase> LoadingWidgetClass;
 
 	UPROPERTY(Config, EditAnywhere, Category = "Settings")
 		TSoftObjectPtr<UGameMusicData> DefaultGameMusicData;

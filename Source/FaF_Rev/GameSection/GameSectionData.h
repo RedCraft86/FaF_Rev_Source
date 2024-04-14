@@ -26,13 +26,13 @@ public:
 	
 	UPROPERTY(EditAnywhere, Category = "SectionData")
 		TSet<TSoftObjectPtr<UObject>> PreloadObjects;
-
+	
 	UPROPERTY(EditAnywhere, Category = "LoadingScreen")
-		TSet<TSoftObjectPtr<UTexture2D>> Backgrounds;
+		TMap<FString, FText> LoadingTips;
 	
 	UPROPERTY(EditAnywhere, Category = "LoadingScreen", meta = (NoElementDuplicate))
-		TMap<FString, FText> LoadingTips;
-
+		TArray<TSoftObjectPtr<UTexture2D>> Backgrounds;
+	
 	UPROPERTY(EditAnywhere, Category = "PlayerData")
 		TSoftObjectPtr<AActor> Teleporter;
 
@@ -55,6 +55,8 @@ public:
 		TSet<FName> Dependencies;
 
 	TSet<FAssetData> GetDependencies();
+	TSoftObjectPtr<UTexture2D> GetBackground();
+	TPair<FString, FText> GetTip() const;
 	
 private:
 #if WITH_EDITORONLY_DATA

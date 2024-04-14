@@ -2,6 +2,8 @@
 
 #include "GameSectionData.h"
 
+#include "Algo/RandomShuffle.h"
+
 UGameSectionData::UGameSectionData()
 {
 	DependencyDepth = 4;
@@ -24,6 +26,21 @@ TSet<FAssetData> UGameSectionData::GetDependencies()
 	}
 
 	return Result;
+}
+
+TSoftObjectPtr<UTexture2D> UGameSectionData::GetBackground()
+{
+	Backgrounds.RemoveAll([](const TSoftObjectPtr<UTexture2D>& Element) -> bool { return Element.IsNull(); });
+	Algo::RandomShuffle(Backgrounds); Algo::RandomShuffle(Backgrounds); // Twice
+	return Backgrounds.IsEmpty() ? nullptr : Backgrounds[0];
+}
+
+TPair<FString, FText> UGameSectionData::GetTip() const
+{
+	TArray<FString> TipKeys;
+	LoadingTips.GenerateKeyArray(TipKeys);
+	Algo::RandomShuffle(TipKeys); Algo::RandomShuffle(TipKeys); // Twice
+	return {TipKeys[0], LoadingTips.FindRef(TipKeys[0])};
 }
 
 uint32 UGameSectionData::CalcChecksum()

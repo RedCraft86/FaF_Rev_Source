@@ -2,10 +2,12 @@
 
 #include "GameSectionManager.h"
 #include "Kismet/GameplayStatics.h"
+#include "UserWidgets/LoadingWidget.h"
 #include "GameSection/Graph/GameSectionNode.h"
 #include "Libraries/GTLoadUtilsLibrary.h"
 #include "FRSettings.h"
 #include "FaF_Rev.h"
+
 
 void UGameSectionManager::Step(const int32 Index)
 {
@@ -83,6 +85,8 @@ void UGameSectionManager::LoadCurrentData()
 {
 	UGTLoadUtilsLibrary::ForceGarbageCollection();
 	checkf(ThisData, TEXT("Trying to load without any valid data."))
+
+	if (LoadingWidget) LoadingWidget->bUnloading = false;
 
 	LoadingLevels = 0;
 	bool bHasMaps = false;
@@ -173,6 +177,22 @@ bool UGameSectionManager::LoadLevel(const TPair<TSoftObjectPtr<UWorld>, bool>& I
 	return true;
 }
 
+void UGameSectionManager::HideLoadingWidget(const TFunction<void()>& OnFinished) const
+{
+	if (LoadingWidget)
+	{
+		LoadingWidget->FinishLoading(OnFinished);
+	}
+}
+
+void UGameSectionManager::ShowLoadingWidget() const
+{
+	if (LoadingWidget && ThisData)
+	{
+		LoadingWidget->BeginLoading(ThisData->GetDependencies(), ThisData->GetBackground(), ThisData->GetTip());
+	}
+}
+
 void UGameSectionManager::OnLevelUnloaded()
 {
 	UnloadingLevels--;
@@ -191,10 +211,24 @@ void UGameSectionManager::OnLevelLoaded()
 	}
 }
 
+void UGameSectionManager::OnWorldBeginPlay(UWorld& InWorld)
+{
+	Super::OnWorldBeginPlay(InWorld);
+	if (UClass* WidgetClass = FRSettings->LoadingWidgetClass.LoadSynchronous())
+	{
+		LoadingWidget = CreateWidget<ULoadingWidgetBase>(InWorld.GetFirstPlayerController(), WidgetClass);	
+	}
+	
+	if (!LoadingWidget)
+	{
+		SMART_LOG(Error, TEXT("Game Section Manager doesn't have a Loading Widget to show."))
+	}
+}
+
 void UGameSectionManager::Initialize(FSubsystemCollectionBase& Collection)
 {
 	Super::Initialize(Collection);
-	SectionGraph = UFRSettings::Get()->GameSectionGraph.LoadSynchronous();
+	SectionGraph = FRSettings->GameSectionGraph.LoadSynchronous();
 	if (!SectionGraph)
 	{
 		SMART_LOG(Error, TEXT("Game Section Manager initialized without any valid Section Graph."))
@@ -204,5 +238,5 @@ void UGameSectionManager::Initialize(FSubsystemCollectionBase& Collection)
 bool UGameSectionManager::ShouldCreateSubsystem(UObject* Outer) const
 {
 	const bool bSuper = Super::ShouldCreateSubsystem(Outer);
-	return bSuper && UFRSettings::Get()->GameplayMap.GetAssetName() == Outer->GetOutermostObject()->GetName();
+	return bSuper && FRSettings->GameplayMap.GetAssetName() == Outer->GetOutermostObject()->GetName();
 }
