@@ -19,12 +19,12 @@ public:
 	{
 		CategoryName = TEXT("Project");
 		SectionName = TEXT("Game Project");
-
-		GameSectionGraph = nullptr;
-		DefaultExpressiveTextStyle = nullptr;
 	}
 
-	UPROPERTY(Config, EditAnywhere, Category = "Settings")
+	UPROPERTY(Config, EditAnywhere, Category = "GameSection")
+		TSoftObjectPtr<UWorld> GameplayMap;
+	
+	UPROPERTY(Config, EditAnywhere, Category = "GameSection")
 		TSoftObjectPtr<UGameSectionGraph> GameSectionGraph;
 
 	UPROPERTY(Config, EditAnywhere, Category = "Settings")
