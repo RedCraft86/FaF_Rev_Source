@@ -31,7 +31,7 @@ public:
 		TSet<TSoftObjectPtr<UTexture2D>> Backgrounds;
 	
 	UPROPERTY(EditAnywhere, Category = "LoadingScreen", meta = (NoElementDuplicate))
-		TArray<FText> LoadingTips;
+		TMap<FString, FText> LoadingTips;
 
 	UPROPERTY(EditAnywhere, Category = "PlayerData")
 		TSoftObjectPtr<AActor> Teleporter;
