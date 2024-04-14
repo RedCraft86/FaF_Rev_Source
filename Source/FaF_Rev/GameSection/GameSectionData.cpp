@@ -37,6 +37,8 @@ TSoftObjectPtr<UTexture2D> UGameSectionData::GetBackground()
 
 TPair<FString, FText> UGameSectionData::GetTip() const
 {
+	if (LoadingTips.IsEmpty()) return{};
+	
 	TArray<FString> TipKeys;
 	LoadingTips.GenerateKeyArray(TipKeys);
 	Algo::RandomShuffle(TipKeys); Algo::RandomShuffle(TipKeys); // Twice
