@@ -47,7 +47,7 @@ Build/*/**
 !/Build/**/*.ico
 
 !Config/DefaultEngine.ini
-!Config/DefaultGame.ini
+Config/DefaultGame.ini
 
 !Saved/Config/WindowsEditor/Game.ini
 !Saved/Config/WindowsEditor/GameUserSettings.ini
