@@ -59,11 +59,10 @@ public:
 	TPair<FString, FText> GetTip() const;
 	
 private:
-#if WITH_EDITORONLY_DATA
+#if WITH_EDITOR
 	UFUNCTION(CallInEditor, Category = "SectionData")
 		void QueryDependencies() { FindAllDependencies(); }
-#endif
-#if WITH_EDITOR
+
 	uint32 Checksum = 0;
 	uint32 CalcChecksum();
 	void CheckDisplayName();

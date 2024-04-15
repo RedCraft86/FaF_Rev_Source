@@ -1,7 +1,6 @@
 ﻿// Copyright (C) RedCraft86. All Rights Reserved.
 
 #include "GameSectionData.h"
-
 #include "Algo/RandomShuffle.h"
 
 UGameSectionData::UGameSectionData()
@@ -45,6 +44,7 @@ TPair<FString, FText> UGameSectionData::GetTip() const
 	return {TipKeys[0], LoadingTips.FindRef(TipKeys[0])};
 }
 
+#if WITH_EDITOR
 uint32 UGameSectionData::CalcChecksum()
 {
 	uint32 Hash = GetTypeHash(DependencyDepth);
@@ -55,7 +55,6 @@ uint32 UGameSectionData::CalcChecksum()
 	return Hash;
 }
 
-#if WITH_EDITOR
 void UGameSectionData::CheckDisplayName()
 {
 	if (DisplayLabel.IsEmptyOrWhitespace())
