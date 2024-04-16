@@ -1,10 +1,10 @@
 ﻿// Copyright (C) RedCraft86. All Rights Reserved.
 
 #include "LoadingWidget.h"
-
 #include "Components/Image.h"
 #include "Components/TextBlock.h"
 #include "Components/ProgressBar.h"
+#include "FaF_Rev.h"
 
 void ULoadingWidgetBase::SlowTick()
 {
@@ -39,7 +39,7 @@ void ULoadingWidgetBase::Update(const bool bFinish) const
 	}
 	else
 	{
-		const float Percent = 0.1f + 0.88f * LoadingObjs.Num() / TotalObjs;
+		const float Percent = 0.1f + 0.88f * (TotalObjs - LoadingObjs.Num()) / TotalObjs;
 		LoadingLabel->SetText(FText::FromString(FString::Printf(
 			TEXT("%.2f%% (%d/%d Objects Loaded)"), Percent, LoadingObjs.Num(), TotalObjs)));
 	}
@@ -53,9 +53,9 @@ void ULoadingWidgetBase::FinishLoading(const TFunction<void()>& OnFinished)
 	Update(true);
 
 	FTimerHandle Handle;
-	GetWorld()->GetTimerManager().SetTimer(Handle, [this, &OnFinished]()
+	GetWorld()->GetTimerManager().SetTimer(Handle, [WEAK_THIS, OnFinished]()
 	{
-		RemoveWidget(OnFinished);
+		if (WeakThis.IsValid()) WeakThis->RemoveWidget(OnFinished);
 	}, 0.5f, false);
 }
 
