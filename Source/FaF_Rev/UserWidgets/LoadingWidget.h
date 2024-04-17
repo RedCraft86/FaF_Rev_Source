@@ -16,22 +16,22 @@ class FAF_REV_API ULoadingWidgetBase final : public UGTUserWidget
 
 public:
 
-	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, Category = "Elements", meta = (BindWidget))
+	UPROPERTY(Transient, BlueprintReadOnly, Category = "Elements", meta = (BindWidget))
 		UTextBlock* LoadingLabel;
 
-	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, Category = "Elements", meta = (BindWidget))
+	UPROPERTY(Transient, BlueprintReadOnly, Category = "Elements", meta = (BindWidget))
 		class UProgressBar* LoadingBar;
 
-	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, Category = "Elements", meta = (BindWidget))
+	UPROPERTY(Transient, BlueprintReadOnly, Category = "Elements", meta = (BindWidget))
 		class UImage* BackgroundImage;
 	
-	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, Category = "Elements", meta = (BindWidget))
+	UPROPERTY(Transient, BlueprintReadOnly, Category = "Elements", meta = (BindWidget))
 		UTextBlock* TipLabel;
 	
-	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, Category = "Elements", meta = (BindWidget))
+	UPROPERTY(Transient, BlueprintReadOnly, Category = "Elements", meta = (BindWidget))
 		UTextBlock* TipText;
 
-	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, Category = "Elements")
+	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, Category = "LoadingWidget")
 		TSoftObjectPtr<UTexture2D> DefaultBackground;
 	
 private:
