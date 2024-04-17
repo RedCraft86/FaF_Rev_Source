@@ -39,9 +39,11 @@ void ULoadingWidgetBase::Update(const bool bFinish) const
 	}
 	else
 	{
-		const float Percent = 0.1f + 0.88f * (TotalObjs - LoadingObjs.Num()) / TotalObjs;
+		const int32 LoadedObjs = TotalObjs - LoadingObjs.Num();
+		const float Percent = 0.1f + 0.88f * LoadedObjs / TotalObjs;
 		LoadingLabel->SetText(FText::FromString(FString::Printf(
-			TEXT("%.2f%% (%d/%d Objects Loaded)"), Percent, LoadingObjs.Num(), TotalObjs)));
+			TEXT("%.2f%% (%d/%d Objects Loaded)"), Percent * 100.0f, LoadedObjs, TotalObjs)));
+		LoadingBar->SetPercent(Percent);
 	}
 }
 
