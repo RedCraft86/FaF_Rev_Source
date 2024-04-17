@@ -22,6 +22,8 @@ public:
 	{
 		CategoryName = TEXT("Project");
 		SectionName = TEXT("Game Project");
+		
+		ReadingWordsPerSecond = 2.0f;
 	}
 
 	UPROPERTY(Config, EditAnywhere, Category = "GameSection")
@@ -32,12 +34,15 @@ public:
 		
 	UPROPERTY(Config, EditAnywhere, Category = "GameSection")
 		TSoftClassPtr<ULoadingWidgetBase> LoadingWidgetClass;
-
+	
 	UPROPERTY(Config, EditAnywhere, Category = "Settings")
 		TSoftObjectPtr<UGameMusicData> DefaultGameMusicData;
 	
 	UPROPERTY(Config, EditAnywhere, Category = "Settings")
 		TSoftObjectPtr<UExpressiveTextStyleBase> DefaultExpressiveTextStyle;
+
+	UPROPERTY(Config, EditAnywhere, Category = "Settings", meta = (ClampMin = 1, UIMin = 1))
+		uint8 ReadingWordsPerSecond;
 
 public: // Statics
 	
