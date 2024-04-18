@@ -2,7 +2,6 @@
 
 #pragma once
 
-#include "FRSettings.h"
 #include "Kismet/BlueprintFunctionLibrary.h"
 #include "MessagingData.generated.h"
 
@@ -26,15 +25,6 @@ struct FAF_REV_API FSimpleNoticeData
 	}
 
 	bool IsValidData() const { return !Message.IsEmptyOrWhitespace(); }
-	float GetReadingTime() const
-	{
-		static uint8 AverageWPS;
-		if (AverageWPS == 0) AverageWPS = FRSettings->ReadingWordsPerSecond;
-
-		TArray<FString> Words;
-		Message.ToString().ParseIntoArray(Words, TEXT(" "));
-		return (Words.Num() / (float)AverageWPS) + DisplayTime;
-	}
 };
 
 USTRUCT(BlueprintType)
@@ -62,13 +52,4 @@ struct FAF_REV_API FSimpleSubtitleData
 	}
 
 	bool IsValidData() const { return !Label.IsEmptyOrWhitespace() && !Line.IsEmptyOrWhitespace(); }
-	float GetReadingTime() const
-	{
-		static uint8 AverageWPS;
-		if (AverageWPS == 0) AverageWPS = FRSettings->ReadingWordsPerSecond;
-
-		TArray<FString> Words;
-		Line.ToString().ParseIntoArray(Words, TEXT(" "));
-		return ((Words.Num() + 2) / (float)AverageWPS) + DisplayTime;
-	}
 };
