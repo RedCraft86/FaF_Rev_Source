@@ -60,7 +60,7 @@ USTRUCT(BlueprintType, DisplayName = "Guide Book Page ID")
 struct FAF_REV_API FGuideBookPageID : public FPulldownStructBase
 {
 	GENERATED_BODY()
-	SETUP_PULLDOWN(FGuideBookPageID);
+	SETUP_PULLDOWN(FGuideBookPageID)
 };
 
 USTRUCT(BlueprintType)
