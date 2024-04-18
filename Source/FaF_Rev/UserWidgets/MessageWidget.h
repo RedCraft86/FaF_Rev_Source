@@ -9,7 +9,7 @@ class UExprTextBlock;
 class UTextBlock;
 
 UCLASS(Abstract)
-class FAF_REV_API UMessageWidget final : public UGTUserWidget
+class FAF_REV_API UMessageWidgetBase final : public UGTUserWidget
 {
 	GENERATED_BODY()
 
@@ -29,6 +29,9 @@ public:
 
 	UPROPERTY(Transient, BlueprintReadOnly, Category = "Elements", meta = (BindWidget))
 		UTextBlock* SubtitleTitleText;
+
+	UPROPERTY(Transient, BlueprintReadOnly, Category = "Elements", meta = (BindWidget))
+		class UWidgetSwitcher* GuideSwitcher;
 
 	UPROPERTY(Transient, BlueprintReadOnly, Category = "Animations", meta = (BindWidget))
 		UWidgetAnimation* SmallNoticeAnim;
