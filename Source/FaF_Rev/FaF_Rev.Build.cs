@@ -37,6 +37,7 @@ public class FaF_Rev : ModuleRules
 		PrivateDependencyModuleNames.AddRange(
 			new[]
 			{
+				"PulldownStruct",
 				"ExpressiveText"
 			}
 		);
