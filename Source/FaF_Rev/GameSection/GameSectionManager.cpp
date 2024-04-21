@@ -221,7 +221,7 @@ void UGameSectionManager::OnLevelLoaded()
 ULoadingWidgetBase* UGameSectionManager::GetLoadingWidget()
 {
 	if (IsValid(LoadingWidgetCache)) return LoadingWidgetCache;
-	if (AFRGameMode* GameMode = GET_GAMEMODE(this))
+	if (AFRGameMode* GameMode = FRGamemode(this))
 	{
 		LoadingWidgetCache = nullptr;
 		return LoadingWidgetCache;

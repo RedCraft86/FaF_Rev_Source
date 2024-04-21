@@ -5,7 +5,7 @@
 #include "GameFramework/Character.h"
 #include "FRPlayer.generated.h"
 
-#define GET_PLAYER(Context) AFRPlayer::Get<AFRPlayer>(Context)
+#define FRPlayer(Context) AFRPlayer::Get<AFRPlayer>(Context)
 
 UENUM(BlueprintType, meta = (Bitflags, UseEnumValuesAsMaskValuesInEditor = "true"))
 enum class EPlayerFlags : uint8
