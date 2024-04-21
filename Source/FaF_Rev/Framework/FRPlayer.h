@@ -5,6 +5,8 @@
 #include "GameFramework/Character.h"
 #include "FRPlayer.generated.h"
 
+#define GET_PLAYER(Context) AFRPlayer::Get<AFRPlayer>(Context)
+
 UENUM(BlueprintType, meta = (Bitflags, UseEnumValuesAsMaskValuesInEditor = "true"))
 enum class EPlayerFlags : uint8
 {
@@ -39,9 +41,12 @@ protected:
 	virtual void SetupPlayerInputComponent(UInputComponent* PlayerInputComponent) override;
 
 public: // Statics
-
-	template <typename T = AFRPlayer>
-	static T* Get(const UObject* WorldContextObject);
+	
 	UFUNCTION(BlueprintPure, Category = "Game", DisplayName = "Get Player (Smart)", meta = (DynamicOutputParam = "ReturnValue", DeterminesOutputType = "Class", WorldContext = "WorldContextObject"))
-		static ACharacter* GetPlayerPawnSmart(const UObject* WorldContextObject, const TSubclassOf<ACharacter> Class);
+		static AFRPlayer* GetPlayerPawnSmart(const UObject* WorldContextObject, const TSubclassOf<AFRPlayer> Class);
+	template <typename T = AFRPlayer>
+	static T* Get(const UObject* WorldContextObject)
+	{
+		return Cast<T>(GetPlayerPawnSmart(WorldContextObject, T::StaticClass()));
+	}
 };

@@ -9,7 +9,7 @@ FExpressiveTextData::FExpressiveTextData() : bUseAsset(false), TextFields({}), T
 	TextFields.DefaultFontSize = 24;
 	TextFields.WidthSettings.Value = 0.0f;
 	TextFields.WidthSettings.ValueType = EExpressiveTextWidthType::Pixels;
-	TextFields.DefaultStyle = UFRSettings::GetConst()->DefaultExpressiveTextStyle.LoadSynchronous();
+	TextFields.DefaultStyle = UFRSettings::GetConst()->DefaultTextStyle.LoadSynchronous();
 }
 
 int64 FExpressiveTextData::CalcChecksum() const
@@ -34,7 +34,7 @@ FExpressiveText FExpressiveTextData::GetExpressiveText() const
 		Result.SetFields(TextFields);
 		if (!Result.GetDefaultStyle())
 		{
-			Result.SetDefaultStyle(UFRSettings::GetConst()->DefaultExpressiveTextStyle.LoadSynchronous());
+			Result.SetDefaultStyle(UFRSettings::GetConst()->DefaultTextStyle.LoadSynchronous());
 		}
 	}
 	

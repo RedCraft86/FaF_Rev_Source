@@ -14,6 +14,7 @@ public class FaF_Rev : ModuleRules
 				"FaF_Rev/Data",
 				"FaF_Rev/Framework/",
 				"FaF_Rev/Gameplay/",
+				"FaF_Rev/UserWidgets/",
 			}
 		);
 		

@@ -2,12 +2,13 @@
 
 #include "GameSectionManager.h"
 #include "Kismet/GameplayStatics.h"
-#include "UserWidgets/LoadingWidget.h"
 #include "GameSection/Graph/GameSectionNode.h"
+#include "GameSection/Graph/GameSectionGraph.h"
 #include "Libraries/GTLoadUtilsLibrary.h"
+#include "Screens/LoadingWidget.h"
+#include "FRGameMode.h"
 #include "FRSettings.h"
 #include "FaF_Rev.h"
-
 
 void UGameSectionManager::Step(const int32 Index)
 {
@@ -87,7 +88,7 @@ void UGameSectionManager::LoadCurrentData()
 	UGTLoadUtilsLibrary::ForceGarbageCollection();
 	checkf(ThisData, TEXT("Trying to load without any valid data."))
 
-	if (LoadingWidget) LoadingWidget->bUnloading = false;
+	if (ULoadingWidgetBase* LoadingWidget = GetLoadingWidget()) LoadingWidget->bUnloading = false;
 
 	LoadingLevels = 0;
 	bool bHasMaps = false;
@@ -181,17 +182,18 @@ bool UGameSectionManager::LoadLevel(const TPair<TSoftObjectPtr<UWorld>, bool>& I
 	return true;
 }
 
-void UGameSectionManager::HideLoadingWidget(const TFunction<void()>& OnFinished) const
+void UGameSectionManager::HideLoadingWidget(const TFunction<void()>& OnFinished)
 {
-	if (LoadingWidget)
+	if (ULoadingWidgetBase* LoadingWidget = GetLoadingWidget())
 	{
 		LoadingWidget->FinishLoading(OnFinished);
 	}
 }
 
-void UGameSectionManager::ShowLoadingWidget() const
+void UGameSectionManager::ShowLoadingWidget()
 {
-	if (LoadingWidget && ThisData)
+	if (!ThisData) return;
+	if (ULoadingWidgetBase* LoadingWidget = GetLoadingWidget())
 	{
 		LoadingWidget->BeginLoading(ThisData->GetDependencies(),
 			ThisData->GetBackground(), ThisData->GetTip());
@@ -216,18 +218,16 @@ void UGameSectionManager::OnLevelLoaded()
 	}
 }
 
-void UGameSectionManager::OnWorldBeginPlay(UWorld& InWorld)
+ULoadingWidgetBase* UGameSectionManager::GetLoadingWidget()
 {
-	Super::OnWorldBeginPlay(InWorld);
-	if (UClass* WidgetClass = FRSettings->LoadingWidgetClass.LoadSynchronous())
+	if (IsValid(LoadingWidgetCache)) return LoadingWidgetCache;
+	if (AFRGameMode* GameMode = GET_GAMEMODE(this))
 	{
-		LoadingWidget = CreateWidget<ULoadingWidgetBase>(InWorld.GetFirstPlayerController(), WidgetClass);	
+		LoadingWidgetCache = nullptr;
+		return LoadingWidgetCache;
 	}
-	
-	if (!LoadingWidget)
-	{
-		SMART_LOG(Error, TEXT("Game Section Manager doesn't have a Loading Widget to show."))
-	}
+
+	return nullptr;
 }
 
 void UGameSectionManager::Initialize(FSubsystemCollectionBase& Collection)

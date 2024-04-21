@@ -2,11 +2,8 @@
 
 #pragma once
 
-#include "GameMusic/GameMusicData.h"
-#include "UserWidgets/LoadingWidget.h"
-#include "GameSection/Graph/GameSectionGraph.h"
-#include "Styles/ExpressiveTextStyleBase.h"
 #include "Engine/DeveloperSettings.h"
+#include "Styles/ExpressiveTextStyleBase.h"
 #include "FRSettings.generated.h"
 
 #define FRSettings UFRSettings::Get()
@@ -18,31 +15,26 @@ class FAF_REV_API UFRSettings : public UDeveloperSettings
 
 public:
 	
-	UFRSettings()
+	UFRSettings() : WordsPerSecond(2)
 	{
 		CategoryName = TEXT("Project");
 		SectionName = TEXT("Game Project");
-		
-		ReadingWordsPerSecond = 2.0f;
 	}
 
+	UPROPERTY(Config, EditAnywhere, Category = "Default")
+		TSoftObjectPtr<class UGameMusicData> DefaultMusic;
+
+	UPROPERTY(Config, EditAnywhere, Category = "Text", meta = (ClampMin = 1, UIMin = 1))
+		uint8 WordsPerSecond;
+	
+	UPROPERTY(Config, EditAnywhere, Category = "Text")
+		TSoftObjectPtr<UExpressiveTextStyleBase> DefaultTextStyle;
+	
 	UPROPERTY(Config, EditAnywhere, Category = "GameSection")
 		TSoftObjectPtr<UWorld> GameplayMap;
-	
-	UPROPERTY(Config, EditAnywhere, Category = "GameSection")
-		TSoftObjectPtr<UGameSectionGraph> GameSectionGraph;
-		
-	UPROPERTY(Config, EditAnywhere, Category = "GameSection")
-		TSoftClassPtr<ULoadingWidgetBase> LoadingWidgetClass;
-	
-	UPROPERTY(Config, EditAnywhere, Category = "Settings")
-		TSoftObjectPtr<UGameMusicData> DefaultGameMusicData;
-	
-	UPROPERTY(Config, EditAnywhere, Category = "Settings")
-		TSoftObjectPtr<UExpressiveTextStyleBase> DefaultExpressiveTextStyle;
 
-	UPROPERTY(Config, EditAnywhere, Category = "Settings", meta = (ClampMin = 1, UIMin = 1))
-		uint8 ReadingWordsPerSecond;
+	UPROPERTY(Config, EditAnywhere, Category = "GameSection")
+		TSoftObjectPtr<class UGameSectionGraph> GameSectionGraph;
 
 public: // Statics
 	
