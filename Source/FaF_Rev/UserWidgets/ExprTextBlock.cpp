@@ -5,8 +5,6 @@
 #include "Blueprint/WidgetTree.h"
 #include "Widgets/ExpressiveTextRendererWidget.h"
 
-// REQUIRES: EXPRESSIVETEXT_API being added to FExpressiveTextSelector
-
 #define LOCTEXT_NAMESPACE "UMG"
 
 UExprTextBlock::UExprTextBlock(const FObjectInitializer& ObjectInitializer) : UUserWidget(ObjectInitializer)
