@@ -24,6 +24,8 @@ void AFRPlayer::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
 }
 
+/* Statics */
+
 AFRPlayer* AFRPlayer::GetPlayerPawnSmart(const UObject* WorldContextObject, const TSubclassOf<AFRPlayer> Class)
 {
 	AFRPlayer* Obj = Cast<AFRPlayer>(UGameplayStatics::GetPlayerPawn(WorldContextObject, 0));
