@@ -46,8 +46,8 @@ Build/*/**
 !/Build/*/PakBlacklist*.txt
 !/Build/**/*.ico
 
-!Config/DefaultEngine.ini
-!Config/DefaultGame.ini
+!/Config/DefaultEngine.default
+!/Config/DefaultGame.default
 
 !Saved/Config/WindowsEditor/Game.ini
 !Saved/Config/WindowsEditor/GameUserSettings.ini

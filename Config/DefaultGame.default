@@ -1,12 +1,11 @@
-[/Script/EngineSettings.GeneralProjectSettings]
-ProjectID=EC1A423D46F726BB3B33DEB7F49A2F36
+﻿[/Script/EngineSettings.GeneralProjectSettings]
 CopyrightNotice=Copyright (C) RedCraft86. All Rights Reserved.
 
 [/Script/UnrealEd.ProjectPackagingSettings]
 Build=IfProjectHasCode
 BuildConfiguration=PPBC_Shipping
 BuildTarget=
-FullRebuild=False
+FullRebuild=True
 ForDistribution=True
 IncludeDebugFiles=False
 BlueprintNativizationMethod=Disabled
@@ -93,4 +92,3 @@ bSkipMovies=False
 +IniSectionDenylist=StorageServers
 bRetainStagedDirectory=False
 CustomStageCopyHandler=
-

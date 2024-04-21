@@ -1,4 +1,4 @@
-[/Script/EngineSettings.GameMapsSettings]
+﻿[/Script/EngineSettings.GameMapsSettings]
 GameDefaultMap=/Game/NewMap.NewMap
 EditorStartupMap=/Game/NewMap.NewMap
 GlobalDefaultGameMode=/Script/Engine.GameModeBase
@@ -68,4 +68,3 @@ FontDPI=72
 [/Script/Engine.Engine]
 +ActiveGameNameRedirects=(OldGameName="TP_Blank",NewGameName="/Script/FaF_Rev")
 +ActiveGameNameRedirects=(OldGameName="/Script/TP_Blank",NewGameName="/Script/FaF_Rev")
-
