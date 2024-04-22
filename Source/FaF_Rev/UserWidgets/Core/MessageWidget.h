@@ -15,14 +15,29 @@ class FAF_REV_API UMessageWidgetBase final : public UGTUserWidget
 private:
 	
 	UPROPERTY(Transient, meta = (BindWidget))
-		UExprTextBlock* SmallNoticeLabel;
+		UExprTextBlock* SmallNoticeText;
 
 	UPROPERTY(Transient, meta = (BindWidget))
-		UExprTextBlock* LargeNoticeLabel;
+		UExprTextBlock* LargeNoticeText;
 
+	UPROPERTY(Transient, meta = (BindWidget))
+		UPanelWidget* SubtitleContainer;
+	
 	UPROPERTY(Transient, meta = (BindWidget))
 		UExprTextBlock* SubtitleLineText;
 
 	UPROPERTY(Transient, meta = (BindWidget))
 		class UTextBlock* SubtitleNameText;
+
+	UPROPERTY(Transient, meta = (BindWidgetAnim))
+		UWidgetAnimation* SmallNoticeAnim;
+
+	UPROPERTY(Transient, meta = (BindWidgetAnim))
+		UWidgetAnimation* LargeNoticeAnim;
+
+	UPROPERTY(Transient, meta = (BindWidgetAnim))
+		UWidgetAnimation* SubtitleAnim;
+	
+	UPROPERTY(Transient, meta = (BindWidgetAnim))
+		UWidgetAnimation* SubtitleHideAnim;
 };

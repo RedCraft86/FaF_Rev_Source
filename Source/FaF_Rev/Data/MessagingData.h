@@ -3,6 +3,7 @@
 #pragma once
 
 #include "FaF_Rev.h"
+#include "FRSettings.h"
 #include "Kismet/BlueprintFunctionLibrary.h"
 #include "PulldownStruct/PulldownStructBase.h"
 #include "MessagingData.generated.h"
@@ -12,21 +13,21 @@ struct FAF_REV_API FSimpleNoticeData
 {
 	GENERATED_BODY()
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "NoticeData", meta = (MultiLine = true))
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "TextData", meta = (MultiLine = true))
 		FText Message;
 
-	// Additional show time. Added on top of the words per second provided in Game Project settings.
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "NoticeData")
-		float DisplayTime;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "TextData")
+		float ExtraTime;
 
-	FSimpleNoticeData() : Message(FText::GetEmpty()), DisplayTime(0.0f) {}
-	FSimpleNoticeData(const FText& InMessage, const float InTime) : Message(InMessage), DisplayTime(InTime) {}
+	FSimpleNoticeData() : Message(FText::GetEmpty()), ExtraTime(1.0f) {}
+	FSimpleNoticeData(const FText& InMessage, const float InTime) : Message(InMessage), ExtraTime(InTime) {}
 	friend uint32 GetTypeHash(const FSimpleNoticeData& Data)
 	{
-		return HashCombine(GetTypeHash(Data.Message.ToString()), GetTypeHash(Data.DisplayTime));
+		return HashCombine(GetTypeHash(Data.Message.ToString()), GetTypeHash(Data.ExtraTime));
 	}
 
 	bool IsValidData() const { return !Message.IsEmptyOrWhitespace(); }
+	float CalcDisplayTime() const { return FRSettings->CalcReadingTime(Message.ToString()) + ExtraTime; }
 };
 
 USTRUCT(BlueprintType)
@@ -34,26 +35,25 @@ struct FAF_REV_API FSimpleSubtitleData
 {
 	GENERATED_BODY()
 
-	// Speaker name
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "SubtitleData")
-		FText Label;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "TextData")
+		FText Speaker;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "SubtitleData", meta = (MultiLine = true))
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "TextData", meta = (MultiLine = true))
 		FText Line;
 
-	// Additional show time. Added on top of the words per second provided in Game Project settings.
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "SubtitleData")
-		float DisplayTime;
+		float ExtraTime;
 
-	FSimpleSubtitleData() : Label(INVTEXT("You")), Line(FText::GetEmpty()), DisplayTime(0.0f) {}
-	FSimpleSubtitleData(const FText& InLabel,const FText& InLine, const float InTime) : Label(InLabel), Line(InLine), DisplayTime(InTime) {}
+	FSimpleSubtitleData() : Speaker(INVTEXT("You")), Line(FText::GetEmpty()), ExtraTime(1.0f) {}
+	FSimpleSubtitleData(const FText& InLabel,const FText& InLine, const float InTime) : Speaker(InLabel), Line(InLine), ExtraTime(InTime) {}
 	friend uint32 GetTypeHash(const FSimpleSubtitleData& Data)
 	{
-		return HashCombine(HashCombine(GetTypeHash(Data.Label.ToString()),
-			GetTypeHash(Data.Line.ToString())), GetTypeHash(Data.DisplayTime));
+		return HashCombine(HashCombine(GetTypeHash(Data.Speaker.ToString()),
+			GetTypeHash(Data.Line.ToString())), GetTypeHash(Data.ExtraTime));
 	}
 
-	bool IsValidData() const { return !Label.IsEmptyOrWhitespace() && !Line.IsEmptyOrWhitespace(); }
+	bool IsValidData() const { return !Speaker.IsEmptyOrWhitespace() && !Line.IsEmptyOrWhitespace(); }
+	float CalcDisplayTime() const { return FRSettings->CalcReadingTime(Line.ToString()) + ExtraTime; }
 };
 
 USTRUCT(BlueprintType, DisplayName = "Guide Book Page ID")

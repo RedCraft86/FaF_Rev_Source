@@ -36,6 +36,12 @@ public:
 	UPROPERTY(Config, EditAnywhere, Category = "GameSection")
 		TSoftObjectPtr<class UGameSectionGraph> GameSectionGraph;
 
+	float CalcReadingTime(const FString& InStr) const
+	{
+		TArray<FString> Words; InStr.ParseIntoArray(Words, TEXT(" "));
+		return Words.Num() / (float)WordsPerSecond;
+	}
+	
 public: // Statics
 	
 	static UFRSettings* Get() { return GetMutableDefault<UFRSettings>(); }
