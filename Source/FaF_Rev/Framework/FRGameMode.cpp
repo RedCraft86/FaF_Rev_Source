@@ -5,27 +5,27 @@
 #include "GTUserWidget.h"
 #include "FRPlayer.h"
 
-AFRGameMode::AFRGameMode()
+AFRGameModeBase::AFRGameModeBase()
 {
-	PlayerControllerClass = AFRController::StaticClass();
-	DefaultPawnClass = AFRPlayer::StaticClass();
+	PlayerControllerClass = AFRControllerBase::StaticClass();
+	DefaultPawnClass = AFRPlayerBase::StaticClass();
 }
 
-UGTUserWidget* AFRGameMode::FindOrAddWidget(const TSubclassOf<UGTUserWidget> Class, const FGameplayTagContainer Tags)
+UGTUserWidget* AFRGameModeBase::FindOrAddWidget(const TSubclassOf<UGTUserWidget> Class, const FGameplayTagContainer InTags)
 {
 	UGTUserWidget** ObjPtr = WidgetObjs.Find(Class);
 	if (ObjPtr && *ObjPtr)
 	{
-		(*ObjPtr)->WidgetTags.AppendTags(Tags);
+		(*ObjPtr)->WidgetTags.AppendTags(InTags);
 		return *ObjPtr;
 	}
 	
-	UGTUserWidget* Obj = UGTUserWidget::CreateSmartWidget(FRController(this), Class, Tags);
+	UGTUserWidget* Obj = UGTUserWidget::CreateSmartWidget(FRController(this), Class, InTags);
 	if (Obj) WidgetObjs.Add(Class, Obj);
 	return Obj;
 }
 
-UGTUserWidget* AFRGameMode::GetWidget(const TSubclassOf<UGTUserWidget> Class, const FGameplayTag FilterTag)
+UGTUserWidget* AFRGameModeBase::GetWidget(const TSubclassOf<UGTUserWidget> Class, const FGameplayTag FilterTag)
 {
 	WidgetObjs.Remove(nullptr);
 	if (UGTUserWidget** ObjPtr = WidgetObjs.Find(Class))
@@ -44,11 +44,11 @@ UGTUserWidget* AFRGameMode::GetWidget(const TSubclassOf<UGTUserWidget> Class, co
 	return nullptr;
 }
 
-void AFRGameMode::BeginPlay()
+void AFRGameModeBase::BeginPlay()
 {
 	Super::BeginPlay();
-	for (const TSubclassOf<UGTUserWidget> WidgetClass : DefaultWidgets)
+	for (const TPair<TSubclassOf<UGTUserWidget>, FGameplayTagContainer>& Pair : DefaultWidgets)
 	{
-		FindOrAddWidget(WidgetClass, {});
+		FindOrAddWidget(Pair.Key, Pair.Value);
 	}
 }

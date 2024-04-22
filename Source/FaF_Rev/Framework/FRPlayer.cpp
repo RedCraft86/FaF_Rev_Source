@@ -3,32 +3,32 @@
 #include "FRPlayer.h"
 #include "Kismet/GameplayStatics.h"
 
-AFRPlayer::AFRPlayer()
+AFRPlayerBase::AFRPlayerBase()
 {
 	PrimaryActorTick.bCanEverTick = true;
 }
 
-void AFRPlayer::BeginPlay()
+void AFRPlayerBase::BeginPlay()
 {
 	Super::BeginPlay();
 	
 }
 
-void AFRPlayer::Tick(float DeltaTime)
+void AFRPlayerBase::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 }
 
-void AFRPlayer::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
+void AFRPlayerBase::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 {
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
 }
 
 /* Statics */
 
-AFRPlayer* AFRPlayer::GetPlayerPawnSmart(const UObject* WorldContextObject, const TSubclassOf<AFRPlayer> Class)
+AFRPlayerBase* AFRPlayerBase::GetPlayerPawnSmart(const UObject* WorldContextObject, const TSubclassOf<AFRPlayerBase> Class)
 {
-	AFRPlayer* Obj = Cast<AFRPlayer>(UGameplayStatics::GetPlayerPawn(WorldContextObject, 0));
-	if (!IsValid(Obj)) Obj = Cast<AFRPlayer>(UGameplayStatics::GetActorOfClass(WorldContextObject, StaticClass()));
+	AFRPlayerBase* Obj = Cast<AFRPlayerBase>(UGameplayStatics::GetPlayerPawn(WorldContextObject, 0));
+	if (!IsValid(Obj)) Obj = Cast<AFRPlayerBase>(UGameplayStatics::GetActorOfClass(WorldContextObject, StaticClass()));
 	return Obj && Obj->IsA(Class) ? Obj : nullptr;
 }

@@ -5,22 +5,22 @@
 #include "GTGameMode.h"
 #include "FRGameMode.generated.h"
 
-#define FRGamemode(Context) AGTGameMode::Get<AFRGameMode>(Context)
+#define FRGamemode(Context) AGTGameMode::Get<AFRGameModeBase>(Context)
 
-UCLASS()
-class FAF_REV_API AFRGameMode final : public AGTGameMode
+UCLASS(Abstract)
+class FAF_REV_API AFRGameModeBase final : public AGTGameMode
 {
 	GENERATED_BODY()
 
 public:
 
-	AFRGameMode();
+	AFRGameModeBase();
 
 	UPROPERTY(EditAnywhere, Category = "Settings")
-		TSet<TSubclassOf<UGTUserWidget>> DefaultWidgets;
+		TMap<TSubclassOf<UGTUserWidget>, FGameplayTagContainer> DefaultWidgets;
 
 	UFUNCTION(BlueprintCallable, Category = "GameMode", meta = (DynamicOutputParam = "ReturnValue", DeterminesOutputType = "Class"))
-		UGTUserWidget* FindOrAddWidget(const TSubclassOf<UGTUserWidget> Class, const FGameplayTagContainer Tags);
+		UGTUserWidget* FindOrAddWidget(const TSubclassOf<UGTUserWidget> Class, const FGameplayTagContainer InTags);
 	
 	UFUNCTION(BlueprintPure, Category = "GameMode", meta = (DynamicOutputParam = "ReturnValue", DeterminesOutputType = "Class"))
 		UGTUserWidget* GetWidget(const TSubclassOf<UGTUserWidget> Class, const FGameplayTag FilterTag);

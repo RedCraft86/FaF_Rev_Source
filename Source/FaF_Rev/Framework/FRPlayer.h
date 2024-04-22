@@ -5,7 +5,7 @@
 #include "GameFramework/Character.h"
 #include "FRPlayer.generated.h"
 
-#define FRPlayer(Context) AFRPlayer::Get<AFRPlayer>(Context)
+#define FRPlayer(Context) AFRPlayerBase::Get<AFRPlayerBase>(Context)
 
 UENUM(BlueprintType, meta = (Bitflags, UseEnumValuesAsMaskValuesInEditor = "true"))
 enum class EPlayerFlags : uint8
@@ -25,14 +25,14 @@ struct FPlayerSettings
 	FPlayerSettings() : PlayerFlags(0) {}
 };
 
-UCLASS()
-class FAF_REV_API AFRPlayer : public ACharacter
+UCLASS(Abstract)
+class FAF_REV_API AFRPlayerBase final : public ACharacter
 {
 	GENERATED_BODY()
 
 public:
 
-	AFRPlayer();
+	AFRPlayerBase();
 	
 protected:
 
@@ -43,8 +43,8 @@ protected:
 public: // Statics
 	
 	UFUNCTION(BlueprintPure, Category = "Game", DisplayName = "Get Player (Smart)", meta = (DynamicOutputParam = "ReturnValue", DeterminesOutputType = "Class", WorldContext = "WorldContextObject"))
-		static AFRPlayer* GetPlayerPawnSmart(const UObject* WorldContextObject, const TSubclassOf<AFRPlayer> Class);
-	template <typename T = AFRPlayer>
+		static AFRPlayerBase* GetPlayerPawnSmart(const UObject* WorldContextObject, const TSubclassOf<AFRPlayerBase> Class);
+	template <typename T = AFRPlayerBase>
 	static T* Get(const UObject* WorldContextObject)
 	{
 		return Cast<T>(GetPlayerPawnSmart(WorldContextObject, T::StaticClass()));

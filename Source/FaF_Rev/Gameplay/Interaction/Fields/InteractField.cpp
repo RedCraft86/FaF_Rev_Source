@@ -21,7 +21,7 @@ void AInteractField::OnConstruction(const FTransform& Transform)
 	}
 }
 
-void AInteractField::OnBeginInteract_Implementation(AFRPlayer* Player, const FHitResult& HitResult)
+void AInteractField::OnBeginInteract_Implementation(AFRPlayerBase* Player, const FHitResult& HitResult)
 {
 	if (!bEnabled) return;
 	

@@ -5,10 +5,10 @@
 #include "GTPlayerController.h"
 #include "FRController.generated.h"
 
-#define FRController(Context) AFRController::Get<AFRController>(Context)
+#define FRController(Context) AGTPlayerController::Get<AFRControllerBase>(Context)
 
-UCLASS()
-class FAF_REV_API AFRController final : public AGTPlayerController
+UCLASS(Abstract)
+class FAF_REV_API AFRControllerBase final : public AGTPlayerController
 {
 	GENERATED_BODY()
 };

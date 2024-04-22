@@ -5,7 +5,7 @@
 #include "UObject/Interface.h"
 #include "InteractionInterface.generated.h"
 
-class AFRPlayer;
+class AFRPlayerBase;
 
 #define DefaultInteractionLabel NSLOCTEXT("Interaction", "GenericLabel", "Interact");
 
@@ -22,12 +22,12 @@ class FAF_REV_API IInteractionInterface
 public:
 	
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Interaction", DisplayName = "Begin Interact")
-		void OnBeginInteract(AFRPlayer* Player, const FHitResult& HitResult);
-	virtual void OnBeginInteract_Implementation(AFRPlayer* Player, const FHitResult& HitResult) {}
+		void OnBeginInteract(AFRPlayerBase* Player, const FHitResult& HitResult);
+	virtual void OnBeginInteract_Implementation(AFRPlayerBase* Player, const FHitResult& HitResult) {}
 
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Interaction", DisplayName = "End Interact")
-		void OnEndInteract(AFRPlayer* Player);
-	virtual void OnEndInteract_Implementation(AFRPlayer* Player) {}
+		void OnEndInteract(AFRPlayerBase* Player);
+	virtual void OnEndInteract_Implementation(AFRPlayerBase* Player) {}
 
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Interaction", DisplayName = "Begin Pawn Interact")
 		void OnBeginPawnInteract(APawn* Pawn, const FHitResult& HitResult);
@@ -49,7 +49,7 @@ namespace Interaction
 		return IsValid(Target) ? Target->Implements<UInteractionInterface>() : false; 
 	} 
 	
-	static void BeginInteract(UObject* Target, AFRPlayer* Player, const FHitResult& HitResult)
+	static void BeginInteract(UObject* Target, AFRPlayerBase* Player, const FHitResult& HitResult)
 	{
 		if (ImplementedBy(Target))
 		{
@@ -57,7 +57,7 @@ namespace Interaction
 		}
 	}
 	
-	static void EndInteract(UObject* Target, AFRPlayer* Player)
+	static void EndInteract(UObject* Target, AFRPlayerBase* Player)
 	{
 		if (ImplementedBy(Target))
 		{
