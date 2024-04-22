@@ -3,10 +3,10 @@
 #pragma once
 
 #include "GTUserWidget.h"
-#include "SubtitleWidget.generated.h"
+#include "NarrativeWidget.generated.h"
 
 UCLASS(Abstract)
-class FAF_REV_API USubtitleWidgetBase final : public UGTUserWidget
+class FAF_REV_API UNarrativeWidget final : public UGTUserWidget
 {
 	GENERATED_BODY()
 };

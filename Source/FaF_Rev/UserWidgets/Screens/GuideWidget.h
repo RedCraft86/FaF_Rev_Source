@@ -9,4 +9,9 @@ UCLASS(Abstract)
 class FAF_REV_API UGuideWidgetBase final : public UGTUserWidget
 {
 	GENERATED_BODY()
+
+private:
+
+	UPROPERTY(Transient, meta = (BindWidget))
+		class UWidgetSwitcher* GuideSwitcher;
 };
