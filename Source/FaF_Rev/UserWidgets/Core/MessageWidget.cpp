@@ -1,9 +1,12 @@
 ﻿// Copyright (C) RedCraft86. All Rights Reserved.
 
 #include "MessageWidget.h"
+#include "ExprTextBlock.h"
+#include "Components/TextBlock.h"
 
 void UMessageWidgetBase::QueueSmallNotice(const FSimpleNoticeData& NoticeData, const bool bResetQueue)
 {
+	if (!NoticeData.IsValidData()) return;
 	if (!SmallNoticeQueue.IsEmpty() && GetTypeHash(*SmallNoticeQueue.Peek()) == GetTypeHash(NoticeData)) return;
 	if (bResetQueue)
 	{
@@ -20,6 +23,7 @@ void UMessageWidgetBase::QueueSmallNotice(const FSimpleNoticeData& NoticeData, c
 
 void UMessageWidgetBase::QueueLargeNotice(const FSimpleNoticeData& NoticeData, const bool bResetQueue)
 {
+	if (!NoticeData.IsValidData()) return;
 	if (!LargeNoticeQueue.IsEmpty() && GetTypeHash(*LargeNoticeQueue.Peek()) == GetTypeHash(NoticeData)) return;
 	if (bResetQueue)
 	{
@@ -44,10 +48,24 @@ void UMessageWidgetBase::QueueSubtitles(const TArray<FSimpleSubtitleData>& Subti
 
 void UMessageWidgetBase::QueueSubtitle(const FSimpleSubtitleData& SubtitleData)
 {
+	if (!SubtitleData.IsValidData()) return;
+	
 	SubtitleQueue.Enqueue(SubtitleData);
 	if (!SubtitleTimer.IsValid() || !GetWorld()->GetTimerManager().IsTimerActive(SubtitleTimer))
 	{
 		UpdateSubtitle();
+	}
+}
+
+void UMessageWidgetBase::SetSubtitlesHidden(const bool bHidden)
+{
+	if (bHidden)
+	{
+		PlayAnimationForward(SubtitleHideAnim);
+	}
+	else
+	{
+		PlayAnimationReverse(SubtitleHideAnim);
 	}
 }
 
@@ -59,21 +77,58 @@ void UMessageWidgetBase::UpdateSmallNotice()
 		if (Data.IsValidData())
 		{
 			PlayAnimation(SmallNoticeAnim);
+			SmallNoticeText->SetText(Data.Message, true);
 			GetWorld()->GetTimerManager().SetTimer(SmallNoticeTimer,
 				this, &UMessageWidgetBase::UpdateSmallNotice,
-				Data.CalcDisplayTime());
+				Data.CalcDisplayTime(), false);
 		}
 
 		UpdateSmallNotice();
 	}
 
+	PlayAnimationReverse(SmallNoticeAnim);
 	SmallNoticeTimer.Invalidate();
 }
 
 void UMessageWidgetBase::UpdateLargeNotice()
 {
+	FSimpleNoticeData Data;
+	if (LargeNoticeQueue.Dequeue(Data))
+	{
+		if (Data.IsValidData())
+		{
+			PlayAnimation(LargeNoticeAnim);
+			LargeNoticeText->SetText(Data.Message, true);
+			GetWorld()->GetTimerManager().SetTimer(LargeNoticeTimer,
+				this, &UMessageWidgetBase::UpdateLargeNotice,
+				Data.CalcDisplayTime(), false);
+		}
+
+		UpdateLargeNotice();
+	}
+
+	PlayAnimationReverse(LargeNoticeAnim);
+	LargeNoticeTimer.Invalidate();
 }
 
 void UMessageWidgetBase::UpdateSubtitle()
 {
+	FSimpleSubtitleData Data;
+	if (SubtitleQueue.Dequeue(Data))
+	{
+		if (Data.IsValidData())
+		{
+			PlayAnimation(SubtitleAnim);
+			SubtitleNameText->SetText(Data.Speaker);
+			SubtitleLineText->SetText(Data.Line, true);
+			GetWorld()->GetTimerManager().SetTimer(SubtitleTimer,
+				this, &UMessageWidgetBase::UpdateSubtitle,
+				Data.CalcDisplayTime(), false);
+		}
+
+		UpdateSubtitle();
+	}
+
+	PlayAnimationReverse(SubtitleAnim);
+	SubtitleTimer.Invalidate();
 }

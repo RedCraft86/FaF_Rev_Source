@@ -19,6 +19,7 @@ public:
 	void QueueLargeNotice(const FSimpleNoticeData& NoticeData, const bool bResetQueue = false);
 	void QueueSubtitles(const TArray<FSimpleSubtitleData>& Subtitles);
 	void QueueSubtitle(const FSimpleSubtitleData& SubtitleData);
+	void SetSubtitlesHidden(const bool bHidden);
 
 private:
 	
@@ -27,9 +28,6 @@ private:
 
 	UPROPERTY(Transient, meta = (BindWidget))
 		UExprTextBlock* LargeNoticeText;
-
-	UPROPERTY(Transient, meta = (BindWidget))
-		UPanelWidget* SubtitleContainer;
 	
 	UPROPERTY(Transient, meta = (BindWidget))
 		UExprTextBlock* SubtitleLineText;
