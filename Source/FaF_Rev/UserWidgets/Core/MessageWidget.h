@@ -3,6 +3,7 @@
 #pragma once
 
 #include "GTUserWidget.h"
+#include "MessagingData.h"
 #include "MessageWidget.generated.h"
 
 class UExprTextBlock;
@@ -11,6 +12,13 @@ UCLASS(Abstract)
 class FAF_REV_API UMessageWidgetBase final : public UGTUserWidget
 {
 	GENERATED_BODY()
+
+public:
+
+	void QueueSmallNotice(const FSimpleNoticeData& NoticeData, const bool bResetQueue = false);
+	void QueueLargeNotice(const FSimpleNoticeData& NoticeData, const bool bResetQueue = false);
+	void QueueSubtitles(const TArray<FSimpleSubtitleData>& Subtitles);
+	void QueueSubtitle(const FSimpleSubtitleData& SubtitleData);
 
 private:
 	
@@ -40,4 +48,16 @@ private:
 	
 	UPROPERTY(Transient, meta = (BindWidgetAnim))
 		UWidgetAnimation* SubtitleHideAnim;
+
+	FTimerHandle SmallNoticeTimer;
+	TQueue<FSimpleNoticeData> SmallNoticeQueue;
+	void UpdateSmallNotice();
+
+	FTimerHandle LargeNoticeTimer;
+	TQueue<FSimpleNoticeData> LargeNoticeQueue;
+	void UpdateLargeNotice();
+
+	FTimerHandle SubtitleTimer;
+	TQueue<FSimpleSubtitleData> SubtitleQueue;
+	void UpdateSubtitle();
 };
