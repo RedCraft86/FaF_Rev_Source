@@ -9,4 +9,8 @@ UCLASS(Abstract)
 class FAF_REV_API UNarrativeWidget final : public UGTUserWidget
 {
 	GENERATED_BODY()
+	
+public:
+
+	UNarrativeWidget(const FObjectInitializer& ObjectInitializer);
 };

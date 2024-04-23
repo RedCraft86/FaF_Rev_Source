@@ -15,6 +15,8 @@ class FAF_REV_API UMessageWidgetBase final : public UGTUserWidget
 
 public:
 
+	UMessageWidgetBase(const FObjectInitializer& ObjectInitializer);
+
 	void QueueSmallNotice(const FSimpleNoticeData& NoticeData, const bool bResetQueue = false);
 	void QueueLargeNotice(const FSimpleNoticeData& NoticeData, const bool bResetQueue = false);
 	void QueueSubtitles(const TArray<FSimpleSubtitleData>& Subtitles);

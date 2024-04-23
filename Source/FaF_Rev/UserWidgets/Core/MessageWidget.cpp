@@ -4,6 +4,15 @@
 #include "ExprTextBlock.h"
 #include "Components/TextBlock.h"
 
+UMessageWidgetBase::UMessageWidgetBase(const FObjectInitializer& ObjectInitializer)
+	: UGTUserWidget(ObjectInitializer), SmallNoticeText(nullptr), LargeNoticeText(nullptr)
+	, SubtitleLineText(nullptr), SubtitleNameText(nullptr), SmallNoticeAnim(nullptr)
+	, LargeNoticeAnim(nullptr), SubtitleAnim(nullptr), SubtitleHideAnim(nullptr)
+{
+	ZOrder = 96;
+	bAutoAdd = true;
+}
+
 void UMessageWidgetBase::QueueSmallNotice(const FSimpleNoticeData& NoticeData, const bool bResetQueue)
 {
 	if (!NoticeData.IsValidData()) return;

@@ -10,6 +10,16 @@
 #include "Components/Button.h"
 #include "Components/Image.h"
 
+UGuideWidgetBase::UGuideWidgetBase(const FObjectInitializer& ObjectInitializer)
+	: UGTUserWidget(ObjectInitializer), ImageHeight(0), DefaultImage(nullptr)
+	, NextButton(nullptr), TypeSwitch(nullptr), CustomPageContainer(nullptr)
+	, LocalPageTitle(nullptr), LocalPageText(nullptr), LocalPageImage(nullptr), LocalImageContainer(nullptr)
+	, GuideFadeAnim(nullptr), NextButtonAnim(nullptr), bActive(false), bPrePauseState(false)
+{
+	ZOrder = 99;
+	bAutoAdd = false;
+}
+
 void UGuideWidgetBase::QueuePage(const FGuideBookPageID& PageID)
 {
 	if (!PageID.IsValid()) return;
@@ -67,7 +77,7 @@ void UGuideWidgetBase::ProceedNextGuide()
 	}
 	else
 	{
-		PlayAnimationReverse(GuideFadeAnim, 2.0f);
+		RemoveWidget(nullptr);
 		UGameplayStatics::SetGamePaused(this, bPrePauseState);
 		bActive = false;
 	}

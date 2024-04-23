@@ -16,6 +16,8 @@ class FAF_REV_API ULoadingWidgetBase final : public UGTUserWidget
 
 public:
 
+	ULoadingWidgetBase(const FObjectInitializer& ObjectInitializer);
+
 	UPROPERTY(Transient, BlueprintReadOnly, Category = "Elements", meta = (BindWidget))
 		UTextBlock* LoadingLabel;
 

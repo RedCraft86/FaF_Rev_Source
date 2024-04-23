@@ -13,6 +13,8 @@ class FAF_REV_API UGuideWidgetBase final : public UGTUserWidget
 
 public:
 
+	UGuideWidgetBase(const FObjectInitializer& ObjectInitializer);
+
 	void QueuePage(const FGuideBookPageID& PageID);
 	void QueuePages(const TArray<FGuideBookPageID>& PageIDs);
 

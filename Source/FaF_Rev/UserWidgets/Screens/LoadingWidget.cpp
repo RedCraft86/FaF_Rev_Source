@@ -6,6 +6,14 @@
 #include "Components/ProgressBar.h"
 #include "FaF_Rev.h"
 
+ULoadingWidgetBase::ULoadingWidgetBase(const FObjectInitializer& ObjectInitializer)
+	: UGTUserWidget(ObjectInitializer), LoadingLabel(nullptr), LoadingBar(nullptr), BackgroundImage(nullptr)
+	, TipLabel(nullptr), TipText(nullptr), Background(nullptr), bUnloading(false), TotalObjs(0)
+{
+	ZOrder = 100;
+	bAutoAdd = false;
+}
+
 void ULoadingWidgetBase::SlowTick()
 {
 	for (int i = LoadingObjs.Num() - 1; i >= 0; i--)
