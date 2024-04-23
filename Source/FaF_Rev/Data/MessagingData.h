@@ -56,13 +56,6 @@ struct FAF_REV_API FSimpleSubtitleData
 	float CalcDisplayTime() const { return FRSettings->CalcReadingTime(Line.ToString()) + ExtraTime; }
 };
 
-USTRUCT(BlueprintType, DisplayName = "Guide Book Page ID")
-struct FAF_REV_API FGuideBookPageID : public FPulldownStructBase
-{
-	GENERATED_BODY()
-	SETUP_PULLDOWN(FGuideBookPageID)
-};
-
 USTRUCT(BlueprintType)
 struct FAF_REV_API FGuideBookPageData : public FTableRowBase
 {
@@ -79,17 +72,31 @@ struct FAF_REV_API FGuideBookPageData : public FTableRowBase
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "GuideBookPageData", meta = (EditCondition = "CustomWidget == nullptr"))
 		TSoftObjectPtr<UTexture2D> Image;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "GuideBookPageData")
-		float WaitTime;
 	
 	FGuideBookPageData()
 		: CustomWidget(nullptr)
 		, Label(INVTEXT("Empty Guide"))
 		, Description(FText::GetEmpty())
 		, Image(nullptr)
-		, WaitTime(1.0f)
 	{}
 
-	bool IsValidData() const { return WaitTime > 0.25f && (!CustomWidget.IsNull() || !Label.IsEmptyOrWhitespace()); }
+	bool IsValidData() const { return !CustomWidget.IsNull() || (!Label.IsEmptyOrWhitespace() && !Description.IsEmptyOrWhitespace()); }
+};
+
+USTRUCT(BlueprintType, DisplayName = "Guide Book Page ID")
+struct FAF_REV_API FGuideBookPageID : public FPulldownStructBase
+{
+	GENERATED_BODY()
+	SETUP_PULLDOWN(FGuideBookPageID)
+	FGuideBookPageData GetPageData() const
+	{
+		FGuideBookPageData Data;
+		const UDataTable* Table = FRSettings->GuideTable.LoadSynchronous();
+		if (const FGuideBookPageData* DataPtr = Table ? Table->FindRow<FGuideBookPageData>(SelectedValue, ToString()) : nullptr)
+		{
+			Data = *DataPtr;
+		}
+		
+		return Data;
+	}
 };

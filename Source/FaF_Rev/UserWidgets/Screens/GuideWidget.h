@@ -13,54 +13,50 @@ class FAF_REV_API UGuideWidgetBase final : public UGTUserWidget
 
 public:
 
-	UGuideWidgetBase(const FObjectInitializer& ObjectInitializer);
-
-	void QueueGuide(const FGuideBookPageID PageID);
-	void QueueGuides(const TArray<FGuideBookPageID>& PageIDs);
+	void QueuePage(const FGuideBookPageID& PageID);
+	void QueuePages(const TArray<FGuideBookPageID>& PageIDs);
 
 private:
 
 	UPROPERTY(EditAnywhere, Category = "Settings")
-		FVector2D ImageHeightRange;
-
+		float ImageHeight;
+	
 	UPROPERTY(EditAnywhere, Category = "Settings")
 		UTexture2D* DefaultImage;
 	
 	UPROPERTY(Transient, meta = (BindWidget))
 		class UButton* NextButton;
-
+	
 	UPROPERTY(Transient, meta = (BindWidget))
-		class UWidgetSwitcher* GuideSwitcher;
-
+		class UWidgetSwitcher* TypeSwitch;
+	
 	UPROPERTY(Transient, meta = (BindWidget))
 		UPanelWidget* CustomPageContainer;
-
+	
 	UPROPERTY(Transient, meta = (BindWidget))
 		class UTextBlock* LocalPageTitle;
-
+	
 	UPROPERTY(Transient, meta = (BindWidget))
 		class UExprTextBlock* LocalPageText;
-
+	
 	UPROPERTY(Transient, meta = (BindWidget))
 		class UImage* LocalPageImage;
-
+	
 	UPROPERTY(Transient, meta = (BindWidget))
 		class USizeBox* LocalImageContainer;
-
+	
 	UPROPERTY(Transient, meta = (BindWidgetAnim))
 		UWidgetAnimation* GuideFadeAnim;
-
+	
 	UPROPERTY(Transient, meta = (BindWidgetAnim))
 		UWidgetAnimation* NextButtonAnim;
-	
-	bool bActive;
-	bool bPaused;
-	float SkipTimer;
-	TQueue<FName> PageQueue;
+
+	bool bActive, bPrePauseState;
+	TQueue<FGuideBookPageID> PageQueue;
 	void ProceedNextGuide();
-	void Reset();
+	void ResetBook() const;
 
 	UFUNCTION() void OnNextClicked();
 	virtual void NativeConstruct() override;
-	virtual void NativeTick(const FGeometry& MyGeometry, float InDeltaTime) override;
+	virtual void NativeDestruct() override;
 };
