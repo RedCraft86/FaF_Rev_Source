@@ -20,5 +20,5 @@ public:
 public: // Shortcuts
 
 	UFUNCTION(BlueprintCallable, Category = "Game", meta = (WorldContext = "WorldContextObject", DynamicOutputParam = "ReturnValue", DeterminesOutputType = "Class", ExpandEnumAsExecs = "ReturnValue"))
-		static EFoundPins GetGameWidget(UGTUserWidget*& FoundWidget, const UObject* WorldContextObject, const TSubclassOf<UGTUserWidget> Class, const FGameplayTag FilterTag);
+		static EFoundPins GetGameWidget(UGTUserWidget*& FoundWidget, const UObject* WorldContextObject, UPARAM(meta = (AllowAbstract = false)) const TSubclassOf<UGTUserWidget> Class, const FGameplayTag FilterTag);
 };
