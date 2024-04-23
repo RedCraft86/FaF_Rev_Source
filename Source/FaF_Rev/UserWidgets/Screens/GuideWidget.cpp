@@ -200,7 +200,6 @@ void UGuideWidgetBase::ResetBook() const
 {
 	NextButton->SetIsEnabled(false);
 	NextButton->SetRenderOpacity(0.0f);
-	TypeSwitch->SetActiveWidgetIndex(0);
 	CustomPageContainer->ClearChildren();
 	LocalPageTitle->SetText(FText::GetEmpty());
 	LocalPageText->SetText(FText::GetEmpty(), true);
