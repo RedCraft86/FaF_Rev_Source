@@ -81,11 +81,11 @@ void UMessageWidgetBase::UpdateSmallNotice()
 			GetWorld()->GetTimerManager().SetTimer(SmallNoticeTimer,
 				this, &UMessageWidgetBase::UpdateSmallNotice,
 				Data.CalcDisplayTime(), false);
-
 			return;
 		}
 
 		UpdateSmallNotice();
+		return;
 	}
 
 	PlayAnimationReverse(SmallNoticeAnim);
@@ -104,11 +104,11 @@ void UMessageWidgetBase::UpdateLargeNotice()
 			GetWorld()->GetTimerManager().SetTimer(LargeNoticeTimer,
 				this, &UMessageWidgetBase::UpdateLargeNotice,
 				Data.CalcDisplayTime(), false);
-			
 			return;
 		}
 
 		UpdateLargeNotice();
+		return;
 	}
 
 	PlayAnimationReverse(LargeNoticeAnim);
@@ -128,11 +128,11 @@ void UMessageWidgetBase::UpdateSubtitle()
 			GetWorld()->GetTimerManager().SetTimer(SubtitleTimer,
 				this, &UMessageWidgetBase::UpdateSubtitle,
 				Data.CalcDisplayTime(), false);
-
 			return;
 		}
 
 		UpdateSubtitle();
+		return;
 	}
 
 	PlayAnimationReverse(SubtitleAnim);

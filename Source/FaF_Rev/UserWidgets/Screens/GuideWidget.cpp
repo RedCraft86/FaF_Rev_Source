@@ -30,6 +30,7 @@ UGuideWidgetBase::UGuideWidgetBase(const FObjectInitializer& ObjectInitializer)
 	, LocalPageText(nullptr), LocalPageImage(nullptr), LocalImageContainer(nullptr)
 	, GuideFadeAnim(nullptr), NextButtonAnim(nullptr), bActive(false), bPaused(false), SkipTimer(0)
 {
+	ZOrder = 100;
 	DefaultImage = LoadObject<UTexture2D>( nullptr, TEXT("/Engine/EngineResources/DefaultTexture.DefaultTexture")); 
 }
 
@@ -95,10 +96,13 @@ void UGuideWidgetBase::ProceedNextGuide()
 			
 			PlayAnimation(GuideFadeAnim);
 			SkipTimer = PageData.WaitTime;
+			NextButton->SetIsEnabled(false);
+			NextButton->SetVisibility(ESlateVisibility::Visible);
 			return;
 		}
 
 		ProceedNextGuide();
+		return;
 	}
 
 	bActive = false;
@@ -108,7 +112,7 @@ void UGuideWidgetBase::ProceedNextGuide()
 
 void UGuideWidgetBase::Reset()
 {
-	NextButton->SetIsEnabled(true);
+	NextButton->SetVisibility(ESlateVisibility::Collapsed);
 	PlayAnimation(NextButtonAnim, 0, 1, EUMGSequencePlayMode::Reverse);
 	LocalPageText->SetText(FText::GetEmpty(), true);
 	LocalPageTitle->SetText(FText::GetEmpty());
@@ -120,7 +124,7 @@ void UGuideWidgetBase::Reset()
 
 void UGuideWidgetBase::OnNextClicked()
 {
-	NextButton->SetIsEnabled(false);
+	NextButton->SetVisibility(ESlateVisibility::Collapsed);
 	if (UUMGSequencePlayer* P = PlayAnimation(GuideFadeAnim, 0, 1, EUMGSequencePlayMode::Reverse))
 	{
 		P->OnSequenceFinishedPlaying().AddLambda([this](UUMGSequencePlayer&)
@@ -133,7 +137,7 @@ void UGuideWidgetBase::OnNextClicked()
 void UGuideWidgetBase::NativeConstruct()
 {
 	Super::NativeConstruct();
-	NextButton->SetIsEnabled(false);
+	NextButton->SetVisibility(ESlateVisibility::Collapsed);
 	NextButton->OnClicked.AddDynamic(this, &UGuideWidgetBase::OnNextClicked);
 }
 
@@ -146,6 +150,7 @@ void UGuideWidgetBase::NativeTick(const FGeometry& MyGeometry, float InDeltaTime
 	}
 	else if (bActive != NextButton->GetIsEnabled())
 	{
+		PlayAnimation(NextButtonAnim);
 		NextButton->SetIsEnabled(bActive);
 	}
 }
