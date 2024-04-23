@@ -2,6 +2,7 @@
 
 #include "GuideWidget.h"
 #include "ExprTextBlock.h"
+#include "Kismet/GameplayStatics.h"
 #include "Animation/UMGSequencePlayer.h"
 #include "Components/WidgetSwitcher.h"
 #include "Components/TextBlock.h"
@@ -42,6 +43,9 @@ void UGuideWidgetBase::QueueGuide(const FGuideBookPageID PageID)
 	{
 		bActive = true;
 		ProceedNextGuide();
+		
+		bPaused = UGameplayStatics::IsGamePaused(this);
+		UGameplayStatics::SetGamePaused(this, true);
 	}
 }
 
@@ -98,6 +102,7 @@ void UGuideWidgetBase::ProceedNextGuide()
 	}
 
 	bActive = false;
+	UGameplayStatics::SetGamePaused(this, bPaused);
 	PlayAnimationReverse(GuideFadeAnim);
 }
 
