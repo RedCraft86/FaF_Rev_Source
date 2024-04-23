@@ -81,6 +81,8 @@ void UMessageWidgetBase::UpdateSmallNotice()
 			GetWorld()->GetTimerManager().SetTimer(SmallNoticeTimer,
 				this, &UMessageWidgetBase::UpdateSmallNotice,
 				Data.CalcDisplayTime(), false);
+
+			return;
 		}
 
 		UpdateSmallNotice();
@@ -102,6 +104,8 @@ void UMessageWidgetBase::UpdateLargeNotice()
 			GetWorld()->GetTimerManager().SetTimer(LargeNoticeTimer,
 				this, &UMessageWidgetBase::UpdateLargeNotice,
 				Data.CalcDisplayTime(), false);
+			
+			return;
 		}
 
 		UpdateLargeNotice();
@@ -124,6 +128,8 @@ void UMessageWidgetBase::UpdateSubtitle()
 			GetWorld()->GetTimerManager().SetTimer(SubtitleTimer,
 				this, &UMessageWidgetBase::UpdateSubtitle,
 				Data.CalcDisplayTime(), false);
+
+			return;
 		}
 
 		UpdateSubtitle();

@@ -69,7 +69,7 @@ struct FAF_REV_API FGuideBookPageData : public FTableRowBase
 	GENERATED_BODY()
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "GuideBookPageData")
-		TSubclassOf<UUserWidget> CustomWidget;
+		TSoftClassPtr<UUserWidget> CustomWidget;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "GuideBookPageData", meta = (EditCondition = "CustomWidget == nullptr"))
 		FText Label;
@@ -80,9 +80,6 @@ struct FAF_REV_API FGuideBookPageData : public FTableRowBase
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "GuideBookPageData", meta = (EditCondition = "CustomWidget == nullptr"))
 		TSoftObjectPtr<UTexture2D> Image;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "GuideBookPageData", meta = (EditCondition = "CustomWidget == nullptr"))
-		bool bShowBackground;
-
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "GuideBookPageData")
 		float WaitTime;
 	
@@ -91,7 +88,8 @@ struct FAF_REV_API FGuideBookPageData : public FTableRowBase
 		, Label(INVTEXT("Empty Guide"))
 		, Description(FText::GetEmpty())
 		, Image(nullptr)
-		, bShowBackground(false)
 		, WaitTime(1.0f)
 	{}
+
+	bool IsValidData() const { return WaitTime > 0.25f && (!CustomWidget.IsNull() || !Label.IsEmptyOrWhitespace()); }
 };
