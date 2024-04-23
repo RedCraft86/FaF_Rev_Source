@@ -2,6 +2,7 @@
 
 #pragma once
 
+#include "PinEnums.h"
 #include "GTGameMode.h"
 #include "FRGameMode.generated.h"
 
@@ -15,4 +16,9 @@ class FAF_REV_API AFRGameModeBase final : public AGTGameMode
 public:
 
 	AFRGameModeBase();
+
+public: // Shortcuts
+
+	UFUNCTION(BlueprintCallable, Category = "Game", meta = (WorldContext = "WorldContextObject", DynamicOutputParam = "ReturnValue", DeterminesOutputType = "Class", ExpandEnumAsExecs = "ReturnValue"))
+		static EFoundPins GetGameWidget(UGTUserWidget*& FoundWidget, const UObject* WorldContextObject, const TSubclassOf<UGTUserWidget> Class, const FGameplayTag FilterTag);
 };
