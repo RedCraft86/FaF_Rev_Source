@@ -3,6 +3,7 @@
 #include "PauseWidget.h"
 
 UPauseWidgetBase::UPauseWidgetBase(const FObjectInitializer& ObjectInitializer)
+	: UGTUserWidget(ObjectInitializer)
 {
 	ZOrder = 98;
 	bAutoAdd = false;
