@@ -1,12 +1,12 @@
 ﻿[/Script/EngineSettings.GameMapsSettings]
 GameDefaultMap=/Game/NewMap.NewMap
 EditorStartupMap=/Game/NewMap.NewMap
-GlobalDefaultGameMode=/Script/Engine.GameModeBase
 
 [/Script/WindowsTargetPlatform.WindowsTargetSettings]
 DefaultGraphicsRHI=DefaultGraphicsRHI_DX12
 -D3D12TargetedShaderFormats=PCD3D_SM5
 +D3D12TargetedShaderFormats=PCD3D_SM6
+-D3D11TargetedShaderFormats=PCD3D_SM5
 +D3D11TargetedShaderFormats=PCD3D_SM5
 Compiler=Default
 AudioSampleRate=48000
@@ -40,16 +40,17 @@ r.Shadow.Virtual.Enable=0
 r.DefaultFeature.AutoExposure.ExtendDefaultLuminanceRange=True
 r.DefaultFeature.LocalExposure.HighlightContrastScale=0.8
 r.DefaultFeature.LocalExposure.ShadowContrastScale=0.8
+r.AllowGlobalClipPlane=True
 r.SkinCache.CompileShaders=True
 r.RayTracing=True
 r.Lumen.HardwareRayTracing=True
 r.CustomDepth=3
 r.DefaultFeature.AutoExposure.Method=2
-r.DefaultFeature.AutoExposure=True
 r.DefaultFeature.AutoExposure.Bias=10.000000
 r.AntiAliasingMethod=2
 r.AllowStaticLighting=False
-r.AllowGlobalClipPlane=True
+r.Nanite.ProjectEnabled=False
+r.Nanite=0
 
 [/Script/HardwareTargeting.HardwareTargetingSettings]
 TargetedHardwareClass=Desktop
