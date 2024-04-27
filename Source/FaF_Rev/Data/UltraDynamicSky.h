@@ -27,4 +27,7 @@ class FAF_REV_API IUDSInterface
 	GENERATED_BODY()
 
 public:
+
+	UFUNCTION(BlueprintCallable, BlueprintImplementableEvent, Category = "UDS", meta = (ForceAsFunction = true))
+		void SetCustomSettings(const FUDSSettings& InSettings);
 };
