@@ -8,9 +8,9 @@
 
 #define FRPlayer(Context) AFRPlayerBase::Get<AFRPlayerBase>(Context)
 
-class USpotLightComponent;
 class UCameraComponent;
 class USpringArmComponent;
+class USpotLightComponent;
 
 UCLASS(Abstract)
 class FAF_REV_API AFRPlayerBase final : public ACharacter
