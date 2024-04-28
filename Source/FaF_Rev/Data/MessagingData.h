@@ -26,7 +26,7 @@ struct FAF_REV_API FSimpleNoticeData
 		return HashCombine(GetTypeHash(Data.Message.ToString()), GetTypeHash(Data.ExtraTime));
 	}
 
-	bool IsValidData() const { return !Message.IsEmptyOrWhitespace(); }
+	FORCEINLINE bool IsValidData() const { return !Message.IsEmptyOrWhitespace(); }
 	float CalcDisplayTime() const { return FRSettings->CalcReadingTime(Message.ToString()) + ExtraTime; }
 };
 
@@ -52,7 +52,7 @@ struct FAF_REV_API FSimpleSubtitleData
 			GetTypeHash(Data.Line.ToString())), GetTypeHash(Data.ExtraTime));
 	}
 
-	bool IsValidData() const { return !Speaker.IsEmptyOrWhitespace() && !Line.IsEmptyOrWhitespace(); }
+	FORCEINLINE bool IsValidData() const { return !Speaker.IsEmptyOrWhitespace() && !Line.IsEmptyOrWhitespace(); }
 	float CalcDisplayTime() const { return FRSettings->CalcReadingTime(Line.ToString()) + ExtraTime; }
 };
 
@@ -80,7 +80,7 @@ struct FAF_REV_API FGuideBookPageData : public FTableRowBase
 		, Image(nullptr)
 	{}
 
-	bool IsValidData() const { return !CustomWidget.IsNull() || (!Label.IsEmptyOrWhitespace() && !Description.IsEmptyOrWhitespace()); }
+	FORCEINLINE bool IsValidData() const { return !CustomWidget.IsNull() || (!Label.IsEmptyOrWhitespace() && !Description.IsEmptyOrWhitespace()); }
 };
 
 USTRUCT(BlueprintType, DisplayName = "Guide Book Page ID")
