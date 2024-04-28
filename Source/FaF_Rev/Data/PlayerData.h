@@ -6,22 +6,24 @@
 #include "PlayerData.generated.h"
 
 UENUM(BlueprintType, meta = (Bitflags, UseEnumValuesAsMaskValuesInEditor = "true"))
-enum class EPlayerControlFlags : uint8
+enum EPlayerControlFlags
 {
-	Locked	= 1 << 0,
+	PCF_None	= 0,
+	PCF_Locked	= 1 << 0,
 };
 ENUM_CLASS_FLAGS(EPlayerControlFlags);
 
 UENUM(BlueprintType, meta = (Bitflags, UseEnumValuesAsMaskValuesInEditor = "true"))
-enum class EPlayerStateFlags : uint8
+enum EPlayerStateFlags
 {
-	Walking			= 1 << 0,
-	Running			= 1 << 1,
-	Crouching		= 1 << 2,
-	Leaning			= 1 << 3,
-	Hiding			= 1 << 4,
-	RunPunished		= 1 << 5,
-	Interacting		= 1 << 6
+	PSF_None		= 0,
+	PSF_Walking		= 1 << 0,
+	PSF_Running		= 1 << 1,
+	PSF_Crouching	= 1 << 2,
+	PSF_Leaning		= 1 << 3,
+	PSF_Hiding		= 1 << 4,
+	PSF_RunPunished	= 1 << 5,
+	PSF_Interacting	= 1 << 6
 };
 ENUM_CLASS_FLAGS(EPlayerStateFlags);
 
@@ -38,8 +40,8 @@ struct FPlayerSettings
 {
 	GENERATED_BODY()
 	
-	UPROPERTY(EditAnywhere, meta = (Bitmask, BitmaskEnum = "/Script/FaF_Rev.EPlayerStateFlags"))
-		uint8 PlayerFlags;
+	UPROPERTY(EditAnywhere, meta = (Bitmask, BitmaskEnum = "/Script/FaF_Rev.EPlayerControlFlags"))
+		int32 PlayerFlags;
 
 	FPlayerSettings() : PlayerFlags(0) {}
 };
