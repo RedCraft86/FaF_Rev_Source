@@ -19,7 +19,7 @@ public:
 	
 protected:
 
-	UPROPERTY(Transient) AActor*, UActorComponent InteractionTarget;
+	FPlayerInteraction InteractData;
 
 	virtual void BeginPlay() override;
 	virtual void Tick(float DeltaTime) override;
