@@ -6,11 +6,26 @@
 #include "PlayerData.generated.h"
 
 UENUM(BlueprintType, meta = (Bitflags, UseEnumValuesAsMaskValuesInEditor = "true"))
-enum class EPlayerFlags : uint8
+enum class EPlayerControlFlags : uint8
 {
 	Locked,
 };
-ENUM_CLASS_FLAGS(EPlayerFlags);
+ENUM_CLASS_FLAGS(EPlayerControlFlags);
+
+UENUM(BlueprintType, meta = (Bitflags, UseEnumValuesAsMaskValuesInEditor = "true"))
+enum class EPlayerStateFlags : uint8
+{
+	Hiding,
+};
+ENUM_CLASS_FLAGS(EPlayerStateFlags);
+
+UENUM(BlueprintType)
+enum class EPlayerLeanState : uint8
+{
+	None,
+	Left,
+	Right
+};
 
 USTRUCT(BlueprintType)
 struct FPlayerSettings
@@ -44,7 +59,7 @@ struct FPlayerInteraction
 };
 
 USTRUCT(BlueprintInternalUseOnly)
-struct GAMECORE_API FPlayerCameraShakes
+struct FPlayerCameraShakes
 {
 	GENERATED_BODY()
 
