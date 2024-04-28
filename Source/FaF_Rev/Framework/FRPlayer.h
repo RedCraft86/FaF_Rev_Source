@@ -2,28 +2,11 @@
 
 #pragma once
 
+#include "PlayerData.h"
 #include "GameFramework/Character.h"
 #include "FRPlayer.generated.h"
 
 #define FRPlayer(Context) AFRPlayerBase::Get<AFRPlayerBase>(Context)
-
-UENUM(BlueprintType, meta = (Bitflags, UseEnumValuesAsMaskValuesInEditor = "true"))
-enum class EPlayerFlags : uint8
-{
-	Locked,
-};
-ENUM_CLASS_FLAGS(EPlayerFlags);
-
-USTRUCT(BlueprintType)
-struct FPlayerSettings
-{
-	GENERATED_BODY()
-	
-	UPROPERTY(EditAnywhere, meta = (Bitmask, BitmaskEnum = "/Script/FaF_Rev.EPlayerFlags"))
-		uint8 PlayerFlags;
-
-	FPlayerSettings() : PlayerFlags(0) {}
-};
 
 UCLASS(Abstract)
 class FAF_REV_API AFRPlayerBase final : public ACharacter
@@ -35,6 +18,8 @@ public:
 	AFRPlayerBase();
 	
 protected:
+
+	UPROPERTY(Transient) AActor*, UActorComponent InteractionTarget;
 
 	virtual void BeginPlay() override;
 	virtual void Tick(float DeltaTime) override;

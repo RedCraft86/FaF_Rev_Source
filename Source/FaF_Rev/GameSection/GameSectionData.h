@@ -2,7 +2,7 @@
 
 #pragma once
 
-#include "FRPlayer.h"
+#include "PlayerData.h"
 #include "UltraDynamicSky.h"
 #include "GameMusic/GameMusicData.h"
 #include "GameSection/GameSectionDataBase.h"
