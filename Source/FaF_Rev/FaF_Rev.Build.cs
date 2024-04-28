@@ -26,6 +26,7 @@ public class FaF_Rev : ModuleRules
 				"Engine", 
 				"UMG",
 				"InputCore",
+				"PhysicsCore",
 				"GameplayTags",
 				"EnhancedInput",
 				"AssetRegistry",
