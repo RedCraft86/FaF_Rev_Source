@@ -8,6 +8,10 @@
 
 #define FRPlayer(Context) AFRPlayerBase::Get<AFRPlayerBase>(Context)
 
+class USpotLightComponent;
+class UCameraComponent;
+class USpringArmComponent;
+
 UCLASS(Abstract)
 class FAF_REV_API AFRPlayerBase final : public ACharacter
 {
@@ -16,6 +20,29 @@ class FAF_REV_API AFRPlayerBase final : public ACharacter
 public:
 
 	AFRPlayerBase();
+
+	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, Category = "DefaultSubobjects")
+		USpringArmComponent* CameraArm;
+	
+	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, Category = "DefaultSubobjects")
+		UCameraComponent* PlayerCamera;
+
+	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, Category = "DefaultSubobjects")
+		USceneComponent* EquipmentRoot;
+
+	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, Category = "DefaultSubobjects")
+		UAudioComponent* FootstepAudio;
+
+	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, Category = "DefaultSubobjects")
+		USpotLightComponent* PlayerLight;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "References")
+		FPlayerCameraShakes CameraShakes;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "References")
+		FPlayerFootsteps FootstepSounds;
+
+	virtual void SetActorHiddenInGame(bool bNewHidden) override;
 	
 protected:
 

@@ -64,18 +64,24 @@ struct FPlayerCameraShakes
 	GENERATED_BODY()
 
 	UPROPERTY(EditAnywhere, Category = "CameraShake")
-		TSubclassOf<UCameraShakeBase> WalkShake;
+		TSoftClassPtr<UCameraShakeBase> WalkShake;
 
 	UPROPERTY(EditAnywhere, Category = "CameraShake", meta = (EditCondition = "WalkShake != nullptr"))
 		float WalkScale;
 
 	UPROPERTY(EditAnywhere, Category = "CameraShake")
-		TSubclassOf<UCameraShakeBase> RunShake;
+		TSoftClassPtr<UCameraShakeBase> RunShake;
 
 	UPROPERTY(EditAnywhere, Category = "CameraShake", meta = (EditCondition = "RunShake != nullptr"))
 		float RunScale;
 
 	FPlayerCameraShakes() : WalkShake(nullptr), WalkScale(1.0f), RunShake(nullptr), RunScale(0.75f) {}
+	void LoadAssetsAsync() const
+	{
+		FStreamableManager& Manager = UAssetManager::GetStreamableManager();
+		Manager.RequestAsyncLoad(WalkShake.ToSoftObjectPath());
+		Manager.RequestAsyncLoad(RunShake.ToSoftObjectPath());
+	}
 };
 
 USTRUCT(BlueprintInternalUseOnly)
