@@ -8,24 +8,46 @@
 UENUM(BlueprintType, meta = (Bitflags, UseEnumValuesAsMaskValuesInEditor = "true"))
 enum EPlayerControlFlags
 {
-	PCF_None	= 0,
-	PCF_Locked	= 1 << 0,
+	PCF_None		= 0,
+	PCF_Locked		= 1 << 0	UMETA(DisplayName = "Locked"),
+
+	// Ability flags
+	PCF_UseStamina	= 1 << 1	UMETA(DisplayName = "Use Stamina"),
+	PCF_CanPause	= 1 << 2	UMETA(DisplayName = "Can Pause"),
+	PCF_CanTurn		= 1 << 3	UMETA(DisplayName = "Can Turn"),
+	PCF_CanWalk		= 1 << 4	UMETA(DisplayName = "Can Walk"),
+	PCF_CanRun		= 1 << 5	UMETA(DisplayName = "Can Run"),
+	PCF_CanCrouch	= 1 << 6	UMETA(DisplayName = "Can Crouch"),
+	PCF_CanLean		= 1 << 7	UMETA(DisplayName = "Can Lean"),
+	PCF_CanInteract	= 1 << 8	UMETA(DisplayName = "Can Interact"),
+	PCF_CanHide		= 1 << 9	UMETA(DisplayName = "Can Hide")
 };
 ENUM_CLASS_FLAGS(EPlayerControlFlags);
+ENUM_RANGE_BY_FIRST_AND_LAST(EPlayerControlFlags, PCF_Locked, PCF_CanHide);
+#define DEFAULT_PLAYER_CONTROL_FLAGS PCF_Locked | PCF_UseStamina | PCF_CanPause | PCF_CanTurn \
+	| PCF_CanWalk | PCF_CanRun | PCF_CanCrouch | PCF_CanLean | PCF_CanInteract | PCF_CanHide
 
 UENUM(BlueprintType, meta = (Bitflags, UseEnumValuesAsMaskValuesInEditor = "true"))
 enum EPlayerStateFlags
 {
 	PSF_None		= 0,
-	PSF_Walking		= 1 << 0,
-	PSF_Running		= 1 << 1,
-	PSF_Crouching	= 1 << 2,
-	PSF_Leaning		= 1 << 3,
-	PSF_Hiding		= 1 << 4,
-	PSF_RunPunished	= 1 << 5,
-	PSF_Interacting	= 1 << 6
+	PSF_Loading		= 1 << 0	UMETA(DisplayName = "Loading"),
+	PSF_Cutscene	= 1 << 1	UMETA(DisplayName = "Cutscene"),
+	PSF_Dialogue	= 1 << 2	UMETA(DisplayName = "Dialogue"),
+	PSF_Jumpscare	= 1 << 3	UMETA(DisplayName = "Jumpscare"),
+	PSF_Inventory	= 1 << 4	UMETA(DisplayName = "Inventory"),
+	PSF_WorldDevice	= 1 << 5	UMETA(DisplayName = "World Device"),
+	PSF_GuideScreen	= 1 << 6	UMETA(DisplayName = "Guide Screen"),
+	PSF_RunPunished	= 1 << 7	UMETA(DisplayName = "Stamina Punished"),
+	PSF_Walking		= 1 << 8	UMETA(DisplayName = "Walking"),
+	PSF_Running		= 1 << 9	UMETA(DisplayName = "Running"),
+	PSF_Crouching	= 1 << 10	UMETA(DisplayName = "Crouching"),
+	PSF_Leaning		= 1 << 11	UMETA(DisplayName = "Leaning"),
+	PSF_Interacting	= 1 << 12	UMETA(DisplayName = "Interacting"),
+	PSF_Hiding		= 1 << 13	UMETA(DisplayName = "Hiding")
 };
 ENUM_CLASS_FLAGS(EPlayerStateFlags);
+ENUM_RANGE_BY_FIRST_AND_LAST(EPlayerStateFlags, PSF_Loading, PSF_Hiding);
 
 UENUM(BlueprintType)
 enum class EPlayerLeanState : uint8
