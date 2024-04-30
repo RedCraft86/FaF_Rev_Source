@@ -4,6 +4,7 @@
 
 #include "PlayerData.h"
 #include "UltraDynamicSky.h"
+#include "PlayerTeleporter.h"
 #include "GameMusic/GameMusicData.h"
 #include "GameSection/GameSectionDataBase.h"
 #include "AssetRegistry/IAssetRegistry.h"
@@ -34,7 +35,7 @@ public:
 		TArray<TSoftObjectPtr<UTexture2D>> Backgrounds;
 	
 	UPROPERTY(EditAnywhere, Category = "PlayerData")
-		TSoftObjectPtr<AActor> Teleporter;
+		TSoftObjectPtr<APlayerTeleporter> Teleporter;
 
 	UPROPERTY(EditAnywhere, Category = "PlayerData", meta = (ShowOnlyInnerProperties))
 		FPlayerSettings PlayerSettings;

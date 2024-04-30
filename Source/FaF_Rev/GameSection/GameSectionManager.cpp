@@ -6,6 +6,7 @@
 #include "GameSection/Graph/GameSectionGraph.h"
 #include "Libraries/GTLoadUtilsLibrary.h"
 #include "Screens/LoadingWidget.h"
+#include "PlayerTeleporter.h"
 #include "FRGameMode.h"
 #include "FRSettings.h"
 #include "FaF_Rev.h"
@@ -118,6 +119,11 @@ void UGameSectionManager::LoadCurrentData()
 void UGameSectionManager::FinishLoading()
 {
 	UGTLoadUtilsLibrary::ForceGarbageCollection();
+
+	if (const APlayerTeleporter* Teleporter = ThisData->Teleporter.LoadSynchronous())
+	{
+		Teleporter->TeleportPlayer();
+	}
 
 	FTimerHandle Handle;
 	GetWorld()->GetTimerManager().SetTimer(Handle, this,
