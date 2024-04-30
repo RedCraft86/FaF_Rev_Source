@@ -1,6 +1,6 @@
 ﻿// Copyright (C) RedCraft86. All Rights Reserved.
-
 // ReSharper disable CppParameterMayBeConst
+
 #include "FRPlayer.h"
 #include "Camera/CameraComponent.h"
 #include "GameFramework/SpringArmComponent.h"
@@ -59,11 +59,19 @@ void AFRPlayerBase::BeginPlay()
 void AFRPlayerBase::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
+
+}
+
+void AFRPlayerBase::OnConstruction(const FTransform& Transform)
+{
+	Super::OnConstruction(Transform);
+
 }
 
 void AFRPlayerBase::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 {
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
+
 }
 
 /* Statics */

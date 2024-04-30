@@ -43,13 +43,14 @@ public:
 		FPlayerFootsteps FootstepSounds;
 
 	virtual void SetActorHiddenInGame(bool bNewHidden) override;
-	
+
 protected:
 
 	FPlayerInteraction InteractData;
 
 	virtual void BeginPlay() override;
 	virtual void Tick(float DeltaTime) override;
+	virtual void OnConstruction(const FTransform& Transform) override;
 	virtual void SetupPlayerInputComponent(UInputComponent* PlayerInputComponent) override;
 
 public: // Statics
