@@ -26,9 +26,6 @@ public:
 
 	UPROPERTY(Config, EditAnywhere, Category = "Text", meta = (ClampMin = 1, UIMin = 1))
 		uint8 WordsPerSecond;
-	
-	UPROPERTY(Config, EditAnywhere, Category = "Text")
-		TSoftObjectPtr<UExpressiveTextStyleBase> DefaultTextStyle;
 
 	UPROPERTY(Config, EditAnywhere, Category = "Text", meta = (RequiredAssetDataTags = "RowStructure=/Script/FaF_Rev.GuideBookPageData"))
 		TSoftObjectPtr<UDataTable> GuideTable;
