@@ -24,7 +24,7 @@ enum EPlayerControlFlags
 };
 ENUM_CLASS_FLAGS(EPlayerControlFlags);
 ENUM_RANGE_BY_FIRST_AND_LAST(EPlayerControlFlags, PCF_Locked, PCF_CanHide);
-#define DEFAULT_PLAYER_CONTROL_FLAGS PCF_Locked | PCF_UseStamina | PCF_CanPause | PCF_CanTurn \
+#define DEFAULT_PLAYER_CONTROL_FLAGS PCF_UseStamina | PCF_CanPause | PCF_CanTurn \
 	| PCF_CanWalk | PCF_CanRun | PCF_CanCrouch | PCF_CanLean | PCF_CanInteract | PCF_CanHide
 
 UENUM(BlueprintType, meta = (Bitflags, UseEnumValuesAsMaskValuesInEditor = "true"))
@@ -63,9 +63,9 @@ struct FPlayerSettings
 	GENERATED_BODY()
 	
 	UPROPERTY(EditAnywhere, meta = (Bitmask, BitmaskEnum = "/Script/FaF_Rev.EPlayerControlFlags"))
-		int32 PlayerFlags;
+		int32 ControlFlags;
 
-	FPlayerSettings() : PlayerFlags(0) {}
+	FPlayerSettings() : ControlFlags(DEFAULT_PLAYER_CONTROL_FLAGS) {}
 };
 
 USTRUCT(BlueprintInternalUseOnly)
