@@ -36,6 +36,9 @@ public:
 	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, Category = "DefaultSubobjects")
 		USpotLightComponent* PlayerLight;
 
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "References", meta = (ReadOnlyKeys, DisplayThumbnail = false))
+		TMap<FName, class UInputAction*> InputActions;
+
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "References")
 		FPlayerCameraShakes CameraShakes;
 

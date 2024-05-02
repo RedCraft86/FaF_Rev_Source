@@ -222,3 +222,21 @@ struct FPlayerFootsteps
 		SneakSounds.LoadAssetsAsync();
 	}
 };
+
+namespace PlayerActions
+{
+	inline static FName Pause			= TEXT("Pause");
+	inline static FName Move			= TEXT("Move");
+	inline static FName Turn			= TEXT("Turn");
+	inline static FName Run				= TEXT("Run");
+	inline static FName Crouch			= TEXT("Crouch");
+	inline static FName Lean			= TEXT("Lean");
+	inline static FName Inventory		= TEXT("Inventory");
+	inline static FName HideQuests		= TEXT("HideQuests");
+	inline static FName Interact		= TEXT("Interact");
+	inline static FName Equipment		= TEXT("Equipment");
+	inline static FName Equipment_Alt	= TEXT("Equipment_Alt");
+
+	inline static TSet<FName> All = {Pause, Move, Turn, Run, Crouch, Lean,
+		Inventory, HideQuests, Interact, Equipment, Equipment_Alt};
+}

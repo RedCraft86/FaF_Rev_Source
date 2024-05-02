@@ -65,7 +65,10 @@ void AFRPlayerBase::Tick(float DeltaTime)
 void AFRPlayerBase::OnConstruction(const FTransform& Transform)
 {
 	Super::OnConstruction(Transform);
-
+	for (const FName& ActionName : PlayerActions::All)
+	{
+		if (!InputActions.Contains(ActionName)) InputActions.Add(ActionName);
+	}
 }
 
 void AFRPlayerBase::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
