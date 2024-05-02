@@ -80,7 +80,7 @@ struct FPlayerInteraction
 	FPlayerInteraction(AActor* InTarget, const FHitResult& InHit) : Target(InTarget), Hit(InHit) {}
 	FORCEINLINE bool operator==(const FPlayerInteraction& Other) const { return Target == Other.Target; }
 	FORCEINLINE bool operator!=(const FPlayerInteraction& Other) const { return Target != Other.Target; }
-	FORCEINLINE bool IsValidData() const { return IsValid(Target) && IsValid(Hit.GetActor()); }
+	FORCEINLINE bool IsValidData() const { return IsValid(Target) && Hit.bBlockingHit; }
 	void Reset()
 	{
 		Target = nullptr;
