@@ -36,15 +36,16 @@ enum EPlayerStateFlags
 	PSF_Dialogue	= 1 << 2	UMETA(DisplayName = "Dialogue"),
 	PSF_Jumpscare	= 1 << 3	UMETA(DisplayName = "Jumpscare"),
 	PSF_Inventory	= 1 << 4	UMETA(DisplayName = "Inventory"),
-	PSF_WorldDevice	= 1 << 5	UMETA(DisplayName = "World Device"),
-	PSF_GuideScreen	= 1 << 6	UMETA(DisplayName = "Guide Screen"),
-	PSF_RunPunished	= 1 << 7	UMETA(DisplayName = "Stamina Punished"),
-	PSF_Walking		= 1 << 8	UMETA(DisplayName = "Walking"),
-	PSF_Running		= 1 << 9	UMETA(DisplayName = "Running"),
-	PSF_Crouching	= 1 << 10	UMETA(DisplayName = "Crouching"),
-	PSF_Leaning		= 1 << 11	UMETA(DisplayName = "Leaning"),
-	PSF_Interacting	= 1 << 12	UMETA(DisplayName = "Interacting"),
-	PSF_Hiding		= 1 << 13	UMETA(DisplayName = "Hiding")
+	PSF_Inspection	= 1 << 5	UMETA(DisplayName = "Inspection"),
+	PSF_WorldDevice	= 1 << 6	UMETA(DisplayName = "World Device"),
+	PSF_GuideScreen	= 1 << 7	UMETA(DisplayName = "Guide Screen"),
+	PSF_RunPunished	= 1 << 8	UMETA(DisplayName = "Stamina Punished"),
+	PSF_Walking		= 1 << 9	UMETA(DisplayName = "Walking"),
+	PSF_Running		= 1 << 10	UMETA(DisplayName = "Running"),
+	PSF_Crouching	= 1 << 11	UMETA(DisplayName = "Crouching"),
+	PSF_Leaning		= 1 << 12	UMETA(DisplayName = "Leaning"),
+	PSF_Interacting	= 1 << 13	UMETA(DisplayName = "Interacting"),
+	PSF_Hiding		= 1 << 14	UMETA(DisplayName = "Hiding")
 };
 ENUM_CLASS_FLAGS(EPlayerStateFlags);
 ENUM_RANGE_BY_FIRST_AND_LAST(EPlayerStateFlags, PSF_Loading, PSF_Hiding);
