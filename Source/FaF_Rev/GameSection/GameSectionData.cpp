@@ -3,11 +3,6 @@
 #include "GameSectionData.h"
 #include "Algo/RandomShuffle.h"
 
-UGameSectionData::UGameSectionData()
-{
-	DependencyDepth = 4;
-}
-
 TSet<FAssetData> UGameSectionData::GetDependencies()
 {
 	TSet<FAssetData> Result;

@@ -17,7 +17,7 @@ class FAF_REV_API UGameSectionData : public UGameSectionDataBase
 
 public:
 
-	UGameSectionData();
+	UGameSectionData() : DependencyDepth(4) {}
 
 	UPROPERTY(EditAnywhere, Category = "SectionData")
 		FText DisplayLabel;
