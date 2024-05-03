@@ -162,10 +162,10 @@ struct FPlayerFootstepSounds
 			for(int32 i = 1; i < Enum->NumEnums(); i++)
 			{
 				const EPhysicalSurface Type = static_cast<EPhysicalSurface>(i);
-				if (i == 0 || Enum->HasMetaData(TEXT("Hidden"), i)
-					&& SurfaceSounds.Contains(TEnumAsByte(Type)))
+				if (i == 0 || Enum->HasMetaData(TEXT("Hidden"), i))
 				{
-					SurfaceSounds.Remove(TEnumAsByte(Type));
+					if (SurfaceSounds.Contains(TEnumAsByte(Type)))
+						SurfaceSounds.Remove(TEnumAsByte(Type));
 				}
 				else if (!SurfaceSounds.Contains(TEnumAsByte(Type)))
 				{
@@ -195,37 +195,37 @@ struct FPlayerFootsteps
 		FPlayerFootstepSounds WalkSounds;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "PlayerFootsteps")
-		FPlayerFootstepSounds RunSounds;
+		FPlayerFootstepSounds CrouchSounds;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "PlayerFootsteps")
-		FPlayerFootstepSounds SneakSounds;
+		FPlayerFootstepSounds RunSounds;
 
 	FPlayerFootsteps()
 		: Volume(1.0f), FloorTraceChannel(ECC_Visibility), Intervals(FVector(0.5f, 0.35f, 0.6f))
-		, WalkSounds({}), RunSounds({}), SneakSounds({}) {}
+		, WalkSounds({}), CrouchSounds({}), RunSounds({}) {}
 
 	void CheckEntries()
 	{
 		WalkSounds.CheckEntries();
+		CrouchSounds.CheckEntries();
 		RunSounds.CheckEntries();
-		SneakSounds.CheckEntries();
 	}
 
-	float GetInterval(const bool bRun, const bool bSneak) const
+	float GetInterval(const bool bRun, const bool bCrouch) const
 	{
-		return bRun ? Intervals.Y : bSneak ? Intervals.Z : Intervals.X;
+		return bRun ? Intervals.Y : bCrouch ? Intervals.Z : Intervals.X;
 	}
 
-	USoundBase* GetAudio(const bool bRun, const bool bSneak, const EPhysicalSurface Surface) const
+	USoundBase* GetAudio(const bool bRun, const bool bCrouch, const EPhysicalSurface Surface) const
 	{
-		return bRun ? RunSounds.GetSound(Surface) : bSneak ? SneakSounds.GetSound(Surface) : WalkSounds.GetSound(Surface);
+		return bRun ? RunSounds.GetSound(Surface) : bCrouch ? CrouchSounds.GetSound(Surface) : WalkSounds.GetSound(Surface);
 	}
 
 	void LoadAssetsAsync() const
 	{
 		WalkSounds.LoadAssetsAsync();
+		CrouchSounds.LoadAssetsAsync();
 		RunSounds.LoadAssetsAsync();
-		SneakSounds.LoadAssetsAsync();
 	}
 };
 
