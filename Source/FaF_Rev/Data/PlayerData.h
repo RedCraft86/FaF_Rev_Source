@@ -8,7 +8,7 @@
 UENUM(BlueprintType, meta = (Bitflags, UseEnumValuesAsMaskValuesInEditor = "true"))
 enum EPlayerControlFlags
 {
-	PCF_None		= 0,
+	PCF_None		= 0			UMETA(Hidden),
 	PCF_Locked		= 1 << 0	UMETA(DisplayName = "Locked"),
 
 	// Ability flags
@@ -30,7 +30,7 @@ ENUM_RANGE_BY_FIRST_AND_LAST(EPlayerControlFlags, PCF_Locked, PCF_CanHide);
 UENUM(BlueprintType, meta = (Bitflags, UseEnumValuesAsMaskValuesInEditor = "true"))
 enum EPlayerStateFlags
 {
-	PSF_None		= 0,
+	PSF_None		= 0			UMETA(Hidden),
 	PSF_Loading		= 1 << 0	UMETA(DisplayName = "Loading"),
 	PSF_Cutscene	= 1 << 1	UMETA(DisplayName = "Cutscene"),
 	PSF_Dialogue	= 1 << 2	UMETA(DisplayName = "Dialogue"),
