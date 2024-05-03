@@ -194,22 +194,22 @@ struct FPlayerFootsteps
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "PlayerFootsteps")
 		FPlayerFootstepSounds WalkSounds;
+	
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "PlayerFootsteps")
+		FPlayerFootstepSounds RunSounds;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "PlayerFootsteps")
 		FPlayerFootstepSounds CrouchSounds;
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "PlayerFootsteps")
-		FPlayerFootstepSounds RunSounds;
-
 	FPlayerFootsteps()
 		: Volume(1.0f), FloorTraceChannel(ECC_Visibility), Intervals(FVector(0.5f, 0.35f, 0.6f))
-		, WalkSounds({}), CrouchSounds({}), RunSounds({}) {}
+		, WalkSounds({}), RunSounds({}), CrouchSounds({}) {}
 
 	void CheckEntries()
 	{
 		WalkSounds.CheckEntries();
-		CrouchSounds.CheckEntries();
 		RunSounds.CheckEntries();
+		CrouchSounds.CheckEntries();
 	}
 
 	float GetInterval(const bool bRun, const bool bCrouch) const
@@ -225,16 +225,16 @@ struct FPlayerFootsteps
 	void LoadAssetsAsync() const
 	{
 		WalkSounds.LoadAssetsAsync();
-		CrouchSounds.LoadAssetsAsync();
 		RunSounds.LoadAssetsAsync();
+		CrouchSounds.LoadAssetsAsync();
 	}
 };
 
 namespace PlayerActions
 {
 	inline static FName Pause			= TEXT("Pause");
-	inline static FName Move			= TEXT("Move");
 	inline static FName Turn			= TEXT("Turn");
+	inline static FName Move			= TEXT("Move");
 	inline static FName Run				= TEXT("Run");
 	inline static FName Crouch			= TEXT("Crouch");
 	inline static FName Lean			= TEXT("Lean");
@@ -244,6 +244,6 @@ namespace PlayerActions
 	inline static FName Equipment		= TEXT("Equipment");
 	inline static FName Equipment_Alt	= TEXT("Equipment_Alt");
 
-	inline static TSet<FName> All = {Pause, Move, Turn, Run, Crouch, Lean,
+	inline static TSet<FName> All = {Pause, Turn, Move, Run, Crouch, Lean,
 		Inventory, HideQuests, Interact, Equipment, Equipment_Alt};
 }
