@@ -3,6 +3,8 @@
 #pragma once
 
 #include "PlayerData.h"
+#include "Data/MathTypes.h"
+#include "Data/LightingData.h"
 #include "GameFramework/Character.h"
 #include "Inspection/InspectionActor.h"
 #include "PhotoMode/PhotoModeActor.h"
@@ -39,6 +41,80 @@ public:
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Settings", meta = (Bitmask, BitmaskEnum = "/Script/FaF_Rev.EPlayerStateFlags"))
 		int32 StateFlags;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Settings|Interaction")
+		TEnumAsByte<ECollisionChannel> InteractTraceChannel;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Settings|Interaction")
+		float ReachDistance;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Settings|Camera")
+		FVector2D Sensitivity;
+	
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Settings|Camera")
+		FGTModifiableSum FieldOfView;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Settings|Camera")
+		float FieldOfViewSpeed;
+	
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Settings|Camera|LockOn")
+		USceneComponent* LockOnTarget;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Settings|Camera|LockOn")
+		float LockOnSpeed;
+	
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Settings|Movement")
+		FGTModifiableMultiplier MoveSpeedMultiplier;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Settings|Movement", meta = (ClampMin = 10.0f, UIMin = 10.0f))
+		float WalkingSpeed;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Settings|Movement", meta = (ClampMin = 0.0f, UIMin = 0.0f))
+		FVector2D CameraSway;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Settings|Running", meta = (ClampMin = 10.0f, UIMin = 10.0f))
+		float RunningSpeed;
+	
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Settings|Running")
+		float RunningFOV;
+	
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Settings|Running|Stamina", meta = (ClampMin = 1.0f, UIMin = 1.0f))
+		float MaxStamina;
+
+	// X: Gain, Y: Drain
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Settings|Running|Stamina", meta = (ClampMin = 0.0f, UIMin = 0.0f, ClampMax = 5.0f, UIMax = 5.0f))
+		FVector2D StaminaRates;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Settings|Crouching", meta = (ClampMin = 0.1f, UIMin = 0.1f))
+		float CrouchSpeed;
+	
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Settings|Crouching")
+		TEnumAsByte<ECollisionChannel> CeilingTraceChannel;
+
+	// X: Standing, Y: Crouching
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Settings|Crouching", meta = (ClampMin = 1.0f, UIMin = 1.0f))
+		FVector2D HalfHeights;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Settings|Crouching", meta = (ClampMin = 10.0f, UIMin = 10.0f))
+		float CrouchWalkSpeed;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Settings|Crouching")
+		float CrouchWalkFOV;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Settings|Leaning", meta = (ClampMin = 0.1f, UIMin = 0.1f))
+		float LeanSpeed;
+	
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Settings|Leaning")
+		TEnumAsByte<ECollisionChannel> WallTraceChannel;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Settings|Leaning", meta = (ClampMin = 10.0f, UIMin = 10.0f))
+		float WallTraceLength;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Settings|Leaning")
+		FVector2D LeanOffsets;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Settings|Misc")
+		FPointLightProperties PlayerLightProperties;
 	
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Settings", AdvancedDisplay)
 		TSoftObjectPtr<APhotoModeActor> PhotoModeActor;

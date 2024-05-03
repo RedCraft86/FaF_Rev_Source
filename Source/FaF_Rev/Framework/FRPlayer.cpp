@@ -43,6 +43,30 @@ AFRPlayerBase::AFRPlayerBase()
 	AutoReceiveInput = EAutoReceiveInput::Player0;
 
 	ControlFlags = DEFAULT_PLAYER_CONTROL_FLAGS;
+	StateFlags = 0;
+	InteractTraceChannel = ECC_Visibility;
+	ReachDistance = 250.0f;
+	Sensitivity = FVector2D::UnitVector;
+	FieldOfView = {90.0f};
+	FieldOfViewSpeed = 10.0f;
+	LockOnTarget = nullptr;
+	LockOnSpeed = 5.0f;
+	MoveSpeedMultiplier = {1.0f};
+	WalkingSpeed = 300.0f;
+	CameraSway = {2.5f, 1.5f};
+	RunningSpeed = 750.0f;
+	RunningFOV = 5.0f;
+	MaxStamina = 100.0f;
+	StaminaRates = {2.5f, 1.75f};
+	CrouchSpeed = 10.0f;
+	CeilingTraceChannel = ECC_Visibility;
+	HalfHeights = {88.0f, 45.0f};
+	CrouchWalkSpeed = 200.0f;
+	CrouchWalkFOV = -5.0f;
+	LeanSpeed = 7.5f;
+	WallTraceChannel = ECC_Visibility;
+	WallTraceLength = 125.0f;
+	LeanOffsets = {75.0f, 25.0f};	
 }
 
 void AFRPlayerBase::SetActorHiddenInGame(bool bNewHidden)
