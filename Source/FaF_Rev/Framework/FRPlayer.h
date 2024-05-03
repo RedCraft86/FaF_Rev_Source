@@ -38,19 +38,22 @@ public:
 	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, Category = "DefaultSubobjects")
 		USpotLightComponent* PlayerLight;
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "References")
+	UPROPERTY(EditAnywhere, Category = "Settings", meta = (Bitmask, BitmaskEnum = "/Script/FaF_Rev.EPlayerControlFlags"))
+		int32 ControlFlags;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Settings", AdvancedDisplay)
 		TSoftObjectPtr<APhotoModeActor> PhotoModeActor;
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "References")
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Settings", AdvancedDisplay)
 		TSoftObjectPtr<AInspectionActor> InspectionActor;
 	
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "References", meta = (ReadOnlyKeys, DisplayThumbnail = false))
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Settings", AdvancedDisplay, meta = (ReadOnlyKeys, DisplayThumbnail = false))
 		TMap<FName, class UInputAction*> InputActions;
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "References")
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Settings", AdvancedDisplay)
 		FPlayerCameraShakes CameraShakes;
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "References")
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Settings", AdvancedDisplay)
 		FPlayerFootsteps FootstepSounds;
 
 	virtual void SetActorHiddenInGame(bool bNewHidden) override;

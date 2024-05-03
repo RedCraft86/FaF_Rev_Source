@@ -63,7 +63,7 @@ struct FPlayerSettings
 {
 	GENERATED_BODY()
 	
-	UPROPERTY(EditAnywhere, meta = (Bitmask, BitmaskEnum = "/Script/FaF_Rev.EPlayerControlFlags"))
+	UPROPERTY(EditAnywhere, Category = "Settings", meta = (Bitmask, BitmaskEnum = "/Script/FaF_Rev.EPlayerControlFlags"))
 		int32 ControlFlags;
 
 	FPlayerSettings() : ControlFlags(DEFAULT_PLAYER_CONTROL_FLAGS) {}
