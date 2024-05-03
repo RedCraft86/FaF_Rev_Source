@@ -2,6 +2,7 @@
 
 #pragma once
 
+#include "Data/LightingData.h"
 #include "Engine/AssetManager.h"
 #include "PlayerData.generated.h"
 
@@ -63,10 +64,28 @@ struct FPlayerSettings
 {
 	GENERATED_BODY()
 	
-	UPROPERTY(EditAnywhere, Category = "Settings", meta = (Bitmask, BitmaskEnum = "/Script/FaF_Rev.EPlayerControlFlags"))
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Settings", meta = (Bitmask, BitmaskEnum = "/Script/FaF_Rev.EPlayerControlFlags"))
 		int32 ControlFlags;
 
-	FPlayerSettings() : ControlFlags(DEFAULT_PLAYER_CONTROL_FLAGS) {}
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Settings|Camera")
+		float FieldOfViewModifier;
+	
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Settings|Movement")
+		float MoveSpeedMultiplier;
+
+	// X: Gain, Y: Drain
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Settings|Running|Stamina", meta = (ClampMin = 0.0f, UIMin = 0.0f, ClampMax = 5.0f, UIMax = 5.0f))
+		FVector2D StaminaRates;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Settings|Misc")
+		FPointLightProperties PlayerLightProperties;
+
+	FPlayerSettings()
+		: ControlFlags(DEFAULT_PLAYER_CONTROL_FLAGS)
+		, FieldOfViewModifier(0.0f)
+		, MoveSpeedMultiplier(1.0f)
+		, StaminaRates({2.5f, 1.75f})
+	{}
 };
 
 USTRUCT(BlueprintInternalUseOnly)
