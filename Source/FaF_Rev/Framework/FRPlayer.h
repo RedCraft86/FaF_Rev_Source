@@ -14,7 +14,7 @@ class UCameraComponent;
 class USpringArmComponent;
 class USpotLightComponent;
 
-UCLASS(Abstract)
+UCLASS(Abstract, HideCategories = "SkinWeights, Skin Weights")
 class FAF_REV_API AFRPlayerBase final : public ACharacter
 {
 	GENERATED_BODY()
@@ -38,9 +38,9 @@ public:
 	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, Category = "DefaultSubobjects")
 		USpotLightComponent* PlayerLight;
 
-	UPROPERTY(EditAnywhere, Category = "Settings", meta = (Bitmask, BitmaskEnum = "/Script/FaF_Rev.EPlayerControlFlags"))
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Settings", meta = (Bitmask, BitmaskEnum = "/Script/FaF_Rev.EPlayerControlFlags"))
 		int32 ControlFlags;
-
+	
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Settings", AdvancedDisplay)
 		TSoftObjectPtr<APhotoModeActor> PhotoModeActor;
 

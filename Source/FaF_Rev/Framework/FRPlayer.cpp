@@ -38,6 +38,11 @@ AFRPlayerBase::AFRPlayerBase()
 
 	PlayerLight = CreateDefaultSubobject<USpotLightComponent>("PlayerLight");
 	PlayerLight->SetupAttachment(GetCapsuleComponent());
+
+	AutoPossessPlayer = EAutoReceiveInput::Player0;
+	AutoReceiveInput = EAutoReceiveInput::Player0;
+
+	ControlFlags = DEFAULT_PLAYER_CONTROL_FLAGS;
 }
 
 void AFRPlayerBase::SetActorHiddenInGame(bool bNewHidden)
