@@ -10,10 +10,6 @@
 
 #define FRPlayer(Context) AFRPlayerBase::Get<AFRPlayerBase>(Context)
 
-class UCameraComponent;
-class USpringArmComponent;
-class USpotLightComponent;
-
 UCLASS(Abstract)
 class FAF_REV_API AFRPlayerBase final : public ACharacter
 {
@@ -24,10 +20,10 @@ public:
 	AFRPlayerBase();
 
 	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, Category = "DefaultSubobjects")
-		USpringArmComponent* CameraArm;
+		class USpringArmComponent* CameraArm;
 	
 	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, Category = "DefaultSubobjects")
-		UCameraComponent* PlayerCamera;
+		class UCameraComponent* PlayerCamera;
 
 	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, Category = "DefaultSubobjects")
 		USceneComponent* EquipmentRoot;
