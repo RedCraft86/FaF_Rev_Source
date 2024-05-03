@@ -2,6 +2,8 @@
 // ReSharper disable CppParameterMayBeConst
 
 #include "FRPlayer.h"
+#include "EngineUtils.h"
+#include "FRGameMode.h"
 #include "Camera/CameraComponent.h"
 #include "GameFramework/SpringArmComponent.h"
 #include "Components/SpotLightComponent.h"
@@ -54,6 +56,12 @@ void AFRPlayerBase::BeginPlay()
 		EquipmentRoot->AttachToComponent(CM->GetTransformComponent(),
 			FAttachmentTransformRules::KeepRelativeTransform);
 	}
+
+	if (AFRGameModeBase* GM = FRGamemode(this))
+	{
+		GM->PhotoModeActor = PhotoModeActor.LoadSynchronous();
+		GM->InspectionActor = InspectionActor.LoadSynchronous();
+	}
 }
 
 void AFRPlayerBase::Tick(float DeltaTime)
@@ -70,6 +78,19 @@ void AFRPlayerBase::OnConstruction(const FTransform& Transform)
 	for (const FName& ActionName : PlayerActions::All)
 	{
 		if (!InputActions.Contains(ActionName)) InputActions.Add(ActionName);
+	}
+	
+	for (const AActor* Actor : TActorRange<AActor>(GetWorld()))
+	{
+		if (!IsValid(Actor)) continue;
+		if (Actor->IsA(APhotoModeActor::StaticClass()))
+		{
+			PhotoModeActor = Actor;
+		}
+		else if (Actor->IsA(APhotoModeActor::StaticClass()))
+		{
+			InspectionActor = Actor;
+		}
 	}
 }
 

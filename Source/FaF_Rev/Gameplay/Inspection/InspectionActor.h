@@ -5,7 +5,7 @@
 #include "GameFramework/Actor.h"
 #include "InspectionActor.generated.h"
 
-UCLASS(Abstract)
+UCLASS()
 class FAF_REV_API AInspectionActor final : public AActor
 {
 	GENERATED_BODY()

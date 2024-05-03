@@ -5,7 +5,7 @@
 #include "GTUserWidget.h"
 #include "FRPlayer.h"
 
-AFRGameModeBase::AFRGameModeBase()
+AFRGameModeBase::AFRGameModeBase(): PhotoModeActor(nullptr), InspectionActor(nullptr)
 {
 	PlayerControllerClass = AFRControllerBase::StaticClass();
 	DefaultPawnClass = AFRPlayerBase::StaticClass();

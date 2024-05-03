@@ -5,7 +5,7 @@
 #include "GameFramework/Actor.h"
 #include "PhotoModeActor.generated.h"
 
-UCLASS(Abstract)
+UCLASS()
 class FAF_REV_API APhotoModeActor final : public AActor
 {
 	GENERATED_BODY()

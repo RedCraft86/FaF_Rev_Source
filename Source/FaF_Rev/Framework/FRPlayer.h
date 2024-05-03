@@ -4,6 +4,8 @@
 
 #include "PlayerData.h"
 #include "GameFramework/Character.h"
+#include "Inspection/InspectionActor.h"
+#include "PhotoMode/PhotoModeActor.h"
 #include "FRPlayer.generated.h"
 
 #define FRPlayer(Context) AFRPlayerBase::Get<AFRPlayerBase>(Context)
@@ -36,6 +38,12 @@ public:
 	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, Category = "DefaultSubobjects")
 		USpotLightComponent* PlayerLight;
 
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "References")
+		TSoftObjectPtr<APhotoModeActor> PhotoModeActor;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "References")
+		TSoftObjectPtr<AInspectionActor> InspectionActor;
+	
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "References", meta = (ReadOnlyKeys, DisplayThumbnail = false))
 		TMap<FName, class UInputAction*> InputActions;
 

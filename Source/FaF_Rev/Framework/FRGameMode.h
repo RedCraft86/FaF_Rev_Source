@@ -17,6 +17,12 @@ public:
 
 	AFRGameModeBase();
 
+	UPROPERTY(Transient)
+		class APhotoModeActor* PhotoModeActor;
+
+	UPROPERTY(Transient)
+		class AInspectionActor* InspectionActor;
+
 public: // Shortcuts
 
 	UFUNCTION(BlueprintCallable, Category = "Game", meta = (WorldContext = "WorldContextObject", DynamicOutputParam = "ReturnValue", DeterminesOutputType = "Class", ExpandEnumAsExecs = "ReturnValue"))
