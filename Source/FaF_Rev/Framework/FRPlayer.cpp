@@ -2,18 +2,20 @@
 // ReSharper disable CppParameterMayBeConst
 
 #include "FRPlayer.h"
-#include "EngineUtils.h"
 #include "FRGameMode.h"
-#include "Camera/CameraComponent.h"
+#include "EngineUtils.h"
 #include "GameFramework/SpringArmComponent.h"
 #include "Components/SpotLightComponent.h"
 #include "Components/CapsuleComponent.h"
 #include "Components/AudioComponent.h"
+#include "Camera/CameraComponent.h"
 #include "Kismet/GameplayStatics.h"
 
 AFRPlayerBase::AFRPlayerBase()
 {
 	PrimaryActorTick.bCanEverTick = true;
+	AutoPossessPlayer = EAutoReceiveInput::Player0;
+	AutoReceiveInput = EAutoReceiveInput::Player0;
 	
 	CameraArm = CreateDefaultSubobject<USpringArmComponent>("CameraArm");
 	CameraArm->SetRelativeLocation(FVector(0.0f, 0.0f, 70.0f));
@@ -38,9 +40,6 @@ AFRPlayerBase::AFRPlayerBase()
 
 	PlayerLight = CreateDefaultSubobject<UPointLightComponent>("PlayerLight");
 	PlayerLight->SetupAttachment(GetCapsuleComponent());
-
-	AutoPossessPlayer = EAutoReceiveInput::Player0;
-	AutoReceiveInput = EAutoReceiveInput::Player0;
 
 	ControlFlags = DEFAULT_PLAYER_CONTROL_FLAGS;
 	StateFlags = 0;
