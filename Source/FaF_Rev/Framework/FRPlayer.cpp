@@ -36,7 +36,7 @@ AFRPlayerBase::AFRPlayerBase()
 	FootstepAudio->SetRelativeLocation(FVector(0.0f, 0.0f, -60.0f));
 	FootstepAudio->SetupAttachment(GetCapsuleComponent());
 
-	PlayerLight = CreateDefaultSubobject<USpotLightComponent>("PlayerLight");
+	PlayerLight = CreateDefaultSubobject<UPointLightComponent>("PlayerLight");
 	PlayerLight->SetupAttachment(GetCapsuleComponent());
 
 	AutoPossessPlayer = EAutoReceiveInput::Player0;
