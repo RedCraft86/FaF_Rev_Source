@@ -122,7 +122,7 @@ struct FPlayerFootstepSounds
 	UPROPERTY(EditAnywhere, Category = "PlayerFootsteps")
 		TSoftObjectPtr<USoundBase> DefaultSound;
 
-	UPROPERTY(EditAnywhere, Category = "PlayerFootsteps", meta = (ReadOnlyKeys))
+	UPROPERTY(EditAnywhere, Category = "PlayerFootsteps", meta = (ReadOnlyKeys, DisplayThumbnail = false))
 		TMap<TEnumAsByte<EPhysicalSurface>, TSoftObjectPtr<USoundBase>> SurfaceSounds;
 
 	FPlayerFootstepSounds() : DefaultSound(nullptr), SurfaceSounds({}) {}
@@ -161,10 +161,16 @@ struct FPlayerFootstepSounds
 		{
 			for(int32 i = 1; i < Enum->NumEnums(); i++)
 			{
-				if(i == 0 || Enum->HasMetaData(TEXT("Hidden"), i)) continue;
 				const EPhysicalSurface Type = static_cast<EPhysicalSurface>(i);
-				if (SurfaceSounds.Contains(TEnumAsByte(Type))) continue;
-				SurfaceSounds.Add(TEnumAsByte(Type));
+				if (i == 0 || Enum->HasMetaData(TEXT("Hidden"), i)
+					&& SurfaceSounds.Contains(TEnumAsByte(Type)))
+				{
+					SurfaceSounds.Remove(TEnumAsByte(Type));
+				}
+				else if (!SurfaceSounds.Contains(TEnumAsByte(Type)))
+				{
+					SurfaceSounds.Add(TEnumAsByte(Type));
+				}
 			}
 		}
 #endif
