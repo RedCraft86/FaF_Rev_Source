@@ -34,7 +34,7 @@ public:
 		UAudioComponent* FootstepAudio;
 
 	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, Category = "DefaultSubobjects")
-		class UPointLightComponent* PlayerLight;
+		UPointLightComponent* PlayerLight;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Settings", meta = (Bitmask, BitmaskEnum = "/Script/FaF_Rev.EPlayerControlFlags"))
 		int32 ControlFlags;
