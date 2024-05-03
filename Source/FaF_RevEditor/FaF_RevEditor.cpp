@@ -2,6 +2,7 @@
 
 #include "FaF_RevEditor.h"
 #include "AssetToolsModule.h"
+#include "Framework/FRPlayer.h"
 #include "Interaction/Fields/InteractField.h"
 #include "Interaction/Fields/TriggerField.h"
 #include "DetailsCustomization/GTActorDetails.h"
@@ -14,6 +15,7 @@ void FFaF_RevEditorModule::StartupModule()
 {
     if (FPropertyEditorModule* PropertyModule = FModuleManager::LoadModulePtr<FPropertyEditorModule>("PropertyEditor"))
     {
+        REGISTER_CLASS_CUSTOMIZATION(PropertyModule, AFRPlayerBase, FGTActorDetails);
         REGISTER_CLASS_CUSTOMIZATION(PropertyModule, AInteractField, FGTActorDetails);
         REGISTER_CLASS_CUSTOMIZATION(PropertyModule, ATriggerField, FGTActorDetails);
     }
@@ -32,6 +34,7 @@ void FFaF_RevEditorModule::ShutdownModule()
 {
     if (FPropertyEditorModule* PropertyModule = FModuleManager::GetModulePtr<FPropertyEditorModule>("PropertyEditor"))
     {
+        UNREGISTER_CLASS_CUSTOMIZATION(PropertyModule, AFRPlayerBase);
         UNREGISTER_CLASS_CUSTOMIZATION(PropertyModule, AInteractField);
         UNREGISTER_CLASS_CUSTOMIZATION(PropertyModule, ATriggerField);
     }
