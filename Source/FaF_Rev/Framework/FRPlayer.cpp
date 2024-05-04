@@ -378,6 +378,32 @@ void AFRPlayerBase::ClearEnemyStack()
 	EnemyStackChanged();
 }
 
+void AFRPlayerBase::FadeToBlack(const float InTime, const bool bAudio) const
+{
+	if (PlayerController && PlayerController->PlayerCameraManager)
+	{
+		PlayerController->PlayerCameraManager->StartCameraFade(0.0f, 1.0f,
+			InTime, FLinearColor::Black, bAudio, true);
+	}
+}
+
+void AFRPlayerBase::FadeFromBlack(const float InTime, const bool bAudio) const
+{
+	if (PlayerController && PlayerController->PlayerCameraManager)
+	{
+		PlayerController->PlayerCameraManager->StartCameraFade(1.0f, 0.0f,
+			InTime, FLinearColor::Black, bAudio, true);
+	}
+}
+
+void AFRPlayerBase::ClearFade() const
+{
+	if (PlayerController && PlayerController->PlayerCameraManager)
+	{
+		PlayerController->PlayerCameraManager->StopCameraFade();
+	}
+}
+
 void AFRPlayerBase::EnemyStackChanged()
 {
 	if (EnemyStack.IsEmpty())
@@ -427,14 +453,17 @@ bool AFRPlayerBase::IsGamePaused() const
 
 bool AFRPlayerBase::IsStandingBlocked() const
 {
+	return false;
 }
 
 bool AFRPlayerBase::IsLeaningBlocked(const float Direction) const
 {
+	return false;
 }
 
 bool AFRPlayerBase::TraceInteraction(FHitResult& OutHitResult, FPlayerInteraction& OutData) const
 {
+	return false;
 }
 
 void AFRPlayerBase::TickStamina()

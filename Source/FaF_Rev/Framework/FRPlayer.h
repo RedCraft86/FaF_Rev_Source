@@ -260,6 +260,21 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Player")
 		void ClearEnemyStack();
 
+	UFUNCTION(BlueprintCallable, BlueprintPure = false, Category = "Player")
+		void FadeToBlack(const float InTime, const bool bAudio = true) const;
+
+	UFUNCTION(BlueprintCallable, BlueprintPure = false, Category = "Player")
+		void FadeFromBlack(const float InTime, const bool bAudio = true) const;
+
+	UFUNCTION(BlueprintCallable, BlueprintPure = false, Category = "Player")
+		void ClearFade() const;
+	
+	UFUNCTION(BlueprintPure, Category = "Player")
+		AFRGameModeBase* GetGameMode() const { return GameMode; }
+	
+	UFUNCTION(BlueprintPure, Category = "Player")
+		AFRControllerBase* GetPlayerController() const { return PlayerController; }
+	
 	void EnemyStackChanged();
 	void TeleportPlayer(const FVector& InLocation, const FRotator& InRotation);
 	virtual void SetActorHiddenInGame(bool bNewHidden) override;

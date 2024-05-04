@@ -41,6 +41,7 @@ void UGameSectionManager::BeginTransition()
 	if (PlayerChar)
 	{
 		PlayerChar->AddLockFlag(Player::LockFlags::Loading);
+		PlayerChar->FadeToBlack(0.25f);
 	}
 	
 	LastData = ThisData;
@@ -151,6 +152,7 @@ void UGameSectionManager::FinishTransition()
 	{
 		if (PlayerChar)
 		{
+			PlayerChar->FadeFromBlack(1.0f);
 			PlayerChar->ClearLockFlag(Player::LockFlags::Loading);
 		}
 		
