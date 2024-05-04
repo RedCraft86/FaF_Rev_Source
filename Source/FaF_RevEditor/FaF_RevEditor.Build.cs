@@ -17,7 +17,8 @@ public class FaF_RevEditor : ModuleRules
                 "UnrealEd",
                 "Engine",
                 "GTEditor", 
-                "FaF_Rev"
+                "FaF_Rev",
+                "PulldownBuilder"
             }
         );
     }
