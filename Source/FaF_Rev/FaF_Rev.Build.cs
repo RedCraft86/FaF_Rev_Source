@@ -25,6 +25,8 @@ public class FaF_Rev : ModuleRules
 				"CoreUObject", 
 				"Engine", 
 				"UMG",
+				"Slate",
+				"SlateCore",
 				"InputCore",
 				"PhysicsCore",
 				"GameplayTags",
