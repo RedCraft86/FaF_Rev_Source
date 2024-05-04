@@ -66,9 +66,6 @@ struct FPlayerSettings
 	
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Settings", meta = (Bitmask, BitmaskEnum = "/Script/FaF_Rev.EPlayerControlFlags"))
 		int32 ControlFlags;
-
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Settings|Camera")
-		float FieldOfViewModifier;
 	
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Settings|Movement")
 		float MoveSpeedMultiplier;
@@ -78,11 +75,10 @@ struct FPlayerSettings
 		FVector2D StaminaRates;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Settings|Misc")
-		FPointLightProperties PlayerLightProperties;
+		FPointLightProperties LightProperties;
 
 	FPlayerSettings()
 		: ControlFlags(DEFAULT_PLAYER_CONTROL_FLAGS)
-		, FieldOfViewModifier(0.0f)
 		, MoveSpeedMultiplier(1.0f)
 		, StaminaRates({2.5f, 1.75f})
 	{}

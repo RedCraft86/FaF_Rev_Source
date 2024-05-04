@@ -114,7 +114,7 @@ public:
 		FVector2D LeanOffsets;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Settings|Misc")
-		FPointLightProperties PlayerLightProperties;
+		FPointLightProperties PlayerLightSettings;
 	
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Settings", AdvancedDisplay)
 		TSoftObjectPtr<APhotoModeActor> PhotoModeActor;
@@ -131,12 +131,51 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Settings", AdvancedDisplay)
 		FPlayerFootsteps FootstepSounds;
 
+	UFUNCTION(BlueprintCallable, Category = "Player")
+		void SetPlayerSettings(const FPlayerSettings& InSettings);
+
+	UFUNCTION(BlueprintCallable, Category = "Player")
+		void OverrideControlFlags(UPARAM(meta = (Bitmask, BitmaskEnum = "/Script/FaF_Rev.EPlayerControlFlags")) const int32 InFlags);
+
+	UFUNCTION(BlueprintCallable, Category = "Player")
+		void SetControlFlag(const TEnumAsByte<EPlayerControlFlags> InFlag);
+	
+	UFUNCTION(BlueprintCallable, Category = "Player")
+		void UnsetControlFlag(const TEnumAsByte<EPlayerControlFlags> InFlag);
+	
+	UFUNCTION(BlueprintPure, Category = "Player")
+		bool HasControlFlag(const TEnumAsByte<EPlayerControlFlags> InFlag) const { return ControlFlags & InFlag.GetValue(); }
+	
+	UFUNCTION(BlueprintPure, Category = "Player")
+		bool HasStateFlag(const TEnumAsByte<EPlayerStateFlags> InFlag) const { return StateFlags & InFlag.GetValue(); }
+	
+	UFUNCTION(BlueprintCallable, Category = "Player")
+		void SetLightProperties(const FPointLightProperties& InProperties);
+	
 	virtual void SetActorHiddenInGame(bool bNewHidden) override;
 
 protected:
 
+	UPROPERTY(Transient) class AFRGameModeBase* GameMode;
+	UPROPERTY(Transient) class AFRControllerBase* PlayerController;
+	
+	TSoftObjectPtr<AActor> WorldDevice;
+	TSet<TSoftObjectPtr<AActor>> EnemyStack;
+	TSet<FName> LockConditions;
+	FVector2D LeanOffset;
+	FVector2D SwayOffset;
+	FVector2D CamOffset;
+	FVector CamPosition;
+	float CurrentStamina;
+	float StaminaDelta;
+	bool bStaminaPunished;
+	float WalkSpeedTarget;
+	bool bShouldBeInteracting;
+	EPlayerLeanState LeanState;
+	FGTInterpScalar FieldOfViewValue;
+	FGTInterpScalar HalfHeightValue;
 	FPlayerInteraction InteractData;
-
+	
 	virtual void BeginPlay() override;
 	virtual void Tick(float DeltaTime) override;
 	virtual void OnConstruction(const FTransform& Transform) override;

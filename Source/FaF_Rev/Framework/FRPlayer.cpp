@@ -3,13 +3,14 @@
 
 #include "FRPlayer.h"
 #include "FRGameMode.h"
-#include "EngineUtils.h"
+#include "FRController.h"
 #include "GameFramework/SpringArmComponent.h"
 #include "Components/SpotLightComponent.h"
 #include "Components/CapsuleComponent.h"
 #include "Components/AudioComponent.h"
 #include "Camera/CameraComponent.h"
 #include "Kismet/GameplayStatics.h"
+#include "EngineUtils.h"
 
 AFRPlayerBase::AFRPlayerBase()
 {
@@ -65,7 +66,77 @@ AFRPlayerBase::AFRPlayerBase()
 	LeanSpeed = 7.5f;
 	WallTraceChannel = ECC_Visibility;
 	WallTraceLength = 125.0f;
-	LeanOffsets = {75.0f, 25.0f};	
+	LeanOffsets = {75.0f, 25.0f};
+	PlayerLightSettings = {};
+	PhotoModeActor = nullptr;
+	InspectionActor = nullptr;
+	InputActions = {};
+	CameraShakes = {};
+	FootstepSounds = {};
+
+	GameMode = nullptr;
+	PlayerController = nullptr;
+	WorldDevice = nullptr;
+	EnemyStack = {};
+	LockConditions = {};
+	LeanOffset = FVector2D::ZeroVector;
+	SwayOffset = FVector2D::ZeroVector;
+	CamOffset = FVector2D::ZeroVector;
+	CamPosition = FVector::ZeroVector;
+	CurrentStamina = MaxStamina;
+	StaminaDelta = 0.0f;
+	bStaminaPunished = false;
+	WalkSpeedTarget = WalkingSpeed;
+	bShouldBeInteracting = false;
+	LeanState = EPlayerLeanState::None;
+	FieldOfViewValue = { FieldOfView.Evaluate() };
+	HalfHeightValue = { FieldOfView.Evaluate() };
+	InteractData = {};
+}
+
+void AFRPlayerBase::SetPlayerSettings(const FPlayerSettings& InSettings)
+{
+	OverrideControlFlags(InSettings.ControlFlags);
+	SetLightProperties(InSettings.LightProperties);
+	MoveSpeedMultiplier.BaseValue = InSettings.MoveSpeedMultiplier;
+	StaminaRates = InSettings.StaminaRates;
+}
+
+void AFRPlayerBase::OverrideControlFlags(int32 InFlags)
+{
+	for (const EPlayerControlFlags Enum : TEnumRange<EPlayerControlFlags>())
+	{
+		if (InFlags & Enum)
+		{
+			SetControlFlag(Enum);
+		}
+		else
+		{
+			UnsetControlFlag(Enum);
+		}
+	}
+}
+
+void AFRPlayerBase::SetControlFlag(const TEnumAsByte<EPlayerControlFlags> InFlag)
+{
+	if (!HasControlFlag(InFlag))
+	{
+		ControlFlags |= InFlag.GetValue();
+	}
+}
+
+void AFRPlayerBase::UnsetControlFlag(const TEnumAsByte<EPlayerControlFlags> InFlag)
+{
+	if (HasControlFlag(InFlag))
+	{
+		ControlFlags &= ~InFlag.GetValue();
+	}
+}
+
+void AFRPlayerBase::SetLightProperties(const FPointLightProperties& InProperties)
+{
+	PlayerLightSettings = InProperties;
+	ULightingDataLibrary::SetPointLightProperties(PlayerLight, PlayerLightSettings);
 }
 
 void AFRPlayerBase::SetActorHiddenInGame(bool bNewHidden)
@@ -85,11 +156,14 @@ void AFRPlayerBase::BeginPlay()
 			FAttachmentTransformRules::KeepRelativeTransform);
 	}
 
-	if (AFRGameModeBase* GM = FRGamemode(this))
+	GameMode = FRGamemode(this);
+	if (GameMode)
 	{
-		GM->PhotoModeActor = PhotoModeActor.LoadSynchronous();
-		GM->InspectionActor = InspectionActor.LoadSynchronous();
+		GameMode->PhotoModeActor = PhotoModeActor.LoadSynchronous();
+		GameMode->InspectionActor = InspectionActor.LoadSynchronous();
 	}
+
+	PlayerController = FRController(this);
 }
 
 void AFRPlayerBase::Tick(float DeltaTime)
@@ -103,6 +177,8 @@ void AFRPlayerBase::OnConstruction(const FTransform& Transform)
 	Super::OnConstruction(Transform);
 	
 	FootstepSounds.CheckEntries();
+	ULightingDataLibrary::SetPointLightProperties(PlayerLight, PlayerLightSettings);
+	
 	for (const FName& ActionName : PlayerActions::All)
 	{
 		if (!InputActions.Contains(ActionName)) InputActions.Add(ActionName);
