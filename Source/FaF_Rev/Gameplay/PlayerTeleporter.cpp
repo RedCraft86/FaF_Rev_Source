@@ -26,7 +26,7 @@ void APlayerTeleporter::TeleportPlayer() const
 		}
 		else
 		{
-			Player->SetActorRotation(GetActorRotation(), ETeleportType::ResetPhysics);
+			Player->SetActorRotation({0.0f, GetActorRotation().Yaw, 0.0f}, ETeleportType::ResetPhysics);
 		}
 	}
 }
