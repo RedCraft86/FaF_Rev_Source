@@ -38,6 +38,11 @@ void UGameSectionManager::Step(const int32 Index)
 void UGameSectionManager::BeginTransition()
 {
 	bLoading = true;
+	if (PlayerChar)
+	{
+		PlayerChar->AddLockFlag(Player::LockFlags::Loading);
+	}
+	
 	LastData = ThisData;
 	const UGameSectionNode* Node = SectionGraph->GetNodeBySequence<UGameSectionNode>(Sequence);
 	if (!Node || !Node->Sequence || !Node->Sequence->IsA(UGameSectionData::StaticClass()))
@@ -53,19 +58,24 @@ void UGameSectionManager::BeginTransition()
 	if (LastData)
 	{
 		GetWorld()->GetTimerManager().SetTimer(Handle, this,
-			&UGameSectionManager::UnloadLastData, 0.1f, false);
+			&UGameSectionManager::UnloadLastData, 0.25f, false);
 	}
 	else
 	{
 		GetWorld()->GetTimerManager().SetTimer(Handle, this,
-			&UGameSectionManager::LoadCurrentData, 0.1f, false);
+			&UGameSectionManager::LoadCurrentData, 0.25f, false);
 	}
 }
 
 void UGameSectionManager::UnloadLastData()
 {
+	if (PlayerChar)
+	{
+		PlayerChar->ResetStates();
+		PlayerChar->TeleportPlayer(FVector::ZeroVector, FRotator::ZeroRotator);
+	}
+	
 	LoadedObjs.Empty(ThisData ? ThisData->PreloadObjects.Num() : 0);
-
 	UnloadingLevels = 0;
 	bool bHasMaps = false;
 	if (LastData)
@@ -125,6 +135,11 @@ void UGameSectionManager::FinishLoading()
 		Teleporter->TeleportPlayer();
 	}
 
+	if (PlayerChar)
+	{
+		PlayerChar->SetPlayerSettings(ThisData->PlayerSettings);
+	}
+
 	FTimerHandle Handle;
 	GetWorld()->GetTimerManager().SetTimer(Handle, this,
 		&UGameSectionManager::FinishTransition, 1.0f, false);
@@ -134,6 +149,11 @@ void UGameSectionManager::FinishTransition()
 {
 	HideLoadingWidget([this]()
 	{
+		if (PlayerChar)
+		{
+			PlayerChar->ClearLockFlag(Player::LockFlags::Loading);
+		}
+		
 		bLoading = false;	
 	});
 }
@@ -234,6 +254,12 @@ ULoadingWidgetBase* UGameSectionManager::GetLoadingWidget()
 	}
 
 	return nullptr;
+}
+
+void UGameSectionManager::OnWorldBeginPlay(UWorld& InWorld)
+{
+	Super::OnWorldBeginPlay(InWorld);
+	PlayerChar = FRPlayer(this);
 }
 
 void UGameSectionManager::Initialize(FSubsystemCollectionBase& Collection)

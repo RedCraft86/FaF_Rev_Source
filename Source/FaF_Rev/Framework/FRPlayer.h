@@ -39,9 +39,6 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Settings", meta = (Bitmask, BitmaskEnum = "/Script/FaF_Rev.EPlayerControlFlags"))
 		int32 ControlFlags;
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Settings", meta = (Bitmask, BitmaskEnum = "/Script/FaF_Rev.EPlayerStateFlags"))
-		int32 StateFlags;
-
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Settings|Interaction")
 		TEnumAsByte<ECollisionChannel> InteractTraceChannel;
 
@@ -131,6 +128,28 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Settings", AdvancedDisplay)
 		FPlayerFootsteps FootstepSounds;
 
+protected:
+
+	UPROPERTY(Transient) class AFRGameModeBase* GameMode;
+	UPROPERTY(Transient) class AFRControllerBase* PlayerController;
+
+	TSet<FName> LockFlags;
+	FVector CamPosition;
+	EPlayerLeanState LeanState;
+	FGTInterpScalar FieldOfViewValue;
+	FGTInterpScalar HalfHeightValue;
+	FPlayerInteraction InteractData;
+	TSoftObjectPtr<AActor> WorldDevice;
+	TSet<TSoftObjectPtr<AActor>> EnemyStack;
+	FVector2D LeanOffset, SwayOffset, CamOffset;
+	float WalkSpeedTarget, CurrentStamina, StaminaDelta;
+	bool bRunning, bCrouching, bStaminaPunished, bInteracting;
+	
+public:
+
+	UFUNCTION(BlueprintCallable, Category = "Player")
+		void ResetStates();
+	
 	UFUNCTION(BlueprintCallable, Category = "Player")
 		void SetPlayerSettings(const FPlayerSettings& InSettings);
 
@@ -144,43 +163,35 @@ public:
 		void UnsetControlFlag(const TEnumAsByte<EPlayerControlFlags> InFlag);
 	
 	UFUNCTION(BlueprintPure, Category = "Player")
-		bool HasControlFlag(const TEnumAsByte<EPlayerControlFlags> InFlag) const { return ControlFlags & InFlag.GetValue(); }
+		bool HasControlFlag(const TEnumAsByte<EPlayerControlFlags> InFlag) const;
+
+	UFUNCTION(BlueprintCallable, Category = "Player")
+		void AddLockFlag(const FPlayerLockState InFlag);
+	void AddLockFlag(const FName InFlag);
 	
+	UFUNCTION(BlueprintCallable, Category = "Player")
+		void ClearLockFlag(const FPlayerLockState InFlag);
+	void ClearLockFlag(const FName InFlag);
+
 	UFUNCTION(BlueprintPure, Category = "Player")
-		bool HasStateFlag(const TEnumAsByte<EPlayerStateFlags> InFlag) const { return StateFlags & InFlag.GetValue(); }
+		bool HasLockFlag(const FPlayerLockState InFlag) const;
+	bool HasLockFlag(const FName InFlag) const;
 	
 	UFUNCTION(BlueprintCallable, Category = "Player")
 		void SetLightProperties(const FPointLightProperties& InProperties);
 	
+	void TeleportPlayer(const FVector InLocation, const FRotator InRotation);
 	virtual void SetActorHiddenInGame(bool bNewHidden) override;
 
 protected:
 
-	UPROPERTY(Transient) class AFRGameModeBase* GameMode;
-	UPROPERTY(Transient) class AFRControllerBase* PlayerController;
-	
-	TSoftObjectPtr<AActor> WorldDevice;
-	TSet<TSoftObjectPtr<AActor>> EnemyStack;
-	TSet<FName> LockConditions;
-	FVector2D LeanOffset;
-	FVector2D SwayOffset;
-	FVector2D CamOffset;
-	FVector CamPosition;
-	float CurrentStamina;
-	float StaminaDelta;
-	bool bStaminaPunished;
-	float WalkSpeedTarget;
-	bool bShouldBeInteracting;
-	EPlayerLeanState LeanState;
-	FGTInterpScalar FieldOfViewValue;
-	FGTInterpScalar HalfHeightValue;
-	FPlayerInteraction InteractData;
-	
+	bool ShouldLock() const;
+
 	virtual void BeginPlay() override;
 	virtual void Tick(float DeltaTime) override;
 	virtual void OnConstruction(const FTransform& Transform) override;
 	virtual void SetupPlayerInputComponent(UInputComponent* PlayerInputComponent) override;
-
+	
 public: // Statics
 	
 	UFUNCTION(BlueprintPure, Category = "Game", DisplayName = "Get Player (Smart)", meta = (DynamicOutputParam = "ReturnValue", DeterminesOutputType = "Class", WorldContext = "WorldContextObject"))

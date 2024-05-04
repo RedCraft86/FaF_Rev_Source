@@ -43,7 +43,6 @@ AFRPlayerBase::AFRPlayerBase()
 	PlayerLight->SetupAttachment(GetCapsuleComponent());
 
 	ControlFlags = DEFAULT_PLAYER_CONTROL_FLAGS;
-	StateFlags = 0;
 	InteractTraceChannel = ECC_Visibility;
 	ReachDistance = 250.0f;
 	Sensitivity = FVector2D::UnitVector;
@@ -76,22 +75,29 @@ AFRPlayerBase::AFRPlayerBase()
 
 	GameMode = nullptr;
 	PlayerController = nullptr;
-	WorldDevice = nullptr;
-	EnemyStack = {};
-	LockConditions = {};
-	LeanOffset = FVector2D::ZeroVector;
-	SwayOffset = FVector2D::ZeroVector;
-	CamOffset = FVector2D::ZeroVector;
+	
+	LockFlags = {};
 	CamPosition = FVector::ZeroVector;
-	CurrentStamina = MaxStamina;
-	StaminaDelta = 0.0f;
-	bStaminaPunished = false;
-	WalkSpeedTarget = WalkingSpeed;
-	bShouldBeInteracting = false;
 	LeanState = EPlayerLeanState::None;
 	FieldOfViewValue = { FieldOfView.Evaluate() };
 	HalfHeightValue = { FieldOfView.Evaluate() };
 	InteractData = {};
+	WorldDevice = nullptr;
+	EnemyStack = {};
+	LeanOffset = FVector2D::ZeroVector;
+	SwayOffset = FVector2D::ZeroVector;
+	CamOffset = FVector2D::ZeroVector;
+	WalkSpeedTarget = WalkingSpeed;
+	CurrentStamina = MaxStamina;
+	StaminaDelta = 0.0f;
+	bRunning = false;
+	bCrouching = false;
+	bStaminaPunished = false;
+	bInteracting = false;
+}
+
+void AFRPlayerBase::ResetStates()
+{
 }
 
 void AFRPlayerBase::SetPlayerSettings(const FPlayerSettings& InSettings)
@@ -133,16 +139,77 @@ void AFRPlayerBase::UnsetControlFlag(const TEnumAsByte<EPlayerControlFlags> InFl
 	}
 }
 
+bool AFRPlayerBase::HasControlFlag(const TEnumAsByte<EPlayerControlFlags> InFlag) const
+{
+	return ControlFlags & InFlag.GetValue();
+}
+
+void AFRPlayerBase::AddLockFlag(const FPlayerLockState InFlag)
+{
+	AddLockFlag(InFlag.SelectedValue);
+}
+
+void AFRPlayerBase::AddLockFlag(const FName InFlag)
+{
+	LockFlags.Remove(NAME_None);
+ 	if (!InFlag.IsNone()) LockFlags.Add(InFlag);
+}
+
+void AFRPlayerBase::ClearLockFlag(const FPlayerLockState InFlag)
+{
+	ClearLockFlag(InFlag.SelectedValue);
+}
+
+void AFRPlayerBase::ClearLockFlag(const FName InFlag)
+{
+	LockFlags.Remove(NAME_None);
+ 	if (!InFlag.IsNone()) LockFlags.Remove(InFlag);
+}
+
+bool AFRPlayerBase::HasLockFlag(const FPlayerLockState InFlag) const
+{
+	return HasLockFlag(InFlag.SelectedValue);
+}
+
+bool AFRPlayerBase::HasLockFlag(const FName InFlag) const
+{
+	return InFlag.IsNone() ? false : LockFlags.Contains(InFlag);
+}
+
 void AFRPlayerBase::SetLightProperties(const FPointLightProperties& InProperties)
 {
 	PlayerLightSettings = InProperties;
 	ULightingDataLibrary::SetPointLightProperties(PlayerLight, PlayerLightSettings);
 }
 
+void AFRPlayerBase::TeleportPlayer(const FVector InLocation, const FRotator InRotation)
+{
+	SetActorLocation(InLocation, false, nullptr, ETeleportType::ResetPhysics);
+
+	FRotator Rot(InRotation); Rot.Roll = 0.0f;
+	if (IsPlayerControlled())
+	{
+		if (AController* C = GetController())
+		{
+			C->SetControlRotation(Rot);
+		}
+	}
+	else
+	{
+		Rot.Pitch = 0.0f;
+		SetActorRotation(Rot, ETeleportType::ResetPhysics);
+	}
+}
+
 void AFRPlayerBase::SetActorHiddenInGame(bool bNewHidden)
 {
 	Super::SetActorHiddenInGame(bNewHidden);
 	EquipmentRoot->SetHiddenInGame(bNewHidden, true);
+}
+
+bool AFRPlayerBase::ShouldLock() const
+{
+	return ControlFlags & PCF_Locked || !LockFlags.IsEmpty();
 }
 
 void AFRPlayerBase::BeginPlay()
@@ -179,7 +246,7 @@ void AFRPlayerBase::OnConstruction(const FTransform& Transform)
 	FootstepSounds.CheckEntries();
 	ULightingDataLibrary::SetPointLightProperties(PlayerLight, PlayerLightSettings);
 	
-	for (const FName& ActionName : PlayerActions::All)
+	for (const FName& ActionName : Player::Actions::All)
 	{
 		if (!InputActions.Contains(ActionName)) InputActions.Add(ActionName);
 	}

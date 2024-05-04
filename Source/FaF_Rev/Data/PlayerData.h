@@ -2,8 +2,12 @@
 
 #pragma once
 
+
+
+#include "FaF_Rev.h"
 #include "Data/LightingData.h"
 #include "Engine/AssetManager.h"
+#include "PulldownStruct/PulldownStructBase.h"
 #include "PlayerData.generated.h"
 
 UENUM(BlueprintType, meta = (Bitflags, UseEnumValuesAsMaskValuesInEditor = "true"))
@@ -28,28 +32,12 @@ ENUM_RANGE_BY_FIRST_AND_LAST(EPlayerControlFlags, PCF_Locked, PCF_CanHide);
 #define DEFAULT_PLAYER_CONTROL_FLAGS PCF_UseStamina | PCF_CanPause | PCF_CanTurn \
 	| PCF_CanWalk | PCF_CanRun | PCF_CanCrouch | PCF_CanLean | PCF_CanInteract | PCF_CanHide
 
-UENUM(BlueprintType, meta = (Bitflags, UseEnumValuesAsMaskValuesInEditor = "true"))
-enum EPlayerStateFlags
+USTRUCT(BlueprintType)
+struct FAF_REV_API FPlayerLockState : public FPulldownStructBase
 {
-	PSF_None		= 0			UMETA(Hidden),
-	PSF_Loading		= 1 << 0	UMETA(DisplayName = "Loading"),
-	PSF_Cutscene	= 1 << 1	UMETA(DisplayName = "Cutscene"),
-	PSF_Dialogue	= 1 << 2	UMETA(DisplayName = "Dialogue"),
-	PSF_Jumpscare	= 1 << 3	UMETA(DisplayName = "Jumpscare"),
-	PSF_Inventory	= 1 << 4	UMETA(DisplayName = "Inventory"),
-	PSF_Inspection	= 1 << 5	UMETA(DisplayName = "Inspection"),
-	PSF_WorldDevice	= 1 << 6	UMETA(DisplayName = "World Device"),
-	PSF_GuideScreen	= 1 << 7	UMETA(DisplayName = "Guide Screen"),
-	PSF_RunPunished	= 1 << 8	UMETA(DisplayName = "Stamina Punished"),
-	PSF_Walking		= 1 << 9	UMETA(DisplayName = "Walking"),
-	PSF_Running		= 1 << 10	UMETA(DisplayName = "Running"),
-	PSF_Crouching	= 1 << 11	UMETA(DisplayName = "Crouching"),
-	PSF_Leaning		= 1 << 12	UMETA(DisplayName = "Leaning"),
-	PSF_Interacting	= 1 << 13	UMETA(DisplayName = "Interacting"),
-	PSF_Hiding		= 1 << 14	UMETA(DisplayName = "Hiding")
+	GENERATED_BODY()
+	SETUP_PULLDOWN(FPlayerLockState)
 };
-ENUM_CLASS_FLAGS(EPlayerStateFlags);
-ENUM_RANGE_BY_FIRST_AND_LAST(EPlayerStateFlags, PSF_Loading, PSF_Hiding);
 
 UENUM(BlueprintType)
 enum class EPlayerLeanState : uint8
@@ -245,20 +233,38 @@ struct FPlayerFootsteps
 	}
 };
 
-namespace PlayerActions
+namespace Player
 {
-	inline static FName Pause			= TEXT("Pause");
-	inline static FName Turn			= TEXT("Turn");
-	inline static FName Move			= TEXT("Move");
-	inline static FName Run				= TEXT("Run");
-	inline static FName Crouch			= TEXT("Crouch");
-	inline static FName Lean			= TEXT("Lean");
-	inline static FName Inventory		= TEXT("Inventory");
-	inline static FName HideQuests		= TEXT("HideQuests");
-	inline static FName Interact		= TEXT("Interact");
-	inline static FName Equipment		= TEXT("Equipment");
-	inline static FName Equipment_Alt	= TEXT("Equipment_Alt");
+	namespace LockFlags
+	{
+		inline static FName Loading			= TEXT("Loading");
+		inline static FName Cutscene		= TEXT("Cutscene");
+		inline static FName Dialogue		= TEXT("Dialogue");
+		inline static FName Jumpscare		= TEXT("Jumpscare");
+		inline static FName Inventory		= TEXT("Inventory");
+		inline static FName Inspection		= TEXT("Inspection");
+		inline static FName WorldDevice		= TEXT("WorldDevice");
+		inline static FName GuideScreen		= TEXT("GuideScreen");
 
-	inline static TSet<FName> All = {Pause, Turn, Move, Run, Crouch, Lean,
-		Inventory, HideQuests, Interact, Equipment, Equipment_Alt};
+		inline static TSet All = {Loading, Cutscene, Dialogue,Jumpscare,
+			Inventory, Inspection, WorldDevice, GuideScreen, GuideScreen};
+	}
+	
+	namespace Actions
+	{
+		inline static FName Pause			= TEXT("Pause");
+		inline static FName Turn			= TEXT("Turn");
+		inline static FName Move			= TEXT("Move");
+		inline static FName Run				= TEXT("Run");
+		inline static FName Crouch			= TEXT("Crouch");
+		inline static FName Lean			= TEXT("Lean");
+		inline static FName Inventory		= TEXT("Inventory");
+		inline static FName HideQuests		= TEXT("HideQuests");
+		inline static FName Interact		= TEXT("Interact");
+		inline static FName Equipment		= TEXT("Equipment");
+		inline static FName Equipment_Alt	= TEXT("Equipment_Alt");
+
+		inline static TSet All = {Pause, Turn, Move, Run, Crouch, Lean,
+			Inventory, HideQuests, Interact, Equipment, Equipment_Alt};
+	}
 }

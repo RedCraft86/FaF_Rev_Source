@@ -24,6 +24,7 @@ private:
 	bool bLoading;
 	TArray<uint8> Sequence;
 	uint8 LatentID, UnloadingLevels, LoadingLevels;
+	UPROPERTY(Transient) AFRPlayerBase* PlayerChar;
 	UPROPERTY(Transient) TSet<UObject*> LoadedObjs;
 	UPROPERTY(Transient) UGameSectionData* ThisData;
 	UPROPERTY(Transient) UGameSectionData* LastData;
@@ -47,6 +48,7 @@ private:
 	UFUNCTION() void OnLevelLoaded();
 
 	ULoadingWidgetBase* GetLoadingWidget();
+	virtual void OnWorldBeginPlay(UWorld& InWorld) override;
 	virtual void Initialize(FSubsystemCollectionBase& Collection);
 	virtual bool ShouldCreateSubsystem(UObject* Outer) const override;
 	virtual bool DoesSupportWorldType(const EWorldType::Type WorldType) const override

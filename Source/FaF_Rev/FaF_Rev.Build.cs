@@ -32,16 +32,10 @@ public class FaF_Rev : ModuleRules
 				"AssetRegistry",
 				"DeveloperSettings",
 				"DataGraphRuntime",
+				"PulldownStruct",
+				"ExpressiveText",
 				"GTRuntime",
 				"GTCore",
-			}
-		);
-		
-		PrivateDependencyModuleNames.AddRange(
-			new[]
-			{
-				"PulldownStruct",
-				"ExpressiveText"
 			}
 		);
 	}

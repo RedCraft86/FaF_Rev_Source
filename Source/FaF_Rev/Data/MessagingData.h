@@ -83,7 +83,7 @@ struct FAF_REV_API FGuideBookPageData : public FTableRowBase
 	FORCEINLINE bool IsValidData() const { return !CustomWidget.IsNull() || (!Label.IsEmptyOrWhitespace() && !Description.IsEmptyOrWhitespace()); }
 };
 
-USTRUCT(BlueprintType, DisplayName = "Guide Book Page ID")
+USTRUCT(BlueprintType)
 struct FAF_REV_API FGuideBookPageID : public FPulldownStructBase
 {
 	GENERATED_BODY()

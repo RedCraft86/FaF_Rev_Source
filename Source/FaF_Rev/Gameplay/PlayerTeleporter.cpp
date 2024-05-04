@@ -16,18 +16,7 @@ void APlayerTeleporter::TeleportPlayer() const
 {
 	if (AFRPlayerBase* Player = PlayerReference.LoadSynchronous())
 	{
-		Player->SetActorLocation(GetActorLocation(), false, nullptr, ETeleportType::ResetPhysics);
-		if (Player->IsPlayerControlled())
-		{
-			if (AController* Controller = Player->GetController())
-			{
-				Controller->SetControlRotation(GetActorRotation());
-			}
-		}
-		else
-		{
-			Player->SetActorRotation({0.0f, GetActorRotation().Yaw, 0.0f}, ETeleportType::ResetPhysics);
-		}
+		Player->TeleportPlayer(GetActorLocation(), GetActorRotation());
 	}
 }
 
