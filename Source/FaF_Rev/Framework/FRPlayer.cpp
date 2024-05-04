@@ -5,12 +5,13 @@
 #include "FRGameMode.h"
 #include "FRPlayerController.h"
 #include "ForceExitInterface.h"
-#include "Camera/CameraComponent.h"
+#include "Libraries/GTMathLibrary.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "GameFramework/SpringArmComponent.h"
 #include "Components/SpotLightComponent.h"
 #include "Components/CapsuleComponent.h"
 #include "Components/AudioComponent.h"
+#include "Camera/CameraComponent.h"
 #include "Kismet/GameplayStatics.h"
 #include "EngineUtils.h"
 
@@ -238,7 +239,7 @@ void AFRPlayerBase::SetRunState(const bool bInState)
 	if (bRunning != bInState)
 	{
 		const bool bCrouching = IsCrouching();
-		bRunning = !bCrouching && bInState;
+		bRunning = !IsStaminaPunished() && !bCrouching && bInState;
 		if (bRunning)
 		{
 			StateFlags |= PLAYER_STATE_FLAG(PCF_Running);
@@ -494,12 +495,28 @@ bool AFRPlayerBase::IsGamePaused() const
 
 bool AFRPlayerBase::IsStandingBlocked() const
 {
-	return false;
+	FVector Start, End = FVector::ZeroVector;
+	UGTMathLibrary::GetActorLineTraceVectors(this, EVectorDirection::Up,
+		GetCapsuleComponent()->GetScaledCapsuleRadius() + HalfHeights.X + 5.0f, Start, End);
+        		
+	FHitResult HitResult;
+	return GetWorld()->SweepSingleByChannel(HitResult, Start, End, FQuat::Identity, CeilingTraceChannel,
+		FCollisionShape::MakeSphere(10.0f), FCollisionQueryParams(NAME_None, false, this));
 }
 
 bool AFRPlayerBase::IsLeaningBlocked(const float Direction) const
 {
-	return false;
+	if (FMath::IsNearlyZero(Direction))
+		return false;
+	
+	FVector Start, End = FVector::ZeroVector;
+	UGTMathLibrary::GetActorLineTraceVectors(this, EVectorDirection::Right, WallTraceLength * Direction, Start, End);
+	Start += FVector(0.0f, 0.0f, CameraArm->GetRelativeLocation().Z);
+	End += FVector(0.0f, 0.0f, CameraArm->GetRelativeLocation().Z);
+
+	FHitResult HitResult;
+	return GetWorld()->SweepSingleByChannel(HitResult, Start, End, FQuat::Identity, WallTraceChannel,
+		FCollisionShape::MakeSphere(10.0f), FCollisionQueryParams(NAME_None, false, this));
 }
 
 bool AFRPlayerBase::TraceInteraction(FHitResult& OutHitResult, FPlayerInteraction& OutData) const
@@ -509,6 +526,18 @@ bool AFRPlayerBase::TraceInteraction(FHitResult& OutHitResult, FPlayerInteractio
 
 void AFRPlayerBase::TickStamina()
 {
+	const bool bShouldDrain = IsMoving() && IsRunning();
+	StaminaDelta = bShouldDrain ? -StaminaRates.Y : StaminaRates.X;
+	CurrentStamina = FMath::Clamp(StaminaDelta + CurrentStamina, 0.0f, MaxStamina);
+	if (CurrentStamina < 0.01f && !IsStaminaPunished())
+	{
+		SetRunState(false);
+		StateFlags |= PLAYER_STATE_FLAG(PCF_RunLocked);
+	}
+	else if (FMath::IsNearlyEqual(CurrentStamina, MaxStamina, 1.0f) && IsStaminaPunished())
+	{
+		StateFlags &= ~PLAYER_STATE_FLAG(PCF_RunLocked);
+	}
 }
 
 void AFRPlayerBase::TickFootstep()
@@ -517,6 +546,17 @@ void AFRPlayerBase::TickFootstep()
 
 void AFRPlayerBase::LeanWallDetect()
 {
+	const float Dir = Player::LeanStateToFloat(LeanState);
+	if (FMath::IsNearlyZero(Dir))
+	{
+		GetWorldTimerManager().PauseTimer(WallDetectTimer);
+		return;
+	}
+	
+	if (IsLeaningBlocked(Dir))
+	{
+		SetLeanState(EPlayerLeanState::None);
+	}
 }
 
 void AFRPlayerBase::SlowTick(const float DeltaTime)
