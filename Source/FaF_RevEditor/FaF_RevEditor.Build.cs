@@ -13,12 +13,13 @@ public class FaF_RevEditor : ModuleRules
             {
                 "Core",
                 "CoreUObject",
-                "AssetTools",
-                "UnrealEd",
+                "UnrealEd", 
                 "Engine",
+                "AssetTools",
+                "DeveloperSettings",
+                "PulldownBuilder",
                 "GTEditor", 
-                "FaF_Rev",
-                "PulldownBuilder"
+                "FaF_Rev"
             }
         );
     }
