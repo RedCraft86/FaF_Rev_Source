@@ -33,7 +33,7 @@ public:
 	UPROPERTY(VisibleInstanceOnly, Category = "Pulldown", meta = (DisplayPriority = -1))
 		FName FoundObject;
 	
-	virtual FName GetDataObjSettingName() const { return NAME_None; }
+	virtual FName GetDataObjectSettingName() const { return NAME_None; }
 	virtual TSoftObjectPtr<> GetDataObject() const { return nullptr; }
 
 protected:

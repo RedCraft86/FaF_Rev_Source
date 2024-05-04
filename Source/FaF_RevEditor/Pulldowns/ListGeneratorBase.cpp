@@ -45,8 +45,8 @@ void UObjectListGenerator::PostEditChangeProperty(FPropertyChangedEvent& Propert
 
 void UObjectListGenerator::OnSettingsChanged(UObject* Object, FPropertyChangedEvent& Property)
 {
-	if (IsValid(Object) && !GetDataObjSettingName().IsNone()
-		&& Property.GetPropertyName() == GetDataObjSettingName())
+	if (IsValid(Object) && !GetDataObjectSettingName().IsNone()
+		&& Property.GetPropertyName() == GetDataObjectSettingName())
 	{
 		DataObjectPtr = GetDataObject();
 		UpdateObjectInfo(DataObjectPtr.LoadSynchronous());
