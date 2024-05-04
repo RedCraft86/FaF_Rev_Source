@@ -166,15 +166,15 @@ public:
 		bool HasControlFlag(const TEnumAsByte<EPlayerControlFlags> InFlag) const;
 
 	UFUNCTION(BlueprintCallable, Category = "Player")
-		void AddLockFlag(const FPlayerLockState InFlag);
+		void AddLockFlag(const FPlayerLockFlag InFlag);
 	void AddLockFlag(const FName InFlag);
 	
 	UFUNCTION(BlueprintCallable, Category = "Player")
-		void ClearLockFlag(const FPlayerLockState InFlag);
+		void ClearLockFlag(const FPlayerLockFlag InFlag);
 	void ClearLockFlag(const FName InFlag);
 
 	UFUNCTION(BlueprintPure, Category = "Player")
-		bool HasLockFlag(const FPlayerLockState InFlag) const;
+		bool HasLockFlag(const FPlayerLockFlag InFlag) const;
 	bool HasLockFlag(const FName InFlag) const;
 	
 	UFUNCTION(BlueprintCallable, Category = "Player")

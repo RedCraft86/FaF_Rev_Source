@@ -33,10 +33,10 @@ ENUM_RANGE_BY_FIRST_AND_LAST(EPlayerControlFlags, PCF_Locked, PCF_CanHide);
 	| PCF_CanWalk | PCF_CanRun | PCF_CanCrouch | PCF_CanLean | PCF_CanInteract | PCF_CanHide
 
 USTRUCT(BlueprintType)
-struct FAF_REV_API FPlayerLockState : public FPulldownStructBase
+struct FAF_REV_API FPlayerLockFlag : public FPulldownStructBase
 {
 	GENERATED_BODY()
-	SETUP_PULLDOWN(FPlayerLockState)
+	SETUP_PULLDOWN(FPlayerLockFlag)
 };
 
 UENUM(BlueprintType)

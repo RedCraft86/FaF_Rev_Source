@@ -144,7 +144,7 @@ bool AFRPlayerBase::HasControlFlag(const TEnumAsByte<EPlayerControlFlags> InFlag
 	return ControlFlags & InFlag.GetValue();
 }
 
-void AFRPlayerBase::AddLockFlag(const FPlayerLockState InFlag)
+void AFRPlayerBase::AddLockFlag(const FPlayerLockFlag InFlag)
 {
 	AddLockFlag(InFlag.SelectedValue);
 }
@@ -155,7 +155,7 @@ void AFRPlayerBase::AddLockFlag(const FName InFlag)
  	if (!InFlag.IsNone()) LockFlags.Add(InFlag);
 }
 
-void AFRPlayerBase::ClearLockFlag(const FPlayerLockState InFlag)
+void AFRPlayerBase::ClearLockFlag(const FPlayerLockFlag InFlag)
 {
 	ClearLockFlag(InFlag.SelectedValue);
 }
@@ -166,7 +166,7 @@ void AFRPlayerBase::ClearLockFlag(const FName InFlag)
  	if (!InFlag.IsNone()) LockFlags.Remove(InFlag);
 }
 
-bool AFRPlayerBase::HasLockFlag(const FPlayerLockState InFlag) const
+bool AFRPlayerBase::HasLockFlag(const FPlayerLockFlag InFlag) const
 {
 	return HasLockFlag(InFlag.SelectedValue);
 }
