@@ -11,6 +11,7 @@
 #include "Components/AudioComponent.h"
 #include "Kismet/GameplayStatics.h"
 #include "EngineUtils.h"
+#include "GameFramework/CharacterMovementComponent.h"
 
 #define RUN_FOV_KEY		FName(TEXT("Internal_RunFOV"))
 #define CROUCH_FOV_KEY	FName(TEXT("Internal_CrouchFOV"))
@@ -46,6 +47,8 @@ AFRPlayerBase::AFRPlayerBase()
 	PlayerLight = CreateDefaultSubobject<UPointLightComponent>("PlayerLight");
 	PlayerLight->SetupAttachment(GetCapsuleComponent());
 
+	SlowTickInterval = 0.25f;
+	
 	ControlFlags = DEFAULT_PLAYER_CONTROL_FLAGS;
 	StateFlags = 0;
 	InteractTraceChannel = ECC_Visibility;
@@ -153,6 +156,12 @@ void AFRPlayerBase::SetControlFlag(const TEnumAsByte<EPlayerControlFlags> InFlag
 	if (!HasControlFlag(InFlag))
 	{
 		ControlFlags |= InFlag.GetValue();
+
+		switch (InFlag)
+		{
+		case PCF_UseStamina:	GetWorldTimerManager().UnPauseTimer(StaminaTimer); break;
+		default: return;
+		}
 	}
 }
 
@@ -161,6 +170,15 @@ void AFRPlayerBase::UnsetControlFlag(const TEnumAsByte<EPlayerControlFlags> InFl
 	if (HasControlFlag(InFlag))
 	{
 		ControlFlags &= ~InFlag.GetValue();
+
+		switch (InFlag)
+		{
+		case PCF_UseStamina:	GetWorldTimerManager().PauseTimer(StaminaTimer); break;
+		case PCF_CanRun:		SetRunState(false); break;
+		case PCF_CanCrouch:		SetCrouchState(false); break;
+		case PCF_CanLean:		SetLeanState(EPlayerLeanState::None); break;
+		default: return;
+		}
 	}
 }
 
@@ -251,10 +269,12 @@ void AFRPlayerBase::SetCrouchState(const bool bInState)
 		if (bCrouching)
 		{
 			StateFlags |= PLAYER_STATE_FLAG(PCF_Crouching);
+			AddFieldOfViewModifier(CROUCH_FOV_KEY, CrouchWalkFOV);
 		}
 		else
 		{
 			StateFlags &= ~PLAYER_STATE_FLAG(PCF_Crouching);
+			RemoveFieldOfViewModifier(CROUCH_FOV_KEY);
 		}
 
 		HalfHeightValue.TargetValue = bCrouching ? HalfHeights.Y : HalfHeights.X;
@@ -276,7 +296,7 @@ void AFRPlayerBase::SetLeanState(const EPlayerLeanState InState)
 	{
 		LeanState = EPlayerLeanState::None;
 		LeanCamOffset = FVector2D::ZeroVector;
-		GetWorldTimerManager().PauseTimer(WallDetectionTimer);
+		GetWorldTimerManager().PauseTimer(WallDetectTimer);
 	}
 	else
 	{
@@ -285,7 +305,7 @@ void AFRPlayerBase::SetLeanState(const EPlayerLeanState InState)
 		{
 			LeanState = InState;
 			LeanCamOffset = LeanOffsets * Dir;
-			GetWorldTimerManager().UnPauseTimer(WallDetectionTimer);
+			GetWorldTimerManager().UnPauseTimer(WallDetectTimer);
 		}
 	}
 }
@@ -474,12 +494,25 @@ void AFRPlayerBase::TickFootstep()
 {
 }
 
-void AFRPlayerBase::LeanWallDetection()
+void AFRPlayerBase::LeanWallDetect()
 {
 }
 
-void AFRPlayerBase::TickWindowFocus()
+void AFRPlayerBase::SlowTick(const float DeltaTime)
 {
+	if (IsRunning())
+	{
+		if (!FieldOfView.Modifiers.Contains(RUN_FOV_KEY))
+		{
+			FieldOfView.Modifiers.Add(RUN_FOV_KEY, RunningFOV);
+		}
+	}
+	else if (FieldOfView.Modifiers.Contains(RUN_FOV_KEY))
+	{
+		FieldOfView.Modifiers.Remove(RUN_FOV_KEY);
+	}
+
+	GEngine->AddOnScreenDebugMessage(-1, DeltaTime, FColor::Green, TEXT("Tick... Tock..."));
 }
 
 void AFRPlayerBase::BeginPlay()
@@ -487,6 +520,7 @@ void AFRPlayerBase::BeginPlay()
 	Super::BeginPlay();
 	CameraShakes.LoadAssetsAsync();
 	FootstepSounds.LoadAssetsAsync();
+	GetCharacterMovement()->MaxWalkSpeed = WalkingSpeed;
 	if (const APlayerCameraManager* CM = UGameplayStatics::GetPlayerCameraManager(this, 0))
 	{
 		EquipmentRoot->AttachToComponent(CM->GetTransformComponent(),
@@ -501,12 +535,26 @@ void AFRPlayerBase::BeginPlay()
 	}
 
 	PlayerController = FRPlayerController(this);
+
+	FTimerManager& TM = GetWorldTimerManager();
+	TM.SetTimer(StaminaTimer, this, &AFRPlayerBase::TickStamina, 0.1f, true);
+	TM.SetTimer(WallDetectTimer, this, &AFRPlayerBase::LeanWallDetect, 0.1f, true);
+	TM.PauseTimer(WallDetectTimer);
+	if (!HasControlFlag(PCF_UseStamina))
+	{
+		TM.PauseTimer(StaminaTimer);
+	}
 }
 
 void AFRPlayerBase::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
-
+	if (SlowTickTime >= SlowTickInterval)
+	{
+		SlowTick(SlowTickTime);
+		SlowTickTime = 0.0f;
+	}
+	else { SlowTickTime += DeltaTime; }
 }
 
 void AFRPlayerBase::OnConstruction(const FTransform& Transform)

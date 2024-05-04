@@ -36,6 +36,9 @@ public:
 	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, Category = "DefaultSubobjects")
 		UPointLightComponent* PlayerLight;
 
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Tick", meta = (ClampMin = 0.05f, UIMin = 0.05f))
+		float SlowTickInterval;
+	
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Settings", meta = (Bitmask, BitmaskEnum = "/Script/FaF_Rev.EPlayerControlFlags"))
 		int32 ControlFlags;
 	
@@ -141,7 +144,8 @@ protected:
 
 	UPROPERTY(Transient) class AFRGameModeBase* GameMode;
 	UPROPERTY(Transient) class AFRPlayerController* PlayerController;
-	
+
+	float SlowTickTime;
 	FVector CamPosition;
 	FGTInterpScalar FOVValue;
 	FGTInterpScalar HalfHeightValue;
@@ -154,8 +158,7 @@ protected:
 
 	FTimerHandle StaminaTimer;
 	FTimerHandle FootstepTimer;
-	FTimerHandle WallDetectionTimer;
-	FTimerHandle WindowFocusTimer;
+	FTimerHandle WallDetectTimer;
 
 public:
 
@@ -289,9 +292,9 @@ protected:
 	
 	void TickStamina();
 	void TickFootstep();
-	void LeanWallDetection();
-	void TickWindowFocus();
-
+	void LeanWallDetect();
+	void SlowTick(const float DeltaTime);
+	
 	virtual void BeginPlay() override;
 	virtual void Tick(float DeltaTime) override;
 	virtual void OnConstruction(const FTransform& Transform) override;
