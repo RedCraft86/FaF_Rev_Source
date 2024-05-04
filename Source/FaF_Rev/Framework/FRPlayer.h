@@ -39,6 +39,9 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Settings", meta = (Bitmask, BitmaskEnum = "/Script/FaF_Rev.EPlayerControlFlags"))
 		int32 ControlFlags;
 
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Settings")
+		TSet<FName> LockFlags;
+
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Settings|Interaction")
 		TEnumAsByte<ECollisionChannel> InteractTraceChannel;
 
@@ -132,8 +135,7 @@ protected:
 
 	UPROPERTY(Transient) class AFRGameModeBase* GameMode;
 	UPROPERTY(Transient) class AFRControllerBase* PlayerController;
-
-	TSet<FName> LockFlags;
+	
 	FVector CamPosition;
 	EPlayerLeanState LeanState;
 	FGTInterpScalar FieldOfViewValue;
