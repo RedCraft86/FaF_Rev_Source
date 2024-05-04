@@ -34,7 +34,7 @@ public:
 		FName FoundObject;
 	
 	virtual FName GetDataObjectSettingName() const { return NAME_None; }
-	virtual TSoftObjectPtr<> GetDataObject() const { return nullptr; }
+	virtual TSoftObjectPtr<UObject> GetDataObject() const { return nullptr; }
 
 protected:
 	
@@ -48,7 +48,7 @@ protected:
 	virtual FString GetSourceAssetName() const override { return DataObjectPtr.GetAssetName(); }
 	virtual void UpdateObjectInfo(const UObject* InObj) { FoundObject = InObj ? InObj->GetFName() : NAME_None; }
 	
-	UPROPERTY(Transient) TSoftObjectPtr<> DataObjectPtr;
+	UPROPERTY(Transient) TSoftObjectPtr<UObject> DataObjectPtr;
 	UPROPERTY(Transient) TArray<FName> PreChangeRowNames;
 };
 

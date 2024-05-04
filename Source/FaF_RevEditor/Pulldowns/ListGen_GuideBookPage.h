@@ -16,7 +16,7 @@ class UListGen_GuideBookPage final : public UTableListGenerator
 public:
 
 	virtual FName GetDataObjectSettingName() const override { return GET_MEMBER_NAME_CHECKED(UFRSettings, GuideTable); }
-	virtual TSoftObjectPtr<> GetDataObject() const override { return UFRSettings::Get()->GuideTable; }
+	virtual TSoftObjectPtr<UObject> GetDataObject() const override { return UFRSettings::Get()->GuideTable; }
 
 private:
 	
