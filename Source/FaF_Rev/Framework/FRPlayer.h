@@ -150,6 +150,7 @@ protected:
 	FGTInterpScalar FOVValue;
 	FGTInterpScalar HalfHeightValue;
 	FPlayerInteraction InteractData;
+	TSoftObjectPtr<UObject> HidingSpot;
 	TSoftObjectPtr<UObject> WorldDevice;
 	TSet<TSoftObjectPtr<UObject>> EnemyStack;
 	FVector2D LeanCamOffset, SwayCamOffset, CamOffset;
@@ -248,12 +249,24 @@ public:
 	UFUNCTION(BlueprintPure, Category = "Player")
 		USceneComponent* GetLockOnTarget() const;
 
+	UFUNCTION(BlueprintCallable, BlueprintPure = false, Category = "Player")
+		void ForceExitHiding() const;
+	
+	UFUNCTION(BlueprintCallable, Category = "Player")
+		void SetHidingSpot(const UObject* InObject);
+
+	UFUNCTION(BlueprintPure, Category = "Player")
+		UObject* GetHidingSpot() const;
+	
+	UFUNCTION(BlueprintCallable, BlueprintPure = false, Category = "Player")
+		void ForceExitWorldDevice() const;
+	
 	UFUNCTION(BlueprintCallable, Category = "Player")
 		void SetWorldDevice(const UObject* InObject);
 
 	UFUNCTION(BlueprintPure, Category = "Player")
 		UObject* GetWorldDevice() const;
-
+	
 	UFUNCTION(BlueprintCallable, Category = "Player")
 		void AddEnemyToStack(const UObject* InObject);
 

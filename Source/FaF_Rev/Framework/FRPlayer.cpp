@@ -4,14 +4,15 @@
 #include "FRPlayer.h"
 #include "FRGameMode.h"
 #include "FRPlayerController.h"
+#include "ForceExitInterface.h"
 #include "Camera/CameraComponent.h"
+#include "GameFramework/CharacterMovementComponent.h"
 #include "GameFramework/SpringArmComponent.h"
 #include "Components/SpotLightComponent.h"
 #include "Components/CapsuleComponent.h"
 #include "Components/AudioComponent.h"
 #include "Kismet/GameplayStatics.h"
 #include "EngineUtils.h"
-#include "GameFramework/CharacterMovementComponent.h"
 
 #define RUN_FOV_KEY		FName(TEXT("Internal_RunFOV"))
 #define CROUCH_FOV_KEY	FName(TEXT("Internal_CrouchFOV"))
@@ -365,6 +366,26 @@ void AFRPlayerBase::SetLockOnTarget(const USceneComponent* InComponent)
 USceneComponent* AFRPlayerBase::GetLockOnTarget() const
 {
 	return LockOnTarget.LoadSynchronous();
+}
+
+void AFRPlayerBase::ForceExitHiding() const
+{
+	IForceExitInterface::Exit(HidingSpot.LoadSynchronous());
+}
+
+void AFRPlayerBase::SetHidingSpot(const UObject* InObject)
+{
+	HidingSpot = InObject;
+}
+
+UObject* AFRPlayerBase::GetHidingSpot() const
+{
+	return HidingSpot.LoadSynchronous();
+}
+
+void AFRPlayerBase::ForceExitWorldDevice() const
+{
+	IForceExitInterface::Exit(WorldDevice.LoadSynchronous());
 }
 
 void AFRPlayerBase::SetWorldDevice(const UObject* InObject)
