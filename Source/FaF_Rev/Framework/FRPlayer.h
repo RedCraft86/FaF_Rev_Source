@@ -59,6 +59,9 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Settings|Camera")
 		float FieldOfViewSpeed;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Settings|Camera")
+		float ChaseFOV;
 	
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Settings|Camera|LockOn")
 		TSoftObjectPtr<USceneComponent> LockOnTarget;
@@ -145,10 +148,15 @@ protected:
 	FPlayerInteraction InteractData;
 	TSoftObjectPtr<UObject> WorldDevice;
 	TSet<TSoftObjectPtr<UObject>> EnemyStack;
-	FVector2D LeanOffset, SwayOffset, CamOffset;
-	float WalkSpeedTarget, CurrentStamina, StaminaDelta;
+	FVector2D LeanCamOffset, SwayCamOffset, CamOffset;
+	float MoveSpeedTarget, CurrentStamina, StaminaDelta;
 	EPlayerLeanState LeanState;
-	
+
+	FTimerHandle StaminaTimer;
+	FTimerHandle FootstepTimer;
+	FTimerHandle WallDetectionTimer;
+	FTimerHandle WindowFocusTimer;
+
 public:
 
 	UFUNCTION(BlueprintCallable, Category = "Player")
@@ -251,13 +259,23 @@ public:
 	
 	UFUNCTION(BlueprintCallable, Category = "Player")
 		void ClearEnemyStack();
-	
+
+	void EnemyStackChanged();
 	void TeleportPlayer(const FVector& InLocation, const FRotator& InRotation);
 	virtual void SetActorHiddenInGame(bool bNewHidden) override;
 
 protected:
 
 	bool ShouldLock() const;
+	bool IsGamePaused() const;
+	bool IsStandingBlocked() const;
+	bool IsLeaningBlocked(const float Direction) const;
+	bool TraceInteraction(FHitResult& OutHitResult, FPlayerInteraction& OutData) const;
+	
+	void TickStamina();
+	void TickFootstep();
+	void LeanWallDetection();
+	void TickWindowFocus();
 
 	virtual void BeginPlay() override;
 	virtual void Tick(float DeltaTime) override;

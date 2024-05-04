@@ -12,6 +12,10 @@
 #include "Kismet/GameplayStatics.h"
 #include "EngineUtils.h"
 
+#define RUN_FOV_KEY		FName(TEXT("Internal_RunFOV"))
+#define CROUCH_FOV_KEY	FName(TEXT("Internal_CrouchFOV"))
+#define CHASE_FOV_KEY	FName(TEXT("Internal_ChaseFOV"))
+
 AFRPlayerBase::AFRPlayerBase()
 {
 	PrimaryActorTick.bCanEverTick = true;
@@ -49,6 +53,7 @@ AFRPlayerBase::AFRPlayerBase()
 	Sensitivity = FVector2D::UnitVector;
 	FieldOfView = {90.0f};
 	FieldOfViewSpeed = 10.0f;
+	ChaseFOV = 2.0f;
 	LockOnTarget = nullptr;
 	LockOnSpeed = 5.0f;
 	MoveSpeedMultiplier = {1.0f};
@@ -84,10 +89,10 @@ AFRPlayerBase::AFRPlayerBase()
 	InteractData = {};
 	WorldDevice = nullptr;
 	EnemyStack = {};
-	LeanOffset = FVector2D::ZeroVector;
-	SwayOffset = FVector2D::ZeroVector;
+	LeanCamOffset = FVector2D::ZeroVector;
+	SwayCamOffset = FVector2D::ZeroVector;
 	CamOffset = FVector2D::ZeroVector;
-	WalkSpeedTarget = WalkingSpeed;
+	MoveSpeedTarget = WalkingSpeed;
 	CurrentStamina = MaxStamina;
 	StaminaDelta = 0.0f;
 	LeanState = EPlayerLeanState::None;
@@ -95,6 +100,29 @@ AFRPlayerBase::AFRPlayerBase()
 
 void AFRPlayerBase::ResetStates()
 {
+	ClearEnemyStack();
+	SetWorldDevice(nullptr);
+	SetLockOnTarget(nullptr);
+	
+	SetRunState(false);
+	SetCrouchState(false);
+	SetLeanState(EPlayerLeanState::None);
+	
+	LockFlags.Remove(NAME_None);
+	for (const FName& Flag : Player::LockFlags::CanReset)
+	{
+		LockFlags.Remove(Flag);
+	}
+
+	ControlFlags = DEFAULT_PLAYER_CONTROL_FLAGS;
+	MoveSpeedMultiplier.Modifiers.Empty();
+	FieldOfView.Modifiers.Empty();
+	FOVValue.TargetValue = FieldOfView.Evaluate();
+	FOVValue.SnapToTarget();
+	HalfHeightValue.SnapToTarget();
+	InteractData.Reset();
+	SwayCamOffset = FVector2D::ZeroVector;
+	CurrentStamina = MaxStamina;
 }
 
 void AFRPlayerBase::SetPlayerSettings(const FPlayerSettings& InSettings)
@@ -187,6 +215,25 @@ bool AFRPlayerBase::IsMoving() const
 
 void AFRPlayerBase::SetRunState(const bool bInState)
 {
+	bool bRunning = IsRunning();
+	if (bRunning != bInState)
+	{
+		const bool bCrouching = IsCrouching();
+		bRunning = !bCrouching && bInState;
+		if (bRunning)
+		{
+			StateFlags |= PLAYER_STATE_FLAG(PCF_Running);
+		}
+		else
+		{
+			StateFlags &= ~PLAYER_STATE_FLAG(PCF_Running);
+		}
+
+		if (!bCrouching)
+		{
+			MoveSpeedTarget = bRunning ? RunningSpeed : WalkingSpeed;
+		}
+	}
 }
 
 bool AFRPlayerBase::IsRunning() const
@@ -196,6 +243,26 @@ bool AFRPlayerBase::IsRunning() const
 
 void AFRPlayerBase::SetCrouchState(const bool bInState)
 {
+	bool bCrouching = IsCrouching();
+	if (bCrouching != bInState)
+	{
+		const bool bRunning = IsRunning();
+		bCrouching = !bRunning && bInState;
+		if (bCrouching)
+		{
+			StateFlags |= PLAYER_STATE_FLAG(PCF_Crouching);
+		}
+		else
+		{
+			StateFlags &= ~PLAYER_STATE_FLAG(PCF_Crouching);
+		}
+
+		HalfHeightValue.TargetValue = bCrouching ? HalfHeights.Y : HalfHeights.X;
+		if (!bRunning)
+		{
+			MoveSpeedTarget = bCrouching ? CrouchWalkSpeed : WalkingSpeed;
+		}
+	}
 }
 
 bool AFRPlayerBase::IsCrouching() const
@@ -205,6 +272,22 @@ bool AFRPlayerBase::IsCrouching() const
 
 void AFRPlayerBase::SetLeanState(const EPlayerLeanState InState)
 {
+	if (InState == EPlayerLeanState::None)
+	{
+		LeanState = EPlayerLeanState::None;
+		LeanCamOffset = FVector2D::ZeroVector;
+		GetWorldTimerManager().PauseTimer(WallDetectionTimer);
+	}
+	else
+	{
+		const float Dir = Player::LeanStateToFloat(InState);
+		if (!IsLeaningBlocked(Dir))
+		{
+			LeanState = InState;
+			LeanCamOffset = LeanOffsets * Dir;
+			GetWorldTimerManager().UnPauseTimer(WallDetectionTimer);
+		}
+	}
 }
 
 EPlayerLeanState AFRPlayerBase::GetLeanState() const
@@ -279,17 +362,32 @@ void AFRPlayerBase::AddEnemyToStack(const UObject* InObject)
 {
 	EnemyStack.Remove(nullptr);
 	EnemyStack.Add(InObject);
+	EnemyStackChanged();
 }
 
 void AFRPlayerBase::RemoveEnemyFromStack(const UObject* InObject)
 {
 	EnemyStack.Remove(nullptr);
 	EnemyStack.Remove(InObject);
+	EnemyStackChanged();
 }
 
 void AFRPlayerBase::ClearEnemyStack()
 {
 	EnemyStack.Empty();
+	EnemyStackChanged();
+}
+
+void AFRPlayerBase::EnemyStackChanged()
+{
+	if (EnemyStack.IsEmpty())
+	{
+		RemoveFieldOfViewModifier(CHASE_FOV_KEY);
+	}
+	else
+	{
+		AddFieldOfViewModifier(CHASE_FOV_KEY, ChaseFOV);
+	}
 }
 
 void AFRPlayerBase::TeleportPlayer(const FVector& InLocation, const FRotator& InRotation)
@@ -320,6 +418,39 @@ void AFRPlayerBase::SetActorHiddenInGame(bool bNewHidden)
 bool AFRPlayerBase::ShouldLock() const
 {
 	return ControlFlags & PCF_Locked || !LockFlags.IsEmpty();
+}
+
+bool AFRPlayerBase::IsGamePaused() const
+{
+	return GetWorldSettings()->GetPauserPlayerState() != nullptr;
+}
+
+bool AFRPlayerBase::IsStandingBlocked() const
+{
+}
+
+bool AFRPlayerBase::IsLeaningBlocked(const float Direction) const
+{
+}
+
+bool AFRPlayerBase::TraceInteraction(FHitResult& OutHitResult, FPlayerInteraction& OutData) const
+{
+}
+
+void AFRPlayerBase::TickStamina()
+{
+}
+
+void AFRPlayerBase::TickFootstep()
+{
+}
+
+void AFRPlayerBase::LeanWallDetection()
+{
+}
+
+void AFRPlayerBase::TickWindowFocus()
+{
 }
 
 void AFRPlayerBase::BeginPlay()

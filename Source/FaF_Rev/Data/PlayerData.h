@@ -262,7 +262,8 @@ namespace Player
 		inline static TSet All = {Loading, Cutscene, Dialogue, Jumpscare, GuideScreen,
 			Inventory, Inspection, WorldDevice, Hiding};
 
-		inline static TSet AllowJumpscare {Inventory, Inspection, WorldDevice};
+		inline static TSet CanReset = {Inventory, Inspection, WorldDevice, Hiding};
+		inline static TSet AllowJumpscare = {Inventory, Inspection, WorldDevice};
 	}
 	
 	namespace Actions
@@ -281,5 +282,15 @@ namespace Player
 
 		inline static TSet All = {Pause, Turn, Move, Run, Crouch, Lean,
 			Inventory, HideQuests, Interact, Equipment, Equipment_Alt};
+	}
+
+	static float LeanStateToFloat(const EPlayerLeanState& State)
+	{
+		switch (State)
+		{
+		case EPlayerLeanState::Left: return -1.0f;
+		case EPlayerLeanState::Right: return 1.0f;
+		default: return 0.0f;
+		}
 	}
 }
