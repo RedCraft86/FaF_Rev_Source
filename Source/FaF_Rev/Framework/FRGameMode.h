@@ -6,10 +6,10 @@
 #include "GTGameMode.h"
 #include "FRGameMode.generated.h"
 
-#define FRGamemode(Context) AGTGameMode::Get<AFRGameModeBase>(Context)
+#define FRGamemode(Context) AGTGameModeBase::Get<AFRGameModeBase>(Context)
 
 UCLASS(Abstract)
-class FAF_REV_API AFRGameModeBase final : public AGTGameMode
+class FAF_REV_API AFRGameModeBase final : public AGTGameModeBase
 {
 	GENERATED_BODY()
 

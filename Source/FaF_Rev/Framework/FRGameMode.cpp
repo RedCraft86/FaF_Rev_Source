@@ -1,13 +1,13 @@
 ﻿// Copyright (C) RedCraft86. All Rights Reserved.
 
 #include "FRGameMode.h"
-#include "FRController.h"
+#include "FRPlayerController.h"
 #include "GTUserWidget.h"
 #include "FRPlayer.h"
 
 AFRGameModeBase::AFRGameModeBase(): PhotoModeActor(nullptr), InspectionActor(nullptr)
 {
-	PlayerControllerClass = AFRControllerBase::StaticClass();
+	PlayerControllerClass = AFRPlayerController::StaticClass();
 	DefaultPawnClass = AFRPlayerBase::StaticClass();
 }
 

@@ -3,7 +3,7 @@
 
 #include "FRPlayer.h"
 #include "FRGameMode.h"
-#include "FRController.h"
+#include "FRPlayerController.h"
 #include "Camera/CameraComponent.h"
 #include "GameFramework/SpringArmComponent.h"
 #include "Components/SpotLightComponent.h"
@@ -500,7 +500,7 @@ void AFRPlayerBase::BeginPlay()
 		GameMode->InspectionActor = InspectionActor.LoadSynchronous();
 	}
 
-	PlayerController = FRController(this);
+	PlayerController = FRPlayerController(this);
 }
 
 void AFRPlayerBase::Tick(float DeltaTime)

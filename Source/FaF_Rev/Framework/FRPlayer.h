@@ -140,7 +140,7 @@ public:
 protected:
 
 	UPROPERTY(Transient) class AFRGameModeBase* GameMode;
-	UPROPERTY(Transient) class AFRControllerBase* PlayerController;
+	UPROPERTY(Transient) class AFRPlayerController* PlayerController;
 	
 	FVector CamPosition;
 	FGTInterpScalar FOVValue;
@@ -273,7 +273,7 @@ public:
 		AFRGameModeBase* GetGameMode() const { return GameMode; }
 	
 	UFUNCTION(BlueprintPure, Category = "Player")
-		AFRControllerBase* GetPlayerController() const { return PlayerController; }
+		AFRPlayerController* GetPlayerController() const { return PlayerController; }
 	
 	void EnemyStackChanged();
 	void TeleportPlayer(const FVector& InLocation, const FRotator& InRotation);
