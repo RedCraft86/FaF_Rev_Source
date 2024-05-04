@@ -38,6 +38,9 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Settings", meta = (Bitmask, BitmaskEnum = "/Script/FaF_Rev.EPlayerControlFlags"))
 		int32 ControlFlags;
+	
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Settings", meta = (Bitmask, BitmaskEnum = "/Script/FaF_Rev.EPlayerStateFlags"))
+		uint8 StateFlags;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Settings")
 		TSet<FName> LockFlags;
@@ -58,7 +61,7 @@ public:
 		float FieldOfViewSpeed;
 	
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Settings|Camera|LockOn")
-		USceneComponent* LockOnTarget;
+		TSoftObjectPtr<USceneComponent> LockOnTarget;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Settings|Camera|LockOn")
 		float LockOnSpeed;
@@ -137,15 +140,14 @@ protected:
 	UPROPERTY(Transient) class AFRControllerBase* PlayerController;
 	
 	FVector CamPosition;
-	EPlayerLeanState LeanState;
-	FGTInterpScalar FieldOfViewValue;
+	FGTInterpScalar FOVValue;
 	FGTInterpScalar HalfHeightValue;
 	FPlayerInteraction InteractData;
-	TSoftObjectPtr<AActor> WorldDevice;
-	TSet<TSoftObjectPtr<AActor>> EnemyStack;
+	TSoftObjectPtr<UObject> WorldDevice;
+	TSet<TSoftObjectPtr<UObject>> EnemyStack;
 	FVector2D LeanOffset, SwayOffset, CamOffset;
 	float WalkSpeedTarget, CurrentStamina, StaminaDelta;
-	bool bRunning, bCrouching, bStaminaPunished, bInteracting;
+	EPlayerLeanState LeanState;
 	
 public:
 
@@ -181,8 +183,76 @@ public:
 	
 	UFUNCTION(BlueprintCallable, Category = "Player")
 		void SetLightProperties(const FPointLightProperties& InProperties);
+
+	UFUNCTION(BlueprintPure, Category = "Player")
+		bool IsMoving() const;
+
+	UFUNCTION(BlueprintCallable, Category = "Player")
+		void SetRunState(const bool bInState);
+
+	UFUNCTION(BlueprintPure, Category = "Player")
+		bool IsRunning() const;
+
+	UFUNCTION(BlueprintCallable, Category = "Player")
+		void SetCrouchState(const bool bInState);
+
+	UFUNCTION(BlueprintPure, Category = "Player")
+		bool IsCrouching() const;
+
+	UFUNCTION(BlueprintCallable, Category = "Player")
+		void SetLeanState(const EPlayerLeanState InState);
+
+	UFUNCTION(BlueprintPure, Category = "Player")
+		EPlayerLeanState GetLeanState() const;
+
+	// Range: 0.0 -> 1.0
+	UFUNCTION(BlueprintCallable, Category = "Player")
+		void SetStaminaPercent(const float InStamina = 1.0f);
+
+	// Range: 0.0 -> 1.0
+	UFUNCTION(BlueprintPure, Category = "Player")
+		float GetStaminaPercent() const;
+
+	UFUNCTION(BlueprintPure, Category = "Player")
+		bool IsStaminaPunished() const;
+
+	UFUNCTION(BlueprintPure, Category = "Player")
+		bool GetInteractionState(FPlayerInteraction& Data) const;
+
+	UFUNCTION(BlueprintCallable, Category = "Player")
+		void AddFieldOfViewModifier(const FName InKey, const float InValue);
+
+	UFUNCTION(BlueprintCallable, Category = "Player")
+		void RemoveFieldOfViewModifier(const FName InKey);
+
+	UFUNCTION(BlueprintCallable, Category = "Player")
+		void AddMoveSpeedModifier(const FName InKey, const float InValue);
+
+	UFUNCTION(BlueprintCallable, Category = "Player")
+		void RemoveMoveSpeedModifier(const FName InKey);
+
+	UFUNCTION(BlueprintCallable, Category = "Player")
+		void SetLockOnTarget(const USceneComponent* InComponent);
+
+	UFUNCTION(BlueprintPure, Category = "Player")
+		USceneComponent* GetLockOnTarget() const;
+
+	UFUNCTION(BlueprintCallable, Category = "Player")
+		void SetWorldDevice(const UObject* InObject);
+
+	UFUNCTION(BlueprintPure, Category = "Player")
+		UObject* GetWorldDevice() const;
+
+	UFUNCTION(BlueprintCallable, Category = "Player")
+		void AddEnemyToStack(const UObject* InObject);
+
+	UFUNCTION(BlueprintCallable, Category = "Player")
+		void RemoveEnemyFromStack(const UObject* InObject);
 	
-	void TeleportPlayer(const FVector InLocation, const FRotator InRotation);
+	UFUNCTION(BlueprintCallable, Category = "Player")
+		void ClearEnemyStack();
+	
+	void TeleportPlayer(const FVector& InLocation, const FRotator& InRotation);
 	virtual void SetActorHiddenInGame(bool bNewHidden) override;
 
 protected:

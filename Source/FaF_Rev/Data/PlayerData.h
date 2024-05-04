@@ -32,6 +32,18 @@ ENUM_RANGE_BY_FIRST_AND_LAST(EPlayerControlFlags, PCF_Locked, PCF_CanHide);
 #define DEFAULT_PLAYER_CONTROL_FLAGS PCF_UseStamina | PCF_CanPause | PCF_CanTurn \
 	| PCF_CanWalk | PCF_CanRun | PCF_CanCrouch | PCF_CanLean | PCF_CanInteract | PCF_CanHide
 
+UENUM(BlueprintType, meta = (Bitflags, UseEnumValuesAsMaskValuesInEditor = "true"))
+enum class EPlayerStateFlags : uint8
+{
+	PSF_None		= 0			UMETA(Hidden),
+	PCF_Running		= 1 << 0	UMETA(DisplayName = "Running"),
+	PCF_RunLocked	= 1 << 1	UMETA(DisplayName = "Stamina Punished"),
+	PCF_Crouching	= 1 << 2	UMETA(DisplayName = "Crouching"),
+	PCF_Interacting	= 1 << 3	UMETA(DisplayName = "Interacting"),
+};
+ENUM_CLASS_FLAGS(EPlayerStateFlags);
+#define PLAYER_STATE_FLAG(Flag) static_cast<uint8>(EPlayerStateFlags::Flag)
+
 USTRUCT(BlueprintType)
 struct FAF_REV_API FPlayerLockFlag : public FPulldownStructBase
 {
@@ -241,13 +253,16 @@ namespace Player
 		inline static FName Cutscene		= TEXT("Cutscene");
 		inline static FName Dialogue		= TEXT("Dialogue");
 		inline static FName Jumpscare		= TEXT("Jumpscare");
+		inline static FName GuideScreen		= TEXT("GuideScreen");
 		inline static FName Inventory		= TEXT("Inventory");
 		inline static FName Inspection		= TEXT("Inspection");
 		inline static FName WorldDevice		= TEXT("WorldDevice");
-		inline static FName GuideScreen		= TEXT("GuideScreen");
+		inline static FName Hiding			= TEXT("Hiding");
 
-		inline static TSet All = {Loading, Cutscene, Dialogue,Jumpscare,
-			Inventory, Inspection, WorldDevice, GuideScreen, GuideScreen};
+		inline static TSet All = {Loading, Cutscene, Dialogue, Jumpscare, GuideScreen,
+			Inventory, Inspection, WorldDevice, Hiding};
+
+		inline static TSet AllowJumpscare {Inventory, Inspection, WorldDevice};
 	}
 	
 	namespace Actions

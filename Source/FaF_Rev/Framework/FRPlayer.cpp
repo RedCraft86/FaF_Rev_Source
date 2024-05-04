@@ -4,11 +4,11 @@
 #include "FRPlayer.h"
 #include "FRGameMode.h"
 #include "FRController.h"
+#include "Camera/CameraComponent.h"
 #include "GameFramework/SpringArmComponent.h"
 #include "Components/SpotLightComponent.h"
 #include "Components/CapsuleComponent.h"
 #include "Components/AudioComponent.h"
-#include "Camera/CameraComponent.h"
 #include "Kismet/GameplayStatics.h"
 #include "EngineUtils.h"
 
@@ -43,6 +43,7 @@ AFRPlayerBase::AFRPlayerBase()
 	PlayerLight->SetupAttachment(GetCapsuleComponent());
 
 	ControlFlags = DEFAULT_PLAYER_CONTROL_FLAGS;
+	StateFlags = 0;
 	InteractTraceChannel = ECC_Visibility;
 	ReachDistance = 250.0f;
 	Sensitivity = FVector2D::UnitVector;
@@ -78,8 +79,7 @@ AFRPlayerBase::AFRPlayerBase()
 	
 	LockFlags = {};
 	CamPosition = FVector::ZeroVector;
-	LeanState = EPlayerLeanState::None;
-	FieldOfViewValue = { FieldOfView.Evaluate() };
+	FOVValue = { FieldOfView.Evaluate() };
 	HalfHeightValue = { FieldOfView.Evaluate() };
 	InteractData = {};
 	WorldDevice = nullptr;
@@ -90,10 +90,7 @@ AFRPlayerBase::AFRPlayerBase()
 	WalkSpeedTarget = WalkingSpeed;
 	CurrentStamina = MaxStamina;
 	StaminaDelta = 0.0f;
-	bRunning = false;
-	bCrouching = false;
-	bStaminaPunished = false;
-	bInteracting = false;
+	LeanState = EPlayerLeanState::None;
 }
 
 void AFRPlayerBase::ResetStates()
@@ -182,7 +179,120 @@ void AFRPlayerBase::SetLightProperties(const FPointLightProperties& InProperties
 	ULightingDataLibrary::SetPointLightProperties(PlayerLight, PlayerLightSettings);
 }
 
-void AFRPlayerBase::TeleportPlayer(const FVector InLocation, const FRotator InRotation)
+bool AFRPlayerBase::IsMoving() const
+{
+	// Test with 50 units just in case it's involuntary 
+	return GetVelocity().Size2D() > 50.0f;
+}
+
+void AFRPlayerBase::SetRunState(const bool bInState)
+{
+}
+
+bool AFRPlayerBase::IsRunning() const
+{
+	return StateFlags & PLAYER_STATE_FLAG(PCF_Running);
+}
+
+void AFRPlayerBase::SetCrouchState(const bool bInState)
+{
+}
+
+bool AFRPlayerBase::IsCrouching() const
+{
+	return StateFlags & PLAYER_STATE_FLAG(PCF_Crouching);
+}
+
+void AFRPlayerBase::SetLeanState(const EPlayerLeanState InState)
+{
+}
+
+EPlayerLeanState AFRPlayerBase::GetLeanState() const
+{
+	return LeanState;
+}
+
+void AFRPlayerBase::SetStaminaPercent(const float InStamina)
+{
+	CurrentStamina = FMath::Lerp(0, MaxStamina, FMath::Clamp(InStamina, 0.0f, 1.0f));
+}
+
+float AFRPlayerBase::GetStaminaPercent() const
+{
+	return CurrentStamina / MaxStamina;
+}
+
+bool AFRPlayerBase::IsStaminaPunished() const
+{
+	return StateFlags & PLAYER_STATE_FLAG(PCF_RunLocked);
+}
+
+bool AFRPlayerBase::GetInteractionState(FPlayerInteraction& Data) const
+{
+	Data = InteractData;
+	return StateFlags & PLAYER_STATE_FLAG(PCF_Interacting);
+}
+
+void AFRPlayerBase::AddFieldOfViewModifier(const FName InKey, const float InValue)
+{
+	FieldOfView.Modifiers.Add(InKey, InValue);
+}
+
+void AFRPlayerBase::RemoveFieldOfViewModifier(const FName InKey)
+{
+	FieldOfView.Modifiers.Remove(InKey);
+}
+
+void AFRPlayerBase::AddMoveSpeedModifier(const FName InKey, const float InValue)
+{
+	MoveSpeedMultiplier.Modifiers.Add(InKey, InValue);
+}
+
+void AFRPlayerBase::RemoveMoveSpeedModifier(const FName InKey)
+{
+	MoveSpeedMultiplier.Modifiers.Remove(InKey);
+}
+
+void AFRPlayerBase::SetLockOnTarget(const USceneComponent* InComponent)
+{
+	if (InComponent) LockOnTarget = InComponent;
+	else LockOnTarget.Reset();
+}
+
+USceneComponent* AFRPlayerBase::GetLockOnTarget() const
+{
+	return LockOnTarget.LoadSynchronous();
+}
+
+void AFRPlayerBase::SetWorldDevice(const UObject* InObject)
+{
+	if (InObject) WorldDevice = InObject;
+	else WorldDevice.Reset();
+}
+
+UObject* AFRPlayerBase::GetWorldDevice() const
+{
+	return WorldDevice.LoadSynchronous();
+}
+
+void AFRPlayerBase::AddEnemyToStack(const UObject* InObject)
+{
+	EnemyStack.Remove(nullptr);
+	EnemyStack.Add(InObject);
+}
+
+void AFRPlayerBase::RemoveEnemyFromStack(const UObject* InObject)
+{
+	EnemyStack.Remove(nullptr);
+	EnemyStack.Remove(InObject);
+}
+
+void AFRPlayerBase::ClearEnemyStack()
+{
+	EnemyStack.Empty();
+}
+
+void AFRPlayerBase::TeleportPlayer(const FVector& InLocation, const FRotator& InRotation)
 {
 	SetActorLocation(InLocation, false, nullptr, ETeleportType::ResetPhysics);
 
