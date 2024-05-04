@@ -8,7 +8,7 @@
 #include "ListGeneratorBase.h"
 #include "ListGen_GuideBookPage.generated.h"
 
-UCLASS(DisplayName = "List Generator - Guide Book Page IDs")
+UCLASS(DisplayName = "[] List Generator - Guide Book Page IDs")
 class UListGen_GuideBookPage final : public UTableListGenerator
 {
 	GENERATED_BODY()

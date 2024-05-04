@@ -6,7 +6,7 @@
 #include "ListGeneratorBase.h"
 #include "ListGen_PlayerLockFlags.generated.h"
 
-UCLASS(DisplayName = "List Generator - Player Lock Flags")
+UCLASS(DisplayName = "[] List Generator - Player Lock Flags")
 class UListGen_PlayerLockFlags final : public USimpleListGenerator
 {
 	GENERATED_BODY()
