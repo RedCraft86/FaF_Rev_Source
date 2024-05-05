@@ -3,6 +3,7 @@
 #pragma once
 
 #include "GTPlayerController.h"
+#include "InputMappingContext.h"
 #include "FRPlayerController.generated.h"
 
 #define FRPlayerController(Context) AGTPlayerController::Get<AFRPlayerController>(Context)
@@ -19,6 +20,11 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Settings")
 		TSubclassOf<UUserWidget> UnfocusedWidgetClass;
 
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Settings")
+		UInputMappingContext* MappingContext;
+
+	class UEnhancedInputLocalPlayerSubsystem* GetInputSubsystem() const;
+	
 protected:
 
 	UPROPERTY(Transient, BlueprintReadOnly)
@@ -26,6 +32,7 @@ protected:
 
 	bool bLastPaused;
 	
-	virtual void BeginPlay() override;
 	void OnWindowFocusChanged(bool bFocused);
+	virtual void BeginPlay() override;
+
 };

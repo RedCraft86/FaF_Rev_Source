@@ -2,16 +2,17 @@
 
 #include "FRPlayerController.h"
 #include "Blueprint/UserWidget.h"
+#include "EnhancedInputSubsystems.h"
 
-AFRPlayerController::AFRPlayerController() : UnfocusedWidget(nullptr), bLastPaused(false)
+AFRPlayerController::AFRPlayerController()
+	: MappingContext(nullptr), UnfocusedWidget(nullptr), bLastPaused(false)
 {
 	PrimaryActorTick.bCanEverTick = true;
 }
 
-void AFRPlayerController::BeginPlay()
+UEnhancedInputLocalPlayerSubsystem* AFRPlayerController::GetInputSubsystem() const
 {
-	Super::BeginPlay();
-	FSlateApplication::Get().OnApplicationActivationStateChanged().AddUObject(this, &AFRPlayerController::OnWindowFocusChanged);
+	return GetLocalPlayer() ? GetLocalPlayer()->GetSubsystem<UEnhancedInputLocalPlayerSubsystem>() : nullptr;
 }
 
 void AFRPlayerController::OnWindowFocusChanged(bool bFocused)
@@ -32,4 +33,10 @@ void AFRPlayerController::OnWindowFocusChanged(bool bFocused)
 		bLastPaused = IsPaused();
 		SetPause(true);
 	}
+}
+
+void AFRPlayerController::BeginPlay()
+{
+	Super::BeginPlay();
+	FSlateApplication::Get().OnApplicationActivationStateChanged().AddUObject(this, &AFRPlayerController::OnWindowFocusChanged);
 }
