@@ -1,5 +1,6 @@
 ﻿[/Script/EngineSettings.GeneralProjectSettings]
 CopyrightNotice=Copyright (C) RedCraft86. All Rights Reserved.
+ProjectVersion=0.0.0.0
 
 [/Script/UnrealEd.ProjectPackagingSettings]
 BuildConfiguration=PPBC_Shipping
