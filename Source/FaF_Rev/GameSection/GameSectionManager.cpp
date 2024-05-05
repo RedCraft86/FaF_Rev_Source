@@ -21,7 +21,7 @@ void UGameSectionManager::Step(const int32 Index)
 	
 	if (IsBusy())
 	{
-		SMART_LOG(Warning, TEXT("Game Section Manager is busy, the Step will be ignored."));
+		SMART_LOG(Warning, TEXT("Game Section Manager is busy, the Step request will be ignored."));
 		return;
 	}
 
