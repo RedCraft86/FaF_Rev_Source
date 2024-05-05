@@ -2,6 +2,7 @@
 
 #pragma once
 
+#include "ExecEnums.h"
 #include "PlayerData.h"
 #include "Data/MathTypes.h"
 #include "Data/LightingData.h"
@@ -340,10 +341,14 @@ protected:
 public: // Statics
 	
 	UFUNCTION(BlueprintPure, Category = "Game", DisplayName = "Get Player (Smart)", meta = (DynamicOutputParam = "ReturnValue", DeterminesOutputType = "Class", WorldContext = "WorldContextObject"))
-		static AFRPlayerBase* GetPlayerPawnSmart(const UObject* WorldContextObject, const TSubclassOf<AFRPlayerBase> Class);
+		static AFRPlayerBase* GetPlayerSmart(const UObject* WorldContextObject, const TSubclassOf<AFRPlayerBase> Class);
+
+	UFUNCTION(BlueprintCallable, Category = "Game", DisplayName = "Get Player (Checked)", meta = (DynamicOutputParam = "OutObject", DeterminesOutputType = "Class", ExpandEnumAsExecs = "ReturnValue", WorldContext = "WorldContextObject"))
+		static EGTValidPins GetPlayerChecked(AFRPlayerBase*& OutObject, const UObject* WorldContextObject, const TSubclassOf<AFRPlayerBase> Class);
+	
 	template <typename T = AFRPlayerBase>
 	static T* Get(const UObject* WorldContextObject)
 	{
-		return Cast<T>(GetPlayerPawnSmart(WorldContextObject, T::StaticClass()));
+		return Cast<T>(GetPlayerSmart(WorldContextObject, T::StaticClass()));
 	}
 };

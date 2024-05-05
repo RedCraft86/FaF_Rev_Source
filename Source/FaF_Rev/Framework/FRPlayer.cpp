@@ -983,9 +983,15 @@ void AFRPlayerBase::SetupPlayerInputComponent(UInputComponent* PlayerInputCompon
 
 /* Statics */
 
-AFRPlayerBase* AFRPlayerBase::GetPlayerPawnSmart(const UObject* WorldContextObject, const TSubclassOf<AFRPlayerBase> Class)
+AFRPlayerBase* AFRPlayerBase::GetPlayerSmart(const UObject* WorldContextObject, const TSubclassOf<AFRPlayerBase> Class)
 {
 	AFRPlayerBase* Obj = Cast<AFRPlayerBase>(UGameplayStatics::GetPlayerPawn(WorldContextObject, 0));
 	if (!IsValid(Obj)) Obj = Cast<AFRPlayerBase>(UGameplayStatics::GetActorOfClass(WorldContextObject, StaticClass()));
 	return Obj && Obj->IsA(Class) ? Obj : nullptr;
+}
+
+EGTValidPins AFRPlayerBase::GetPlayerChecked(AFRPlayerBase*& OutObject, const UObject* WorldContextObject, const TSubclassOf<AFRPlayerBase> Class)
+{
+	OutObject = GetPlayerSmart(WorldContextObject, Class);
+	return IsValid(OutObject) ? EGTValidPins::Valid : EGTValidPins::NotValid;
 }
