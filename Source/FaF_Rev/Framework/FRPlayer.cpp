@@ -13,11 +13,16 @@
 #include "Components/AudioComponent.h"
 #include "Camera/CameraComponent.h"
 #include "Kismet/GameplayStatics.h"
+#include "EnhancedInputComponent.h"
 #include "EngineUtils.h"
 
 #define RUN_FOV_KEY		FName(TEXT("Internal_RunFOV"))
 #define CROUCH_FOV_KEY	FName(TEXT("Internal_CrouchFOV"))
 #define CHASE_FOV_KEY	FName(TEXT("Internal_ChaseFOV"))
+
+#define BIND_INPUT_ACTION(Component, Type, Event, Function) \
+	if (const UInputAction* Action = InputActions.FindRef(Player::InputActions::Type)) \
+	{ Component->BindAction(Action, ETriggerEvent::Event, this, &AFRPlayerBase::Function); }
 
 AFRPlayerBase::AFRPlayerBase()
 {
@@ -49,7 +54,7 @@ AFRPlayerBase::AFRPlayerBase()
 	PlayerLight = CreateDefaultSubobject<UPointLightComponent>("PlayerLight");
 	PlayerLight->SetupAttachment(GetCapsuleComponent());
 
-	SlowTickInterval = 0.25f;
+	SlowTickInterval = 0.1f;
 	
 	ControlFlags = DEFAULT_PLAYER_CONTROL_FLAGS;
 	StateFlags = 0;
@@ -88,15 +93,18 @@ AFRPlayerBase::AFRPlayerBase()
 	PlayerController = nullptr;
 	
 	LockFlags = {};
-	CamPosition = FVector::ZeroVector;
+	CamPosition = CameraArm->GetRelativeLocation();
 	FOVValue = { FieldOfView.Evaluate() };
 	HalfHeightValue = { FieldOfView.Evaluate() };
 	InteractData = {};
 	WorldDevice = nullptr;
 	EnemyStack = {};
+	LockCurrentRot = FRotator::ZeroRotator;
+	LockTargetRot = FRotator::ZeroRotator;
 	LeanCamOffset = FVector2D::ZeroVector;
 	SwayCamOffset = FVector2D::ZeroVector;
-	CamOffset = FVector2D::ZeroVector;
+	CurrentCamOffset = FVector2D::ZeroVector;
+	TargetCamOffset = FVector2D::ZeroVector;
 	MoveSpeedTarget = WalkingSpeed;
 	CurrentStamina = MaxStamina;
 	StaminaDelta = 0.0f;
@@ -294,6 +302,7 @@ bool AFRPlayerBase::IsCrouching() const
 
 void AFRPlayerBase::SetLeanState(const EPlayerLeanState InState)
 {
+	if (LeanState == InState) return;
 	if (InState == EPlayerLeanState::None)
 	{
 		LeanState = EPlayerLeanState::None;
@@ -460,6 +469,7 @@ void AFRPlayerBase::EnemyStackChanged()
 
 void AFRPlayerBase::TeleportPlayer(const FVector& InLocation, const FRotator& InRotation)
 {
+	PlayerController->PlayerCameraManager->SetGameCameraCutThisFrame();
 	SetActorLocation(InLocation, false, nullptr, ETeleportType::ResetPhysics);
 
 	FRotator Rot(InRotation); Rot.Roll = 0.0f;
@@ -497,7 +507,7 @@ bool AFRPlayerBase::IsStandingBlocked() const
 {
 	FVector Start, End = FVector::ZeroVector;
 	UGTMathLibrary::GetActorLineTraceVectors(this, EVectorDirection::Up,
-		GetCapsuleComponent()->GetScaledCapsuleRadius() + HalfHeights.X + 5.0f, Start, End);
+		GetCapsuleComponent()->GetUnscaledCapsuleRadius() + HalfHeights.X + 5.0f, Start, End);
         		
 	FHitResult HitResult;
 	return GetWorld()->SweepSingleByChannel(HitResult, Start, End, FQuat::Identity, CeilingTraceChannel,
@@ -542,6 +552,33 @@ void AFRPlayerBase::TickStamina()
 
 void AFRPlayerBase::TickFootstep()
 {
+	FVector Start, End = FVector::ZeroVector;
+	UGTMathLibrary::GetComponentLineTraceVectors(FootstepAudio, EVectorDirection::Up, -125.0f , Start, End);
+
+	FCollisionQueryParams Params{NAME_None, true, this};
+	Params.bReturnPhysicalMaterial = true;
+		
+	FHitResult HitResult;
+#if WITH_EDITOR
+	if (GetWorld()->LineTraceSingleByChannel(HitResult, Start, End, ECC_Visibility, Params) && !HitResult.GetActor())
+	{
+		GetWorld()->LineTraceSingleByChannel(HitResult, Start, End, FootstepSounds.FloorTraceChannel, Params);
+	}
+#else
+	GetWorld()->LineTraceSingleByChannel(HitResult, Start, End, FootstepSounds.FloorTraceChannel, Params);
+#endif
+	if (IsMoving() && HitResult.bBlockingHit)
+	{
+		if (USoundBase* Sound = FootstepSounds.GetAudio(IsRunning(), IsCrouching(),
+			UPhysicalMaterial::DetermineSurfaceType(HitResult.PhysMaterial.Get())))
+		{
+			FootstepAudio->SetVolumeMultiplier(FootstepSounds.Volume);
+			FootstepAudio->SetSound(Sound);
+			FootstepAudio->Play();
+		}
+	}
+	
+	FootstepTimer.Invalidate();
 }
 
 void AFRPlayerBase::LeanWallDetect()
@@ -572,15 +609,63 @@ void AFRPlayerBase::SlowTick(const float DeltaTime)
 	{
 		FieldOfView.Modifiers.Remove(RUN_FOV_KEY);
 	}
+	
+	GetCharacterMovement()->MaxWalkSpeed = MoveSpeedTarget * MoveSpeedMultiplier.Evaluate();
+}
 
-	GEngine->AddOnScreenDebugMessage(-1, DeltaTime, FColor::Green, TEXT("Tick... Tock..."));
+void AFRPlayerBase::InputBinding_Pause(const FInputActionValue& InValue)
+{
+}
+
+void AFRPlayerBase::InputBinding_Turn(const FInputActionValue& InValue)
+{
+}
+
+void AFRPlayerBase::InputBinding_Move(const FInputActionValue& InValue)
+{
+}
+
+void AFRPlayerBase::InputBinding_Run(const FInputActionValue& InValue)
+{
+}
+
+void AFRPlayerBase::InputBinding_Crouch(const FInputActionValue& InValue)
+{
+}
+
+void AFRPlayerBase::InputBinding_Lean(const FInputActionValue& InValue)
+{
+}
+
+void AFRPlayerBase::InputBinding_Inventory(const FInputActionValue& InValue)
+{
+}
+
+void AFRPlayerBase::InputBinding_HideQuests(const FInputActionValue& InValue)
+{
+}
+
+void AFRPlayerBase::InputBinding_Interact(const FInputActionValue& InValue)
+{
+}
+
+void AFRPlayerBase::InputBinding_CloseEyes(const FInputActionValue& InValue)
+{
+}
+
+void AFRPlayerBase::InputBinding_Equipment(const FInputActionValue& InValue)
+{
+}
+
+void AFRPlayerBase::InputBinding_Equipment_Alt(const FInputActionValue& InValue)
+{
 }
 
 void AFRPlayerBase::BeginPlay()
 {
 	Super::BeginPlay();
-	CameraShakes.LoadAssetsAsync();
 	FootstepSounds.LoadAssetsAsync();
+	CamPosition = CameraArm->GetRelativeLocation();
 	GetCharacterMovement()->MaxWalkSpeed = WalkingSpeed;
 	if (const APlayerCameraManager* CM = UGameplayStatics::GetPlayerCameraManager(this, 0))
 	{
@@ -616,6 +701,61 @@ void AFRPlayerBase::Tick(float DeltaTime)
 		SlowTickTime = 0.0f;
 	}
 	else { SlowTickTime += DeltaTime; }
+
+	if (!FOVValue.IsComplete())
+	{
+		PlayerCamera->SetFieldOfView(FOVValue.CurrentValue);
+		FOVValue.InterpSpeed = FieldOfViewSpeed;
+		FOVValue.Tick(DeltaTime);
+	}
+	
+	if (!HalfHeightValue.IsComplete())
+	{
+		GetCapsuleComponent()->SetCapsuleHalfHeight(HalfHeightValue.CurrentValue);
+		HalfHeightValue.InterpSpeed = CrouchSpeed;
+		HalfHeightValue.Tick(DeltaTime);
+	}
+
+	if (const USceneComponent* LockOn = LockOnTarget.LoadSynchronous())
+	{
+		SetLeanState(EPlayerLeanState::None);
+		LockCurrentRot = GetController()->GetControlRotation();
+		LockTargetRot = FRotationMatrix::MakeFromX(LockOn->GetComponentLocation() - PlayerCamera->GetComponentLocation()).Rotator();
+		GetController()->SetControlRotation(FMath::RInterpTo(LockCurrentRot, LockTargetRot, DeltaTime, LockOnSpeed));
+	}
+	else
+	{
+		TargetCamOffset = SwayCamOffset + LeanCamOffset;
+		if (!CurrentCamOffset.Equals(TargetCamOffset, 0.01))
+		{
+			CurrentCamOffset = FMath::Vector2DInterpTo(CurrentCamOffset, TargetCamOffset, DeltaTime, LeanSpeed);
+			CamPosition.Y = CurrentCamOffset.X;
+
+			const FRotator CtrlRot = GetController()->GetControlRotation();
+			GetController()->SetControlRotation(FRotator(CtrlRot.Pitch, CtrlRot.Yaw, CurrentCamOffset.Y));
+		}
+
+		if (IsMoving() && IsPlayerControlled())
+		{
+			const TSubclassOf<UCameraShakeBase> Shake = IsRunning() ? CameraShakes.RunShake : CameraShakes.WalkShake;
+			const float Scale = IsRunning() ? CameraShakes.RunScale : CameraShakes.WalkScale;
+			PlayerController->ClientStartCameraShake(Shake, Scale);
+		}
+	}
+
+	const float HalfHeight = GetCapsuleComponent()->GetUnscaledCapsuleHalfHeight_WithoutHemisphere();
+	FootstepAudio->SetRelativeLocation({0.0f, 0.0f, -HalfHeight});
+	
+	const float CamHeight = HalfHeight + GetCapsuleComponent()->GetUnscaledCapsuleRadius() * 0.5f;
+	CamPosition.Z = FMath::FInterpTo(CamPosition.Z, CamHeight, DeltaTime, 10.0f);
+
+	CameraArm->SetRelativeLocation(CamPosition);
+	
+	if (!FootstepTimer.IsValid() && IsMoving())
+	{
+		GetWorldTimerManager().SetTimer(FootstepTimer, this, &AFRPlayerBase::TickFootstep,
+			FootstepSounds.GetInterval(IsRunning(), IsCrouching()), false);
+	}
 }
 
 void AFRPlayerBase::OnConstruction(const FTransform& Transform)
@@ -625,7 +765,7 @@ void AFRPlayerBase::OnConstruction(const FTransform& Transform)
 	FootstepSounds.CheckEntries();
 	ULightingDataLibrary::SetPointLightProperties(PlayerLight, PlayerLightSettings);
 	
-	for (const FName& ActionName : Player::Actions::All)
+	for (const FName& ActionName : Player::InputActions::All)
 	{
 		if (!InputActions.Contains(ActionName)) InputActions.Add(ActionName);
 	}
@@ -647,7 +787,30 @@ void AFRPlayerBase::OnConstruction(const FTransform& Transform)
 void AFRPlayerBase::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 {
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
-
+	if (UEnhancedInputComponent* InputComp = Cast<UEnhancedInputComponent>(PlayerInputComponent))
+	{
+		BIND_INPUT_ACTION(InputComp, Pause, Started, InputBinding_Pause);
+		BIND_INPUT_ACTION(InputComp, Turn, Triggered, InputBinding_Turn);
+		BIND_INPUT_ACTION(InputComp, Move, Triggered, InputBinding_Move);
+		BIND_INPUT_ACTION(InputComp, Move, Completed, InputBinding_Move);
+		BIND_INPUT_ACTION(InputComp, Move, Canceled, InputBinding_Move);
+		BIND_INPUT_ACTION(InputComp, Run, Started, InputBinding_Run);
+		BIND_INPUT_ACTION(InputComp, Run, Completed, InputBinding_Run);
+		BIND_INPUT_ACTION(InputComp, Run, Canceled, InputBinding_Run);
+		BIND_INPUT_ACTION(InputComp, Crouch, Started, InputBinding_Crouch);
+		BIND_INPUT_ACTION(InputComp, Lean, Started, InputBinding_Lean);
+		BIND_INPUT_ACTION(InputComp, Lean, Completed, InputBinding_Lean);
+		BIND_INPUT_ACTION(InputComp, Lean, Canceled, InputBinding_Lean);
+		BIND_INPUT_ACTION(InputComp, Inventory, Started, InputBinding_Inventory);
+		BIND_INPUT_ACTION(InputComp, HideQuests, Started, InputBinding_HideQuests);
+		BIND_INPUT_ACTION(InputComp, Interact, Triggered, InputBinding_Interact);
+		BIND_INPUT_ACTION(InputComp, Interact, Completed, InputBinding_Interact);
+		BIND_INPUT_ACTION(InputComp, Interact, Canceled, InputBinding_Interact);
+		BIND_INPUT_ACTION(InputComp, Equipment, Started, InputBinding_Equipment);
+		BIND_INPUT_ACTION(InputComp, Equipment_Alt, Started, InputBinding_Equipment_Alt);
+		BIND_INPUT_ACTION(InputComp, Equipment_Alt, Completed, InputBinding_Equipment_Alt);
+		BIND_INPUT_ACTION(InputComp, Equipment_Alt, Canceled, InputBinding_Equipment_Alt);
+	}
 }
 
 /* Statics */

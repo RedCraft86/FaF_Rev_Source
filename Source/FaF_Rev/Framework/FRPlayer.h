@@ -5,6 +5,7 @@
 #include "PlayerData.h"
 #include "Data/MathTypes.h"
 #include "Data/LightingData.h"
+#include "InputActionValue.h"
 #include "GameFramework/Character.h"
 #include "Inspection/InspectionActor.h"
 #include "PhotoMode/PhotoModeActor.h"
@@ -153,7 +154,9 @@ protected:
 	TSoftObjectPtr<UObject> HidingSpot;
 	TSoftObjectPtr<UObject> WorldDevice;
 	TSet<TSoftObjectPtr<UObject>> EnemyStack;
-	FVector2D LeanCamOffset, SwayCamOffset, CamOffset;
+	FRotator LockCurrentRot, LockTargetRot;
+	FVector2D LeanCamOffset, SwayCamOffset;
+	FVector2D CurrentCamOffset, TargetCamOffset;
 	float MoveSpeedTarget, CurrentStamina, StaminaDelta;
 	EPlayerLeanState LeanState;
 
@@ -307,6 +310,19 @@ protected:
 	void TickFootstep();
 	void LeanWallDetect();
 	void SlowTick(const float DeltaTime);
+
+	void InputBinding_Pause(const FInputActionValue& InValue);
+	void InputBinding_Turn(const FInputActionValue& InValue);
+	void InputBinding_Move(const FInputActionValue& InValue);
+	void InputBinding_Run(const FInputActionValue& InValue);
+	void InputBinding_Crouch(const FInputActionValue& InValue);
+	void InputBinding_Lean(const FInputActionValue& InValue);
+	void InputBinding_Inventory(const FInputActionValue& InValue);
+	void InputBinding_HideQuests(const FInputActionValue& InValue);
+	void InputBinding_Interact(const FInputActionValue& InValue);
+	void InputBinding_CloseEyes(const FInputActionValue& InValue);
+	void InputBinding_Equipment(const FInputActionValue& InValue);
+	void InputBinding_Equipment_Alt(const FInputActionValue& InValue);
 	
 	virtual void BeginPlay() override;
 	virtual void Tick(float DeltaTime) override;

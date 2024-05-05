@@ -110,24 +110,18 @@ struct FPlayerCameraShakes
 	GENERATED_BODY()
 
 	UPROPERTY(EditAnywhere, Category = "CameraShake")
-		TSoftClassPtr<UCameraShakeBase> WalkShake;
+		TSubclassOf<UCameraShakeBase> WalkShake;
 
 	UPROPERTY(EditAnywhere, Category = "CameraShake", meta = (EditCondition = "WalkShake != nullptr"))
 		float WalkScale;
 
 	UPROPERTY(EditAnywhere, Category = "CameraShake")
-		TSoftClassPtr<UCameraShakeBase> RunShake;
+		TSubclassOf<UCameraShakeBase> RunShake;
 
 	UPROPERTY(EditAnywhere, Category = "CameraShake", meta = (EditCondition = "RunShake != nullptr"))
 		float RunScale;
 
 	FPlayerCameraShakes() : WalkShake(nullptr), WalkScale(1.0f), RunShake(nullptr), RunScale(0.75f) {}
-	void LoadAssetsAsync() const
-	{
-		FStreamableManager& Manager = UAssetManager::GetStreamableManager();
-		Manager.RequestAsyncLoad(WalkShake.ToSoftObjectPath());
-		Manager.RequestAsyncLoad(RunShake.ToSoftObjectPath());
-	}
 };
 
 USTRUCT(BlueprintInternalUseOnly)
@@ -266,7 +260,7 @@ namespace Player
 		inline static TSet AllowJumpscare = {Inventory, Inspection, WorldDevice};
 	}
 	
-	namespace Actions
+	namespace InputActions
 	{
 		inline static FName Pause			= TEXT("Pause");
 		inline static FName Turn			= TEXT("Turn");
