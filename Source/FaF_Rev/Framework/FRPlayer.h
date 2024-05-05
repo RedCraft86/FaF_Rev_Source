@@ -146,6 +146,7 @@ protected:
 
 	UPROPERTY(Transient) class AFRGameModeBase* GameMode;
 	UPROPERTY(Transient) class AFRPlayerController* PlayerController;
+	UPROPERTY(Transient) class ULevelSequence* ActiveCutscene;
 
 	float SlowTickTime;
 	FVector CamPosition;
@@ -297,12 +298,21 @@ public:
 
 	UFUNCTION(BlueprintCallable, BlueprintPure = false, Category = "Player")
 		void ClearFade() const;
+
+	UFUNCTION(BlueprintCallable, Category = "Player")
+		void CutsceneStart(ULevelSequence* InSequence);
+	
+	UFUNCTION(BlueprintCallable, Category = "Player")
+		void CutsceneEnd();
 	
 	UFUNCTION(BlueprintPure, Category = "Player")
 		AFRGameModeBase* GetGameMode() const { return GameMode; }
 	
 	UFUNCTION(BlueprintPure, Category = "Player")
 		AFRPlayerController* GetPlayerController() const { return PlayerController; }
+	
+	UFUNCTION(BlueprintPure, Category = "Player")
+		ULevelSequence* GetActiveCutscene() const { return ActiveCutscene; }
 	
 	void EnemyStackChanged();
 	void TeleportPlayer(const FVector& InLocation, const FRotator& InRotation);

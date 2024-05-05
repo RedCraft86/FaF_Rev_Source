@@ -15,6 +15,7 @@
 #include "Camera/CameraComponent.h"
 #include "Kismet/GameplayStatics.h"
 #include "EnhancedInputComponent.h"
+#include "LevelSequence.h"
 #include "EngineUtils.h"
 
 #define RUN_FOV_KEY		FName(TEXT("Internal_RunFOV"))
@@ -123,6 +124,7 @@ void AFRPlayerBase::ResetStates()
 	SetCrouchState(false);
 	SetLeanState(EPlayerLeanState::None);
 
+	CutsceneEnd();
 	ForceExitHiding();
 	ForceExitWorldDevice();
 	
@@ -475,6 +477,18 @@ void AFRPlayerBase::ClearFade() const
 	}
 }
 
+void AFRPlayerBase::CutsceneStart(ULevelSequence* InSequence)
+{
+	LockFlags.Add(Player::LockFlags::Cutscene);
+	ActiveCutscene = InSequence;
+}
+
+void AFRPlayerBase::CutsceneEnd()
+{
+	LockFlags.Remove(Player::LockFlags::Cutscene);
+	ActiveCutscene = nullptr;
+}
+
 void AFRPlayerBase::EnemyStackChanged()
 {
 	if (EnemyStack.IsEmpty())
@@ -661,7 +675,7 @@ void AFRPlayerBase::SlowTick(const float DeltaTime)
 
 void AFRPlayerBase::InputBinding_Pause(const FInputActionValue& InValue)
 {
-	if (IsGamePaused()) return;
+	if (IsGamePaused() || IsValid(ActiveCutscene)) return;
 	if (LockFlags.Contains(Player::LockFlags::Inventory))
 	{
 		// Force exit inventory
