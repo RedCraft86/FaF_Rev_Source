@@ -7,6 +7,8 @@
 
 class AFRPlayerBase;
 
+#define DEFAULT_INTERACT_LABEL NSLOCTEXT("Interaction", "GenericLabel", "Interact")
+
 USTRUCT(BlueprintType)
 struct FInteractionInfo
 {
@@ -18,7 +20,7 @@ struct FInteractionInfo
 	UPROPERTY(Transient, BlueprintReadOnly, Category = "Data")
 		UTexture2D* Icon;
 	
-	FInteractionInfo() : Label(NSLOCTEXT("Interaction", "GenericLabel", "Interact")), Icon(nullptr) {}
+	FInteractionInfo() : Label(DEFAULT_INTERACT_LABEL), Icon(nullptr) {}
 };
 
 UINTERFACE()

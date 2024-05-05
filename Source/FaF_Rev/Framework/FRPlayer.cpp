@@ -122,6 +122,9 @@ void AFRPlayerBase::ResetStates()
 	SetRunState(false);
 	SetCrouchState(false);
 	SetLeanState(EPlayerLeanState::None);
+
+	ForceExitHiding();
+	ForceExitWorldDevice();
 	
 	LockFlags.Remove(NAME_None);
 	for (const FName& Flag : Player::LockFlags::CanReset)
@@ -599,9 +602,13 @@ void AFRPlayerBase::TickFootstep()
 		
 	FHitResult HitResult;
 #if WITH_EDITOR
-	if (GetWorld()->LineTraceSingleByChannel(HitResult, Start, End, ECC_Visibility, Params) && !HitResult.GetActor())
+	if (!GetWorld()->LineTraceSingleByChannel(HitResult, Start, End, FootstepSounds.FloorTraceChannel, Params))
 	{
-		GetWorld()->LineTraceSingleByChannel(HitResult, Start, End, FootstepSounds.FloorTraceChannel, Params);
+		// Box Brush check
+		if (GetWorld()->LineTraceSingleByChannel(HitResult, Start, End, ECC_Visibility, Params) && !HitResult.GetActor())
+		{
+			HitResult.Reset();
+		}
 	}
 #else
 	GetWorld()->LineTraceSingleByChannel(HitResult, Start, End, FootstepSounds.FloorTraceChannel, Params);
@@ -712,7 +719,7 @@ void AFRPlayerBase::InputBinding_Move(const FInputActionValue& InValue)
 
 void AFRPlayerBase::InputBinding_Run(const FInputActionValue& InValue)
 {
-	if (INPUT_CHECK(PCF_CanRun))
+	if (INPUT_CHECK())
 	{
 		SetRunState(HasControlFlag(PCF_CanRun) && InValue.Get<bool>());
 	}

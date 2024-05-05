@@ -9,7 +9,7 @@ AInteractField::AInteractField()
 	GetBrushComponent()->SetCollisionResponseToChannel(ECC_Visibility, ECR_Block);
 	
 	bSingleUse = true;
-	DisplayLabel = DefaultInteractionLabel;
+	DisplayLabel = DEFAULT_INTERACT_LABEL;
 }
 
 void AInteractField::OnConstruction(const FTransform& Transform)
@@ -17,7 +17,7 @@ void AInteractField::OnConstruction(const FTransform& Transform)
 	Super::OnConstruction(Transform);
 	if (DisplayLabel.IsEmptyOrWhitespace())
 	{
-		DisplayLabel = DefaultInteractionLabel;
+		DisplayLabel = DEFAULT_INTERACT_LABEL;
 	}
 }
 
@@ -28,8 +28,9 @@ void AInteractField::OnBeginInteract_Implementation(AFRPlayerBase* Player, const
 	if (bSingleUse) SetEnabled(false);
 }
 
-bool AInteractField::GetInteractionInfo_Implementation(FText& DisplayName)
+bool AInteractField::GetInteractionInfo_Implementation(FInteractionInfo& Info)
 {
-	DisplayName = DisplayLabel;
+	Info.Label = DisplayLabel;
+	Info.Icon = nullptr;
 	return bEnabled;
 }

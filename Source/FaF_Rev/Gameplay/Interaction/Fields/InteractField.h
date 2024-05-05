@@ -29,5 +29,5 @@ private:
 	
 	virtual void OnConstruction(const FTransform& Transform) override;
 	virtual void OnBeginInteract_Implementation(AFRPlayerBase* Player, const FHitResult& HitResult);
-	virtual bool GetInteractionInfo_Implementation(FText& DisplayName);
+	virtual bool GetInteractionInfo_Implementation(FInteractionInfo& Info);
 };
