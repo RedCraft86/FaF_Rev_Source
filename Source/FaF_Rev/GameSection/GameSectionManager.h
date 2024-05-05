@@ -14,7 +14,7 @@ class FAF_REV_API UGameSectionManager : public UWorldSubsystem
 public:
 
 	UFUNCTION(BlueprintCallable, Category = "GameSectionManager")
-		void Step(const int32 Index);
+		void Step(const uint8 Index);
 	
 	UFUNCTION(BlueprintPure, Category = "GameSectionManager")
 		bool IsBusy() const { return bLoading; }

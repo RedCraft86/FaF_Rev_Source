@@ -11,7 +11,7 @@
 #include "FRSettings.h"
 #include "FaF_Rev.h"
 
-void UGameSectionManager::Step(const int32 Index)
+void UGameSectionManager::Step(const uint8 Index)
 {
 	if (!SectionGraph)
 	{
@@ -28,7 +28,7 @@ void UGameSectionManager::Step(const int32 Index)
 	const TArray<uint8> PreUpdate = Sequence;
 	Sequence.Add(Sequence.IsEmpty() ? 0 : Index);
 	Sequence = SectionGraph->ValidateSequence(Sequence);
-	
+
 	if (PreUpdate != Sequence)
 	{
 		BeginTransition();
