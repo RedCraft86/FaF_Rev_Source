@@ -32,6 +32,7 @@ public class FaF_Rev : ModuleRules
 				"GameplayTags",
 				"EnhancedInput",
 				"AssetRegistry",
+				"LevelSequence",
 				"DeveloperSettings",
 				"DataGraphRuntime",
 				"PulldownStruct",
