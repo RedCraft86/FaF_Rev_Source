@@ -185,6 +185,15 @@ public:
 		bool HasControlFlag(const TEnumAsByte<EPlayerControlFlags> InFlag) const;
 
 	UFUNCTION(BlueprintCallable, Category = "Player")
+		void SetStateFlag(const TEnumAsByte<EPlayerStateFlags> InFlag);
+	
+	UFUNCTION(BlueprintCallable, Category = "Player")
+		void UnsetStateFlag(const TEnumAsByte<EPlayerStateFlags> InFlag);
+	
+	UFUNCTION(BlueprintPure, Category = "Player")
+		bool HasStateFlag(const TEnumAsByte<EPlayerStateFlags> InFlag) const;
+
+	UFUNCTION(BlueprintCallable, Category = "Player")
 		void AddLockFlag(const FPlayerLockFlag InFlag);
 	void AddLockFlag(const FName InFlag);
 	
@@ -320,7 +329,6 @@ protected:
 	void InputBinding_Inventory(const FInputActionValue& InValue);
 	void InputBinding_HideQuests(const FInputActionValue& InValue);
 	void InputBinding_Interact(const FInputActionValue& InValue);
-	void InputBinding_CloseEyes(const FInputActionValue& InValue);
 	void InputBinding_Equipment(const FInputActionValue& InValue);
 	void InputBinding_Equipment_Alt(const FInputActionValue& InValue);
 	

@@ -3,9 +3,10 @@
 
 #include "FRPlayer.h"
 #include "FRGameMode.h"
+#include "ExitInterface.h"
 #include "FRPlayerController.h"
-#include "ForceExitInterface.h"
 #include "Libraries/GTMathLibrary.h"
+#include "Interaction/InteractionInterface.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "GameFramework/SpringArmComponent.h"
 #include "Components/SpotLightComponent.h"
@@ -20,6 +21,7 @@
 #define CROUCH_FOV_KEY	FName(TEXT("Internal_CrouchFOV"))
 #define CHASE_FOV_KEY	FName(TEXT("Internal_ChaseFOV"))
 
+#define INPUT_CHECK() !ShouldLock() && !IsGamePaused()
 #define BIND_INPUT_ACTION(Component, Type, Event, Function) \
 	if (const UInputAction* Action = InputActions.FindRef(Player::InputActions::Type)) \
 	{ Component->BindAction(Action, ETriggerEvent::Event, this, &AFRPlayerBase::Function); }
@@ -197,6 +199,21 @@ bool AFRPlayerBase::HasControlFlag(const TEnumAsByte<EPlayerControlFlags> InFlag
 	return ControlFlags & InFlag.GetValue();
 }
 
+void AFRPlayerBase::SetStateFlag(const TEnumAsByte<EPlayerStateFlags> InFlag)
+{
+	StateFlags |= InFlag.GetValue();
+}
+
+void AFRPlayerBase::UnsetStateFlag(const TEnumAsByte<EPlayerStateFlags> InFlag)
+{
+	StateFlags &= ~InFlag.GetValue();
+}
+
+bool AFRPlayerBase::HasStateFlag(const TEnumAsByte<EPlayerStateFlags> InFlag) const
+{
+	return StateFlags & InFlag.GetValue();
+}
+
 void AFRPlayerBase::AddLockFlag(const FPlayerLockFlag InFlag)
 {
 	AddLockFlag(InFlag.SelectedValue);
@@ -250,11 +267,11 @@ void AFRPlayerBase::SetRunState(const bool bInState)
 		bRunning = !IsStaminaPunished() && !bCrouching && bInState;
 		if (bRunning)
 		{
-			StateFlags |= PLAYER_STATE_FLAG(PCF_Running);
+			SetStateFlag(PSF_Running);
 		}
 		else
 		{
-			StateFlags &= ~PLAYER_STATE_FLAG(PCF_Running);
+			UnsetStateFlag(PSF_Running);
 		}
 
 		if (!bCrouching)
@@ -266,7 +283,7 @@ void AFRPlayerBase::SetRunState(const bool bInState)
 
 bool AFRPlayerBase::IsRunning() const
 {
-	return StateFlags & PLAYER_STATE_FLAG(PCF_Running);
+	return HasStateFlag(PSF_Running);
 }
 
 void AFRPlayerBase::SetCrouchState(const bool bInState)
@@ -278,12 +295,12 @@ void AFRPlayerBase::SetCrouchState(const bool bInState)
 		bCrouching = !bRunning && bInState;
 		if (bCrouching)
 		{
-			StateFlags |= PLAYER_STATE_FLAG(PCF_Crouching);
+			SetStateFlag(PSF_Crouching);
 			AddFieldOfViewModifier(CROUCH_FOV_KEY, CrouchWalkFOV);
 		}
 		else
 		{
-			StateFlags &= ~PLAYER_STATE_FLAG(PCF_Crouching);
+			UnsetStateFlag(PSF_Crouching);
 			RemoveFieldOfViewModifier(CROUCH_FOV_KEY);
 		}
 
@@ -297,7 +314,7 @@ void AFRPlayerBase::SetCrouchState(const bool bInState)
 
 bool AFRPlayerBase::IsCrouching() const
 {
-	return StateFlags & PLAYER_STATE_FLAG(PCF_Crouching);
+	return HasStateFlag(PSF_Crouching);
 }
 
 void AFRPlayerBase::SetLeanState(const EPlayerLeanState InState)
@@ -338,13 +355,13 @@ float AFRPlayerBase::GetStaminaPercent() const
 
 bool AFRPlayerBase::IsStaminaPunished() const
 {
-	return StateFlags & PLAYER_STATE_FLAG(PCF_RunLocked);
+	return HasStateFlag(PSF_RunLocked);
 }
 
 bool AFRPlayerBase::GetInteractionState(FPlayerInteraction& Data) const
 {
 	Data = InteractData;
-	return StateFlags & PLAYER_STATE_FLAG(PCF_Interacting);
+	return InteractData.IsValidData();
 }
 
 void AFRPlayerBase::AddFieldOfViewModifier(const FName InKey, const float InValue)
@@ -380,7 +397,7 @@ USceneComponent* AFRPlayerBase::GetLockOnTarget() const
 
 void AFRPlayerBase::ForceExitHiding() const
 {
-	IForceExitInterface::Exit(HidingSpot.LoadSynchronous());
+	IExitInterface::Exit(HidingSpot.LoadSynchronous());
 }
 
 void AFRPlayerBase::SetHidingSpot(const UObject* InObject)
@@ -395,7 +412,7 @@ UObject* AFRPlayerBase::GetHidingSpot() const
 
 void AFRPlayerBase::ForceExitWorldDevice() const
 {
-	IForceExitInterface::Exit(WorldDevice.LoadSynchronous());
+	IExitInterface::Exit(WorldDevice.LoadSynchronous());
 }
 
 void AFRPlayerBase::SetWorldDevice(const UObject* InObject)
@@ -531,6 +548,28 @@ bool AFRPlayerBase::IsLeaningBlocked(const float Direction) const
 
 bool AFRPlayerBase::TraceInteraction(FHitResult& OutHitResult, FPlayerInteraction& OutData) const
 {
+	OutData.Reset();
+	OutHitResult = {};
+
+	if (ShouldLock()) return false;
+	
+	FVector Start, End = FVector::ZeroVector;
+	UGTMathLibrary::GetCameraLineTraceVectors(this, EVectorDirection::Forward, ReachDistance, Start, End);
+
+	FHitResult HitResult;
+	if (GetWorld()->LineTraceSingleByChannel(HitResult, Start, End, InteractTraceChannel,
+		FCollisionQueryParams(NAME_None, false, this)))
+	{
+		FInteractionInfo Info;
+		if (IInteract::GetInteractionInfo(HitResult.GetActor(), Info))
+		{
+			OutHitResult = HitResult;
+			OutData.InteractInfo = Info;
+			OutData.Target = HitResult.GetActor();
+			return true;
+		}
+	}
+
 	return false;
 }
 
@@ -542,11 +581,11 @@ void AFRPlayerBase::TickStamina()
 	if (CurrentStamina < 0.01f && !IsStaminaPunished())
 	{
 		SetRunState(false);
-		StateFlags |= PLAYER_STATE_FLAG(PCF_RunLocked);
+		SetStateFlag(PSF_RunLocked);
 	}
 	else if (FMath::IsNearlyEqual(CurrentStamina, MaxStamina, 1.0f) && IsStaminaPunished())
 	{
-		StateFlags &= ~PLAYER_STATE_FLAG(PCF_RunLocked);
+		UnsetStateFlag(PSF_RunLocked);
 	}
 }
 
@@ -615,50 +654,172 @@ void AFRPlayerBase::SlowTick(const float DeltaTime)
 
 void AFRPlayerBase::InputBinding_Pause(const FInputActionValue& InValue)
 {
+	if (IsGamePaused()) return;
+	if (LockFlags.Contains(Player::LockFlags::Inventory))
+	{
+		// Force exit inventory
+	}
+
+	if (LockFlags.Contains(Player::LockFlags::WorldDevice))
+	{
+		ForceExitWorldDevice();
+		return;
+	}
+
+	if (!ShouldLock())
+	{
+		// Pausing code
+	}
 }
 
 void AFRPlayerBase::InputBinding_Turn(const FInputActionValue& InValue)
 {
+	if (INPUT_CHECK() && HasControlFlag(PCF_CanTurn) && (!LockOnTarget.IsValid() || LockOnTarget.IsNull()))
+	{
+		const FVector2D Axis = InValue.Get<FVector2D>();
+		if (Axis.X != 0.0f)
+		{
+			AddControllerYawInput(Axis.X * Sensitivity.X);
+		}
+		if (Axis.Y != 0.0f)
+		{
+			AddControllerPitchInput(Axis.Y * Sensitivity.Y * -1.0f);
+		}
+	}
 }
 
 void AFRPlayerBase::InputBinding_Move(const FInputActionValue& InValue)
 {
+	if (INPUT_CHECK() && HasControlFlag(PCF_CanMove))
+	{
+		const FVector2D Axis = InValue.Get<FVector2D>();
+		if (Axis.X != 0.0f)
+		{
+			AddMovementInput(GetActorForwardVector(), Axis.X);
+		}
+		if (Axis.Y != 0.0f)
+		{
+			AddMovementInput(GetActorRightVector(), Axis.Y);
+		}
+
+		SwayCamOffset = CameraSway * Axis.Y;
+	}
+	else
+	{
+		SwayCamOffset = FVector2D::ZeroVector;
+	}
 }
 
 void AFRPlayerBase::InputBinding_Run(const FInputActionValue& InValue)
 {
+	if (INPUT_CHECK(PCF_CanRun))
+	{
+		SetRunState(HasControlFlag(PCF_CanRun) && InValue.Get<bool>());
+	}
 }
 
 void AFRPlayerBase::InputBinding_Crouch(const FInputActionValue& InValue)
 {
+	if (INPUT_CHECK())
+	{
+		if (HasControlFlag(PCF_CanCrouch) && !IsCrouching())
+		{
+			SetCrouchState(true);
+		}
+		else if (!IsStandingBlocked())
+		{
+			SetCrouchState(false);
+		}
+	}
 }
 
 void AFRPlayerBase::InputBinding_Lean(const FInputActionValue& InValue)
 {
+	if (INPUT_CHECK() && (!LockOnTarget.IsValid() || LockOnTarget.IsNull()))
+	{
+		const float Direction = InValue.Get<float>();
+		if (!HasControlFlag(PCF_CanLean) || FMath::IsNearlyZero(Direction))
+		{
+			SetLeanState(EPlayerLeanState::None);
+		}
+		else if (Direction > 0.0f)
+		{
+			SetLeanState(EPlayerLeanState::Right);
+		}
+		else // if (Direction < 0.0f)
+		{
+			SetLeanState(EPlayerLeanState::Left);
+		}
+	}
 }
 
 void AFRPlayerBase::InputBinding_Inventory(const FInputActionValue& InValue)
 {
+	if (IsGamePaused()) return;
+	if (LockFlags.Contains(Player::LockFlags::Inventory))
+	{
+		// Close
+	}
+	else if (!ShouldLock())
+	{
+		// Open
+	}
 }
 
 void AFRPlayerBase::InputBinding_HideQuests(const FInputActionValue& InValue)
 {
+	if (INPUT_CHECK())
+	{
+		
+	}
 }
 
 void AFRPlayerBase::InputBinding_Interact(const FInputActionValue& InValue)
 {
-}
+	if (INPUT_CHECK() && HasControlFlag(PCF_CanInteract) && InValue.Get<bool>())
+	{
+		if (HasStateFlag(PSF_ShouldInt))
+		{
+			FHitResult HitResult;
+			FPlayerInteraction NewData;
+			if (TraceInteraction(HitResult, NewData))
+			{
+				if (NewData != InteractData)
+				{
+					IInteract::EndInteract(InteractData.Target, this);
+					IInteract::BeginInteract(NewData.Target, this, HitResult);
+					InteractData = NewData;
+				}
 
-void AFRPlayerBase::InputBinding_CloseEyes(const FInputActionValue& InValue)
-{
+				return;
+			}
+
+			UnsetStateFlag(PSF_ShouldInt);
+		}
+	}
+	else
+	{
+		SetStateFlag(PSF_ShouldInt);
+	}
+
+	IInteract::EndInteract(InteractData.Target, this);
+	InteractData.Reset();
 }
 
 void AFRPlayerBase::InputBinding_Equipment(const FInputActionValue& InValue)
 {
+	if (INPUT_CHECK())
+	{
+		
+	}
 }
 
 void AFRPlayerBase::InputBinding_Equipment_Alt(const FInputActionValue& InValue)
 {
+	if (INPUT_CHECK())
+	{
+		
+	}
 }
 
 void AFRPlayerBase::BeginPlay()

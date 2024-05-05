@@ -7,6 +7,7 @@
 #include "FaF_Rev.h"
 #include "Data/LightingData.h"
 #include "Engine/AssetManager.h"
+#include "Interaction/InteractionInterface.h"
 #include "PulldownStruct/PulldownStructBase.h"
 #include "PlayerData.generated.h"
 
@@ -20,7 +21,7 @@ enum EPlayerControlFlags
 	PCF_UseStamina	= 1 << 1	UMETA(DisplayName = "Use Stamina"),
 	PCF_CanPause	= 1 << 2	UMETA(DisplayName = "Can Pause"),
 	PCF_CanTurn		= 1 << 3	UMETA(DisplayName = "Can Turn"),
-	PCF_CanWalk		= 1 << 4	UMETA(DisplayName = "Can Walk"),
+	PCF_CanMove		= 1 << 4	UMETA(DisplayName = "Can Walk"),
 	PCF_CanRun		= 1 << 5	UMETA(DisplayName = "Can Run"),
 	PCF_CanCrouch	= 1 << 6	UMETA(DisplayName = "Can Crouch"),
 	PCF_CanLean		= 1 << 7	UMETA(DisplayName = "Can Lean"),
@@ -30,19 +31,18 @@ enum EPlayerControlFlags
 ENUM_CLASS_FLAGS(EPlayerControlFlags);
 ENUM_RANGE_BY_FIRST_AND_LAST(EPlayerControlFlags, PCF_Locked, PCF_CanHide);
 #define DEFAULT_PLAYER_CONTROL_FLAGS PCF_UseStamina | PCF_CanPause | PCF_CanTurn \
-	| PCF_CanWalk | PCF_CanRun | PCF_CanCrouch | PCF_CanLean | PCF_CanInteract | PCF_CanHide
+	| PCF_CanMove | PCF_CanRun | PCF_CanCrouch | PCF_CanLean | PCF_CanInteract | PCF_CanHide
 
 UENUM(BlueprintType, meta = (Bitflags, UseEnumValuesAsMaskValuesInEditor = "true"))
-enum class EPlayerStateFlags : uint8
+enum EPlayerStateFlags
 {
 	PSF_None		= 0			UMETA(Hidden),
-	PCF_Running		= 1 << 0	UMETA(DisplayName = "Running"),
-	PCF_RunLocked	= 1 << 1	UMETA(DisplayName = "Stamina Punished"),
-	PCF_Crouching	= 1 << 2	UMETA(DisplayName = "Crouching"),
-	PCF_Interacting	= 1 << 3	UMETA(DisplayName = "Interacting"),
+	PSF_Running		= 1 << 0	UMETA(DisplayName = "Running"),
+	PSF_RunLocked	= 1 << 1	UMETA(DisplayName = "Stamina Punished"),
+	PSF_Crouching	= 1 << 2	UMETA(DisplayName = "Crouching"),
+	PSF_ShouldInt	= 1 << 3	UMETA(DisplayName = "Should Interact"),
 };
 ENUM_CLASS_FLAGS(EPlayerStateFlags);
-#define PLAYER_STATE_FLAG(Flag) static_cast<uint8>(EPlayerStateFlags::Flag)
 
 USTRUCT(BlueprintType)
 struct FAF_REV_API FPlayerLockFlag : public FPulldownStructBase
@@ -88,19 +88,21 @@ USTRUCT(BlueprintInternalUseOnly)
 struct FPlayerInteraction
 {
 	GENERATED_BODY()
+
+	UPROPERTY(Transient, BlueprintReadOnly, Category = "Data")
+		AActor* Target;
+
+	UPROPERTY(Transient, BlueprintReadOnly, Category = "Data")
+		FInteractionInfo InteractInfo;
 	
-	AActor* Target;
-	FHitResult Hit;
-	
-	FPlayerInteraction() : Target(nullptr) {}
-	FPlayerInteraction(AActor* InTarget, const FHitResult& InHit) : Target(InTarget), Hit(InHit) {}
+	FPlayerInteraction() : Target(nullptr), InteractInfo({}) {}
 	FORCEINLINE bool operator==(const FPlayerInteraction& Other) const { return Target == Other.Target; }
 	FORCEINLINE bool operator!=(const FPlayerInteraction& Other) const { return Target != Other.Target; }
-	FORCEINLINE bool IsValidData() const { return IsValid(Target) && Hit.bBlockingHit; }
+	FORCEINLINE bool IsValidData() const { return IsValid(Target); }
 	void Reset()
 	{
 		Target = nullptr;
-		Hit.Reset(1.0f, false);
+		InteractInfo = {};
 	}
 };
 

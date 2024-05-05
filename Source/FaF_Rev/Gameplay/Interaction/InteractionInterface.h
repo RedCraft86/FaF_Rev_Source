@@ -7,7 +7,19 @@
 
 class AFRPlayerBase;
 
-#define DefaultInteractionLabel NSLOCTEXT("Interaction", "GenericLabel", "Interact");
+USTRUCT(BlueprintType)
+struct FInteractionInfo
+{
+	GENERATED_BODY()
+
+	UPROPERTY(Transient, BlueprintReadOnly, Category = "Data")
+		FText Label;
+
+	UPROPERTY(Transient, BlueprintReadOnly, Category = "Data")
+		UTexture2D* Icon;
+	
+	FInteractionInfo() : Label(NSLOCTEXT("Interaction", "GenericLabel", "Interact")), Icon(nullptr) {}
+};
 
 UINTERFACE()
 class UInteractionInterface : public UInterface
@@ -34,15 +46,15 @@ public:
 	virtual void OnBeginPawnInteract_Implementation(APawn* Pawn, const FHitResult& HitResult) {}
 
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Interaction")
-		bool GetInteractionInfo(FText& DisplayName);
-	virtual bool GetInteractionInfo_Implementation(FText& DisplayName)
+		bool GetInteractionInfo(FInteractionInfo& Info);
+	virtual bool GetInteractionInfo_Implementation(FInteractionInfo& Info)
 	{
-		DisplayName = FText::GetEmpty();
+		Info = {};
 		return false;
 	}
 };
 
-namespace Interaction
+namespace IInteract
 {
 	static bool ImplementedBy(const UObject* Target) 
 	{ 
@@ -73,14 +85,14 @@ namespace Interaction
 		}
 	}
 
-	static bool GetInteractionInfo(UObject* Target, FText& DisplayName)
+	static bool GetInteractionInfo(UObject* Target, FInteractionInfo& Info)
 	{
 		if (ImplementedBy(Target))
 		{
-			return IInteractionInterface::Execute_GetInteractionInfo(Target, DisplayName);
+			return IInteractionInterface::Execute_GetInteractionInfo(Target, Info);
 		}
-		
-		DisplayName = DefaultInteractionLabel;
+
+		Info = {};
 		return false;
 	}
 }
