@@ -684,11 +684,11 @@ void AFRPlayerBase::InputBinding_Turn(const FInputActionValue& InValue)
 	if (INPUT_CHECK() && HasControlFlag(PCF_CanTurn) && (!LockOnTarget.IsValid() || LockOnTarget.IsNull()))
 	{
 		const FVector2D Axis = InValue.Get<FVector2D>();
-		if (Axis.X != 0.0f)
+		if (!FMath::IsNearlyZero(Axis.X))
 		{
 			AddControllerYawInput(Axis.X * Sensitivity.X);
 		}
-		if (Axis.Y != 0.0f)
+		if (!FMath::IsNearlyZero(Axis.Y))
 		{
 			AddControllerPitchInput(Axis.Y * Sensitivity.Y * -1.0f);
 		}
@@ -700,11 +700,11 @@ void AFRPlayerBase::InputBinding_Move(const FInputActionValue& InValue)
 	if (INPUT_CHECK() && HasControlFlag(PCF_CanMove))
 	{
 		const FVector2D Axis = InValue.Get<FVector2D>();
-		if (Axis.X != 0.0f)
+		if (!FMath::IsNearlyZero(Axis.X))
 		{
 			AddMovementInput(GetActorForwardVector(), Axis.X);
 		}
-		if (Axis.Y != 0.0f)
+		if (!FMath::IsNearlyZero(Axis.Y))
 		{
 			AddMovementInput(GetActorRightVector(), Axis.Y);
 		}
