@@ -38,5 +38,6 @@ void AFRPlayerController::OnWindowFocusChanged(bool bFocused)
 void AFRPlayerController::BeginPlay()
 {
 	Super::BeginPlay();
+	PlayerCameraManager->SetTickableWhenPaused(true);
 	FSlateApplication::Get().OnApplicationActivationStateChanged().AddUObject(this, &AFRPlayerController::OnWindowFocusChanged);
 }
