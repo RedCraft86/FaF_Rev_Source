@@ -15,6 +15,9 @@ public:
 
 	UFUNCTION(BlueprintCallable, Category = "GameSectionManager")
 		void Step(const uint8 Index);
+
+	UFUNCTION(BlueprintCallable, Category = "GameSectionManager")
+		void SetSequence(const TArray<uint8>& InSequence);
 	
 	UFUNCTION(BlueprintPure, Category = "GameSectionManager")
 		bool IsBusy() const { return bLoading; }

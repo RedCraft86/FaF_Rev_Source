@@ -13,24 +13,32 @@
 
 void UGameSectionManager::Step(const uint8 Index)
 {
+	TArray<uint8> PostUpdate = Sequence;
+	PostUpdate.Add(PostUpdate.IsEmpty() ? 0 : Index);
+	if (Sequence != PostUpdate)
+	{
+		SetSequence(PostUpdate);
+	}
+}
+
+void UGameSectionManager::SetSequence(const TArray<uint8>& InSequence)
+{
 	if (!SectionGraph)
 	{
-		SMART_LOG(Error, TEXT("Attempting to Step with a null Section Graph."));
+		SMART_LOG(Error, TEXT("Attempting to Transition with a null Section Graph."));
 		return;
 	}
 	
 	if (IsBusy())
 	{
-		SMART_LOG(Warning, TEXT("Game Section Manager is busy, the Step request will be ignored."));
+		SMART_LOG(Warning, TEXT("Game Section Manager is busy, the Transition request will be ignored."));
 		return;
 	}
 
-	const TArray<uint8> PreUpdate = Sequence;
-	Sequence.Add(Sequence.IsEmpty() ? 0 : Index);
-	Sequence = SectionGraph->ValidateSequence(Sequence);
-
-	if (PreUpdate != Sequence)
+	const TArray<uint8> FixedSequence = SectionGraph->ValidateSequence(InSequence);
+	if (Sequence != FixedSequence)
 	{
+		Sequence = FixedSequence;
 		BeginTransition();
 	}
 }
@@ -44,13 +52,13 @@ void UGameSectionManager::BeginTransition()
 		PlayerChar->FadeToBlack(0.25f);
 	}
 	
-	LastData = ThisData;
 	const UGameSectionNode* Node = SectionGraph->GetNodeBySequence<UGameSectionNode>(Sequence);
 	if (!Node || !Node->Sequence || !Node->Sequence->IsA(UGameSectionData::StaticClass()))
 	{
 		SMART_LOG(Error, TEXT("Cannot begin transition. Node or sequence is null."))
 		return;
 	}
+	LastData = ThisData;
 	ThisData = Cast<UGameSectionData>(Node->Sequence);
 
 	ShowLoadingWidget();
