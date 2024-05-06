@@ -87,7 +87,7 @@ void AFRGameModeBase::BeginPlay()
 	if (const UFRSettings* Settings = FRSettings)
 	{
 		FadeTime = Settings->MusicFadeTime;
-		if (!Settings->OnGameplayMap(this))
+		if (!Settings->IsGameplayMap(this))
 			SetGameMusic(Settings->DefaultMusicID);
 	}
 }

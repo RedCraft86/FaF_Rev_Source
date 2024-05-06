@@ -52,7 +52,7 @@ public:
 		return Words.Num() / (float)WordsPerSecond;
 	}
 
-	bool OnGameplayMap(const UObject* WorldContext) const
+	bool IsGameplayMap(const UObject* WorldContext) const
 	{
 		return UGameplayStatics::GetCurrentLevelName(WorldContext) == GameplayMap.GetAssetName();
 	}
