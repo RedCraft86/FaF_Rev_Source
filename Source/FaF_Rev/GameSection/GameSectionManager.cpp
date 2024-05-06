@@ -15,7 +15,7 @@ void UGameSectionManager::Step(const uint8 Index)
 {
 	if (!SectionGraph)
 	{
-		SMART_LOG(Error, TEXT("Attempting to Step with a null Section Graph."))
+		SMART_LOG(Error, TEXT("Attempting to Step with a null Section Graph."));
 		return;
 	}
 	
