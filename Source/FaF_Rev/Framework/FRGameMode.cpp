@@ -16,11 +16,13 @@ AFRGameModeBase::AFRGameModeBase()
 	WorldMusicAudio->SetupAttachment(GetRootComponent());
 	WorldMusicAudio->bCanPlayMultipleInstances = false;
 	WorldMusicAudio->bAutoActivate = false;
+	WorldMusicAudio->SetUISound(true);
 
 	ChaseMusicAudio = CreateDefaultSubobject<UAudioComponent>("ChaseMusicAudio");
 	ChaseMusicAudio->SetupAttachment(GetRootComponent());
 	ChaseMusicAudio->bCanPlayMultipleInstances = false;
 	ChaseMusicAudio->bAutoActivate = false;
+	ChaseMusicAudio->SetUISound(true);
 }
 
 void AFRGameModeBase::SetGameMusic(const FGameMusicID InMusicID)
