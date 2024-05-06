@@ -74,6 +74,7 @@ void UGameSectionManager::UnloadLastData()
 	{
 		PlayerChar->ResetStates();
 		PlayerChar->TeleportPlayer(FVector::ZeroVector, FRotator::ZeroRotator);
+		PlayerChar->GetGameMode()->MuteGameMusic();
 	}
 	
 	LoadedObjs.Empty(ThisData ? ThisData->PreloadObjects.Num() : 0);
@@ -154,6 +155,7 @@ void UGameSectionManager::FinishTransition()
 		{
 			PlayerChar->FadeFromBlack(1.0f);
 			PlayerChar->ClearLockFlag(Player::LockFlags::Loading);
+			PlayerChar->GetGameMode()->SetGameMusic(ThisData->MusicID);
 		}
 		
 		bLoading = false;	
@@ -277,5 +279,5 @@ void UGameSectionManager::Initialize(FSubsystemCollectionBase& Collection)
 bool UGameSectionManager::ShouldCreateSubsystem(UObject* Outer) const
 {
 	const bool bSuper = Super::ShouldCreateSubsystem(Outer);
-	return bSuper && FRSettings->GameplayMap.GetAssetName() == Outer->GetOutermostObject()->GetName();
+	return bSuper && FRSettings->OnGameplayMap(Outer);
 }

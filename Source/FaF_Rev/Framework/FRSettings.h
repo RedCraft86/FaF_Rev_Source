@@ -2,8 +2,9 @@
 
 #pragma once
 
+#include "GameMusicData.h"
+#include "Kismet/GameplayStatics.h"
 #include "Engine/DeveloperSettings.h"
-#include "Styles/ExpressiveTextStyleBase.h"
 #include "FRSettings.generated.h"
 
 #define FRSettings UFRSettings::Get()
@@ -15,14 +16,14 @@ class FAF_REV_API UFRSettings : public UDeveloperSettings
 
 public:
 	
-	UFRSettings() : WordsPerSecond(2)
+	UFRSettings()
 	{
 		CategoryName = TEXT("Project");
 		SectionName = TEXT("Game Project");
-	}
 
-	UPROPERTY(Config, EditAnywhere, Category = "Default")
-		TSoftObjectPtr<class UGameMusicData> DefaultMusic;
+		WordsPerSecond = 2;
+		MusicFadeTime = 2.0f;
+	}
 
 	UPROPERTY(Config, EditAnywhere, Category = "Text", meta = (ClampMin = 1, UIMin = 1))
 		uint8 WordsPerSecond;
@@ -36,10 +37,24 @@ public:
 	UPROPERTY(Config, EditAnywhere, Category = "GameSection")
 		TSoftObjectPtr<class UGameSectionGraph> GameSectionGraph;
 
+	UPROPERTY(Config, EditAnywhere, Category = "GameMusic")
+		float MusicFadeTime;
+	
+	UPROPERTY(Config, EditAnywhere, Category = "GameMusic", meta = (RequiredAssetDataTags = "RowStructure=/Script/FaF_Rev.GameMusicData"))
+		TSoftObjectPtr<UDataTable> MusicTable;
+
+	UPROPERTY(Config, EditAnywhere, Category = "GameMusic")
+		FGameMusicID DefaultMusicID;
+	
 	float CalcReadingTime(const FString& InStr) const
 	{
 		TArray<FString> Words; InStr.ParseIntoArray(Words, TEXT(" "));
 		return Words.Num() / (float)WordsPerSecond;
+	}
+
+	bool OnGameplayMap(const UObject* WorldContext) const
+	{
+		return UGameplayStatics::GetCurrentLevelName(WorldContext) == GameplayMap.GetAssetName();
 	}
 	
 public: // Statics
