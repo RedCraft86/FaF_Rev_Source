@@ -25,6 +25,9 @@ public:
 
 	USaveObjectBase() : LastError(ESaveGameError::None) {}
 
+	UFUNCTION(BlueprintPure, Category = "SaveObject")
+		ESaveGameError GetLastError() const { return LastError; }
+
 	FString GetSavePath() const;
 	void SaveToFile(const TFunction<void(const ESaveGameError)>& Callback);
 	void LoadFromFile(const TFunction<void(const ESaveGameError)>& Callback);
@@ -52,13 +55,13 @@ public:
 
 	UGameSaveObject() : PlayTime(0.0f), Sequence({}), Inventory({}) {}
 
-	UPROPERTY(BlueprintReadOnly, Category = "GameSaveObject")
+	UPROPERTY(BlueprintReadOnly, Category = "SaveObject")
 		float PlayTime;
 	
-	UPROPERTY(BlueprintReadOnly, Category = "GameSaveObject")
+	UPROPERTY(BlueprintReadOnly, Category = "SaveObject")
 		TArray<uint8> Sequence;
 	
-	UPROPERTY(BlueprintReadOnly, Category = "GameSaveObject")
+	UPROPERTY(BlueprintReadOnly, Category = "SaveObject")
 		TMap<FGameplayTag, FString> Inventory;
 
 	virtual void DeleteFile() override;
@@ -78,10 +81,10 @@ public:
 
 	UGlobalSaveObject() {}
 
-	UPROPERTY(BlueprintReadOnly, Category = "GlobalSaveObject")
+	UPROPERTY(BlueprintReadOnly, Category = "SaveObject")
 		TMap<FGameplayTag, FDateTime> Endings;
 	
-	UPROPERTY(BlueprintReadOnly, Category = "GlobalSaveObject")
+	UPROPERTY(BlueprintReadOnly, Category = "SaveObject")
 		TSet<FGameplayTag> Content;
 	
 	virtual void DeleteFile() override;
