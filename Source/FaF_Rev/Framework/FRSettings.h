@@ -21,10 +21,14 @@ public:
 		CategoryName = TEXT("Project");
 		SectionName = TEXT("Game Project");
 
+		bIsDemo = false;
 		WordsPerSecond = 2;
 		MusicFadeTime = 2.0f;
 	}
 
+	UPROPERTY(Config, EditAnywhere, Category = "Default")
+		bool bIsDemo;
+	
 	UPROPERTY(Config, EditAnywhere, Category = "Text", meta = (ClampMin = 1, UIMin = 1))
 		uint8 WordsPerSecond;
 
@@ -45,7 +49,7 @@ public:
 
 	UPROPERTY(Config, EditAnywhere, Category = "GameMusic")
 		FGameMusicID DefaultMusicID;
-	
+
 	float CalcReadingTime(const FString& InStr) const
 	{
 		TArray<FString> Words; InStr.ParseIntoArray(Words, TEXT(" "));
