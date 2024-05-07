@@ -285,7 +285,7 @@ ULoadingWidgetBase* UGameSectionManager::GetLoadingWidget()
 void UGameSectionManager::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
-	PlayTime += DeltaTime;
+	if (!bLoading) PlayTime += DeltaTime;
 }
 
 void UGameSectionManager::OnWorldBeginPlay(UWorld& InWorld)

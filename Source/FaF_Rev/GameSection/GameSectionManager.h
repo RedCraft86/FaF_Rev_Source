@@ -71,4 +71,5 @@ private:
 		return WorldType == EWorldType::Game || WorldType == EWorldType::PIE ||
 			WorldType == EWorldType::GamePreview || WorldType == EWorldType::GameRPC;
 	}
+	virtual TStatId GetStatId() const override { return UObject::GetStatID(); }
 };
