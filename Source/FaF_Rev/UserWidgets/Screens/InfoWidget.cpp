@@ -2,6 +2,7 @@
 
 #include "InfoWidget.h"
 #include "Components/TextBlock.h"
+#include "GameSettings/GameSettings.h"
 #include "SaveSystem/SaveSubsystem.h"
 
 UInfoWidgetBase::UInfoWidgetBase(const FObjectInitializer& ObjectInitializer)
@@ -15,7 +16,7 @@ void UInfoWidgetBase::UpdateInfo()
 {
 	PlayAnimation(SaveAnim);
 
-	const bool bWantsFPS = false; // getter
+	const bool bWantsFPS = UGameSettings::Get()->GetShowFPS();
 	FrameRateText->SetVisibility(bWantsFPS ? ESlateVisibility::HitTestInvisible : ESlateVisibility::Collapsed);
 	DeltaTimeText->SetVisibility(bWantsFPS ? ESlateVisibility::HitTestInvisible : ESlateVisibility::Collapsed);
 	
@@ -39,14 +40,12 @@ void UInfoWidgetBase::NativeConstruct()
 	GetWorld()->GetTimerManager().SetTimer(FrameRateTimer,
 		this, &UInfoWidgetBase::FrameRateTick, 0.25f, true);
 
-	if (false) // getter
-	{
-		GetWorld()->GetTimerManager().PauseTimer(FrameRateTimer);
-	}
+	UpdateInfo();
 }
 
 void UInfoWidgetBase::NativeOnInitialized()
 {
 	Super::NativeOnInitialized();
 	USaveSubsystem::Get(this)->OnSaveStarted.AddUObject(this, &UInfoWidgetBase::UpdateInfo);
+	UGameSettings::Get()->OnDynamicApply.AddUObject(this, &UInfoWidgetBase::UpdateInfo);
 }
