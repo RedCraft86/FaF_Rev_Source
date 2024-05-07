@@ -5,19 +5,19 @@
 #include "GameSection/Graph/GameSectionNode.h"
 #include "GameSection/Graph/GameSectionGraph.h"
 #include "Libraries/GTLoadUtilsLibrary.h"
+#include "SaveSystem/SaveSubsystem.h"
 #include "PlayerTeleporter.h"
 #include "LoadingWidget.h"
 #include "FRGameMode.h"
 #include "FRSettings.h"
 #include "FaF_Rev.h"
 
-void UGameSectionManager::Step(const uint8 Index)
+void UGameSectionManager::LoadSequence()
 {
-	TArray<uint8> PostUpdate = Sequence;
-	PostUpdate.Add(PostUpdate.IsEmpty() ? 0 : Index);
-	if (Sequence != PostUpdate)
+	if (const USaveSubsystem* Subsystem = USaveSubsystem::Get(this))
 	{
-		SetSequence(PostUpdate);
+		Subsystem->LoadGameData();
+		SetSequence(Subsystem->GetGameDataObject()->Sequence);
 	}
 }
 
@@ -40,7 +40,21 @@ void UGameSectionManager::SetSequence(const TArray<uint8>& InSequence)
 	{
 		Sequence = FixedSequence;
 		BeginTransition();
+		
+		if (const USaveSubsystem* Subsystem = USaveSubsystem::Get(this))
+		{
+			Subsystem->GetGameDataObject()->Sequence = Sequence;
+			Subsystem->SaveGameData(PlayTime);
+			PlayTime = 0.0f;
+		}
 	}
+}
+
+void UGameSectionManager::Step(const uint8 Index)
+{
+	TArray<uint8> PostStep = Sequence;
+	PostStep.Add(PostStep.IsEmpty() ? 0 : Index);
+	SetSequence(PostStep);
 }
 
 void UGameSectionManager::BeginTransition()
@@ -258,14 +272,20 @@ void UGameSectionManager::OnLevelLoaded()
 
 ULoadingWidgetBase* UGameSectionManager::GetLoadingWidget()
 {
-	if (IsValid(LoadingWidgetCache)) return LoadingWidgetCache;
+	if (IsValid(LoadingWidget)) return LoadingWidget;
 	if (AFRGameModeBase* GameMode = FRGamemode(this))
 	{
-		LoadingWidgetCache = GameMode->GetWidget<ULoadingWidgetBase>();
-		return LoadingWidgetCache;
+		LoadingWidget = GameMode->GetWidget<ULoadingWidgetBase>();
+		return LoadingWidget;
 	}
 
 	return nullptr;
+}
+
+void UGameSectionManager::Tick(float DeltaTime)
+{
+	Super::Tick(DeltaTime);
+	PlayTime += DeltaTime;
 }
 
 void UGameSectionManager::OnWorldBeginPlay(UWorld& InWorld)
