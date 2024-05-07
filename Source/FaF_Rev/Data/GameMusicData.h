@@ -11,6 +11,8 @@
 USTRUCT(BlueprintInternalUseOnly)
 struct FAF_REV_API FGameMusicTypeData
 {
+	GENERATED_BODY()
+	
 	UPROPERTY(EditAnywhere, Category = "GameMusic")
 		TSoftObjectPtr<USoundBase> Music;
 
