@@ -13,41 +13,44 @@ void USaveSubsystem::SaveGameData(const float InPlayTime) const
 
 void USaveSubsystem::LoadGameData() const
 {
-	if (GameDataObject)
-	{
-		GameDataObject->LoadFromFile(nullptr);
-	}
+	if (GameDataObject) GameDataObject->LoadFromFile(nullptr);
 }
 
 void USaveSubsystem::DeleteGameData() const
 {
-	if (GameDataObject)
-	{
-		GameDataObject->DeleteFile();
-	}
+	if (GameDataObject) GameDataObject->DeleteFile();
 }
 
 void USaveSubsystem::SaveGlobalData() const
 {
-	if (GlobalDataObject)
-	{
-		GlobalDataObject->SaveToFile(nullptr);
-	}
+	if (GlobalDataObject) GlobalDataObject->SaveToFile(nullptr);
 }
 
 void USaveSubsystem::LoadGlobalData() const
 {
-	if (GlobalDataObject)
-	{
-		GlobalDataObject->LoadFromFile(nullptr);
-	}
+	if (GlobalDataObject) GlobalDataObject->LoadFromFile(nullptr);
 }
 
 void USaveSubsystem::DeleteGlobalData() const
 {
+	if (GlobalDataObject) GlobalDataObject->DeleteFile();
+}
+
+void USaveSubsystem::UnlockContent(const TSet<FGameplayTag>& InContentIDs, const bool bSave) const
+{
 	if (GlobalDataObject)
 	{
-		GlobalDataObject->DeleteFile();
+		GlobalDataObject->Content.Append(InContentIDs);
+		if (bSave) GlobalDataObject->SaveToFile(nullptr);
+	}
+}
+
+void USaveSubsystem::ReachEnding(const FGameplayTag InEndingID, const bool bSave) const
+{
+	if (GlobalDataObject && GlobalDataObject->Endings.FindRef(InEndingID).GetTicks() <= 0)
+	{
+		GlobalDataObject->Endings.Add(InEndingID, FDateTime::Now());
+		if (bSave) GlobalDataObject->SaveToFile(nullptr);
 	}
 }
 

@@ -122,4 +122,5 @@ void UGlobalSaveObject::DeleteFile()
 void UGlobalSaveObject::SerializeData(FArchive& Ar)
 {
 	Ar << Endings;
+	Ar << Content;
 }

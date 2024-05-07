@@ -81,6 +81,9 @@ public:
 	UPROPERTY(BlueprintReadOnly, Category = "GlobalSaveObject")
 		TMap<FGameplayTag, FDateTime> Endings;
 	
+	UPROPERTY(BlueprintReadOnly, Category = "GlobalSaveObject")
+		TSet<FGameplayTag> Content;
+	
 	virtual void DeleteFile() override;
 
 private:

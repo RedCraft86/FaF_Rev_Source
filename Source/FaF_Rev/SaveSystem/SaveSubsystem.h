@@ -30,6 +30,12 @@ public:
 	
 	UFUNCTION(BlueprintCallable, BlueprintPure = false, Category = "SaveManager")
 		void DeleteGlobalData() const;
+
+	UFUNCTION(BlueprintCallable, BlueprintPure = false, Category = "SaveManager")
+		void UnlockContent(const TSet<FGameplayTag>& InContentIDs, const bool bSave = true) const;
+
+	UFUNCTION(BlueprintCallable, BlueprintPure = false, Category = "SaveManager")
+		void ReachEnding(const FGameplayTag InEndingID, const bool bSave = true) const;
 	
 	UGameSaveObject* GetGameDataObject() const { return GameDataObject; }
 	UGlobalSaveObject* GetGlobalDataObject() const { return GlobalDataObject; }
