@@ -62,7 +62,7 @@ void AFRGameStateBase::SetMusicMode(const EEnemyAIMode InMusicMode)
 	for (const EEnemyAIMode Mode : TEnumRange<EEnemyAIMode>())
 	{
 		UAudioComponent* Comp = EnemyModeToAudio.FindRef(Mode);
-		if (!Comp) continue;
+		if (!Comp || !Comp->GetSound()) continue;
 			
 		if (Mode == MusicMode)
 		{
