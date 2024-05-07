@@ -44,7 +44,7 @@ void AFRGameStateBase::SetGameMusic(const FGameMusicID InMusicID)
 		Comp->SetSound(Data->Music.LoadSynchronous());
 		if (Mode == MusicMode)
 		{
-			Comp->FadeIn(FadeTime);
+			Comp->FadeIn(Data->TransitionTime);
 		}
 		else
 		{
@@ -58,27 +58,34 @@ void AFRGameStateBase::SetMusicMode(const EEnemyAIMode InMusicMode)
 {
 	if (MusicMode == InMusicMode) return;
 
+	float Time = 0.0f;
 	MusicMode = InMusicMode;
 	for (const EEnemyAIMode Mode : TEnumRange<EEnemyAIMode>())
 	{
 		UAudioComponent* Comp = EnemyModeToAudio.FindRef(Mode);
 		if (!Comp || !Comp->GetSound()) continue;
-			
+
+		const FGameMusicTypeData TypeData = MusicTracks.EnemyModeToTracks.FindRef(Mode);
+		if (TypeData.TransitionTime > Time)
+		{
+			Time = TypeData.TransitionTime;
+		}
+		
 		if (Mode == MusicMode)
 		{
 			Comp->SetPaused(false);
-			if (MusicTracks.EnemyModeToTracks.FindRef(Mode).bRestartOnTransition)
+			if (TypeData.bRestartOnTransition)
 			{
-				Comp->FadeIn(FadeTime, 1.0f);
+				Comp->FadeIn(TypeData.TransitionTime, 1.0f);
 			}
 			else
 			{
-				Comp->AdjustVolume(FadeTime, 1.0f);
+				Comp->AdjustVolume(TypeData.TransitionTime, 1.0f);
 			}
 		}
 		else
 		{
-			Comp->AdjustVolume(FadeTime * 0.5f, 0.05f);
+			Comp->AdjustVolume(TypeData.TransitionTime * 0.5f, 0.05f);
 		}
 	}
 
@@ -92,7 +99,7 @@ void AFRGameStateBase::SetMusicMode(const EEnemyAIMode InMusicMode)
 				Comp->SetPaused(Mode != MusicMode);
 			}
 		}
-	}, FadeTime * 0.55f, false);
+	}, Time * 0.5f, false);
 }
 
 void AFRGameStateBase::StopGameMusic() const
@@ -112,7 +119,6 @@ void AFRGameStateBase::BeginPlay()
 	Super::BeginPlay();
 	if (const UFRSettings* Settings = FRSettings)
 	{
-		FadeTime = Settings->MusicFadeTime;
 		if (!Settings->IsGameplayMap(this))
 			SetGameMusic(Settings->DefaultMusicID);
 	}

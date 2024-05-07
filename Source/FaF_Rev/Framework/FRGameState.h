@@ -40,10 +40,9 @@ public:
 		void StopGameMusic() const;
 
 protected:
-
-	float FadeTime;
-	FTimerHandle FadeTimer;
+	
 	EEnemyAIMode MusicMode;
+	FTimerHandle FadeTimer;
 	
 	UPROPERTY(Transient)
 		FGameMusicData MusicTracks;

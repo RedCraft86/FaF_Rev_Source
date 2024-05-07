@@ -17,9 +17,12 @@ struct FAF_REV_API FGameMusicTypeData
 		TSoftObjectPtr<USoundBase> Music;
 
 	UPROPERTY(EditAnywhere, Category = "GameMusic")
+		float TransitionTime;
+
+	UPROPERTY(EditAnywhere, Category = "GameMusic")
 		bool bRestartOnTransition;
 
-	FGameMusicTypeData() : Music(nullptr), bRestartOnTransition(false) {}
+	FGameMusicTypeData() : Music(nullptr), TransitionTime(2.0f), bRestartOnTransition(false) {}
 };
 
 USTRUCT(BlueprintInternalUseOnly)
