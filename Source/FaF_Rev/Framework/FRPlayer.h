@@ -65,9 +65,6 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Settings|Camera")
 		float FieldOfViewSpeed;
-
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Settings|Camera")
-		float ChaseFOV;
 	
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Settings|Camera|LockOn")
 		TSoftObjectPtr<USceneComponent> LockOnTarget;
@@ -93,9 +90,15 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Settings|Running|Stamina", meta = (ClampMin = 1.0f, UIMin = 1.0f))
 		float MaxStamina;
 
-	// X: Gain, Y: Drain
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Settings|Running|Stamina", meta = (ClampMin = 0.0f, UIMin = 0.0f, ClampMax = 5.0f, UIMax = 5.0f))
-		FVector2D StaminaRates;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Settings|Running|Stamina")
+		FGTModifiableMultiplier StaminaDrainRate;
+	
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Settings|Running|Stamina")
+		FGTModifiableMultiplier StaminaGainRate;
+
+	// Percent of stamina drain for when the player is in a chase: 0.1 -> 1.0
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Settings|Running|Stamina", meta = (ClampMin = 0.1f, UIMin = 0.1f))
+		float AdrenalineReductionMulti;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Settings|Crouching", meta = (ClampMin = 0.1f, UIMin = 0.1f))
 		float CrouchSpeed;
@@ -154,6 +157,7 @@ protected:
 	float SlowTickTime;
 	FVector CamPosition;
 	FGTInterpScalar FOVValue;
+	float FOVFinal, FOVRun, FOVCrouch;
 	FGTInterpScalar HalfHeightValue;
 	FPlayerInteraction InteractData;
 	TSoftObjectPtr<UObject> HidingSpot;
@@ -169,6 +173,9 @@ protected:
 	FTimerHandle WallDetectTimer;
 
 public:
+
+	UFUNCTION(BlueprintImplementableEvent, DisplayName = "Enemy Stack Changed")
+		void K2_EnemyStackChanged(const EEnemyAIMode PriorityMode);
 
 	UFUNCTION(BlueprintCallable, Category = "Player")
 		void ResetStates();
@@ -260,6 +267,18 @@ public:
 		void RemoveMoveSpeedModifier(const FName InKey);
 
 	UFUNCTION(BlueprintCallable, Category = "Player")
+		void AddStaminaDrainModifier(const FName InKey, const float InValue);
+
+	UFUNCTION(BlueprintCallable, Category = "Player")
+		void RemoveStaminaDrainModifier(const FName InKey);
+
+	UFUNCTION(BlueprintCallable, Category = "Player")
+		void AddStaminaGainModifier(const FName InKey, const float InValue);
+
+	UFUNCTION(BlueprintCallable, Category = "Player")
+		void RemoveStaminaGainModifier(const FName InKey);
+
+	UFUNCTION(BlueprintCallable, Category = "Player")
 		void SetLockOnTarget(const USceneComponent* InComponent);
 
 	UFUNCTION(BlueprintPure, Category = "Player")
@@ -292,6 +311,9 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Player")
 		void ClearEnemyStack();
 
+	UFUNCTION(BlueprintPure, Category = "Player")
+		EEnemyAIMode GetPriorityEnemyMode() const;
+	
 	UFUNCTION(BlueprintCallable, BlueprintPure = false, Category = "Player")
 		void FadeToBlack(const float InTime, const bool bAudio = true) const;
 

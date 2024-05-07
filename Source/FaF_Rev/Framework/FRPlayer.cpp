@@ -19,9 +19,9 @@
 #include "LevelSequence.h"
 #include "EngineUtils.h"
 
-#define RUN_FOV_KEY		FName(TEXT("Internal_RunFOV"))
-#define CROUCH_FOV_KEY	FName(TEXT("Internal_CrouchFOV"))
-#define CHASE_FOV_KEY	FName(TEXT("Internal_ChaseFOV"))
+#define RUN_FOV_KEY			FName(TEXT("Internal_RunFOV"))
+#define CROUCH_FOV_KEY		FName(TEXT("Internal_CrouchFOV"))
+#define CHASE_STAMINA_KEY	FName(TEXT("Internal_ChaseStamina"))
 
 #define INPUT_CHECK() !ShouldLock() && !IsGamePaused()
 #define BIND_INPUT_ACTION(Component, Type, Event, Function) \
@@ -67,7 +67,6 @@ AFRPlayerBase::AFRPlayerBase()
 	Sensitivity = FVector2D::UnitVector;
 	FieldOfView = {90.0f};
 	FieldOfViewSpeed = 10.0f;
-	ChaseFOV = 2.0f;
 	LockOnTarget = nullptr;
 	LockOnSpeed = 5.0f;
 	MoveSpeedMultiplier = {1.0f};
@@ -76,7 +75,9 @@ AFRPlayerBase::AFRPlayerBase()
 	RunningSpeed = 750.0f;
 	RunningFOV = 5.0f;
 	MaxStamina = 100.0f;
-	StaminaRates = {2.5f, 1.75f};
+	StaminaDrainRate = {2.5f};
+	StaminaGainRate = {1.75f};
+	AdrenalineReductionMulti = 0.5f;
 	CrouchSpeed = 10.0f;
 	CeilingTraceChannel = ECC_Visibility;
 	HalfHeights = {88.0f, 45.0f};
@@ -151,7 +152,8 @@ void AFRPlayerBase::SetPlayerSettings(const FPlayerSettings& InSettings)
 	OverrideControlFlags(InSettings.ControlFlags);
 	SetLightProperties(InSettings.LightProperties);
 	MoveSpeedMultiplier.BaseValue = InSettings.MoveSpeedMultiplier;
-	StaminaRates = InSettings.StaminaRates;
+	StaminaDrainRate.BaseValue = InSettings.StaminaRates.X;
+	StaminaGainRate.BaseValue = InSettings.StaminaRates.Y;
 }
 
 void AFRPlayerBase::OverrideControlFlags(int32 InFlags)
@@ -390,6 +392,26 @@ void AFRPlayerBase::RemoveMoveSpeedModifier(const FName InKey)
 	MoveSpeedMultiplier.Modifiers.Remove(InKey);
 }
 
+void AFRPlayerBase::AddStaminaDrainModifier(const FName InKey, const float InValue)
+{
+	StaminaDrainRate.Modifiers.Add(InKey, InValue);
+}
+
+void AFRPlayerBase::RemoveStaminaDrainModifier(const FName InKey)
+{
+	StaminaDrainRate.Modifiers.Remove(InKey);
+}
+
+void AFRPlayerBase::AddStaminaGainModifier(const FName InKey, const float InValue)
+{
+	StaminaGainRate.Modifiers.Add(InKey, InValue);
+}
+
+void AFRPlayerBase::RemoveStaminaGainModifier(const FName InKey)
+{
+	StaminaGainRate.Modifiers.Remove(InKey);
+}
+
 void AFRPlayerBase::SetLockOnTarget(const USceneComponent* InComponent)
 {
 	if (InComponent) LockOnTarget = InComponent;
@@ -459,6 +481,28 @@ void AFRPlayerBase::ClearEnemyStack()
 	EnemyStackChanged();
 }
 
+EEnemyAIMode AFRPlayerBase::GetPriorityEnemyMode() const
+{
+	if (EnemyStack.IsEmpty()) return EEnemyAIMode::None;
+	
+	TArray<EEnemyAIMode> States;
+	EnemyStack.GenerateValueArray(States);
+	if (States.Contains(EEnemyAIMode::Chase))
+	{
+		return EEnemyAIMode::Chase;
+	}
+	if (States.Contains(EEnemyAIMode::Search))
+	{
+		return EEnemyAIMode::Search;
+	}
+	if (States.Contains(EEnemyAIMode::Suspicion))
+	{
+		return EEnemyAIMode::Suspicion;
+	}
+
+	return EEnemyAIMode::None;
+}
+
 void AFRPlayerBase::FadeToBlack(const float InTime, const bool bAudio) const
 {
 	if (PlayerController && PlayerController->PlayerCameraManager)
@@ -501,8 +545,9 @@ void AFRPlayerBase::EnemyStackChanged()
 {
 	if (EnemyStack.IsEmpty())
 	{
-		RemoveFieldOfViewModifier(CHASE_FOV_KEY);
+		RemoveStaminaDrainModifier(CHASE_STAMINA_KEY);
 		GameState->SetMusicMode(EEnemyAIMode::None);
+		K2_EnemyStackChanged(EEnemyAIMode::None);
 		return;
 	}
 
@@ -510,22 +555,27 @@ void AFRPlayerBase::EnemyStackChanged()
 	EnemyStack.GenerateValueArray(States);
 	if (States.Contains(EEnemyAIMode::Chase))
 	{
-		AddFieldOfViewModifier(CHASE_FOV_KEY, ChaseFOV);
+		AddStaminaDrainModifier(CHASE_STAMINA_KEY, AdrenalineReductionMulti);
 		GameState->SetMusicMode(EEnemyAIMode::Chase);
+		K2_EnemyStackChanged(EEnemyAIMode::Chase);
 	}
 	else if (States.Contains(EEnemyAIMode::Search))
 	{
 		GameState->SetMusicMode(EEnemyAIMode::Search);
+		K2_EnemyStackChanged(EEnemyAIMode::Search);
 	}
 	else if (States.Contains(EEnemyAIMode::Suspicion))
 	{
+		RemoveStaminaDrainModifier(CHASE_STAMINA_KEY);
 		GameState->SetMusicMode(EEnemyAIMode::Suspicion);
+		K2_EnemyStackChanged(EEnemyAIMode::Suspicion);
 	}
 	else
 	{
 		// Uh-oh! Something broke though. We shouldn't have an Enemy in the stack with their AI Mode saved as NONE
-		RemoveFieldOfViewModifier(CHASE_FOV_KEY);
+		RemoveStaminaDrainModifier(CHASE_STAMINA_KEY);
 		GameState->SetMusicMode(EEnemyAIMode::None);
+		K2_EnemyStackChanged(EEnemyAIMode::None);
 	}
 }
 
@@ -621,7 +671,7 @@ bool AFRPlayerBase::TraceInteraction(FHitResult& OutHitResult, FPlayerInteractio
 void AFRPlayerBase::TickStamina()
 {
 	const bool bShouldDrain = IsMoving() && IsRunning();
-	StaminaDelta = bShouldDrain ? -StaminaRates.Y : StaminaRates.X;
+	StaminaDelta = bShouldDrain ? -StaminaDrainRate.Evaluate() : StaminaGainRate.Evaluate();
 	CurrentStamina = FMath::Clamp(StaminaDelta + CurrentStamina, 0.0f, MaxStamina);
 	if (CurrentStamina < 0.01f && !IsStaminaPunished())
 	{
