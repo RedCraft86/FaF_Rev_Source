@@ -36,6 +36,9 @@ public:
 
 	UFUNCTION(BlueprintCallable, BlueprintPure = false, Category = "SaveManager")
 		void ReachEnding(const FGameplayTag InEndingID, const bool bSave = true) const;
+
+	DECLARE_MULTICAST_DELEGATE(FPromptSaveIcon)
+	FPromptSaveIcon OnSaveStarted;
 	
 	UGameSaveObject* GetGameDataObject() const { return GameDataObject; }
 	UGlobalSaveObject* GetGlobalDataObject() const { return GlobalDataObject; }
