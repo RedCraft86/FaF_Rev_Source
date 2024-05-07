@@ -8,6 +8,7 @@
 #include "SaveSystem/SaveSubsystem.h"
 #include "PlayerTeleporter.h"
 #include "LoadingWidget.h"
+#include "FRGameState.h"
 #include "FRGameMode.h"
 #include "FRSettings.h"
 #include "FaF_Rev.h"
@@ -96,7 +97,7 @@ void UGameSectionManager::UnloadLastData()
 	{
 		PlayerChar->ResetStates();
 		PlayerChar->TeleportPlayer(FVector::ZeroVector, FRotator::ZeroRotator);
-		PlayerChar->GetGameMode()->MuteGameMusic();
+		PlayerChar->GetGameState()->StopGameMusic();
 	}
 	
 	LoadedObjs.Empty(ThisData ? ThisData->PreloadObjects.Num() : 0);
@@ -123,7 +124,7 @@ void UGameSectionManager::LoadCurrentData()
 	UGTLoadUtilsLibrary::ForceGarbageCollection();
 	checkf(ThisData, TEXT("Trying to load without any valid data."))
 
-	if (ULoadingWidgetBase* LoadingWidget = GetLoadingWidget()) LoadingWidget->bUnloading = false;
+	if (ULoadingWidgetBase* Widget = GetLoadingWidget()) Widget->bUnloading = false;
 
 	LoadingLevels = 0;
 	bool bHasMaps = false;
@@ -177,7 +178,7 @@ void UGameSectionManager::FinishTransition()
 		{
 			PlayerChar->FadeFromBlack(1.0f);
 			PlayerChar->ClearLockFlag(Player::LockFlags::Loading);
-			PlayerChar->GetGameMode()->SetGameMusic(ThisData->MusicID);
+			PlayerChar->GetGameState()->SetGameMusic(ThisData->MusicID);
 		}
 		
 		bLoading = false;	
@@ -236,18 +237,18 @@ bool UGameSectionManager::LoadLevel(const TPair<TSoftObjectPtr<UWorld>, bool>& I
 
 void UGameSectionManager::HideLoadingWidget(const TFunction<void()>& OnFinished)
 {
-	if (ULoadingWidgetBase* LoadingWidget = GetLoadingWidget())
+	if (ULoadingWidgetBase* Widget = GetLoadingWidget())
 	{
-		LoadingWidget->FinishLoading(OnFinished);
+		Widget->FinishLoading(OnFinished);
 	}
 }
 
 void UGameSectionManager::ShowLoadingWidget()
 {
 	if (!ThisData) return;
-	if (ULoadingWidgetBase* LoadingWidget = GetLoadingWidget())
+	if (ULoadingWidgetBase* Widget = GetLoadingWidget())
 	{
-		LoadingWidget->BeginLoading(ThisData->GetDependencies(),
+		Widget->BeginLoading(ThisData->GetDependencies(),
 			ThisData->GetBackground(), ThisData->GetTip());
 	}
 }
@@ -273,13 +274,8 @@ void UGameSectionManager::OnLevelLoaded()
 ULoadingWidgetBase* UGameSectionManager::GetLoadingWidget()
 {
 	if (IsValid(LoadingWidget)) return LoadingWidget;
-	if (AFRGameModeBase* GameMode = FRGameMode(this))
-	{
-		LoadingWidget = GameMode->GetWidget<ULoadingWidgetBase>();
-		return LoadingWidget;
-	}
-
-	return nullptr;
+	LoadingWidget = PlayerChar->GetGameMode()->GetWidget<ULoadingWidgetBase>();
+	return LoadingWidget;
 }
 
 void UGameSectionManager::Tick(float DeltaTime)

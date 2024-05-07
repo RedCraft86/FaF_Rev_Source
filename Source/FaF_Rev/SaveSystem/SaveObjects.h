@@ -37,11 +37,6 @@ protected:
 
 	ESaveGameError LastError;
 
-	virtual void PreSave() {}
-	virtual void PostSave() {}
-	virtual void PreLoad() {}
-	virtual void PostLoad() {}
-
 	virtual void SerializeData(FArchive& Ar) {}
 	virtual FString GetSaveFileName() const { return TEXT("Default"); }
 };

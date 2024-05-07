@@ -331,6 +331,9 @@ public:
 	
 	UFUNCTION(BlueprintPure, Category = "Player")
 		AFRGameModeBase* GetGameMode() const { return GameMode; }
+
+	UFUNCTION(BlueprintPure, Category = "Player")
+		AFRGameStateBase* GetGameState() const { return GameState; }
 	
 	UFUNCTION(BlueprintPure, Category = "Player")
 		AFRPlayerController* GetPlayerController() const { return PlayerController; }

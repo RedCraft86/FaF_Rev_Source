@@ -12,7 +12,6 @@ FString USaveObjectBase::GetSavePath() const
 
 void USaveObjectBase::SaveToFile(const TFunction<void(const ESaveGameError)>& Callback)
 {
-	PreSave();
 	FBufferArchive ToBinary(true);
 	SerializeData(ToBinary);
 
@@ -43,7 +42,6 @@ void USaveObjectBase::SaveToFile(const TFunction<void(const ESaveGameError)>& Ca
 		
 		LastError = ESaveGameError::None;
 		if (Callback) Callback(LastError);
-		PostSave();
 	});
 }
 
@@ -54,8 +52,7 @@ void USaveObjectBase::LoadFromFile(const TFunction<void(const ESaveGameError)>& 
 		SaveToFile(Callback);
 		return;
 	}
-
-	PreLoad();
+	
 	AsyncTask(ENamedThreads::AnyBackgroundHiPriTask, [this, Callback](){
 		TArray<uint8> CompressedData;
 		if (!FFileHelper::LoadFileToArray(CompressedData, *GetSavePath()))
@@ -88,7 +85,6 @@ void USaveObjectBase::LoadFromFile(const TFunction<void(const ESaveGameError)>& 
 
 			LastError = ESaveGameError::None;
 			if (Callback) Callback(LastError);
-			PostLoad();
 		});
 	});
 }

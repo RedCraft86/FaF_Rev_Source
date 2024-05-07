@@ -14,12 +14,12 @@ class FAF_REV_API UGameSettings final : public UGameUserSettings
 public:
 
 	UFUNCTION(BlueprintCallable, Category = "Settings")
-		void SetShowFPS(const bool bShowFPS);
+		void SetShowFPS(const bool bInShowFPS);
 
 	UFUNCTION(BlueprintPure, Category = "Settings")
 		bool GetShowFPS() const { return bShowFPS; }
 
-	DECLARE_MULTICAST_DELEGATE_OneParam(FOnSettingsApply);
+	DECLARE_MULTICAST_DELEGATE(FOnSettingsApply);
 	FOnSettingsApply OnDynamicApply, OnManualApply;
 
 private:
