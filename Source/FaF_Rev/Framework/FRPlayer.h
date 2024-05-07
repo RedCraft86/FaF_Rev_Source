@@ -3,6 +3,7 @@
 #pragma once
 
 #include "ExecEnums.h"
+#include "EnemyData.h"
 #include "PlayerData.h"
 #include "Data/MathTypes.h"
 #include "Data/LightingData.h"
@@ -145,8 +146,10 @@ public:
 protected:
 
 	UPROPERTY(Transient) class AFRGameModeBase* GameMode;
+	UPROPERTY(Transient) class AFRGameStateBase* GameState;
 	UPROPERTY(Transient) class AFRPlayerController* PlayerController;
 	UPROPERTY(Transient) class ULevelSequence* ActiveCutscene;
+	UPROPERTY(Transient) TMap<const UObject*, EEnemyAIMode> EnemyStack;
 
 	float SlowTickTime;
 	FVector CamPosition;
@@ -155,7 +158,6 @@ protected:
 	FPlayerInteraction InteractData;
 	TSoftObjectPtr<UObject> HidingSpot;
 	TSoftObjectPtr<UObject> WorldDevice;
-	TSet<TSoftObjectPtr<UObject>> EnemyStack;
 	FRotator LockCurrentRot, LockTargetRot;
 	FVector2D LeanCamOffset, SwayCamOffset;
 	FVector2D CurrentCamOffset, TargetCamOffset;
@@ -282,10 +284,10 @@ public:
 		UObject* GetWorldDevice() const;
 	
 	UFUNCTION(BlueprintCallable, Category = "Player")
-		void AddEnemyToStack(const UObject* InObject);
+		void AddEnemy(const UObject* InObject, const EEnemyAIMode InMode);
 
 	UFUNCTION(BlueprintCallable, Category = "Player")
-		void RemoveEnemyFromStack(const UObject* InObject);
+		void RemoveEnemy(const UObject* InObject);
 	
 	UFUNCTION(BlueprintCallable, Category = "Player")
 		void ClearEnemyStack();

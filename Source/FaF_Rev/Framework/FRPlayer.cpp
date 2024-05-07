@@ -3,6 +3,7 @@
 
 #include "FRPlayer.h"
 #include "FRGameMode.h"
+#include "FRGameState.h"
 #include "ExitInterface.h"
 #include "FRPlayerController.h"
 #include "Libraries/GTMathLibrary.h"
@@ -431,14 +432,21 @@ UObject* AFRPlayerBase::GetWorldDevice() const
 	return WorldDevice.LoadSynchronous();
 }
 
-void AFRPlayerBase::AddEnemyToStack(const UObject* InObject)
+void AFRPlayerBase::AddEnemy(const UObject* InObject, const EEnemyAIMode InMode)
 {
-	EnemyStack.Remove(nullptr);
-	EnemyStack.Add(InObject);
-	EnemyStackChanged();
+	if (InMode == EEnemyAIMode::None)
+	{
+		RemoveEnemy(InObject);
+	}
+	else
+	{
+		EnemyStack.Remove(nullptr);
+		EnemyStack.Add(InObject, InMode);
+		EnemyStackChanged();
+	}
 }
 
-void AFRPlayerBase::RemoveEnemyFromStack(const UObject* InObject)
+void AFRPlayerBase::RemoveEnemy(const UObject* InObject)
 {
 	EnemyStack.Remove(nullptr);
 	EnemyStack.Remove(InObject);
@@ -494,10 +502,30 @@ void AFRPlayerBase::EnemyStackChanged()
 	if (EnemyStack.IsEmpty())
 	{
 		RemoveFieldOfViewModifier(CHASE_FOV_KEY);
+		GameState->SetMusicMode(EEnemyAIMode::None);
+		return;
+	}
+
+	TArray<EEnemyAIMode> States;
+	EnemyStack.GenerateValueArray(States);
+	if (States.Contains(EEnemyAIMode::Chase))
+	{
+		AddFieldOfViewModifier(CHASE_FOV_KEY, ChaseFOV);
+		GameState->SetMusicMode(EEnemyAIMode::Chase);
+	}
+	else if (States.Contains(EEnemyAIMode::Search))
+	{
+		GameState->SetMusicMode(EEnemyAIMode::Search);
+	}
+	else if (States.Contains(EEnemyAIMode::Suspicion))
+	{
+		GameState->SetMusicMode(EEnemyAIMode::Suspicion);
 	}
 	else
 	{
-		AddFieldOfViewModifier(CHASE_FOV_KEY, ChaseFOV);
+		// Uh-oh! Something broke though. We shouldn't have an Enemy in the stack with their AI Mode saved as NONE
+		RemoveFieldOfViewModifier(CHASE_FOV_KEY);
+		GameState->SetMusicMode(EEnemyAIMode::None);
 	}
 }
 
@@ -855,11 +883,12 @@ void AFRPlayerBase::BeginPlay()
 			FAttachmentTransformRules::KeepRelativeTransform);
 	}
 
-	GameMode = FRGamemode(this);
+	GameMode = FRGameMode(this);
 	if (GameMode)
 	{
 		GameMode->PhotoModeActor = PhotoModeActor.LoadSynchronous();
 		GameMode->InspectionActor = InspectionActor.LoadSynchronous();
+		GameState = GameMode->GetGameState<AFRGameStateBase>();
 	}
 
 	PlayerController = FRPlayerController(this);

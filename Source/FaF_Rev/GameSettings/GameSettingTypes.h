@@ -22,9 +22,14 @@ enum class EFRColorBlind : uint8
 UENUM(BlueprintType, DisplayName = "Anti Aliasing Method")
 enum class EFRAntiAliasing : uint8
 {
-	FXAA	UMETA(DisplayName = "Fast Approximate Anti-Aliasing (FXAA)"),
-	TAA		UMETA(DisplayName = "Temporal Anti-Aliasing (TAA)"),
-	TSR		UMETA(DisplayName = "Temporal Super-Resolution (TSR)")
+	// Fast Approximate Anti-Aliasing
+	FXAA,
+
+	// Temporal Anti-Aliasing
+	TAA,
+
+	// Temporal Super-Resolution
+	TSR
 };
 
 UENUM(BlueprintType, DisplayName = "Sound Type")

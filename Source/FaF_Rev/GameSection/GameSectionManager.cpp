@@ -273,7 +273,7 @@ void UGameSectionManager::OnLevelLoaded()
 ULoadingWidgetBase* UGameSectionManager::GetLoadingWidget()
 {
 	if (IsValid(LoadingWidget)) return LoadingWidget;
-	if (AFRGameModeBase* GameMode = FRGamemode(this))
+	if (AFRGameModeBase* GameMode = FRGameMode(this))
 	{
 		LoadingWidget = GameMode->GetWidget<ULoadingWidgetBase>();
 		return LoadingWidget;
