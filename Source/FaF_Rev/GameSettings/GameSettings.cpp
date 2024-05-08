@@ -2,12 +2,10 @@
 
 #include "GameSettings.h"
 #include "AudioDevice.h"
-#include "Kismet/KismetSystemLibrary.h"
-#include "Libraries/GTConsoleLibrary.h"
+#include "Kismet/KismetMaterialLibrary.h"
 #include "GTConfigSubsystem.h"
 #include "FRGameInstance.h"
 #include "FRSettings.h"
-#include "Kismet/KismetMaterialLibrary.h"
 
 UGameSettings::UGameSettings()
 {
@@ -134,33 +132,6 @@ void UGameSettings::SetBrightness(const uint8 InBrightness)
 	}
 }
 
-void UGameSettings::SetGamma(const float InGamma)
-{
-	if (Gamma != InGamma)
-	{
-		Gamma = FMath::Clamp(InGamma, 0, 5);
-		if (GEngine) GEngine->DisplayGamma = InGamma;
-	}
-}
-
-void UGameSettings::SetColorBlindMode(const EFRColorBlindMode InColorBlindMode)
-{
-	if (ColorBlindMode != InColorBlindMode)
-	{
-		ColorBlindMode = InColorBlindMode;
-		ApplyColorBlindSettings();
-	}
-}
-
-void UGameSettings::SetColorBlindStrength(const uint8 InColorBlindStrength)
-{
-	if (ColorBlindStrength != InColorBlindStrength)
-	{
-		ColorBlindStrength = FMath::Clamp(InColorBlindStrength, 0, 10);
-		ApplyColorBlindSettings();
-	}
-}
-
 void UGameSettings::SetUseFancyBloom(const bool bUseFancyBloom)
 {
 	if (bFancyBloom != bUseFancyBloom)
@@ -170,42 +141,10 @@ void UGameSettings::SetUseFancyBloom(const bool bUseFancyBloom)
 	}
 }
 
-void UGameSettings::SetMotionBlurAmount(const uint8 InMotionBlurAmount)
-{
-	MotionBlurAmount = FMath::Clamp(InMotionBlurAmount, 0, 4);
-}
-
-void UGameSettings::SetAntiAliasingMethod(const EFRAntiAliasingMethod InAntiAliasingMethod)
-{
-	AntiAliasingMethod = InAntiAliasingMethod;
-}
-
 void UGameSettings::SetAudioVolume(const EFRSoundType Type, const uint8 InVolume)
 {
 	SoundTypeToVolume.Add(Type, InVolume);
 	ApplyAudioSettings();
-}
-
-TArray<FIntPoint> UGameSettings::GetAllResolutions() const
-{
-	TArray<FIntPoint> Supported;
-	UKismetSystemLibrary::GetSupportedFullscreenResolutions(Supported);
-	
-	FDisplayMetrics Metrics;
-	FDisplayMetrics::RebuildDisplayMetrics(Metrics);
-
-	TArray<FIntPoint> Result;
-	for (const FIntPoint& Elem : Supported)
-	{
-		if (Elem.X <= Metrics.PrimaryDisplayWidth
-			&& Elem.Y <= Metrics.PrimaryDisplayHeight)
-		{
-			Result.Add(Elem);
-		}
-	}
-	
-	Algo::Reverse(Result);
-	return Result;
 }
 
 UWorld* UGameSettings::GetWorld() const
@@ -234,39 +173,17 @@ void UGameSettings::ApplyAudioSettings()
 	AudioDevice->PushSoundMixModifier(SoundMixObject);
 }
 
-void UGameSettings::ApplyColorBlindSettings()
-{
-	if (!FApp::IsGame()) return;
-	FSlateApplication::Get().GetRenderer()->SetColorVisionDeficiencyType(static_cast<EColorVisionDeficiency>(ColorBlindMode),
-		FMath::Clamp(ColorBlindStrength, 0, 10), true, false);
-}
-
 void UGameSettings::SetToDefaults()
 {
 	Super::SetToDefaults();
-	
-	SetScreenResolution(GetDesktopResolution());
-#if WITH_EDITOR
-	SetFullscreenMode(GIsPlayInEditorWorld ? EWindowMode::WindowedFullscreen : EWindowMode::Fullscreen);
-#else
-	SetFullscreenMode(EWindowMode::Fullscreen);
-#endif
 	SetOverallQuality(2);
-	SetResolutionScaleNormalized(1.0f);
-	SetVSyncEnabled(true);
-	FrameRateLimit = 60.0f;
 	
 	bShowFPS = false;
 	bSmoothCamera = true;
 	SensitivityXY = FVector2D::UnitVector;
 	FieldOfView = 90;
 	Brightness = 100;
-	Gamma = 2.2f;
-	ColorBlindMode = EFRColorBlindMode::None;
-	ColorBlindStrength = 10;
 	bFancyBloom = true;
-	MotionBlurAmount = 1;
-	AntiAliasingMethod = EFRAntiAliasingMethod::TAA;
 	for (const EFRSoundType Type : TEnumRange<EFRSoundType>())
 	{
 		SoundTypeToVolume.Add(Type, 100);
@@ -282,58 +199,17 @@ void UGameSettings::SetToDefaults()
 void UGameSettings::ApplyNonResolutionSettings()
 {
 	Super::ApplyNonResolutionSettings();
-#if WITH_EDITOR
-	if (!FApp::IsGame())
-	{
-		GEngine->DisplayGamma = 2.2;
-		
-		if (IConsoleVariable* CVar_MotionBlurQuality = UGTConsoleLibrary::FindCVar(TEXT("r.MotionBlurQuality")))
-		{
-			CVar_MotionBlurQuality->Set(2, ECVF_SetByConsole);
-		}
-		if (IConsoleVariable* CVar_AntiAliasingMethod = UGTConsoleLibrary::FindCVar(TEXT("r.AntiAliasingMethod")))
-		{
-			CVar_AntiAliasingMethod->Set(2, ECVF_SetByConsole);
-		}
-	}
-	else
-#endif
-	{
-		GEngine->DisplayGamma = FMath::Clamp(Gamma, 0, 5);
-		
-		if (IConsoleVariable* CVar_MotionBlurQuality = UGTConsoleLibrary::FindCVar(TEXT("r.MotionBlurQuality")))
-		{
-			CVar_MotionBlurQuality->Set(FMath::Clamp((int32)MotionBlurAmount, 0, 4), ECVF_SetByConsole);
-		}
-		if (IConsoleVariable* CVar_AntiAliasingMethod = UGTConsoleLibrary::FindCVar(TEXT("r.AntiAliasingMethod")))
-		{
-			CVar_AntiAliasingMethod->Set(ConvertAAMethod(AntiAliasingMethod), ECVF_SetByConsole);
-		}
-	}
-	
 	// if (IConsoleVariable* CVar_FSRQuality = UGTConsoleLibrary::FindCVar(TEXT("r.FidelityFX.FSR3.QualityMode")))
 	// {
 	// 	CVar_FSRQuality->Set(FMath::Clamp((int32)FSRQuality, 0, 4), ECVF_SetByConsole);
 	// }
 	
 	ApplyAudioSettings();
-	ApplyColorBlindSettings();
 	
 	OnManualApply.Broadcast();
 	if (bInitializing) OnDynamicApply.Broadcast();
 
 	SaveSettings();
-}
-
-int32 UGameSettings::ConvertAAMethod(const EFRAntiAliasingMethod InMethod)
-{
-	switch (InMethod)
-	{
-	case EFRAntiAliasingMethod::FXAA: return 1;
-	case EFRAntiAliasingMethod::TAA: return 2;
-	case EFRAntiAliasingMethod::TSR: return 4;
-	default: return 2;
-	}
 }
 
 int32 UGameSettings::FrameRateToInt(const float InFramerate)

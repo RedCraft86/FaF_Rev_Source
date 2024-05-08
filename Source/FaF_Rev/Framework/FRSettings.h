@@ -4,7 +4,7 @@
 
 #include "Kismet/GameplayStatics.h"
 #include "Engine/DeveloperSettings.h"
-#include "GameSettings/GameSettingTypes.h"
+#include "GameSettings/GameSettings.h"
 #include "Materials/MaterialParameterCollection.h"
 #include "FRSettings.generated.h"
 

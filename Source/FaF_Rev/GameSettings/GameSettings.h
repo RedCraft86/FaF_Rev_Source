@@ -2,12 +2,22 @@
 
 #pragma once
 
-#include "GameSettingTypes.h"
-#include "GameFramework/GameUserSettings.h"
+#include "GTGameUserSettings.h"
 #include "GameSettings.generated.h"
 
+UENUM(BlueprintType, DisplayName = "Sound Type")
+enum class EFRSoundType : uint8
+{
+	Master,
+	Ambience,
+	Music,
+	SoundFX,
+	Voice
+};
+ENUM_RANGE_BY_FIRST_AND_LAST(EFRSoundType, EFRSoundType::Master, EFRSoundType::Voice);
+
 UCLASS(BlueprintType)
-class FAF_REV_API UGameSettings final : public UGameUserSettings
+class FAF_REV_API UGameSettings final : public UGTGameUserSettings
 {
 	GENERATED_BODY()
 
@@ -63,40 +73,10 @@ public:
 		uint8 GetBrightness() const { return Brightness; }
 
 	UFUNCTION(BlueprintCallable, Category = "Settings")
-		void SetGamma(const float InGamma);
-
-	UFUNCTION(BlueprintPure, Category = "Settings")
-		float GetGamma() const { return Gamma; }
-
-	UFUNCTION(BlueprintCallable, Category = "Settings")
-		void SetColorBlindMode(const EFRColorBlindMode InColorBlindMode);
-
-	UFUNCTION(BlueprintPure, Category = "Settings")
-		EFRColorBlindMode GetColorBlindMode() const { return ColorBlindMode; }
-
-	UFUNCTION(BlueprintCallable, Category = "Settings")
-		void SetColorBlindStrength(const uint8 InColorBlindStrength);
-
-	UFUNCTION(BlueprintPure, Category = "Settings")
-		uint8 GetColorBlindStrength() const { return ColorBlindStrength; }
-
-	UFUNCTION(BlueprintCallable, Category = "Settings")
 		void SetUseFancyBloom(const bool bUseFancyBloom);
 
 	UFUNCTION(BlueprintPure, Category = "Settings")
 		bool GetUseFancyBloom() const { return bFancyBloom; }
-
-	UFUNCTION(BlueprintCallable, Category = "Settings")
-		void SetMotionBlurAmount(const uint8 InMotionBlurAmount);
-
-	UFUNCTION(BlueprintPure, Category = "Settings")
-		uint8 GetMotionBlurAmount() const { return MotionBlurAmount; }
-
-	UFUNCTION(BlueprintCallable, Category = "Settings")
-		void SetAntiAliasingMethod(const EFRAntiAliasingMethod InAntiAliasingMethod);
-
-	UFUNCTION(BlueprintPure, Category = "Settings")
-		EFRAntiAliasingMethod GetAntiAliasingMethod() const { return AntiAliasingMethod; }
 
 	UFUNCTION(BlueprintCallable, Category = "Settings")
 		void SetAudioVolume(const EFRSoundType Type, const uint8 InVolume);
@@ -109,17 +89,10 @@ public:
 	
 	DECLARE_MULTICAST_DELEGATE(FOnSettingsApply);
 	FOnSettingsApply OnDynamicApply, OnManualApply;
-
-	void SetResScalePercent(const float InValue) { SetResolutionScaleNormalized(InValue * 0.01); }
-	float GetResScalePercent() const { return GetResolutionScaleNormalized() * 100.0f; }
+	
 	void SetFrameRateInt(const int32 InValue) { SetFrameRateLimit(IntToFrameRate(InValue)); }
 	int32 GetFrameRateInt() const { return FrameRateToInt(GetFrameRateLimit()); }
-	void SetAAliasingInt(const int32 InValue) { SetAntiAliasingMethod(static_cast<EFRAntiAliasingMethod>(InValue)); }
-	int32 GetAAliasingInt() const { return static_cast<int32>(GetAntiAliasingMethod()); }
-	void SetCBlindModeInt(const int32 InValue) { SetColorBlindMode(static_cast<EFRColorBlindMode>(InValue)); }
-	int32 GetCBlindModeInt() const { return static_cast<int32>(GetColorBlindMode()); }
-
-	TArray<FIntPoint> GetAllResolutions() const;
+	
 	virtual UWorld* GetWorld() const override;
 
 private:
@@ -139,28 +112,16 @@ private:
 	UPROPERTY(Config) bool bSmoothCamera;
 	UPROPERTY(Config) FVector2D SensitivityXY;
 	UPROPERTY(Config) uint8 FieldOfView;
-	
 	UPROPERTY(Config) uint8 Brightness;
-	UPROPERTY(Config) float Gamma;
-	
-	UPROPERTY(Config) EFRColorBlindMode ColorBlindMode;
-	UPROPERTY(Config) uint8 ColorBlindStrength;
-	
 	UPROPERTY(Config) bool bFancyBloom;
-	UPROPERTY(Config) uint8 MotionBlurAmount;
-	UPROPERTY(Config) EFRAntiAliasingMethod AntiAliasingMethod;
-	
 	UPROPERTY(Config) TMap<EFRSoundType, uint8> SoundTypeToVolume;
 
 	void ApplyAudioSettings();
-	void ApplyColorBlindSettings();
-
 	virtual void SetToDefaults() override;
 	virtual void ApplyNonResolutionSettings() override;
 	
 public: // Statics
-
-	static int32 ConvertAAMethod(const EFRAntiAliasingMethod InMethod);
+	
 	static int32 FrameRateToInt(const float InFramerate);
 	static float IntToFrameRate(const int32 InValue);
 	
