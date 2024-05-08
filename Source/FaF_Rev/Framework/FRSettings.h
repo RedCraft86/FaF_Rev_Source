@@ -2,9 +2,10 @@
 
 #pragma once
 
-#include "GameMusicData.h"
 #include "Kismet/GameplayStatics.h"
 #include "Engine/DeveloperSettings.h"
+#include "GameSettings/GameSettingTypes.h"
+#include "Materials/MaterialParameterCollection.h"
 #include "FRSettings.generated.h"
 
 #define FRSettings UFRSettings::Get()
@@ -46,6 +47,21 @@ public:
 	UPROPERTY(Config, EditAnywhere, Category = "GameMusic", meta = (RequiredAssetDataTags = "RowStructure=/Script/FaF_Rev.GameMusicData"))
 		TSoftObjectPtr<UDataTable> MusicTable;
 
+	UPROPERTY(Config, EditAnywhere, BlueprintReadOnly, Category = "GameSettings")
+		TSoftObjectPtr<class UInputMappingContext> InputMappingContext;
+	
+	UPROPERTY(Config, EditAnywhere, BlueprintReadOnly, Category = "GameSettings")
+		TSoftObjectPtr<class USoundMix> SoundMixClass;
+
+	UPROPERTY(Config, EditAnywhere, BlueprintReadOnly, Category = "GameSettings", meta = (ReadOnlyKeys))
+		TMap<EFRSoundType, TSoftObjectPtr<class USoundClass>> SoundClasses;
+
+	UPROPERTY(Config, EditAnywhere, BlueprintReadOnly, Category = "GameSettings|PostProcessing")
+		TSoftObjectPtr<class UMaterialParameterCollection> MainRenderingMPC;
+
+	UPROPERTY(Config, EditAnywhere, BlueprintReadOnly, Category = "GameSettings|PostProcessing", meta = (GetOptions = "GetMainRenderingMPCNames"))
+		FName BrightnessParamName;
+	
 	float CalcReadingTime(const FString& InStr) const
 	{
 		TArray<FString> Words; InStr.ParseIntoArray(Words, TEXT(" "));
@@ -61,15 +77,26 @@ public:
 private:
 	UFUNCTION() TArray<FName> GetMusicTableKeys()
 	{
-		TArray<FName> Name = {};
+		TArray<FName> Names = {};
 		if (MusicTable.LoadSynchronous())
 		{
-			Name = MusicTable.LoadSynchronous()->GetRowNames();
-			if (DefaultMusicID.IsNone() && Name.Num() > 0)
-				DefaultMusicID = Name[0];
+			Names = MusicTable.LoadSynchronous()->GetRowNames();
+			if (DefaultMusicID.IsNone() && Names.Num() > 0)
+				DefaultMusicID = Names[0];
 		}
 		
-		return Name;
+		return Names;
+	}
+
+	UFUNCTION() TArray<FName> GetMainRenderingMPCNames() const
+	{
+		TArray<FName> Names = {};
+		if (MainRenderingMPC.LoadSynchronous())
+		{
+			MainRenderingMPC.LoadSynchronous()->GetParameterNames(Names, false);
+		}
+		
+		return Names;
 	}
 #endif
 #if WITH_EDITOR
@@ -77,6 +104,13 @@ private:
 	{
 		Super::PostEditChangeProperty(PropertyChangedEvent);
 		if (MusicTable.IsNull()) DefaultMusicID = NAME_None;
+		if (SoundClasses.Num() < 5)
+		{
+			for (const EFRSoundType Type : TEnumRange<EFRSoundType>())
+			{
+				if (!SoundClasses.Contains(Type)) SoundClasses.Add(Type);
+			}
+		}
 	}
 #endif
 public: // Statics

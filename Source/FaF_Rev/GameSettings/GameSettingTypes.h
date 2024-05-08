@@ -5,7 +5,7 @@
 #include "GameSettingTypes.generated.h"
 
 UENUM(BlueprintType, DisplayName = "Color Blind Mode")
-enum class EFRColorBlind : uint8
+enum class EFRColorBlindMode : uint8
 {
 	None = 0,
 	
@@ -20,7 +20,7 @@ enum class EFRColorBlind : uint8
 };
 
 UENUM(BlueprintType, DisplayName = "Anti Aliasing Method")
-enum class EFRAntiAliasing : uint8
+enum class EFRAntiAliasingMethod : uint8
 {
 	// Fast Approximate Anti-Aliasing
 	FXAA,
