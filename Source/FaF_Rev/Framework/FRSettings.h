@@ -57,8 +57,8 @@ public:
 		return UGameplayStatics::GetCurrentLevelName(WorldContext) == GameplayMap.GetAssetName();
 	}
 
-private:
 #if WITH_EDITORONLY_DATA
+private:
 	UFUNCTION() TArray<FName> GetMusicTableKeys()
 	{
 		TArray<FName> Name = {};
@@ -72,7 +72,6 @@ private:
 		return Name;
 	}
 #endif
-	
 public: // Statics
 	
 	static UFRSettings* Get() { return GetMutableDefault<UFRSettings>(); }
