@@ -144,6 +144,8 @@ void AFRPlayerBase::ResetStates()
 	HalfHeightValue.SnapToTarget();
 	InteractData.Reset();
 	SwayCamOffset = FVector2D::ZeroVector;
+	StaminaDrainRate.Modifiers.Empty();
+	StaminaGainRate.Modifiers.Empty();
 	CurrentStamina = MaxStamina;
 }
 
