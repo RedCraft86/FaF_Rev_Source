@@ -81,7 +81,7 @@ public:
 		uint8 GetColorBlindStrength() const { return ColorBlindStrength; }
 
 	UFUNCTION(BlueprintCallable, Category = "Settings")
-		void SetUseFancyBloom(const float bUseFancyBloom);
+		void SetUseFancyBloom(const bool bUseFancyBloom);
 
 	UFUNCTION(BlueprintPure, Category = "Settings")
 		bool GetUseFancyBloom() const { return bFancyBloom; }

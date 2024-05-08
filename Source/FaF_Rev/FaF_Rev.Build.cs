@@ -33,6 +33,7 @@ public class FaF_Rev : ModuleRules
 				"EnhancedInput",
 				"AssetRegistry",
 				"LevelSequence",
+				"ApplicationCore",
 				"DeveloperSettings",
 				"DataGraphRuntime",
 				"PulldownStruct",

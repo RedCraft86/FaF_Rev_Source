@@ -161,7 +161,7 @@ void UGameSettings::SetColorBlindStrength(const uint8 InColorBlindStrength)
 	}
 }
 
-void UGameSettings::SetUseFancyBloom(const float bUseFancyBloom)
+void UGameSettings::SetUseFancyBloom(const bool bUseFancyBloom)
 {
 	if (bFancyBloom != bUseFancyBloom)
 	{
