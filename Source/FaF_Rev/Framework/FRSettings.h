@@ -46,20 +46,17 @@ public:
 	
 	UPROPERTY(Config, EditAnywhere, Category = "GameMusic", meta = (RequiredAssetDataTags = "RowStructure=/Script/FaF_Rev.GameMusicData"))
 		TSoftObjectPtr<UDataTable> MusicTable;
-
-	UPROPERTY(Config, EditAnywhere, BlueprintReadOnly, Category = "GameSettings")
-		TSoftObjectPtr<class UInputMappingContext> InputMappingContext;
 	
-	UPROPERTY(Config, EditAnywhere, BlueprintReadOnly, Category = "GameSettings")
-		TSoftObjectPtr<class USoundMix> SoundMixClass;
+	UPROPERTY(Config, EditAnywhere, Category = "GameSettings")
+		TSoftObjectPtr<USoundMix> SoundMixClass;
 
-	UPROPERTY(Config, EditAnywhere, BlueprintReadOnly, Category = "GameSettings", meta = (ReadOnlyKeys))
-		TMap<EFRSoundType, TSoftObjectPtr<class USoundClass>> SoundClasses;
+	UPROPERTY(Config, EditAnywhere, Category = "GameSettings", meta = (ReadOnlyKeys))
+		TMap<EFRSoundType, TSoftObjectPtr<USoundClass>> SoundClasses;
 
-	UPROPERTY(Config, EditAnywhere, BlueprintReadOnly, Category = "GameSettings|PostProcessing")
-		TSoftObjectPtr<class UMaterialParameterCollection> MainRenderingMPC;
+	UPROPERTY(Config, EditAnywhere, Category = "GameSettings|PostProcessing")
+		TSoftObjectPtr<UMaterialParameterCollection> MainRenderingMPC;
 
-	UPROPERTY(Config, EditAnywhere, BlueprintReadOnly, Category = "GameSettings|PostProcessing", meta = (GetOptions = "GetMainRenderingMPCNames"))
+	UPROPERTY(Config, EditAnywhere, Category = "GameSettings|PostProcessing", meta = (GetOptions = "GetMainRenderingMPCNames"))
 		FName BrightnessParamName;
 	
 	float CalcReadingTime(const FString& InStr) const

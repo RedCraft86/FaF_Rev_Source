@@ -7,15 +7,17 @@
 #include "GTConfigSubsystem.h"
 #include "FRGameInstance.h"
 #include "FRSettings.h"
-
+#include "Kismet/KismetMaterialLibrary.h"
 
 UGameSettings::UGameSettings()
 {
 	bInitializing = false;
 	bLaunchWork = false;
-	GameInst = nullptr;
+	GameInstance = nullptr;
 	SoundMixObject = nullptr;
 	SoundTypeToClass = {};
+	BrightnessParamName = NAME_None;
+	BrightnessMPC = nullptr;
 	
 	UGameSettings::SetToDefaults();
 }
@@ -24,14 +26,17 @@ void UGameSettings::InitializeSettings()
 {
 	bInitializing = true;
 
-	UFRSettings* Settings = FRSettings;
+	const UFRSettings* Settings = FRSettings;
+	BrightnessParamName = Settings->BrightnessParamName;
+	BrightnessMPC = Settings->MainRenderingMPC.LoadSynchronous();
 	SoundMixObject = Settings->SoundMixClass.LoadSynchronous();
 	for (const EFRSoundType Type : TEnumRange<EFRSoundType>())
 	{
-		SoundTypeToClass.Add(Type, Settings->SoundClasses.FindOrAdd(Type).LoadSynchronous());
+		if (Settings->SoundClasses.FindRef(Type).IsNull()) continue;
+		SoundTypeToClass.Add(Type, Settings->SoundClasses.FindRef(Type).LoadSynchronous());
 	}
 	
-	if (UGTConfigSubsystem::Get(GameInst)->IsFirstLaunch() && !bLaunchWork)
+	if (UGTConfigSubsystem::Get(GameInstance)->IsFirstLaunch() && !bLaunchWork)
 	{
 		bLaunchWork = true;
 #if !WITH_EDITOR
@@ -124,7 +129,8 @@ void UGameSettings::SetBrightness(const uint8 InBrightness)
 	if (Brightness != InBrightness)
 	{
 		Brightness = InBrightness;
-		OnDynamicApply.Broadcast();
+		UKismetMaterialLibrary::SetScalarParameterValue(GetWorld(), BrightnessMPC,
+			BrightnessParamName, Brightness * 0.01f);
 	}
 }
 
@@ -157,7 +163,11 @@ void UGameSettings::SetColorBlindStrength(const uint8 InColorBlindStrength)
 
 void UGameSettings::SetUseFancyBloom(const float bUseFancyBloom)
 {
-	bFancyBloom = bUseFancyBloom;
+	if (bFancyBloom != bUseFancyBloom)
+	{
+		bFancyBloom = bUseFancyBloom;
+		OnDynamicApply.Broadcast();
+	}
 }
 
 void UGameSettings::SetMotionBlurAmount(const uint8 InMotionBlurAmount)
@@ -201,7 +211,7 @@ TArray<FIntPoint> UGameSettings::GetAllResolutions() const
 UWorld* UGameSettings::GetWorld() const
 {
 	UWorld* World = Super::GetWorld();
-	if (!World) World = GameInst ? GameInst->GetWorld() : nullptr;
+	if (!World) World = GameInstance ? GameInstance->GetWorld() : nullptr;
 	if (!World) World = GEngine ? GEngine->GetCurrentPlayWorld() : GWorld;
 	return World;
 }

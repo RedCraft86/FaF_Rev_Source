@@ -11,6 +11,8 @@ class FAF_REV_API UGameSettings final : public UGameUserSettings
 {
 	GENERATED_BODY()
 
+	friend class UFRGameInstance;
+
 public:
 
 	UGameSettings();
@@ -40,13 +42,13 @@ public:
 		void SetSensitivityX(const float SensitivityX);
 
 	UFUNCTION(BlueprintPure, Category = "Settings")
-		bool GetSensitivityX() const { return SensitivityXY.X; }
+		float GetSensitivityX() const { return SensitivityXY.X; }
 
 	UFUNCTION(BlueprintCallable, Category = "Settings")
 		void SetSensitivityY(const float SensitivityY);
 
 	UFUNCTION(BlueprintPure, Category = "Settings")
-		bool GetSensitivityY() const { return SensitivityXY.Y; }
+		float GetSensitivityY() const { return SensitivityXY.Y; }
 
 	UFUNCTION(BlueprintCallable, Category = "Settings")
 		void SetFieldOfView(const uint8 InFieldOfView);
@@ -123,9 +125,13 @@ public:
 private:
 
 	bool bInitializing, bLaunchWork;
-	UPROPERTY(Transient) class UFRGameInstance* GameInst;
-	UPROPERTY(Transient) class USoundMix* SoundMixObject;
+	UPROPERTY(Transient) UFRGameInstance* GameInstance;
+	
+	UPROPERTY(Transient) USoundMix* SoundMixObject;
 	UPROPERTY(Transient) TMap<EFRSoundType, USoundClass*> SoundTypeToClass;
+
+	FName BrightnessParamName;
+	UPROPERTY(Transient) UMaterialParameterCollection* BrightnessMPC;
 	
 // Configs
 	
