@@ -72,6 +72,13 @@ private:
 		return Name;
 	}
 #endif
+#if WITH_EDITOR
+	virtual void PostEditChangeProperty(FPropertyChangedEvent& PropertyChangedEvent) override
+	{
+		Super::PostEditChangeProperty(PropertyChangedEvent);
+		if (MusicTable.IsNull()) DefaultMusicID = NAME_None;
+	}
+#endif
 public: // Statics
 	
 	static UFRSettings* Get() { return GetMutableDefault<UFRSettings>(); }
