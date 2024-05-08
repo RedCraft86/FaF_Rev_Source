@@ -23,7 +23,6 @@ public:
 
 		bIsDemo = false;
 		WordsPerSecond = 2;
-		MusicFadeTime = 2.0f;
 	}
 
 	UPROPERTY(Config, EditAnywhere, Category = "Default")
@@ -41,14 +40,11 @@ public:
 	UPROPERTY(Config, EditAnywhere, Category = "GameSection")
 		TSoftObjectPtr<class UGameSectionGraph> GameSectionGraph;
 
-	UPROPERTY(Config, EditAnywhere, Category = "GameMusic")
-		float MusicFadeTime;
+	UPROPERTY(Config, EditAnywhere, Category = "GameMusic", meta = (GetOptions = "GetMusicTableKeys"))
+		FName DefaultMusicID;
 	
 	UPROPERTY(Config, EditAnywhere, Category = "GameMusic", meta = (RequiredAssetDataTags = "RowStructure=/Script/FaF_Rev.GameMusicData"))
 		TSoftObjectPtr<UDataTable> MusicTable;
-
-	UPROPERTY(Config, EditAnywhere, Category = "GameMusic")
-		FGameMusicID DefaultMusicID;
 
 	float CalcReadingTime(const FString& InStr) const
 	{
@@ -60,6 +56,22 @@ public:
 	{
 		return UGameplayStatics::GetCurrentLevelName(WorldContext) == GameplayMap.GetAssetName();
 	}
+
+private:
+#if WITH_EDITORONLY_DATA
+	UFUNCTION() TArray<FName> GetMusicTableKeys()
+	{
+		TArray<FName> Name = {};
+		if (MusicTable.LoadSynchronous())
+		{
+			Name = MusicTable.LoadSynchronous()->GetRowNames();
+			if (DefaultMusicID.IsNone() && Name.Num() > 0)
+				DefaultMusicID = Name[0];
+		}
+		
+		return Name;
+	}
+#endif
 	
 public: // Statics
 	
