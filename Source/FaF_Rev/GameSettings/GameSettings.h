@@ -116,7 +116,9 @@ private:
 	UPROPERTY(Config) bool bFancyBloom;
 	UPROPERTY(Config) TMap<EFRSoundType, uint8> SoundTypeToVolume;
 
+	void ApplyBrightness() const;
 	void ApplyAudioSettings();
+	
 	virtual void SetToDefaults() override;
 	virtual void ApplyNonResolutionSettings() override;
 	

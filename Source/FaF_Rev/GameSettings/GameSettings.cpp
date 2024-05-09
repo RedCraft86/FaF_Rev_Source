@@ -127,8 +127,7 @@ void UGameSettings::SetBrightness(const uint8 InBrightness)
 	if (Brightness != InBrightness)
 	{
 		Brightness = InBrightness;
-		UKismetMaterialLibrary::SetScalarParameterValue(GetWorld(), BrightnessMPC,
-			BrightnessParamName, Brightness * 0.01f);
+		ApplyBrightness();
 	}
 }
 
@@ -155,6 +154,12 @@ UWorld* UGameSettings::GetWorld() const
 	return World;
 }
 
+void UGameSettings::ApplyBrightness() const
+{
+	UKismetMaterialLibrary::SetScalarParameterValue(GetWorld(), BrightnessMPC,
+		BrightnessParamName, Brightness * 0.01f);
+}
+
 void UGameSettings::ApplyAudioSettings()
 {
 	if (!FApp::IsGame()) return;
@@ -165,8 +170,8 @@ void UGameSettings::ApplyAudioSettings()
 	FAudioDeviceHandle AudioDevice = World->GetAudioDevice();
 	for (const EFRSoundType Type : TEnumRange<EFRSoundType>())
 	{
-		USoundClass* SoundClass = SoundTypeToClass.FindOrAdd(Type);
-		AudioDevice->SetSoundMixClassOverride(SoundMixObject, SoundClass,
+		USoundClass** SoundClass = SoundTypeToClass.Find(Type);
+		AudioDevice->SetSoundMixClassOverride(SoundMixObject, *SoundClass,
 			GetAudioVolumeValue(Type), 1.0f, 0.5f, true);
 	}
 
@@ -203,7 +208,8 @@ void UGameSettings::ApplyNonResolutionSettings()
 	// {
 	// 	CVar_FSRQuality->Set(FMath::Clamp((int32)FSRQuality, 0, 4), ECVF_SetByConsole);
 	// }
-	
+
+	ApplyBrightness();
 	ApplyAudioSettings();
 	
 	OnManualApply.Broadcast();
