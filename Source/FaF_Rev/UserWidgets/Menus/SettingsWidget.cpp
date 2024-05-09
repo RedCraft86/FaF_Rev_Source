@@ -3,7 +3,7 @@
 #include "SettingsWidget.h"
 
 USettingsWidgetBase::USettingsWidgetBase(const FObjectInitializer& ObjectInitializer)
-	: UGTUserWidget(ObjectInitializer)
+	: UGTUserWidget(ObjectInitializer), ParentWidget(nullptr)
 {
 	ZOrder = 98;
 	bAutoAdd = false;

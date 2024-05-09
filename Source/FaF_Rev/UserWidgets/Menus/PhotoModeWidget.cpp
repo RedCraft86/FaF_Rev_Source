@@ -3,8 +3,12 @@
 #include "PhotoModeWidget.h"
 
 UPhotoModeWidgetBase::UPhotoModeWidgetBase(const FObjectInitializer& ObjectInitializer)
-	: UGTUserWidget(ObjectInitializer)
+	: UGTUserWidget(ObjectInitializer), ParentWidget(nullptr)
 {
 	ZOrder = 98;
 	bAutoAdd = false;
+}
+
+void UPhotoModeWidgetBase::BeginCapture()
+{
 }

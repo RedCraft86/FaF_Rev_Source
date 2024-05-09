@@ -12,6 +12,8 @@ class FAF_REV_API AFRGameModeBase final : public AGTGameModeBase
 {
 	GENERATED_BODY()
 
+	friend class AFRPlayerBase;
+
 public:
 
 	AFRGameModeBase();
@@ -21,4 +23,8 @@ public:
 
 	UPROPERTY(Transient)
 		class AInspectionActor* InspectionActor;
+
+protected:
+
+	void PlayerInitialized();
 };

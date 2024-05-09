@@ -33,6 +33,7 @@ public class FaF_Rev : ModuleRules
 				"EnhancedInput",
 				"AssetRegistry",
 				"LevelSequence",
+                "CinematicCamera",
 				"DeveloperSettings",
 				"DataGraphRuntime",
 				"PulldownStruct",

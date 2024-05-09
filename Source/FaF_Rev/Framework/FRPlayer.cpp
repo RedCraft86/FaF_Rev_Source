@@ -963,13 +963,10 @@ void AFRPlayerBase::BeginPlay()
 	}
 
 	GameMode = FRGameMode(this);
-	if (GameMode)
-	{
-		GameMode->PhotoModeActor = PhotoModeActor.LoadSynchronous();
-		GameMode->InspectionActor = InspectionActor.LoadSynchronous();
-		GameState = GameMode->GetGameState<AFRGameStateBase>();
-	}
-
+	GameMode->PhotoModeActor = PhotoModeActor.LoadSynchronous();
+	GameMode->InspectionActor = InspectionActor.LoadSynchronous();
+	GameState = GameMode->GetGameState<AFRGameStateBase>();
+	
 	PlayerController = FRPlayerController(this);
 
 	FTimerManager& TM = GetWorldTimerManager();
@@ -984,6 +981,8 @@ void AFRPlayerBase::BeginPlay()
 	UGameSettings* Settings = UGameSettings::Get();
 	Settings->OnManualApply.AddUObject(this, &AFRPlayerBase::OnSettingsApply);
 	Settings->OnDynamicApply.AddUObject(this, &AFRPlayerBase::OnSettingsApply);
+
+	GameMode->PlayerInitialized();
 }
 
 void AFRPlayerBase::Tick(float DeltaTime)
