@@ -10,7 +10,6 @@
 #include "InputActionValue.h"
 #include "GameFramework/Character.h"
 #include "Inspection/InspectionActor.h"
-#include "PhotoMode/PhotoModeActor.h"
 #include "FRPlayer.generated.h"
 
 #define FRPlayer(Context) AFRPlayerBase::Get<AFRPlayerBase>(Context)
@@ -133,9 +132,6 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Settings|Misc")
 		FPointLightProperties PlayerLightSettings;
-	
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Settings", AdvancedDisplay)
-		TSoftObjectPtr<APhotoModeActor> PhotoModeActor;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Settings", AdvancedDisplay)
 		TSoftObjectPtr<AInspectionActor> InspectionActor;

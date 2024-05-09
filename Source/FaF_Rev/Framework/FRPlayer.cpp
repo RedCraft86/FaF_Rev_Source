@@ -20,7 +20,6 @@
 #include "LevelSequence.h"
 #include "EngineUtils.h"
 
-
 #define RUN_FOV_KEY			FName(TEXT("Internal_RunFOV"))
 #define CROUCH_FOV_KEY		FName(TEXT("Internal_CrouchFOV"))
 #define CHASE_STAMINA_KEY	FName(TEXT("Internal_ChaseStamina"))
@@ -91,7 +90,6 @@ AFRPlayerBase::AFRPlayerBase()
 	WallTraceLength = 125.0f;
 	LeanOffsets = {75.0f, 25.0f};
 	PlayerLightSettings = {};
-	PhotoModeActor = nullptr;
 	InspectionActor = nullptr;
 	InputActions = {};
 	CameraShakes = {};
@@ -963,7 +961,6 @@ void AFRPlayerBase::BeginPlay()
 	}
 
 	GameMode = FRGameMode(this);
-	GameMode->PhotoModeActor = PhotoModeActor.LoadSynchronous();
 	GameMode->InspectionActor = InspectionActor.LoadSynchronous();
 	GameState = GameMode->GetGameState<AFRGameStateBase>();
 	
@@ -981,8 +978,6 @@ void AFRPlayerBase::BeginPlay()
 	UGameSettings* Settings = UGameSettings::Get();
 	Settings->OnManualApply.AddUObject(this, &AFRPlayerBase::OnSettingsApply);
 	Settings->OnDynamicApply.AddUObject(this, &AFRPlayerBase::OnSettingsApply);
-
-	GameMode->PlayerInitialized();
 }
 
 void AFRPlayerBase::Tick(float DeltaTime)
@@ -1066,11 +1061,7 @@ void AFRPlayerBase::OnConstruction(const FTransform& Transform)
 	for (const AActor* Actor : TActorRange<AActor>(GetWorld()))
 	{
 		if (!IsValid(Actor)) continue;
-		if (Actor->IsA(APhotoModeActor::StaticClass()))
-		{
-			PhotoModeActor = Actor;
-		}
-		else if (Actor->IsA(APhotoModeActor::StaticClass()))
+		else if (Actor->IsA(AInspectionActor::StaticClass()))
 		{
 			InspectionActor = Actor;
 		}

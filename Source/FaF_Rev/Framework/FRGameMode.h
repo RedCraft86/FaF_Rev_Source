@@ -19,12 +19,5 @@ public:
 	AFRGameModeBase();
 
 	UPROPERTY(Transient)
-		class APhotoModeActor* PhotoModeActor;
-
-	UPROPERTY(Transient)
 		class AInspectionActor* InspectionActor;
-
-protected:
-
-	void PlayerInitialized();
 };
