@@ -36,7 +36,7 @@ public:
 	UPROPERTY(EditAnywhere, Category = "Settings", meta = (DisplayThumbnail = false))
 		UInputAction* CaptureInput;
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "PhotoMode")
 		class UPhotoModeWidgetBase* PhotoModeWidget;
 
 	DECLARE_MULTICAST_DELEGATE_OneParam(FOnScreenshotCaptured, UTexture*);
