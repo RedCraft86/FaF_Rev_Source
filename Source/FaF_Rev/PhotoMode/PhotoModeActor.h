@@ -40,17 +40,20 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "PhotoMode")
 		class UPhotoModeWidgetBase* PhotoModeWidget;
 
-	DECLARE_MULTICAST_DELEGATE_OneParam(FOnScreenshotCaptured, UTexture*);
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "PhotoMode")
+		float ResolutionScale;
+	
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "PhotoMode")
+		bool bUseWatermark;
+
+	DECLARE_MULTICAST_DELEGATE_OneParam(FOnScreenshotCaptured, UTexture2D*);
 	FOnScreenshotCaptured OnCaptured;
 	
 	void ExitMode();
 	void EnterMode();
-	void TakeScreenshot(const float InScale, const bool bInWatermark);
+	void TakeScreenshot();
 
 protected:
-
-	float ResScale;
-	bool bWatermark;
 
 	bool bActive;
 	bool bCapturing;

@@ -18,7 +18,7 @@ void AFRGameModeBase::PlayerInitialized()
 {
 	if (UPhotoModeWidgetBase* PhotoModeWidget = GetWidget<UPhotoModeWidgetBase>())
 	{
-		PhotoModeWidget->PhotoModeActor = PhotoModeActor;
+		PhotoModeWidget->SetPhotoModeActor(PhotoModeActor);
 		PhotoModeActor->PhotoModeWidget = PhotoModeWidget;
 	}
 }

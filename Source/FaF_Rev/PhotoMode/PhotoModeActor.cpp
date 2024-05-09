@@ -13,7 +13,7 @@
 
 APhotoModeActor::APhotoModeActor()
 	: WatermarkClass(nullptr), RotationRate(25.0f), TurnInput(nullptr), CaptureInput(nullptr)
-	, ResScale(1.0f), bWatermark(true), bActive(false), bCapturing(false), Rotation(FRotator::ZeroRotator)
+	, ResolutionScale(1.0f), bUseWatermark(true), bActive(false), bCapturing(false), Rotation(FRotator::ZeroRotator)
 	, Viewport(nullptr), Watermark(nullptr), ScreenshotResult(nullptr)
 {
 	PrimaryActorTick.bCanEverTick = true;
@@ -67,20 +67,17 @@ void APhotoModeActor::EnterMode()
 	Controller->SetViewTargetWithBlend(this, 0.25f);
 }
 
-void APhotoModeActor::TakeScreenshot(const float InScale, const bool bInWatermark)
+void APhotoModeActor::TakeScreenshot()
 {
 	ScreenshotResult = nullptr;
 	if (Viewport)
 	{
 		bCapturing = true;
-		ResScale = InScale;
-		bWatermark = bInWatermark;
-		
 		FVector2D ViewportSize;
 		Viewport->GetViewportSize(ViewportSize);
 		GetHighResScreenshotConfig().SetResolution(
-			FMath::Clamp(ViewportSize.X * ResScale, 2048, GetMax2DTextureDimension()), 
-			FMath::Clamp(ViewportSize.Y * ResScale, 2048, GetMax2DTextureDimension()),
+			FMath::Clamp(ViewportSize.X * ResolutionScale, 2048, GetMax2DTextureDimension()), 
+			FMath::Clamp(ViewportSize.Y * ResolutionScale, 2048, GetMax2DTextureDimension()),
 			1.0f);
 		
 		if (!Viewport->GetGameViewport()->TakeHighResScreenShot())
@@ -118,7 +115,7 @@ void APhotoModeActor::InputBinding_Capture(const FInputActionValue& InValue)
 void APhotoModeActor::OnScreenCaptured(int32 SizeX, int32 SizeY, const TArray<FColor>& ColorData)
 {
 	UTexture2D* OutTex = UGTTextureUtilsLibrary::CreateTextureFromData({ColorData, SizeX, SizeY});
-	if (bWatermark)
+	if (bUseWatermark)
 	{
 		ScreenshotResult = Watermark->AddWatermark(OutTex);
 	}
