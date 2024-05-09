@@ -7,6 +7,7 @@
 #include "ExitInterface.h"
 #include "FRPlayerController.h"
 #include "Libraries/GTMathLibrary.h"
+#include "GameSettings/GameSettings.h"
 #include "Interaction/InteractionInterface.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "GameFramework/SpringArmComponent.h"
@@ -18,6 +19,7 @@
 #include "EnhancedInputComponent.h"
 #include "LevelSequence.h"
 #include "EngineUtils.h"
+
 
 #define RUN_FOV_KEY			FName(TEXT("Internal_RunFOV"))
 #define CROUCH_FOV_KEY		FName(TEXT("Internal_CrouchFOV"))
@@ -923,6 +925,19 @@ void AFRPlayerBase::InputBinding_Equipment_Alt(const FInputActionValue& InValue)
 	}
 }
 
+void AFRPlayerBase::OnSettingsApply()
+{
+	const UGameSettings* Settings = UGameSettings::Get();
+	CameraArm->bEnableCameraRotationLag = Settings->GetUseSmoothCamera();
+	Sensitivity.X = Settings->GetSensitivityX();
+	Sensitivity.Y = Settings->GetSensitivityY();
+	FieldOfView.BaseValue = Settings->GetFieldOfView();
+
+	FOVValue.TargetValue = FieldOfView.Evaluate();
+	FOVValue.SnapToTarget();
+	PlayerCamera->SetFieldOfView(FOVValue.CurrentValue);
+}
+
 void AFRPlayerBase::BeginPlay()
 {
 	Super::BeginPlay();
@@ -953,6 +968,10 @@ void AFRPlayerBase::BeginPlay()
 	{
 		TM.PauseTimer(StaminaTimer);
 	}
+
+	UGameSettings* Settings = UGameSettings::Get();
+	Settings->OnManualApply.AddUObject(this, &AFRPlayerBase::OnSettingsApply);
+	Settings->OnDynamicApply.AddUObject(this, &AFRPlayerBase::OnSettingsApply);
 }
 
 void AFRPlayerBase::Tick(float DeltaTime)

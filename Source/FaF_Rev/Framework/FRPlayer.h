@@ -157,7 +157,6 @@ protected:
 	float SlowTickTime;
 	FVector CamPosition;
 	FGTInterpScalar FOVValue;
-	float FOVFinal, FOVRun, FOVCrouch;
 	FGTInterpScalar HalfHeightValue;
 	FPlayerInteraction InteractData;
 	TSoftObjectPtr<UObject> HidingSpot;
@@ -369,7 +368,8 @@ protected:
 	void InputBinding_Interact(const FInputActionValue& InValue);
 	void InputBinding_Equipment(const FInputActionValue& InValue);
 	void InputBinding_Equipment_Alt(const FInputActionValue& InValue);
-	
+
+	void OnSettingsApply();
 	virtual void BeginPlay() override;
 	virtual void Tick(float DeltaTime) override;
 	virtual void OnConstruction(const FTransform& Transform) override;
