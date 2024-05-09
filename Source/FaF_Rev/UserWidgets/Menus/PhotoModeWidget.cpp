@@ -7,11 +7,11 @@
 #include "Components/SpinBox.h"
 #include "Components/CheckBox.h"
 #include "Components/ComboBoxString.h"
+#include "Animation/UMGSequencePlayer.h"
 #include "Misc/URLRequestFilter.h"
 #include "FRPlayerController.h"
 #include "WidgetInterface.h"
 #include "FRPlayer.h"
-#include "Animation/UMGSequencePlayer.h"
 
 #define POST_PROCESS_SETTINGS PhotoModeActor->CineCamera->PostProcessSettings
 
