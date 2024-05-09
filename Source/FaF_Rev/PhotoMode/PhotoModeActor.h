@@ -3,6 +3,7 @@
 #pragma once
 
 #include "WatermarkWidget.h"
+#include "InputActionValue.h"
 #include "CineCameraComponent.h"
 #include "GameFramework/Actor.h"
 #include "PhotoModeActor.generated.h"
@@ -44,7 +45,7 @@ public:
 	
 	void ExitMode();
 	void EnterMode();
-	void Capture(const float InScale, const bool bInWatermark);
+	void TakeScreenshot(const float InScale, const bool bInWatermark);
 
 protected:
 

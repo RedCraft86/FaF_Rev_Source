@@ -25,6 +25,7 @@ public class FaF_Rev : ModuleRules
 				"CoreUObject", 
 				"Engine", 
 				"UMG",
+				"RHI",
 				"Slate",
 				"SlateCore",
 				"InputCore",

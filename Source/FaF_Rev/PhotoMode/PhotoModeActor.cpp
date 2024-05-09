@@ -17,7 +17,7 @@ APhotoModeActor::APhotoModeActor()
 	, Viewport(nullptr), Watermark(nullptr), ScreenshotResult(nullptr)
 {
 	PrimaryActorTick.bCanEverTick = true;
-	PrimaryActorTick.bStartWithTickEnabled(false);
+	PrimaryActorTick.bStartWithTickEnabled = false;
 
 	SceneRoot = CreateDefaultSubobject<USceneComponent>("SceneRoot");
 	SetRootComponent(SceneRoot);
@@ -67,7 +67,7 @@ void APhotoModeActor::EnterMode()
 	Controller->SetViewTargetWithBlend(this, 0.25f);
 }
 
-void APhotoModeActor::Capture(const float InScale, const bool bInWatermark)
+void APhotoModeActor::TakeScreenshot(const float InScale, const bool bInWatermark)
 {
 	ScreenshotResult = nullptr;
 	if (Viewport)
