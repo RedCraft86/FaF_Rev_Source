@@ -59,6 +59,9 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Settings|Camera")
 		FVector2D Sensitivity;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Settings|Movement")
+		FGTModifiableMultiplier SensitivityMulti;
 	
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Settings|Camera")
 		FGTModifiableSum FieldOfView;
@@ -252,6 +255,12 @@ public:
 
 	UFUNCTION(BlueprintPure, Category = "Player")
 		bool GetInteractionState(FPlayerInteraction& Data) const;
+
+	UFUNCTION(BlueprintCallable, Category = "Player")
+		void AddSensitivityModifier(const FName InKey, const float InValue);
+
+	UFUNCTION(BlueprintCallable, Category = "Player")
+		void RemoveSensitivityModifier(const FName InKey);
 
 	UFUNCTION(BlueprintCallable, Category = "Player")
 		void AddFieldOfViewModifier(const FName InKey, const float InValue);

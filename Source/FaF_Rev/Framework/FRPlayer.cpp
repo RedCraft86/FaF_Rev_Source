@@ -67,6 +67,7 @@ AFRPlayerBase::AFRPlayerBase()
 	InteractTraceChannel = ECC_Visibility;
 	ReachDistance = 250.0f;
 	Sensitivity = FVector2D::UnitVector;
+	SensitivityMulti = {1.0f};
 	FieldOfView = {90.0f};
 	FieldOfViewSpeed = 10.0f;
 	LockOnTarget = nullptr;
@@ -374,6 +375,16 @@ bool AFRPlayerBase::GetInteractionState(FPlayerInteraction& Data) const
 {
 	Data = InteractData;
 	return InteractData.IsValidData();
+}
+
+void AFRPlayerBase::AddSensitivityModifier(const FName InKey, const float InValue)
+{
+	SensitivityMulti.Modifiers.Add(InKey, InValue);
+}
+
+void AFRPlayerBase::RemoveSensitivityModifier(const FName InKey)
+{
+	SensitivityMulti.Modifiers.Remove(InKey);
 }
 
 void AFRPlayerBase::AddFieldOfViewModifier(const FName InKey, const float InValue)
@@ -780,13 +791,14 @@ void AFRPlayerBase::InputBinding_Turn(const FInputActionValue& InValue)
 	if (INPUT_CHECK() && HasControlFlag(PCF_CanTurn) && (!LockOnTarget.IsValid() || LockOnTarget.IsNull()))
 	{
 		const FVector2D Axis = InValue.Get<FVector2D>();
+		const float Multiplier = SensitivityMulti.Evaluate();
 		if (!FMath::IsNearlyZero(Axis.X))
 		{
-			AddControllerYawInput(Axis.X * Sensitivity.X);
+			AddControllerYawInput(Axis.X * Sensitivity.X * Multiplier);
 		}
 		if (!FMath::IsNearlyZero(Axis.Y))
 		{
-			AddControllerPitchInput(Axis.Y * Sensitivity.Y * -1.0f);
+			AddControllerPitchInput(Axis.Y * Sensitivity.Y * Multiplier * -1.0f);
 		}
 	}
 }
