@@ -13,4 +13,8 @@ class FAF_REV_API USettingsWidgetBase final : public UGTUserWidget
 public:
 
 	USettingsWidgetBase(const FObjectInitializer& ObjectInitializer);
+
+protected:
+
+	UPROPERTY(Transient) UUserWidget* ParentWidget;
 };

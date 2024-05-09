@@ -17,7 +17,7 @@ class FAF_REV_API IExitInterface
 
 public:
 
-	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "ForceExit")
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "ExitInterface")
 		void Exit();
 	virtual void Exit_Implementation() {}
 
