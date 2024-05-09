@@ -37,8 +37,8 @@ UPhotoModeWidgetBase::UPhotoModeWidgetBase(const FObjectInitializer& ObjectIniti
 	, FieldOfViewSpinBox(nullptr), ApertureSpinBox(nullptr), FilterSpinBox(nullptr), FilterComboBox(nullptr)
 	, ColorSplitSpinBox(nullptr), VignetteSpinBox(nullptr), LensFlareSpinBox(nullptr), CapturedImage(nullptr)
 	, BackButton(nullptr), FolderButton(nullptr), FileButton(nullptr), SideBarButton(nullptr), ExitButton(nullptr)
-	, SidebarAnim(nullptr), CaptureStartAnim(nullptr), CaptureEndAnim(nullptr), ReturnAnim(nullptr), ParentWidget(nullptr)
-	, CapturedTexture(nullptr), PhotoModeActor(nullptr), Controller(nullptr), PlayerChar(nullptr)
+	, SidebarAnim(nullptr), CaptureStartAnim(nullptr), CaptureEndAnim(nullptr), ReturnAnim(nullptr), bIsSidebarOpen(false)
+	, ParentWidget(nullptr), CapturedTexture(nullptr), PhotoModeActor(nullptr), Controller(nullptr), PlayerChar(nullptr)
 {
 	ZOrder = 98;
 	bAutoAdd = false;
