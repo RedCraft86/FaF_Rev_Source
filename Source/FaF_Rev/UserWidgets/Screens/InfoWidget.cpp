@@ -15,7 +15,12 @@ UInfoWidgetBase::UInfoWidgetBase(const FObjectInitializer& ObjectInitializer)
 void UInfoWidgetBase::UpdateInfo()
 {
 	PlayAnimation(SaveAnim);
+}
 
+void UInfoWidgetBase::OnSettingsUpdate()
+{
+	UpdateInfo();
+	
 	const bool bWantsFPS = UGameSettings::Get()->GetShowFPS();
 	FrameRateText->SetVisibility(bWantsFPS ? ESlateVisibility::HitTestInvisible : ESlateVisibility::Collapsed);
 	DeltaTimeText->SetVisibility(bWantsFPS ? ESlateVisibility::HitTestInvisible : ESlateVisibility::Collapsed);
@@ -40,12 +45,12 @@ void UInfoWidgetBase::NativeConstruct()
 	GetWorld()->GetTimerManager().SetTimer(FrameRateTimer,
 		this, &UInfoWidgetBase::FrameRateTick, 0.25f, true);
 
-	UpdateInfo();
+	OnSettingsUpdate();
 }
 
 void UInfoWidgetBase::NativeOnInitialized()
 {
 	Super::NativeOnInitialized();
 	USaveSubsystem::Get(this)->OnSaveStarted.AddUObject(this, &UInfoWidgetBase::UpdateInfo);
-	UGameSettings::Get()->OnDynamicApply.AddUObject(this, &UInfoWidgetBase::UpdateInfo);
+	UGameSettings::Get()->OnDynamicApply.AddUObject(this, &UInfoWidgetBase::OnSettingsUpdate);
 }
