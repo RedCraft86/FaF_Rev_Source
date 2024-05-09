@@ -12,7 +12,7 @@
 #include "FRPlayer.h"
 
 APhotoModeActor::APhotoModeActor()
-	: WatermarkClass(NULL), RotationRate(25.0f), TurnInput(nullptr), CaptureInput(nullptr)
+	: WatermarkClass(nullptr), RotationRate(25.0f), TurnInput(nullptr), CaptureInput(nullptr)
 	, ResScale(1.0f), bWatermark(true), bActive(false), bCapturing(false), Rotation(FRotator::ZeroRotator)
 	, Viewport(nullptr), Watermark(nullptr), ScreenshotResult(nullptr)
 {
