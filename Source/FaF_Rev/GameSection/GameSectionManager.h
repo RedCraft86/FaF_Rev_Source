@@ -40,8 +40,8 @@ private:
 	uint8 LatentID, UnloadingLevels, LoadingLevels;
 	UPROPERTY(Transient) AFRPlayerBase* PlayerChar;
 	UPROPERTY(Transient) TSet<UObject*> LoadedObjs;
-	UPROPERTY(Transient) UGameSectionData* ThisData;
-	UPROPERTY(Transient) UGameSectionData* LastData;
+	UPROPERTY(Transient) UGameSectionDataNode* ThisData;
+	UPROPERTY(Transient) UGameSectionDataNode* LastData;
 	UPROPERTY(Transient) class UGameSectionGraph* SectionGraph;
 	UPROPERTY(Transient) class ULoadingWidgetBase* LoadingWidget;
 	

@@ -3,13 +3,14 @@
 #include "FaF_Rev.h"
 #include "Inventory/InventoryItemData.h"
 #include "GameSection/GameSectionData.h"
+#include "GameSection/GameSectionGraph.h"
 
 DEFINE_LOG_CATEGORY(FaFRev);
 
 void FFRGameModule::StartupModule()
 {
 	UInventoryItemDataBase::DefaultSpawnClass = UInventoryItemData::StaticClass();
-	UGameSectionDataBase::DefaultSpawnClass = UGameSectionData::StaticClass();
+	UGameSectionGraph::GraphNodeType = UGameSectionDataNode::StaticClass();
 }
 
 void FFRGameModule::ShutdownModule()

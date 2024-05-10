@@ -3,7 +3,7 @@
 #include "GameSectionData.h"
 #include "Algo/RandomShuffle.h"
 
-TSet<FAssetData> UGameSectionData::GetDependencies()
+TSet<FAssetData> UGameSectionDataNode::GetDependencies()
 {
 	TSet<FAssetData> Result;
 	for (const FName& Package : Dependencies)
@@ -22,14 +22,14 @@ TSet<FAssetData> UGameSectionData::GetDependencies()
 	return Result;
 }
 
-TSoftObjectPtr<UTexture2D> UGameSectionData::GetBackground()
+TSoftObjectPtr<UTexture2D> UGameSectionDataNode::GetBackground()
 {
 	Backgrounds.RemoveAll([](const TSoftObjectPtr<UTexture2D>& Element) -> bool { return Element.IsNull(); });
 	Algo::RandomShuffle(Backgrounds); Algo::RandomShuffle(Backgrounds); // Twice
 	return Backgrounds.IsEmpty() ? nullptr : Backgrounds[0];
 }
 
-TPair<FString, FText> UGameSectionData::GetTip() const
+TPair<FString, FText> UGameSectionDataNode::GetTip() const
 {
 	if (LoadingTips.IsEmpty()) return{};
 	
@@ -40,7 +40,7 @@ TPair<FString, FText> UGameSectionData::GetTip() const
 }
 
 #if WITH_EDITOR
-uint32 UGameSectionData::CalcChecksum()
+uint32 UGameSectionDataNode::CalcChecksum()
 {
 	uint32 Hash = GetTypeHash(DependencyDepth);
 	for (const TPair<TSoftObjectPtr<UWorld>, bool>& Pair : Levels)
@@ -50,7 +50,7 @@ uint32 UGameSectionData::CalcChecksum()
 	return Hash;
 }
 
-void UGameSectionData::CheckDisplayName()
+void UGameSectionDataNode::CheckDisplayName()
 {
 	if (DisplayLabel.IsEmptyOrWhitespace())
 	{
@@ -58,7 +58,7 @@ void UGameSectionData::CheckDisplayName()
 	}
 }
 
-void UGameSectionData::FindAllDependencies()
+void UGameSectionDataNode::FindAllDependencies()
 {
 	TArray<FName> Packages;
 	for (const TPair<TSoftObjectPtr<UWorld>, bool>& Pair : Levels)
@@ -92,13 +92,13 @@ void UGameSectionData::FindAllDependencies()
 	}
 }
 
-void UGameSectionData::PostInitProperties()
+void UGameSectionDataNode::PostInitProperties()
 {
 	Super::PostInitProperties();
 	CheckDisplayName();
 }
 
-void UGameSectionData::PostEditChangeProperty(FPropertyChangedEvent& PropertyChangedEvent)
+void UGameSectionDataNode::PostEditChangeProperty(FPropertyChangedEvent& PropertyChangedEvent)
 {
 	Super::PostEditChangeProperty(PropertyChangedEvent);
 	const uint32 TempChecksum = CalcChecksum();

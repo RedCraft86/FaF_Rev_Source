@@ -2,8 +2,8 @@
 
 #include "GameSectionManager.h"
 #include "Kismet/GameplayStatics.h"
-#include "GameSection/Graph/GameSectionNode.h"
-#include "GameSection/Graph/GameSectionGraph.h"
+#include "GameSection/GameSectionNode.h"
+#include "GameSection/GameSectionGraph.h"
 #include "Libraries/GTLoadUtilsLibrary.h"
 #include "SaveSystem/SaveSubsystem.h"
 #include "NarrativeComponent.h"
@@ -69,14 +69,14 @@ void UGameSectionManager::BeginTransition()
 		PlayerChar->FadeToBlack(0.25f);
 	}
 	
-	const UGameSectionNode* Node = SectionGraph->GetNodeBySequence<UGameSectionNode>(Sequence);
-	if (!Node || !Node->Sequence || !Node->Sequence->IsA(UGameSectionData::StaticClass()))
+	UGameSectionNode* Node = SectionGraph->GetNodeBySequence<UGameSectionNode>(Sequence);
+	if (!Node || !Node->IsA(UGameSectionDataNode::StaticClass()))
 	{
-		SMART_LOG(Error, TEXT("Cannot begin transition. Node or sequence is null."))
+		SMART_LOG(Error, TEXT("Cannot begin transition. Node or sequence is invalid."))
 		return;
 	}
 	LastData = ThisData;
-	ThisData = Cast<UGameSectionData>(Node->Sequence);
+	ThisData = Cast<UGameSectionDataNode>(Node);
 
 	ShowLoadingWidget();
 	

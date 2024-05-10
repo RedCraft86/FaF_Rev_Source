@@ -7,21 +7,18 @@
 #include "GameMusicData.h"
 #include "UltraDynamicSky.h"
 #include "PlayerTeleporter.h"
-#include "GameSection/GameSectionDataBase.h"
 #include "AssetRegistry/IAssetRegistry.h"
+#include "GameSection/GameSectionNode.h"
 #include "GameSectionData.generated.h"
 
 UCLASS()
-class FAF_REV_API UGameSectionData : public UGameSectionDataBase
+class FAF_REV_API UGameSectionDataNode final : public UGameSectionNode
 {
 	GENERATED_BODY()
 
 public:
 
-	UGameSectionData() : DependencyDepth(4) {}
-
-	UPROPERTY(EditAnywhere, Category = "SectionData")
-		FText DisplayLabel;
+	UGameSectionDataNode() : DependencyDepth(4) {}
 	
 	UPROPERTY(EditAnywhere, Category = "SectionData")
 		TMap<TSoftObjectPtr<UWorld>, bool> Levels;
@@ -71,7 +68,6 @@ private:
 	void FindAllDependencies();
 	virtual void PostInitProperties() override;
 	virtual void PostEditChangeProperty(FPropertyChangedEvent& PropertyChangedEvent) override;
-	virtual FText GetTitle() const override { return DisplayLabel; }
 #endif
 	static IAssetRegistry* GetAssetRegistry()
 	{
