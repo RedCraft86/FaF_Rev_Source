@@ -3,6 +3,7 @@
 #include "FRPlayerController.h"
 #include "Blueprint/UserWidget.h"
 #include "EnhancedInputSubsystems.h"
+#include "Inventory/InventoryComponent.h"
 #include "Menus/PauseWidget.h"
 #include "FRGameMode.h"
 
@@ -10,6 +11,8 @@ AFRPlayerController::AFRPlayerController()
 	: MappingContext(nullptr), bLastPaused(false), UnfocusedWidget(nullptr), PauseWidget(nullptr)
 {
 	PrimaryActorTick.bCanEverTick = true;
+
+	Inventory = CreateDefaultSubobject<UInventoryComponent>("Inventory");
 }
 
 UEnhancedInputLocalPlayerSubsystem* AFRPlayerController::GetInputSubsystem() const
