@@ -3,9 +3,11 @@
 #include "FRPlayerController.h"
 #include "Blueprint/UserWidget.h"
 #include "EnhancedInputSubsystems.h"
+#include "Menus/PauseWidget.h"
+#include "FRGameMode.h"
 
 AFRPlayerController::AFRPlayerController()
-	: MappingContext(nullptr), UnfocusedWidget(nullptr), bLastPaused(false)
+	: MappingContext(nullptr), bLastPaused(false), UnfocusedWidget(nullptr), PauseWidget(nullptr)
 {
 	PrimaryActorTick.bCanEverTick = true;
 }
@@ -13,6 +15,22 @@ AFRPlayerController::AFRPlayerController()
 UEnhancedInputLocalPlayerSubsystem* AFRPlayerController::GetInputSubsystem() const
 {
 	return GetLocalPlayer() ? GetLocalPlayer()->GetSubsystem<UEnhancedInputLocalPlayerSubsystem>() : nullptr;
+}
+
+void AFRPlayerController::SetPauseState(const bool bInPaused)
+{
+	if (IsPaused() != bInPaused)
+	{
+		SetPause(bInPaused);
+		if (bInPaused)
+		{
+			PauseWidget->AddWidget(nullptr);
+		}
+		else
+		{
+			PauseWidget->RemoveWidget(nullptr);
+		}
+	}
 }
 
 void AFRPlayerController::OnWindowFocusChanged(bool bFocused)
@@ -40,4 +58,6 @@ void AFRPlayerController::BeginPlay()
 	Super::BeginPlay();
 	PlayerCameraManager->SetTickableWhenPaused(true);
 	FSlateApplication::Get().OnApplicationActivationStateChanged().AddUObject(this, &AFRPlayerController::OnWindowFocusChanged);
+
+	PauseWidget = FRGameMode(this)->GetWidget<UPauseWidgetBase>();
 }

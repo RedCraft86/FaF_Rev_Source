@@ -15,13 +15,14 @@ public:
 	UNarrativeWidget(const FObjectInitializer& ObjectInitializer);
 	
 	UPROPERTY(Transient, BlueprintReadOnly, Category = "Animations", meta = (BindWidgetAnim))
-	UWidgetAnimation* PauseFadeAnim;
+		UWidgetAnimation* HideFadeAnim;
 
 protected:
 
-	FTimerHandle PauseCheckTimer;
+	FTimerHandle HideCheckTimer;
 	UPROPERTY(Transient) AWorldSettings* WorldSettings;
+	UPROPERTY(Transient) class AFRPlayerBase* PlayerChar;
 
-	void PauseCheck();
+	void HideCheck();
 	virtual void NativeConstruct() override;
 };

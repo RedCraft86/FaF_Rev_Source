@@ -1,11 +1,13 @@
 ﻿// Copyright (C) RedCraft86. All Rights Reserved.
 
+// ReSharper disable CppMemberFunctionMayBeConst
 #include "PauseWidget.h"
 #include "Components/TextBlock.h"
 #include "Animation/UMGSequencePlayer.h"
 #include "Animation/WidgetAnimation.h"
 #include "GeneralProjectSettings.h"
 #include "Kismet/GameplayStatics.h"
+#include "FRPlayerController.h"
 #include "SettingsWidget.h"
 #include "SubWidgets.h"
 #include "FRGameMode.h"
@@ -21,6 +23,8 @@ UPauseWidgetBase::UPauseWidgetBase(const FObjectInitializer& ObjectInitializer)
 
 void UPauseWidgetBase::OnResumeClicked()
 {
+	PlayerChar->GetPlayerController()->SetPauseState(false);
+	SetVisibility(ESlateVisibility::HitTestInvisible);
 }
 
 void UPauseWidgetBase::OnSettingsClicked()
@@ -87,4 +91,5 @@ void UPauseWidgetBase::NativeConstruct()
 {
 	Super::NativeConstruct();
 	PlayerChar = FRPlayer(this);
+	SetVisibility(ESlateVisibility::SelfHitTestInvisible);
 }

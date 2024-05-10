@@ -544,12 +544,14 @@ void AFRPlayerBase::ClearFade() const
 
 void AFRPlayerBase::CutsceneStart(ULevelSequence* InSequence)
 {
+	if (!InSequence) return;
 	LockFlags.Add(Player::LockFlags::Cutscene);
 	ActiveCutscene = InSequence;
 }
 
 void AFRPlayerBase::CutsceneEnd()
 {
+	if (!ActiveCutscene) return;
 	LockFlags.Remove(Player::LockFlags::Cutscene);
 	ActiveCutscene = nullptr;
 }
@@ -560,7 +562,7 @@ void AFRPlayerBase::EnemyStackChanged()
 	{
 		RemoveStaminaDrainModifier(CHASE_STAMINA_KEY);
 		GameState->SetMusicMode(EEnemyAIMode::None);
-		K2_EnemyStackChanged(EEnemyAIMode::None);
+		EnemyStackChangedEvent(EEnemyAIMode::None);
 		return;
 	}
 
@@ -570,25 +572,25 @@ void AFRPlayerBase::EnemyStackChanged()
 	{
 		AddStaminaDrainModifier(CHASE_STAMINA_KEY, AdrenalineReductionMulti);
 		GameState->SetMusicMode(EEnemyAIMode::Chase);
-		K2_EnemyStackChanged(EEnemyAIMode::Chase);
+		EnemyStackChangedEvent(EEnemyAIMode::Chase);
 	}
 	else if (States.Contains(EEnemyAIMode::Search))
 	{
 		GameState->SetMusicMode(EEnemyAIMode::Search);
-		K2_EnemyStackChanged(EEnemyAIMode::Search);
+		EnemyStackChangedEvent(EEnemyAIMode::Search);
 	}
 	else if (States.Contains(EEnemyAIMode::Suspicion))
 	{
 		RemoveStaminaDrainModifier(CHASE_STAMINA_KEY);
 		GameState->SetMusicMode(EEnemyAIMode::Suspicion);
-		K2_EnemyStackChanged(EEnemyAIMode::Suspicion);
+		EnemyStackChangedEvent(EEnemyAIMode::Suspicion);
 	}
 	else
 	{
 		// Uh-oh! Something broke though. We shouldn't have an Enemy in the stack with their AI Mode saved as NONE
 		RemoveStaminaDrainModifier(CHASE_STAMINA_KEY);
 		GameState->SetMusicMode(EEnemyAIMode::None);
-		K2_EnemyStackChanged(EEnemyAIMode::None);
+		EnemyStackChangedEvent(EEnemyAIMode::None);
 	}
 }
 

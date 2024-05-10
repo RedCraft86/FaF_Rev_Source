@@ -173,7 +173,7 @@ protected:
 public:
 
 	UFUNCTION(BlueprintImplementableEvent, DisplayName = "Enemy Stack Changed")
-		void K2_EnemyStackChanged(const EEnemyAIMode PriorityMode);
+		void EnemyStackChangedEvent(const EEnemyAIMode PriorityMode);
 
 	UFUNCTION(BlueprintCallable, Category = "Player")
 		void ResetStates();

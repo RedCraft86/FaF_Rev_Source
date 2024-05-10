@@ -25,12 +25,13 @@ public:
 
 	class UEnhancedInputLocalPlayerSubsystem* GetInputSubsystem() const;
 	
+	void SetPauseState(bool bInPaused);
+
 protected:
-
-	UPROPERTY(Transient, BlueprintReadOnly)
-		UUserWidget* UnfocusedWidget;
-
+	
 	bool bLastPaused;
+	UPROPERTY(Transient) UUserWidget* UnfocusedWidget;
+	UPROPERTY(Transient) class UPauseWidgetBase* PauseWidget;
 	
 	void OnWindowFocusChanged(bool bFocused);
 	virtual void BeginPlay() override;
