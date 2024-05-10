@@ -4,7 +4,8 @@
 #include "FRPlayer.h"
 
 UNarrativeWidget::UNarrativeWidget(const FObjectInitializer& ObjectInitializer)
-	: UGTUserWidget(ObjectInitializer), HideFadeAnim(nullptr), WorldSettings(nullptr), PlayerChar(nullptr)
+	: UGTUserWidget(ObjectInitializer), HideFadeAnim(nullptr), HideCheckTime(0.0f)
+	, WorldSettings(nullptr), PlayerChar(nullptr)
 {
 	ZOrder = 97;
 	bAutoAdd = true;
@@ -12,6 +13,8 @@ UNarrativeWidget::UNarrativeWidget(const FObjectInitializer& ObjectInitializer)
 
 void UNarrativeWidget::HideCheck()
 {
+	HideCheckTime = 0.0f;
+	if (!PlayerChar || !WorldSettings) return;
 	if (PlayerChar->GetActiveCutscene() || WorldSettings->GetPauserPlayerState())
 	{
 		PlayAnimationForward(HideFadeAnim);
@@ -26,5 +29,12 @@ void UNarrativeWidget::NativeConstruct()
 {
 	Super::NativeConstruct();
 	WorldSettings = GetWorld()->GetWorldSettings();
-	GetWorld()->GetTimerManager().SetTimer(HideCheckTimer, this, &UNarrativeWidget::HideCheck, 0.25f, true);
+	PlayerChar = FRPlayer(this);
+}
+
+void UNarrativeWidget::NativeTick(const FGeometry& MyGeometry, float InDeltaTime)
+{
+	Super::NativeTick(MyGeometry, InDeltaTime);
+	if (HideCheckTime >= 0.25f) { HideCheck(); }
+	else { HideCheckTime += InDeltaTime; }
 }

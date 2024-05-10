@@ -19,10 +19,11 @@ public:
 
 protected:
 
-	FTimerHandle HideCheckTimer;
+	float HideCheckTime;
 	UPROPERTY(Transient) AWorldSettings* WorldSettings;
 	UPROPERTY(Transient) class AFRPlayerBase* PlayerChar;
 
 	void HideCheck();
 	virtual void NativeConstruct() override;
+	virtual void NativeTick(const FGeometry& MyGeometry, float InDeltaTime) override;
 };
