@@ -23,7 +23,7 @@ UPauseWidgetBase::UPauseWidgetBase(const FObjectInitializer& ObjectInitializer)
 
 void UPauseWidgetBase::OnResumeClicked()
 {
-	PlayerChar->GetPlayerController()->SetPauseState(false);
+	GetPlayerController<AFRPlayerController>()->SetPauseState(false);
 	SetVisibility(ESlateVisibility::HitTestInvisible);
 }
 
@@ -49,6 +49,7 @@ void UPauseWidgetBase::OnMainMenuClicked()
 
 void UPauseWidgetBase::FadeScreen(const TFunction<void()>& Callback)
 {
+	SetVisibility(ESlateVisibility::HitTestInvisible);
 	PlayerChar->FadeToBlack(ScreenFadeAnim->GetEndTime() - ScreenFadeAnim->GetStartTime());
 	if (UUMGSequencePlayer* Player = PlayAnimation(ScreenFadeAnim))
 	{
@@ -80,6 +81,6 @@ void UPauseWidgetBase::InitWidget()
 	CheckpointButton->OnClicked.AddUObject(this, &UPauseWidgetBase::OnCheckpointClicked);
 	MainMenuButton->OnClicked.AddUObject(this, &UPauseWidgetBase::OnMainMenuClicked);
 
-	SettingsWidget = CreateWidget<USettingsWidgetBase>(this, SettingsWidgetClass);
+	SettingsWidget = CreateWidget<USettingsWidgetBase>(GetPlayerController(), SettingsWidgetClass);
 	SettingsWidget->ParentWidget = this;
 }

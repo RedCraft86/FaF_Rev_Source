@@ -14,7 +14,7 @@ public:
 
 	UGameWidgetBase(const FObjectInitializer& ObjectInitializer);
 
-	UPROPERTY(Transient, BlueprintReadOnly, Category = "Animations", meta = (BindWidgetAnim))
+	UPROPERTY(Transient, meta = (BindWidgetAnim))
 		UWidgetAnimation* HideFadeAnim;
 
 protected:
