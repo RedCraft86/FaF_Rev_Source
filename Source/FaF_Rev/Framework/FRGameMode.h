@@ -26,8 +26,4 @@ public:
 
 	UPROPERTY(Transient)
 		class AInspectionActor* InspectionActor;
-
-protected:
-
-	virtual void BeginPlay() override;
 };

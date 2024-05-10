@@ -6,7 +6,6 @@
 #include "FRPlayerController.h"
 #include "FRGameState.h"
 #include "FRPlayer.h"
-#include "Core/NarrativeWidget.h"
 
 AFRGameModeBase::AFRGameModeBase()
 	: InspectionActor(nullptr)
@@ -17,9 +16,4 @@ AFRGameModeBase::AFRGameModeBase()
 	
 	Narrative = CreateDefaultSubobject<UNarrativeComponent>("Narrative");
 	Inventory = CreateDefaultSubobject<UInventoryComponent>("Inventory");
-}
-
-void AFRGameModeBase::BeginPlay()
-{
-	Super::BeginPlay();
 }
