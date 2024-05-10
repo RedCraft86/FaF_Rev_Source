@@ -67,5 +67,4 @@ FontDPIPreset=Standard
 FontDPI=72
 
 [/Script/Engine.Engine]
-+ActiveGameNameRedirects=(OldGameName="TP_Blank",NewGameName="/Script/FaF_Rev")
-+ActiveGameNameRedirects=(OldGameName="/Script/TP_Blank",NewGameName="/Script/FaF_Rev")
+GameUserSettingsClassName=/Script/GTRuntime.GTGameUserSettings
