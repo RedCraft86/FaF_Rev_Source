@@ -17,12 +17,6 @@ public:
 
 	AFRPlayerController();
 
-	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, Category = "DefaultSubobjects")
-		class UInventoryComponent* Inventory;
-
-	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, Category = "DefaultSubobjects")
-		class UNarrativeComponent* Narrative;
-
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Settings")
 		TSubclassOf<UUserWidget> UnfocusedWidgetClass;
 

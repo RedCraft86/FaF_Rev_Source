@@ -3,15 +3,15 @@
 #include "NarrativeWidget.h"
 #include "FRPlayer.h"
 
-UNarrativeWidget::UNarrativeWidget(const FObjectInitializer& ObjectInitializer)
-	: UGTUserWidget(ObjectInitializer), HideFadeAnim(nullptr), HideCheckTime(0.0f)
-	, WorldSettings(nullptr), PlayerChar(nullptr)
+UNarrativeWidgetBase::UNarrativeWidgetBase(const FObjectInitializer& ObjectInitializer)
+	: UGTUserWidget(ObjectInitializer), HideFadeAnim(nullptr), NarrativeComponent(nullptr)
+	, HideCheckTime(0.0f), WorldSettings(nullptr), PlayerChar(nullptr)
 {
 	ZOrder = 97;
 	bAutoAdd = true;
 }
 
-void UNarrativeWidget::HideCheck()
+void UNarrativeWidgetBase::HideCheck()
 {
 	HideCheckTime = 0.0f;
 	if (!PlayerChar || !WorldSettings) return;
@@ -25,14 +25,14 @@ void UNarrativeWidget::HideCheck()
 	}
 }
 
-void UNarrativeWidget::NativeConstruct()
+void UNarrativeWidgetBase::NativeConstruct()
 {
 	Super::NativeConstruct();
 	WorldSettings = GetWorld()->GetWorldSettings();
 	PlayerChar = FRPlayer(this);
 }
 
-void UNarrativeWidget::NativeTick(const FGeometry& MyGeometry, float InDeltaTime)
+void UNarrativeWidgetBase::NativeTick(const FGeometry& MyGeometry, float InDeltaTime)
 {
 	Super::NativeTick(MyGeometry, InDeltaTime);
 	if (HideCheckTime >= 0.25f) { HideCheck(); }

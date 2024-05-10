@@ -99,7 +99,7 @@ void UGameSectionManager::UnloadLastData()
 	{
 		PlayerChar->ResetStates();
 		PlayerChar->TeleportPlayer(FVector::ZeroVector, FRotator::ZeroRotator);
-		PlayerChar->GetPlayerController()->Narrative->ForgetQuest(LastData->Quest.LoadSynchronous());
+		PlayerChar->GetGameMode()->Narrative->ForgetQuest(LastData->Quest.LoadSynchronous());
 		PlayerChar->GetGameState()->StopGameMusic();
 
 		IUDSInterface::SetCustomSettings(PlayerChar->UltraDynamicSky, ThisData->SkyWeatherSettings);
@@ -184,7 +184,7 @@ void UGameSectionManager::FinishTransition()
 			PlayerChar->FadeFromBlack(1.0f);
 			PlayerChar->ClearLockFlag(Player::LockFlags::Loading);
 			PlayerChar->GetGameState()->SetGameMusic(ThisData->MusicID);
-			PlayerChar->GetPlayerController()->Narrative->BeginQuest(LastData->Quest.LoadSynchronous());
+			PlayerChar->GetGameMode()->Narrative->BeginQuest(LastData->Quest.LoadSynchronous());
 		}
 		
 		bLoading = false;	

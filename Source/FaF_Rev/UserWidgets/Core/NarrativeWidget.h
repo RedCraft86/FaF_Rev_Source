@@ -3,19 +3,23 @@
 #pragma once
 
 #include "GTUserWidget.h"
+#include "NarrativeComponent.h"
 #include "NarrativeWidget.generated.h"
 
 UCLASS(Abstract)
-class FAF_REV_API UNarrativeWidget final : public UGTUserWidget
+class FAF_REV_API UNarrativeWidgetBase final : public UGTUserWidget
 {
 	GENERATED_BODY()
 	
 public:
 
-	UNarrativeWidget(const FObjectInitializer& ObjectInitializer);
+	UNarrativeWidgetBase(const FObjectInitializer& ObjectInitializer);
 	
 	UPROPERTY(Transient, BlueprintReadOnly, Category = "Animations", meta = (BindWidgetAnim))
 		UWidgetAnimation* HideFadeAnim;
+
+	UPROPERTY(Transient, BlueprintReadOnly, Category = "NarrativeWidget")
+		UNarrativeComponent* NarrativeComponent;
 
 protected:
 

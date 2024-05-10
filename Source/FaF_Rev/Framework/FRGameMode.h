@@ -18,6 +18,16 @@ public:
 
 	AFRGameModeBase();
 
+	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, Category = "DefaultSubobjects")
+		class UNarrativeComponent* Narrative;
+
+	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, Category = "DefaultSubobjects")
+		class UInventoryComponent* Inventory;
+
 	UPROPERTY(Transient)
 		class AInspectionActor* InspectionActor;
+
+protected:
+
+	virtual void BeginPlay() override;
 };
