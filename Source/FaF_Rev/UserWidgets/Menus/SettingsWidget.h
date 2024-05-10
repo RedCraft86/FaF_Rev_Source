@@ -3,6 +3,7 @@
 #pragma once
 
 #include "GTUserWidget.h"
+#include "PauseWidget.h"
 #include "SettingsWidget.generated.h"
 
 UCLASS(Abstract)
@@ -14,7 +15,6 @@ public:
 
 	USettingsWidgetBase(const FObjectInitializer& ObjectInitializer);
 
-protected:
-
-	UPROPERTY(Transient) UUserWidget* ParentWidget;
+	UPROPERTY(Transient, BlueprintReadOnly, Category = "SettingsWidget")
+		UUserWidget* ParentWidget;
 };
