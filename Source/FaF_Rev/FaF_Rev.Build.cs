@@ -40,6 +40,7 @@ public class FaF_Rev : ModuleRules
 				"DataGraphRuntime",
 				"PulldownStruct",
 				"ExpressiveText",
+				"Narrative",
 				"GTRuntime",
 				"GTCore",
 			}
