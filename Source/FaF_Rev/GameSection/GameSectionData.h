@@ -35,7 +35,7 @@ public:
 	UPROPERTY(EditAnywhere, Category = "PlayerData")
 		TSoftObjectPtr<APlayerTeleporter> Teleporter;
 
-	UPROPERTY(EditAnywhere, Category = "PlayerData", meta = (ShowOnlyInnerProperties))
+	UPROPERTY(EditAnywhere, Category = "PlayerData")
 		FPlayerSettings PlayerSettings;
 
 	UPROPERTY(EditAnywhere, Category = "WorldData")
