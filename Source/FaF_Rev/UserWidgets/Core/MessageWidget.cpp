@@ -7,7 +7,7 @@
 UMessageWidgetBase::UMessageWidgetBase(const FObjectInitializer& ObjectInitializer)
 	: UGTUserWidget(ObjectInitializer), SmallNoticeText(nullptr), LargeNoticeText(nullptr)
 	, SubtitleLineText(nullptr), SubtitleNameText(nullptr), SmallNoticeAnim(nullptr)
-	, LargeNoticeAnim(nullptr), SubtitleAnim(nullptr), SubtitleHideAnim(nullptr)
+	, LargeNoticeAnim(nullptr), SubtitleAnim(nullptr), SubtitlePauseFade(nullptr), WorldSettings(nullptr)
 {
 	ZOrder = 96;
 	bAutoAdd = true;
@@ -63,18 +63,6 @@ void UMessageWidgetBase::QueueSubtitle(const FSimpleSubtitleData& SubtitleData)
 	if (!SubtitleTimer.IsValid() || !GetWorld()->GetTimerManager().IsTimerActive(SubtitleTimer))
 	{
 		UpdateSubtitle();
-	}
-}
-
-void UMessageWidgetBase::SetSubtitlesHidden(const bool bHidden)
-{
-	if (bHidden)
-	{
-		PlayAnimationForward(SubtitleHideAnim);
-	}
-	else
-	{
-		PlayAnimationReverse(SubtitleHideAnim);
 	}
 }
 
@@ -152,4 +140,23 @@ void UMessageWidgetBase::UpdateSubtitle()
 		PlayAnimationReverse(SubtitleAnim);
 		SubtitleTimer.Invalidate();
 	}
+}
+
+void UMessageWidgetBase::PauseCheck()
+{
+	if (WorldSettings && WorldSettings->GetPauserPlayerState())
+	{
+		PlayAnimationForward(SubtitlePauseFade);
+	}
+	else if (!IsAnimationPlaying(SubtitlePauseFade) && GetAnimationCurrentTime(SubtitlePauseFade) > 0.1f)
+	{
+		PlayAnimationReverse(SubtitlePauseFade);
+	}
+}
+
+void UMessageWidgetBase::NativeConstruct()
+{
+	Super::NativeConstruct();
+	WorldSettings = GetWorld()->GetWorldSettings();
+	GetWorld()->GetTimerManager().SetTimer(PauseCheckTimer, this, &UMessageWidgetBase::PauseCheck, 0.25f, true);
 }

@@ -17,14 +17,6 @@ public:
 
 	UMessageWidgetBase(const FObjectInitializer& ObjectInitializer);
 
-	void QueueSmallNotice(const FSimpleNoticeData& NoticeData, const bool bResetQueue = false);
-	void QueueLargeNotice(const FSimpleNoticeData& NoticeData, const bool bResetQueue = false);
-	void QueueSubtitles(const TArray<FSimpleSubtitleData>& Subtitles);
-	void QueueSubtitle(const FSimpleSubtitleData& SubtitleData);
-	void SetSubtitlesHidden(const bool bHidden);
-
-private:
-	
 	UPROPERTY(Transient, meta = (BindWidget))
 		UExprTextBlock* SmallNoticeText;
 
@@ -47,7 +39,17 @@ private:
 		UWidgetAnimation* SubtitleAnim;
 	
 	UPROPERTY(Transient, meta = (BindWidgetAnim))
-		UWidgetAnimation* SubtitleHideAnim;
+		UWidgetAnimation* SubtitlePauseFade;
+	
+	void QueueSmallNotice(const FSimpleNoticeData& NoticeData, const bool bResetQueue = false);
+	void QueueLargeNotice(const FSimpleNoticeData& NoticeData, const bool bResetQueue = false);
+	void QueueSubtitles(const TArray<FSimpleSubtitleData>& Subtitles);
+	void QueueSubtitle(const FSimpleSubtitleData& SubtitleData);
+
+protected:
+
+	FTimerHandle PauseCheckTimer;
+	UPROPERTY(Transient) AWorldSettings* WorldSettings;
 
 	FTimerHandle SmallNoticeTimer;
 	TQueue<FSimpleNoticeData> SmallNoticeQueue;
@@ -60,4 +62,7 @@ private:
 	FTimerHandle SubtitleTimer;
 	TQueue<FSimpleSubtitleData> SubtitleQueue;
 	void UpdateSubtitle();
+
+	void PauseCheck();
+	virtual void NativeConstruct() override;
 };
