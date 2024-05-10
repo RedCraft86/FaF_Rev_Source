@@ -39,7 +39,7 @@ void AFRGameStateBase::SetGameMusic(const FGameMusicID InMusicID)
 		if (!Comp) continue;
 
 		const FGameMusicTypeData* Data = MusicTracks.Tracks.Find(Mode);
-		if (Data && !Data->Music.IsNull()) continue;
+		if (!Data || Data->Music.IsNull()) continue;
 
 		Comp->SetSound(Data->Music.LoadSynchronous());
 		if (Mode == MusicMode)
@@ -119,7 +119,7 @@ void AFRGameStateBase::BeginPlay()
 	Super::BeginPlay();
 	if (const UFRSettings* Settings = FRSettings)
 	{
-		if (!Settings->IsGameplayMap(this))
+		if (!Settings->IsGameplayMap(this) && Settings->DefaultMusicID.IsValid())
 			SetGameMusic(Settings->DefaultMusicID);
 	}
 }
