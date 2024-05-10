@@ -2,9 +2,10 @@
 
 // ReSharper disable CppMemberFunctionMayBeConst
 #include "NarrativeWidget.h"
+#include "Components/Button.h"
 #include "Components/TextBlock.h"
 #include "Components/PanelWidget.h"
-#include "Components/Button.h"
+#include "NarrativeDataTask.h"
 #include "ExprTextBlock.h"
 #include "MessageWidget.h"
 #include "FRGameMode.h"
