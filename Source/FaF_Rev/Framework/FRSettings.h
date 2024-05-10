@@ -40,12 +40,12 @@ public:
 
 	UPROPERTY(Config, EditAnywhere, Category = "GameSection")
 		TSoftObjectPtr<class UGameSectionGraph> GameSectionGraph;
-
-	UPROPERTY(Config, EditAnywhere, Category = "GameMusic", meta = (GetOptions = "GetMusicTableKeys"))
-		FName DefaultMusicID;
 	
 	UPROPERTY(Config, EditAnywhere, Category = "GameMusic", meta = (RequiredAssetDataTags = "RowStructure=/Script/FaF_Rev.GameMusicData"))
 		TSoftObjectPtr<UDataTable> MusicTable;
+
+	UPROPERTY(Config, EditAnywhere, Category = "GameMusic", meta = (GetOptions = "GetMusicTableKeys"))
+		FName DefaultMusicID;
 	
 	UPROPERTY(Config, EditAnywhere, Category = "GameSettings")
 		TSoftObjectPtr<USoundMix> SoundMixClass;
