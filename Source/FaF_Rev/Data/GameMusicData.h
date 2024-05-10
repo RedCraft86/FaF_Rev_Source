@@ -30,8 +30,8 @@ struct FAF_REV_API FGameMusicData : public FTableRowBase
 {
 	GENERATED_BODY()
 
-	UPROPERTY(EditAnywhere, Category = "GameMusic", meta = (ReadOnlyKeys))
-		TMap<EEnemyAIMode, FGameMusicTypeData> EnemyModeToTracks;
+	UPROPERTY(EditAnywhere, Category = "GameMusic", meta = (ReadOnlyKeys, TitleProperty = "Music"))
+		TMap<EEnemyAIMode, FGameMusicTypeData> Tracks;
 
 #if WITH_EDITOR
 protected:
@@ -39,10 +39,10 @@ protected:
 	{
 		Super::OnDataTableChanged(InDataTable, InRowName);
 		
-		if (EnemyModeToTracks.Num() == 4) return;
+		if (Tracks.Num() == 4) return;
 		for (const EEnemyAIMode Mode : TEnumRange<EEnemyAIMode>())
 		{
-			if (!EnemyModeToTracks.Contains(Mode)) EnemyModeToTracks.Add(Mode);
+			if (!Tracks.Contains(Mode)) Tracks.Add(Mode);
 		}
 	}
 #endif

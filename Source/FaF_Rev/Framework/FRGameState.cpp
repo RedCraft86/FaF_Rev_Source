@@ -38,7 +38,7 @@ void AFRGameStateBase::SetGameMusic(const FGameMusicID InMusicID)
 		UAudioComponent* Comp = EnemyModeToAudio.FindRef(Mode);
 		if (!Comp) continue;
 
-		const FGameMusicTypeData* Data = MusicTracks.EnemyModeToTracks.Find(Mode);
+		const FGameMusicTypeData* Data = MusicTracks.Tracks.Find(Mode);
 		if (Data && !Data->Music.IsNull()) continue;
 
 		Comp->SetSound(Data->Music.LoadSynchronous());
@@ -65,7 +65,7 @@ void AFRGameStateBase::SetMusicMode(const EEnemyAIMode InMusicMode)
 		UAudioComponent* Comp = EnemyModeToAudio.FindRef(Mode);
 		if (!Comp || !Comp->GetSound()) continue;
 
-		const FGameMusicTypeData TypeData = MusicTracks.EnemyModeToTracks.FindRef(Mode);
+		const FGameMusicTypeData TypeData = MusicTracks.Tracks.FindRef(Mode);
 		if (TypeData.TransitionTime > Time)
 		{
 			Time = TypeData.TransitionTime;
