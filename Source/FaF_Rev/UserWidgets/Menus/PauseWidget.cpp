@@ -66,30 +66,20 @@ void UPauseWidgetBase::Return_Implementation(UUserWidget* From)
 	SetWidgetHidden(false);
 }
 
-void UPauseWidgetBase::NativeOnInitialized()
+void UPauseWidgetBase::InitWidget()
 {
-	Super::NativeOnInitialized();
-	GetWorld()->GetTimerManager().SetTimerForNextTick([this]()
-	{
-		if (const UGeneralProjectSettings* ProjectSettings = GetDefault<UGeneralProjectSettings>())
-		{
-			GameVersionText->SetText(FText::FromString(FString::Printf(TEXT("Game Version: %s - %s"),
-				*ProjectSettings->ProjectVersion, *ProjectSettings->ProjectDebugTitleInfo.ToString())));
-		}
-		
-		ResumeButton->OnClicked.AddUObject(this, &UPauseWidgetBase::OnResumeClicked);
-		SettingsButton->OnClicked.AddUObject(this, &UPauseWidgetBase::OnSettingsClicked);
-		CheckpointButton->OnClicked.AddUObject(this, &UPauseWidgetBase::OnCheckpointClicked);
-		MainMenuButton->OnClicked.AddUObject(this, &UPauseWidgetBase::OnMainMenuClicked);
-
-		SettingsWidget = CreateWidget<USettingsWidgetBase>(this, SettingsWidgetClass);
-		SettingsWidget->ParentWidget = this;
-	});
-}
-
-void UPauseWidgetBase::NativeConstruct()
-{
-	Super::NativeConstruct();
 	PlayerChar = FRPlayer(this);
-	SetVisibility(ESlateVisibility::SelfHitTestInvisible);
+	if (const UGeneralProjectSettings* ProjectSettings = GetDefault<UGeneralProjectSettings>())
+	{
+		GameVersionText->SetText(FText::FromString(FString::Printf(TEXT("Game Version: %s - %s"),
+			*ProjectSettings->ProjectVersion, *ProjectSettings->ProjectDebugTitleInfo.ToString())));
+	}
+		
+	ResumeButton->OnClicked.AddUObject(this, &UPauseWidgetBase::OnResumeClicked);
+	SettingsButton->OnClicked.AddUObject(this, &UPauseWidgetBase::OnSettingsClicked);
+	CheckpointButton->OnClicked.AddUObject(this, &UPauseWidgetBase::OnCheckpointClicked);
+	MainMenuButton->OnClicked.AddUObject(this, &UPauseWidgetBase::OnMainMenuClicked);
+
+	SettingsWidget = CreateWidget<USettingsWidgetBase>(this, SettingsWidgetClass);
+	SettingsWidget->ParentWidget = this;
 }

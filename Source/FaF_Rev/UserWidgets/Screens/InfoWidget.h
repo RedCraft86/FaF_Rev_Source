@@ -32,6 +32,5 @@ private:
 	void UpdateInfo();
 	void OnSettingsUpdate();
 	void FrameRateTick() const;
-	virtual void NativeConstruct() override;
-	virtual void NativeOnInitialized() override;
+	virtual void InitWidget() override;
 };

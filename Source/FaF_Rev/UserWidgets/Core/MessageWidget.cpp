@@ -154,9 +154,8 @@ void UMessageWidgetBase::PauseCheck()
 	}
 }
 
-void UMessageWidgetBase::NativeConstruct()
+void UMessageWidgetBase::InitWidget()
 {
-	Super::NativeConstruct();
 	WorldSettings = GetWorld()->GetWorldSettings();
 	GetWorld()->GetTimerManager().SetTimer(PauseCheckTimer, this, &UMessageWidgetBase::PauseCheck, 0.25f, true);
 }

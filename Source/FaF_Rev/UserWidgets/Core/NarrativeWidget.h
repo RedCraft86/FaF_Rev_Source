@@ -28,6 +28,6 @@ protected:
 	UPROPERTY(Transient) class AFRPlayerBase* PlayerChar;
 
 	void HideCheck();
-	virtual void NativeConstruct() override;
+	virtual void InitWidget() override;
 	virtual void NativeTick(const FGeometry& MyGeometry, float InDeltaTime) override;
 };

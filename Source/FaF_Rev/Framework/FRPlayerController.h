@@ -35,5 +35,4 @@ protected:
 	
 	void OnWindowFocusChanged(bool bFocused);
 	virtual void BeginPlay() override;
-
 };

@@ -8,7 +8,7 @@
 #include "FRPlayer.h"
 
 AFRGameModeBase::AFRGameModeBase()
-	: InspectionActor(nullptr)
+	: InspectionActor(nullptr), PlayerController(nullptr), PlayerCharacter(nullptr)
 {
 	PlayerControllerClass = AFRPlayerController::StaticClass();
 	DefaultPawnClass = AFRPlayerBase::StaticClass();

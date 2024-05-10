@@ -1,6 +1,7 @@
 ﻿// Copyright (C) RedCraft86. All Rights Reserved.
 
 #include "NarrativeWidget.h"
+#include "FRGameMode.h"
 #include "FRPlayer.h"
 
 UNarrativeWidgetBase::UNarrativeWidgetBase(const FObjectInitializer& ObjectInitializer)
@@ -25,9 +26,9 @@ void UNarrativeWidgetBase::HideCheck()
 	}
 }
 
-void UNarrativeWidgetBase::NativeConstruct()
+void UNarrativeWidgetBase::InitWidget()
 {
-	Super::NativeConstruct();
+	NarrativeComponent = GetGameMode<AFRGameModeBase>()->Narrative;
 	WorldSettings = GetWorld()->GetWorldSettings();
 	PlayerChar = FRPlayer(this);
 }

@@ -39,18 +39,13 @@ void UInfoWidgetBase::FrameRateTick() const
 		FString::Printf(TEXT("%.2f ms"), FApp::GetDeltaTime() * 1000.0f)));
 }
 
-void UInfoWidgetBase::NativeConstruct()
+void UInfoWidgetBase::InitWidget()
 {
-	Super::NativeConstruct();
 	GetWorld()->GetTimerManager().SetTimer(FrameRateTimer,
 		this, &UInfoWidgetBase::FrameRateTick, 0.25f, true);
 
 	OnSettingsUpdate();
-}
 
-void UInfoWidgetBase::NativeOnInitialized()
-{
-	Super::NativeOnInitialized();
 	USaveSubsystem::Get(this)->OnSaveStarted.AddUObject(this, &UInfoWidgetBase::UpdateInfo);
 	UGameSettings::Get()->OnDynamicApply.AddUObject(this, &UInfoWidgetBase::OnSettingsUpdate);
 }

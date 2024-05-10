@@ -964,11 +964,13 @@ void AFRPlayerBase::BeginPlay()
 			FAttachmentTransformRules::KeepRelativeTransform);
 	}
 
-	GameMode = FRGameMode(this);
-	GameMode->InspectionActor = InspectionActor;
-	GameState = GameMode->GetGameState<AFRGameStateBase>();
-	
 	PlayerController = FRPlayerController(this);
+
+	GameMode = FRGameMode(this);
+	GameMode->PlayerCharacter = this;
+	GameMode->InspectionActor = InspectionActor;
+	GameMode->PlayerController = PlayerController;
+	GameState = GameMode->GetGameState<AFRGameStateBase>();
 
 	FTimerManager& TM = GetWorldTimerManager();
 	TM.SetTimer(StaminaTimer, this, &AFRPlayerBase::TickStamina, 0.1f, true);

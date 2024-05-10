@@ -59,6 +59,6 @@ private:
 	void ResetBook() const;
 
 	UFUNCTION() void OnNextClicked();
+	virtual void InitWidget() override;
 	virtual void NativeConstruct() override;
-	virtual void NativeDestruct() override;
 };

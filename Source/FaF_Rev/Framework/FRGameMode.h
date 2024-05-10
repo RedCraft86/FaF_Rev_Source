@@ -12,8 +12,6 @@ class FAF_REV_API AFRGameModeBase final : public AGTGameModeBase
 {
 	GENERATED_BODY()
 
-	friend class AFRPlayerBase;
-
 public:
 
 	AFRGameModeBase();
@@ -24,6 +22,12 @@ public:
 	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, Category = "DefaultSubobjects")
 		class UInventoryComponent* Inventory;
 
-	UPROPERTY(Transient)
+	UPROPERTY(Transient, BlueprintReadOnly, Category = "GameMode")
 		class AInspectionActor* InspectionActor;
+	
+	UPROPERTY(Transient, BlueprintReadOnly, Category = "GameMode")
+		class AFRPlayerController* PlayerController;
+	
+	UPROPERTY(Transient, BlueprintReadOnly, Category = "GameMode")
+		class AFRPlayerBase* PlayerCharacter;
 };

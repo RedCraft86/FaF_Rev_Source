@@ -64,5 +64,5 @@ protected:
 	void UpdateSubtitle();
 
 	void PauseCheck();
-	virtual void NativeConstruct() override;
+	virtual void InitWidget() override;
 };

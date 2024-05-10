@@ -25,9 +25,8 @@ void UGameWidgetBase::HideCheck()
 	}
 }
 
-void UGameWidgetBase::NativeConstruct()
+void UGameWidgetBase::InitWidget()
 {
-	Super::NativeConstruct();
 	WorldSettings = GetWorld()->GetWorldSettings();
 	PlayerChar = FRPlayer(this);
 }

@@ -107,15 +107,14 @@ void UGuideWidgetBase::OnNextClicked()
 	}
 }
 
+void UGuideWidgetBase::InitWidget()
+{
+	Super::InitWidget();
+	NextButton->OnClicked.AddDynamic(this, &UGuideWidgetBase::OnNextClicked);
+}
+
 void UGuideWidgetBase::NativeConstruct()
 {
 	Super::NativeConstruct();
-	NextButton->OnClicked.AddDynamic(this, &UGuideWidgetBase::OnNextClicked);
 	ResetBook();
-}
-
-void UGuideWidgetBase::NativeDestruct()
-{
-	Super::NativeDestruct();
-	if (NextButton) NextButton->OnClicked.RemoveDynamic(this, &UGuideWidgetBase::OnNextClicked);
 }
