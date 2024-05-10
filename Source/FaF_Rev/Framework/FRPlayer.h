@@ -134,7 +134,10 @@ public:
 		FPointLightProperties PlayerLightSettings;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Settings", AdvancedDisplay)
-		TSoftObjectPtr<AInspectionActor> InspectionActor;
+		AActor* UltraDynamicSky;
+	
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Settings", AdvancedDisplay)
+		AInspectionActor* InspectionActor;
 	
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Settings", AdvancedDisplay, meta = (ReadOnlyKeys, DisplayThumbnail = false))
 		TMap<FName, class UInputAction*> InputActions;

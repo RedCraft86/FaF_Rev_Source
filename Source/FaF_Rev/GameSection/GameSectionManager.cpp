@@ -6,6 +6,8 @@
 #include "GameSection/Graph/GameSectionGraph.h"
 #include "Libraries/GTLoadUtilsLibrary.h"
 #include "SaveSystem/SaveSubsystem.h"
+#include "NarrativeComponent.h"
+#include "FRPlayerController.h"
 #include "PlayerTeleporter.h"
 #include "LoadingWidget.h"
 #include "FRGameState.h"
@@ -97,7 +99,10 @@ void UGameSectionManager::UnloadLastData()
 	{
 		PlayerChar->ResetStates();
 		PlayerChar->TeleportPlayer(FVector::ZeroVector, FRotator::ZeroRotator);
+		PlayerChar->GetPlayerController()->Narrative->ForgetQuest(LastData->Quest.LoadSynchronous());
 		PlayerChar->GetGameState()->StopGameMusic();
+
+		IUDSInterface::SetCustomSettings(PlayerChar->UltraDynamicSky, ThisData->SkyWeatherSettings);
 	}
 	
 	LoadedObjs.Empty(ThisData ? ThisData->PreloadObjects.Num() : 0);
@@ -179,6 +184,7 @@ void UGameSectionManager::FinishTransition()
 			PlayerChar->FadeFromBlack(1.0f);
 			PlayerChar->ClearLockFlag(Player::LockFlags::Loading);
 			PlayerChar->GetGameState()->SetGameMusic(ThisData->MusicID);
+			PlayerChar->GetPlayerController()->Narrative->BeginQuest(LastData->Quest.LoadSynchronous());
 		}
 		
 		bLoading = false;	

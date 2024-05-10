@@ -1,10 +1,12 @@
 ﻿// Copyright (C) RedCraft86. All Rights Reserved.
 // ReSharper disable CppParameterMayBeConst
 
+// ReSharper disable CppMemberFunctionMayBeConst
 #include "FRPlayer.h"
 #include "FRGameMode.h"
 #include "FRGameState.h"
 #include "ExitInterface.h"
+#include "UltraDynamicSky.h"
 #include "FRPlayerController.h"
 #include "Libraries/GTMathLibrary.h"
 #include "GameSettings/GameSettings.h"
@@ -963,7 +965,7 @@ void AFRPlayerBase::BeginPlay()
 	}
 
 	GameMode = FRGameMode(this);
-	GameMode->InspectionActor = InspectionActor.LoadSynchronous();
+	GameMode->InspectionActor = InspectionActor;
 	GameState = GameMode->GetGameState<AFRGameStateBase>();
 	
 	PlayerController = FRPlayerController(this);
@@ -1060,12 +1062,16 @@ void AFRPlayerBase::OnConstruction(const FTransform& Transform)
 		if (!InputActions.Contains(ActionName)) InputActions.Add(ActionName);
 	}
 	
-	for (const AActor* Actor : TActorRange<AActor>(GetWorld()))
+	for (AActor* Actor : TActorRange<AActor>(GetWorld()))
 	{
 		if (!IsValid(Actor)) continue;
+		if (Actor->Implements<UUDSInterface>())
+		{
+			UltraDynamicSky = Actor;
+		}
 		else if (Actor->IsA(AInspectionActor::StaticClass()))
 		{
-			InspectionActor = Actor;
+			InspectionActor = Cast<AInspectionActor>(Actor);
 		}
 	}
 }

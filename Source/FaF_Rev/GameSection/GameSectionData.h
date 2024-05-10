@@ -2,6 +2,7 @@
 
 #pragma once
 
+#include "Quest.h"
 #include "PlayerData.h"
 #include "GameMusicData.h"
 #include "UltraDynamicSky.h"
@@ -41,13 +42,13 @@ public:
 		FPlayerSettings PlayerSettings;
 
 	UPROPERTY(EditAnywhere, Category = "WorldData")
-		TSoftClassPtr<UObject> Quest;
+		TSoftClassPtr<UQuest> Quest;
 
 	UPROPERTY(EditAnywhere, Category = "WorldData")
 		FGameMusicID MusicID;
 
-	UPROPERTY(EditAnywhere, Category = "WorldData", DisplayName = "Weather")
-		FUDSSettings WeatherSettings;
+	UPROPERTY(EditAnywhere, Category = "WorldData")
+		FUDSSettings SkyWeatherSettings;
 	
 	UPROPERTY(EditAnywhere, Category = "Dependencies", meta = (ClampMin = 1, UIMin = 1, ClampMax = 8, UIMax = 8, DisplayName = "Search Depth"))
 		uint8 DependencyDepth;

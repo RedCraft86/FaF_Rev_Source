@@ -30,4 +30,12 @@ public:
 
 	UFUNCTION(BlueprintCallable, BlueprintImplementableEvent, Category = "UDS", meta = (ForceAsFunction = true))
 		void SetCustomSettings(const FUDSSettings& InSettings);
+
+	static void SetCustomSettings(UObject* Target, const FUDSSettings& InSettings)
+	{
+		if (IsValid(Target) && Target->Implements<UUDSInterface>())
+		{
+			IUDSInterface::Execute_SetCustomSettings(Target, InSettings);
+		}
+	}
 };
