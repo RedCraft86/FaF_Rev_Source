@@ -19,11 +19,11 @@ public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Subobjects")
 		UWorldEventComponent* WorldEventComponent;
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Settings", meta = (DisplayPriority = -1))
+	UPROPERTY(EditAnywhere, Category = "Settings", meta = (DisplayPriority = -1))
 		bool bSingleUse;
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Settings", meta = (DisplayPriority = -1))
-		FText DisplayLabel;
+	UPROPERTY(EditAnywhere, AdvancedDisplay, Category = "Settings", meta = (DisplayPriority = -1))
+		FInteractionInfo InteractionInfo;
 
 private:
 	
