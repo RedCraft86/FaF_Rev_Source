@@ -9,6 +9,9 @@
 #include "WidgetInterface.h"
 #include "FRGameInstance.h"
 #include "SubWidgets.h"
+#if UE_BUILD_SHIPPING
+#include "GTConfigSubsystem.h"
+#endif
 
 #define __SETUP_BASE(type, Property, GetterFunc, SetterFunc) \
 	OnRefreshDisplay.AddUObject(Property, &UFRSettingRowBase::RefreshValue); \
@@ -42,7 +45,7 @@
 
 USettingsWidgetBase::USettingsWidgetBase(const FObjectInitializer& ObjectInitializer)
 	: UGTUserWidget(ObjectInitializer), GeneralButton(nullptr), GraphicsButton(nullptr), AudioButton(nullptr)
-	, KeybindsButton(nullptr), DebuggingButton(nullptr), ToggleFramerateRow(nullptr), FieldOfViewRow(nullptr)
+	, KeybindsButton(nullptr), DeveloperButton(nullptr), ToggleFramerateRow(nullptr), FieldOfViewRow(nullptr)
 	, CameraSmoothingRow(nullptr), XSensitivityRow(nullptr), YSensitivityRow(nullptr), XInvertRow(nullptr)
 	, YInvertRow(nullptr), ResolutionBox(nullptr), ResScaleRow(nullptr), VSyncRow(nullptr), FrameRateRow(nullptr)
 	, GammaRow(nullptr), BrightnessRow(nullptr), CBlindModeRow(nullptr), CBlindStrengthRow(nullptr), FancyBloomRow(nullptr)
@@ -63,6 +66,12 @@ void USettingsWidgetBase::RefreshUI()
 {
 	OnRefreshDisplay.Broadcast();
 	PlayAnimation(FadeAnim, 0.0f, 1, EUMGSequencePlayMode::Forward, 1.5f);
+#if UE_BUILD_SHIPPING
+	DeveloperButton->SetVisibility(UGTConfigSubsystem::Get(this)->IsDeveloperMode()
+		? ESlateVisibility::Visible : ESlateVisibility::Collapsed);
+#else
+	DeveloperButton->SetVisibility(ESlateVisibility::Visible);
+#endif
 }
 
 void USettingsWidgetBase::SetScreenIndex(const int32 InIndex)
@@ -86,7 +95,6 @@ void USettingsWidgetBase::RefreshResolutions()
 	}
 	ResolutionBox->OnSelectionChanged.AddDynamic(this, &USettingsWidgetBase::OnResolutionChanged);
 	ResolutionBox->SetSelectedIndex(FMath::Max(0, Resolutions.Find(SettingsObj->GetScreenResolution())));
-
 }
 
 void USettingsWidgetBase::OnUpdateResolution()
@@ -204,7 +212,7 @@ void USettingsWidgetBase::InitWidget()
 	GraphicsButton->OnClicked.AddUObject(this, &USettingsWidgetBase::OnGraphicsButtonClicked);
 	AudioButton->OnClicked.AddUObject(this, &USettingsWidgetBase::OnAudioButtonClicked);
 	KeybindsButton->OnClicked.AddUObject(this, &USettingsWidgetBase::OnKeybindsButtonClicked);
-	DebuggingButton->OnClicked.AddUObject(this, &USettingsWidgetBase::OnDebuggingButtonClicked);
+	DeveloperButton->OnClicked.AddUObject(this, &USettingsWidgetBase::OnDebuggingButtonClicked);
 
 		/* General */
 	SETUP_TOGGLE(ToggleFramerateRow, GetShowFPS, SetShowFPS);
@@ -275,7 +283,7 @@ void USettingsWidgetBase::NativeConstruct()
 	Super::NativeConstruct();
 	
 	RefreshResolutions();
-	OnRefreshDisplay.Broadcast();
+	RefreshUI();
 }
 
 void USettingsWidgetBase::NativeTick(const FGeometry& InGeometry, float DeltaTime)

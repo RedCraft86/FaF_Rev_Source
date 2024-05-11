@@ -33,7 +33,7 @@ public:
 		UFRAnimatedButtonBase* KeybindsButton;
 	
 	UPROPERTY(Transient, meta = (BindWidget))
-		UFRAnimatedButtonBase* DebuggingButton;
+		UFRAnimatedButtonBase* DeveloperButton;
 	
 	/* General */
 	UPROPERTY(Transient, meta = (BindWidget))
