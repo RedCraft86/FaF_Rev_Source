@@ -70,7 +70,7 @@ public:
 		return UGameplayStatics::GetCurrentLevelName(WorldContext) == GameplayMap.GetAssetName();
 	}
 
-#if WITH_EDITORONLY_DATA
+#if WITH_EDITOR && WITH_EDITORONLY_DATA
 private:
 	UFUNCTION() TArray<FName> GetMusicTableKeys()
 	{

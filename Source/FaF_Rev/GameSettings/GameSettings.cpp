@@ -163,14 +163,19 @@ void UGameSettings::ApplyBrightness() const
 void UGameSettings::ApplyAudioSettings()
 {
 	if (!FApp::IsGame()) return;
+	if (!SoundMixObject) return;
 	
 	const UWorld* World = GetWorld();
 	if (!ensure(World)) return;
 	
 	FAudioDeviceHandle AudioDevice = World->GetAudioDevice();
+	if (!AudioDevice) return;
+	
 	for (const EFRSoundType Type : TEnumRange<EFRSoundType>())
 	{
 		USoundClass** SoundClass = SoundTypeToClass.Find(Type);
+		if (!SoundClass || !*SoundClass) continue;
+		
 		AudioDevice->SetSoundMixClassOverride(SoundMixObject, *SoundClass,
 			GetAudioVolumeValue(Type), 1.0f, 0.5f, true);
 	}
