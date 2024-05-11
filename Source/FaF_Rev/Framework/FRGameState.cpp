@@ -18,13 +18,6 @@ AFRGameStateBase::AFRGameStateBase()
 	CREATE_AUDIO_COMPONENT(SuspicionMusicAudio);
 	CREATE_AUDIO_COMPONENT(ChaseMusicAudio);
 	CREATE_AUDIO_COMPONENT(SearchMusicAudio);
-
-	EnemyModeToAudio = {
-		{EEnemyAIMode::None, WorldMusicAudio},
-		{EEnemyAIMode::Suspicion, SuspicionMusicAudio},
-		{EEnemyAIMode::Chase, ChaseMusicAudio},
-		{EEnemyAIMode::Search, SearchMusicAudio}
-	};
 }
 
 void AFRGameStateBase::SetGameMusic(const FGameMusicID InMusicID)
@@ -35,7 +28,7 @@ void AFRGameStateBase::SetGameMusic(const FGameMusicID InMusicID)
 
 	for (const EEnemyAIMode Mode : TEnumRange<EEnemyAIMode>())
 	{
-		UAudioComponent* Comp = EnemyModeToAudio.FindRef(Mode);
+		UAudioComponent* Comp = GetComponentForMode(Mode);
 		if (!Comp) continue;
 
 		const FGameMusicTypeData* Data = MusicTracks.Tracks.Find(Mode);
@@ -62,7 +55,7 @@ void AFRGameStateBase::SetMusicMode(const EEnemyAIMode InMusicMode)
 	MusicMode = InMusicMode;
 	for (const EEnemyAIMode Mode : TEnumRange<EEnemyAIMode>())
 	{
-		UAudioComponent* Comp = EnemyModeToAudio.FindRef(Mode);
+		UAudioComponent* Comp = GetComponentForMode(Mode);
 		if (!Comp || !Comp->GetSound()) continue;
 
 		const FGameMusicTypeData TypeData = MusicTracks.Tracks.FindRef(Mode);
@@ -94,7 +87,7 @@ void AFRGameStateBase::SetMusicMode(const EEnemyAIMode InMusicMode)
 	{
 		for (const EEnemyAIMode Mode : TEnumRange<EEnemyAIMode>())
 		{
-			if (UAudioComponent* Comp = EnemyModeToAudio.FindRef(Mode))
+			if (UAudioComponent* Comp = GetComponentForMode(Mode))
 			{
 				Comp->SetPaused(Mode != MusicMode);
 			}
@@ -106,12 +99,25 @@ void AFRGameStateBase::StopGameMusic() const
 {
 	for (const EEnemyAIMode Mode : TEnumRange<EEnemyAIMode>())
 	{
-		if (UAudioComponent* Comp = EnemyModeToAudio.FindRef(Mode))
+		if (UAudioComponent* Comp = GetComponentForMode(Mode))
 		{
 			Comp->SetPaused(false);
 			Comp->Stop();
 		}
 	}
+}
+
+UAudioComponent* AFRGameStateBase::GetComponentForMode(const EEnemyAIMode InMode) const
+{
+	switch (InMode)
+	{
+	case EEnemyAIMode::None:		return WorldMusicAudio;
+	case EEnemyAIMode::Suspicion:	return SuspicionMusicAudio;
+	case EEnemyAIMode::Chase:		return ChaseMusicAudio;
+	case EEnemyAIMode::Search:		return SearchMusicAudio;
+	}
+
+	return WorldMusicAudio;
 }
 
 void AFRGameStateBase::BeginPlay()

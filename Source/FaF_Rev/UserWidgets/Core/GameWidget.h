@@ -15,13 +15,13 @@ public:
 	UGameWidgetBase(const FObjectInitializer& ObjectInitializer);
 
 	UPROPERTY(Transient, meta = (BindWidgetAnim))
-		UWidgetAnimation* HideFadeAnim;
+		TObjectPtr<UWidgetAnimation> HideFadeAnim;
 
 protected:
 
 	float HideCheckTime;
-	UPROPERTY(Transient) AWorldSettings* WorldSettings;
-	UPROPERTY(Transient) class AFRPlayerBase* PlayerChar;
+	UPROPERTY(Transient) TObjectPtr<const AWorldSettings> WorldSettings;
+	UPROPERTY(Transient) TObjectPtr<class AFRPlayerBase> PlayerChar;
 
 	void HideCheck();
 	virtual void InitWidget() override;

@@ -21,169 +21,169 @@ public:
 	USettingsWidgetBase(const FObjectInitializer& ObjectInitializer);
 
 	UPROPERTY(Transient, meta = (BindWidget))
-		UFRAnimatedButtonBase* GeneralButton;
+		TObjectPtr<UFRAnimatedButtonBase> GeneralButton;
 
 	UPROPERTY(Transient, meta = (BindWidget))
-		UFRAnimatedButtonBase* GraphicsButton;
+		TObjectPtr<UFRAnimatedButtonBase> GraphicsButton;
 
 	UPROPERTY(Transient, meta = (BindWidget))
-		UFRAnimatedButtonBase* AudioButton;
+		TObjectPtr<UFRAnimatedButtonBase> AudioButton;
 	
 	UPROPERTY(Transient, meta = (BindWidget))
-		UFRAnimatedButtonBase* KeybindsButton;
+		TObjectPtr<UFRAnimatedButtonBase> KeybindsButton;
 	
 	UPROPERTY(Transient, meta = (BindWidget))
-		UFRAnimatedButtonBase* DeveloperButton;
+		TObjectPtr<UFRAnimatedButtonBase> DeveloperButton;
 	
 	/* General */
 	UPROPERTY(Transient, meta = (BindWidget))
-		UFRToggleSettingBase* ToggleFramerateRow;
+		TObjectPtr<UFRToggleSettingBase> ToggleFramerateRow;
 	
 	UPROPERTY(Transient, meta = (BindWidget))
-		UFRSliderSettingBase* FieldOfViewRow;
+		TObjectPtr<UFRSliderSettingBase> FieldOfViewRow;
 	
 	UPROPERTY(Transient, meta = (BindWidget))
-		UFRToggleSettingBase* CameraSmoothingRow;
+		TObjectPtr<UFRToggleSettingBase> CameraSmoothingRow;
 	
 	UPROPERTY(Transient, meta = (BindWidget))
-		UFRSliderSettingBase* XSensitivityRow;
+		TObjectPtr<UFRSliderSettingBase> XSensitivityRow;
 	
 	UPROPERTY(Transient, meta = (BindWidget))
-		UFRSliderSettingBase* YSensitivityRow;
+		TObjectPtr<UFRSliderSettingBase> YSensitivityRow;
 	
 	UPROPERTY(Transient, meta = (BindWidget))
-		UFRToggleSettingBase* XInvertRow;
+		TObjectPtr<UFRToggleSettingBase> XInvertRow;
 	
 	UPROPERTY(Transient, meta = (BindWidget))
-		UFRToggleSettingBase* YInvertRow;
+		TObjectPtr<UFRToggleSettingBase> YInvertRow;
 	/* ~General */
 
 	/* Graphics */
 	// Video
 	UPROPERTY(Transient, meta = (BindWidget))
-		class UComboBoxString* ResolutionBox;
+		TObjectPtr<class UComboBoxString> ResolutionBox;
 	
 	UPROPERTY(Transient, meta = (BindWidget))
-		UFRSliderSettingBase* ResScaleRow;
+		TObjectPtr<UFRSliderSettingBase> ResScaleRow;
 	
 	UPROPERTY(Transient, meta = (BindWidget))
-		UFRToggleSettingBase* VSyncRow;
+		TObjectPtr<UFRToggleSettingBase> VSyncRow;
 	
 	UPROPERTY(Transient, meta = (BindWidget))
-		UFRSwitcherSettingBase* FrameRateRow;
+		TObjectPtr<UFRSwitcherSettingBase> FrameRateRow;
 	
 	UPROPERTY(Transient, meta = (BindWidget))
-		UFRSliderSettingBase* GammaRow;
+		TObjectPtr<UFRSliderSettingBase> GammaRow;
 		
 	UPROPERTY(Transient, meta = (BindWidget))
-		UFRSliderSettingBase* BrightnessRow;
+		TObjectPtr<UFRSliderSettingBase> BrightnessRow;
 	
 	// Color Blind
 	UPROPERTY(Transient, meta = (BindWidget))
-		UFRSwitcherSettingBase* CBlindModeRow;
+		TObjectPtr<UFRSwitcherSettingBase> CBlindModeRow;
 		
 	UPROPERTY(Transient, meta = (BindWidget))
-		UFRSliderSettingBase* CBlindStrengthRow;
+		TObjectPtr<UFRSliderSettingBase> CBlindStrengthRow;
 	
 	// Rendering Features
 	UPROPERTY(Transient, meta = (BindWidget))
-		UFRToggleSettingBase* FancyBloomRow;
+		TObjectPtr<UFRToggleSettingBase> FancyBloomRow;
 
 	UPROPERTY(Transient, meta = (BindWidget))
-		UFRSwitcherSettingBase* MBlurAmountRow;
+		TObjectPtr<UFRSwitcherSettingBase> MBlurAmountRow;
 	
 	UPROPERTY(Transient, meta = (BindWidget))
-		UFRSwitcherSettingBase* AAliasingTypeRow;
+		TObjectPtr<UFRSwitcherSettingBase> AAliasingTypeRow;
 
 	// UPROPERTY(Transient, meta = (BindWidget))
-	// 	UFRSwitcherSettingBase* FSRQualityRow;
+	// 	TObjectPtr<UFRSwitcherSettingBase> FSRQualityRow;
 	//
 	// UPROPERTY(Transient, meta = (BindWidget))
-	// 	UFRToggleSettingBase* FSRFrameInterpRow;
+	// 	TObjectPtr<UFRToggleSettingBase> FSRFrameInterpRow;
 	
 	// Advanced
 	UPROPERTY(Transient, meta = (BindWidget))
-		UButton* AutoDetectButton;
+		TObjectPtr<UButton> AutoDetectButton;
 
 	UPROPERTY(Transient, meta = (BindWidget))
-		class UTextBlock* AutoDetectText;
+		TObjectPtr<class UTextBlock> AutoDetectText;
 	
 	UPROPERTY(Transient, meta = (BindWidget))
-		UFRSwitcherSettingBase* OverallQualityRow;
+		TObjectPtr<UFRSwitcherSettingBase> OverallQualityRow;
 		
 	UPROPERTY(Transient, meta = (BindWidget))
-		UFRSwitcherSettingBase* ViewDistQualityRow;
+		TObjectPtr<UFRSwitcherSettingBase> ViewDistQualityRow;
 		
 	UPROPERTY(Transient, meta = (BindWidget))
-		UFRSwitcherSettingBase* AAliasingQualityRow;
+		TObjectPtr<UFRSwitcherSettingBase> AAliasingQualityRow;
 		
 	UPROPERTY(Transient, meta = (BindWidget))
-		UFRSwitcherSettingBase* ShadowQualityRow;
+		TObjectPtr<UFRSwitcherSettingBase> ShadowQualityRow;
 		
 	UPROPERTY(Transient, meta = (BindWidget))
-		UFRSwitcherSettingBase* GIlluminationQualityRow;
+		TObjectPtr<UFRSwitcherSettingBase> GIlluminationQualityRow;
 		
 	UPROPERTY(Transient, meta = (BindWidget))
-		UFRSwitcherSettingBase* ReflectionQualityRow;
+		TObjectPtr<UFRSwitcherSettingBase> ReflectionQualityRow;
 		
 	UPROPERTY(Transient, meta = (BindWidget))
-		UFRSwitcherSettingBase* PostProcessQualityRow;
+		TObjectPtr<UFRSwitcherSettingBase> PostProcessQualityRow;
 		
 	UPROPERTY(Transient, meta = (BindWidget))
-		UFRSwitcherSettingBase* TextureQualityRow;
+		TObjectPtr<UFRSwitcherSettingBase> TextureQualityRow;
 		
 	UPROPERTY(Transient, meta = (BindWidget))
-		UFRSwitcherSettingBase* EffectsQualityRow;
+		TObjectPtr<UFRSwitcherSettingBase> EffectsQualityRow;
 		
 	UPROPERTY(Transient, meta = (BindWidget))
-		UFRSwitcherSettingBase* FoliageQualityRow;
+		TObjectPtr<UFRSwitcherSettingBase> FoliageQualityRow;
 		
 	UPROPERTY(Transient, meta = (BindWidget))
-		UFRSwitcherSettingBase* ShadingQualityRow;
+		TObjectPtr<UFRSwitcherSettingBase> ShadingQualityRow;
 	/* ~Graphics */
 
 	/* Audio */
 	UPROPERTY(Transient, meta = (BindWidget))
-		UFRSliderSettingBase* MasterVolRow;
+		TObjectPtr<UFRSliderSettingBase> MasterVolRow;
 		
 	UPROPERTY(Transient, meta = (BindWidget))
-		UFRSliderSettingBase* AmbienceVolRow;
+		TObjectPtr<UFRSliderSettingBase> AmbienceVolRow;
 		
 	UPROPERTY(Transient, meta = (BindWidget))
-		UFRSliderSettingBase* MusicVolRow;
+		TObjectPtr<UFRSliderSettingBase> MusicVolRow;
 		
 	UPROPERTY(Transient, meta = (BindWidget))
-		UFRSliderSettingBase* SoundFXVolRow;
+		TObjectPtr<UFRSliderSettingBase> SoundFXVolRow;
 	/* ~Audio */
 
 	/* Developer */
 	UPROPERTY(Transient, meta = (BindWidget))
-		UFRToggleSettingBase* InvincibilityRow;
+		TObjectPtr<UFRToggleSettingBase> InvincibilityRow;
 		
 	UPROPERTY(Transient, meta = (BindWidget))
-		UFRToggleSettingBase* ViewModeUnlitRow;
+		TObjectPtr<UFRToggleSettingBase> ViewModeUnlitRow;
 	/* ~Developer */
 
 	UPROPERTY(Transient, meta = (BindWidget))
-		UTextBlock* ConfirmResText;
+		TObjectPtr<UTextBlock> ConfirmResText;
 	
 	UPROPERTY(Transient, meta = (BindWidget))
-		UButton* ConfirmResButton;
+		TObjectPtr<UButton> ConfirmResButton;
 
 	UPROPERTY(Transient, meta = (BindWidget))
-		UButton* RevertResButton;
+		TObjectPtr<UButton> RevertResButton;
 
 	UPROPERTY(Transient, meta = (BindWidget))
-		UButton* ExitButton;
+		TObjectPtr<UButton> ExitButton;
 
 	UPROPERTY(Transient, meta = (BindWidgetAnim))
-		UWidgetAnimation* SwapScreenAnim;
+		TObjectPtr<UWidgetAnimation> SwapScreenAnim;
 
 	UPROPERTY(Transient, meta = (BindWidgetAnim))
-		UWidgetAnimation* ConfirmResAnim;
+		TObjectPtr<UWidgetAnimation> ConfirmResAnim;
 
 	UPROPERTY(Transient, BlueprintReadOnly, Category = "SettingsWidget")
-		UUserWidget* ParentWidget;
+		TObjectPtr<UUserWidget> ParentWidget;
 	
 	UFUNCTION(BlueprintCallable, Category = "SettingsWidget")
 		void RefreshUI();
@@ -194,7 +194,7 @@ protected:
 	FOnRefreshDisplay OnRefreshDisplay;
 
 	uint8 ScreenIndex;
-	UPROPERTY(Transient) class UGameSettings* SettingsObj;
+	UPROPERTY(Transient) TObjectPtr<class UGameSettings> SettingsObj;
 
 	TArray<FIntPoint> Resolutions;
 	int32 LastConfirmedResIdx;

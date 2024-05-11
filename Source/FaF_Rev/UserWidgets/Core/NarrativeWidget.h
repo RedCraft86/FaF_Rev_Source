@@ -23,11 +23,11 @@ public:
 	{}
 
 	UPROPERTY(Transient, meta = (BindWidget))
-		UTextBlock* DisplayText;
+		TObjectPtr<UTextBlock> DisplayText;
 
 protected:
 
-	UPROPERTY(Transient) const UNarrativeTask* TaskObject;
+	UPROPERTY(Transient) TObjectPtr<const UNarrativeTask> TaskObject;
 
 	void InitWidget(const UNarrativeTask* Task);
 };
@@ -46,17 +46,17 @@ public:
 	{}
 
 	UPROPERTY(Transient, meta = (BindWidget))
-		UTextBlock* DisplayText;
+		TObjectPtr<UTextBlock> DisplayText;
 	
 	UPROPERTY(Transient, meta = (BindWidget))
-		UPanelWidget* TaskList;
+		TObjectPtr<UPanelWidget> TaskList;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "QuestBranchWidget")
 		TSubclassOf<UQuestTaskWidgetBase> TaskWidgetClass;
 	
 protected:
 
-	UPROPERTY(Transient) const UQuestBranch* BranchObject;
+	UPROPERTY(Transient) TObjectPtr<const UQuestBranch> BranchObject;
 
 	void InitWidget(const UQuestBranch* Branch);
 };
@@ -73,10 +73,10 @@ public:
 	UDialogueOptionWidgetBase(const FObjectInitializer& ObjectInitializer);
 
 	UPROPERTY(Transient, meta = (BindWidget))
-		UTextBlock* DisplayText;
+		TObjectPtr<UTextBlock> DisplayText;
 	
 	UPROPERTY(Transient, meta = (BindWidget))
-		UButton* SelectButton;
+		TObjectPtr<UButton> SelectButton;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "DialogueOptionWidget", meta = (UIMin = 10, ClampMin = 10))
 		uint8 MaxCharCount;
@@ -85,12 +85,12 @@ public:
 		FLinearColor SelectedColor;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "DialogueOptionWidget")
-		const UNarrativeDataTask* ReplyTaskType;
+		TObjectPtr<const UNarrativeDataTask> ReplyTaskType;
 
 protected:
 
-	UPROPERTY(Transient) UNarrativeWidgetBase* ParentUI;
-	UPROPERTY(Transient) UDialogueNode_Player* ReplyObject;
+	UPROPERTY(Transient) TObjectPtr<UNarrativeWidgetBase> ParentUI;
+	UPROPERTY(Transient) TObjectPtr<UDialogueNode_Player> ReplyObject;
 
 	UFUNCTION() void OnOptionClicked();
 	
@@ -110,34 +110,34 @@ public:
 	UNarrativeWidgetBase(const FObjectInitializer& ObjectInitializer);
 	
 	UPROPERTY(Transient, meta = (BindWidget))
-		UPanelWidget* QuestBranchBox;
+		TObjectPtr<UPanelWidget> QuestBranchBox;
 
 	UPROPERTY(Transient, meta = (BindWidget))
-		UTextBlock* DialogueNameText;
+		TObjectPtr<UTextBlock> DialogueNameText;
 
 	UPROPERTY(Transient, meta = (BindWidget))
-		UTextBlock* DialogueTitleText;
+		TObjectPtr<UTextBlock> DialogueTitleText;
 
 	UPROPERTY(Transient, meta = (BindWidget))
-		class UExprTextBlock* DialogueLineText;
+		TObjectPtr<class UExprTextBlock> DialogueLineText;
 
 	UPROPERTY(Transient, meta = (BindWidget))
-		UButton* SkipLineButton;
+		TObjectPtr<UButton> SkipLineButton;
 	
 	UPROPERTY(Transient, meta = (BindWidget))
-		UPanelWidget* DialogueReplyBox;
+		TObjectPtr<UPanelWidget> DialogueReplyBox;
 
 	UPROPERTY(Transient, meta = (BindWidgetAnim))
-		UWidgetAnimation* QuestFadeAnim;
+		TObjectPtr<UWidgetAnimation> QuestFadeAnim;
 
 	UPROPERTY(Transient, meta = (BindWidgetAnim))
-		UWidgetAnimation* DialogueFadeAnim;
+		TObjectPtr<UWidgetAnimation> DialogueFadeAnim;
 
 	UPROPERTY(Transient, meta = (BindWidgetAnim))
-		UWidgetAnimation* RepliesFadeAnim;
+		TObjectPtr<UWidgetAnimation> RepliesFadeAnim;
 
 	UPROPERTY(Transient, meta = (BindWidgetAnim))
-		UWidgetAnimation* HideFadeAnim;
+		TObjectPtr<UWidgetAnimation> HideFadeAnim;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "NarrativeWidget")
 		TSubclassOf<UQuestBranchWidgetBase> BranchWidgetClass;
@@ -155,7 +155,7 @@ public:
 		FMargin DialogueReplyPadding;
 
 	UPROPERTY(Transient, BlueprintReadOnly, Category = "NarrativeWidget")
-		UNarrativeComponent* NarrativeComponent;
+		TObjectPtr<UNarrativeComponent> NarrativeComponent;
 
 	UFUNCTION(BlueprintCallable, Category = "NarrativeWidget")
 		void SetQuestsHidden(const bool bInHidden);
@@ -167,9 +167,9 @@ protected:
 
 	bool bQuestsHidden;
 	float HideCheckTime;
-	UPROPERTY(Transient) AWorldSettings* WorldSettings;
-	UPROPERTY(Transient) class AFRPlayerBase* PlayerChar;
-	UPROPERTY(Transient) TMap<FName, UDialogueOptionWidgetBase*> DialogueReplies;
+	UPROPERTY(Transient) TObjectPtr<const AWorldSettings> WorldSettings;
+	UPROPERTY(Transient) TObjectPtr<class AFRPlayerBase> PlayerChar;
+	UPROPERTY(Transient) TMap<FName, TObjectPtr<UDialogueOptionWidgetBase>> DialogueReplies;
 
 	void QuestUpdatedNotify();
 	void RefreshQuestList(const UQuest* Quest, const UQuestBranch* Branch);

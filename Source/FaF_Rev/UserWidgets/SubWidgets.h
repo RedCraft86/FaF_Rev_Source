@@ -25,10 +25,10 @@ public:
 		FSimpleSubWidgetDelegateBP OnClickedBP;
 	
 	UPROPERTY(Transient, meta = (BindWidget))
-		UButton* Button;
+		TObjectPtr<UButton> Button;
 
 	UPROPERTY(Transient, meta = (BindWidgetAnim))
-		UWidgetAnimation* ButtonAnim;
+		TObjectPtr<UWidgetAnimation> ButtonAnim;
 
 	DECLARE_MULTICAST_DELEGATE(FOnClicked);
 	FOnClicked OnClicked;
@@ -57,10 +57,10 @@ public:
 	UFRKeybindRowBase(const FObjectInitializer& ObjectInitializer);
 
 	UPROPERTY(Transient, meta = (BindWidget))
-		UTextBlock* LabelText;
+		TObjectPtr<UTextBlock> LabelText;
 	
 	UPROPERTY(Transient, meta = (BindWidget))
-		class UHorizontalBox* KeybindsBox;
+		TObjectPtr<class UHorizontalBox> KeybindsBox;
 
 	UPROPERTY(EditAnywhere, Category = "Settings")
 		FText Label;
@@ -92,10 +92,10 @@ public:
 	{}
 
 	UPROPERTY(Transient, meta = (BindWidget))
-		UTextBlock* LabelText;
+		TObjectPtr<UTextBlock> LabelText;
 
 	UPROPERTY(Transient, meta = (BindWidget))
-		UButton* ResetButton;
+		TObjectPtr<UButton> ResetButton;
 
 	UPROPERTY(EditAnywhere, Category = "Settings", meta = (DisplayPriority = -1))
 		FText Label;
@@ -137,10 +137,10 @@ public:
 		FOnToggleValueChanged OnValueChangedBP;
 	
 	UPROPERTY(Transient, meta = (BindWidget))
-		UButton* ToggleButton;
+		TObjectPtr<UButton> ToggleButton;
 
 	UPROPERTY(Transient, meta = (BindWidget))
-		UTextBlock* ToggleLabelText;
+		TObjectPtr<UTextBlock> ToggleLabelText;
 
 	UPROPERTY(EditAnywhere, Category = "Settings")
 		bool bDefaultValue;
@@ -208,7 +208,7 @@ public:
 		FOnSliderValueChanged OnValueChangedBP;
 
 	UPROPERTY(Transient, meta = (BindWidget))
-		class USpinBox* SliderSpinBox;
+		TObjectPtr<class USpinBox> SliderSpinBox;
 
 	UPROPERTY(EditAnywhere, Category = "Settings")
 		float DefaultValue;
@@ -287,13 +287,13 @@ public:
 		FOnSwitcherValueChanged OnValueChangedBP;
 
 	UPROPERTY(Transient, meta = (BindWidget))
-		UTextBlock* ValueText;
+		TObjectPtr<UTextBlock> ValueText;
 	
 	UPROPERTY(Transient, meta = (BindWidget))
-		UButton* PrevButton;
+		TObjectPtr<UButton> PrevButton;
 
 	UPROPERTY(Transient, meta = (BindWidget))
-		UButton* NextButton;
+		TObjectPtr<UButton> NextButton;
 
 	UPROPERTY(EditAnywhere, Category = "Settings")
 		uint8 DefaultValue;

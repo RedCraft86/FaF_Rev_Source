@@ -90,7 +90,7 @@ struct FPlayerInteraction
 	GENERATED_BODY()
 
 	UPROPERTY(Transient, BlueprintReadOnly, Category = "Data")
-		AActor* Target;
+		TObjectPtr<AActor> Target;
 
 	UPROPERTY(Transient, BlueprintReadOnly, Category = "Data")
 		FInteractionInfo InteractInfo;

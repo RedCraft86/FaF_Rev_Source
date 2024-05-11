@@ -183,7 +183,7 @@ void UGameSettings::ApplyAudioSettings()
 	
 	for (const EFRSoundType Type : TEnumRange<EFRSoundType>())
 	{
-		USoundClass** SoundClass = SoundTypeToClass.Find(Type);
+		const TObjectPtr<USoundClass>* SoundClass = SoundTypeToClass.Find(Type);
 		if (!SoundClass || !*SoundClass) continue;
 		
 		AudioDevice->SetSoundMixClassOverride(SoundMixObject, *SoundClass,

@@ -46,10 +46,10 @@ public:
 protected:
 
 	UPROPERTY(Transient, BlueprintReadOnly, Category = "SaveManager", meta = (AllowPrivateAccess = true))
-		UGameSaveObject* GameDataObject;
+		TObjectPtr<UGameSaveObject> GameDataObject;
 
 	UPROPERTY(Transient, BlueprintReadOnly, Category = "SaveManager", meta = (AllowPrivateAccess = true))
-		UGlobalSaveObject* GlobalDataObject;
+		TObjectPtr<UGlobalSaveObject> GlobalDataObject;
 
 	virtual void Initialize(FSubsystemCollectionBase& Collection) override;
 

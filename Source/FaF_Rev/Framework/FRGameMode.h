@@ -17,17 +17,17 @@ public:
 	AFRGameModeBase();
 
 	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, Category = "DefaultSubobjects")
-		class UNarrativeComponent* Narrative;
+		TObjectPtr<class UNarrativeComponent> Narrative;
 
 	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, Category = "DefaultSubobjects")
-		class UInventoryComponent* Inventory;
+		TObjectPtr<class UInventoryComponent> Inventory;
 
 	UPROPERTY(Transient, BlueprintReadOnly, Category = "GameMode")
-		class AInspectionActor* InspectionActor;
+		TObjectPtr<class AInspectionActor> InspectionActor;
 	
 	UPROPERTY(Transient, BlueprintReadOnly, Category = "GameMode")
-		class AFRPlayerController* PlayerController;
+		TObjectPtr<class AFRPlayerController> PlayerController;
 	
 	UPROPERTY(Transient, BlueprintReadOnly, Category = "GameMode")
-		class AFRPlayerBase* PlayerCharacter;
+		TObjectPtr<class AFRPlayerBase> PlayerCharacter;
 };

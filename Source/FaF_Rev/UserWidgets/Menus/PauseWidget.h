@@ -18,22 +18,22 @@ public:
 	UPauseWidgetBase(const FObjectInitializer& ObjectInitializer);
 
 	UPROPERTY(Transient, meta = (BindWidget))
-		UFRAnimatedButtonBase* ResumeButton;
+		TObjectPtr<UFRAnimatedButtonBase> ResumeButton;
 
 	UPROPERTY(Transient, meta = (BindWidget))
-		UFRAnimatedButtonBase* SettingsButton;
+		TObjectPtr<UFRAnimatedButtonBase> SettingsButton;
 
 	UPROPERTY(Transient, meta = (BindWidget))
-		UFRAnimatedButtonBase* CheckpointButton;
+		TObjectPtr<UFRAnimatedButtonBase> CheckpointButton;
 	
 	UPROPERTY(Transient, meta = (BindWidget))
-		UFRAnimatedButtonBase* MainMenuButton;
+		TObjectPtr<UFRAnimatedButtonBase> MainMenuButton;
 
 	UPROPERTY(Transient, meta = (BindWidget))
-		class UTextBlock* GameVersionText;
+		TObjectPtr<class UTextBlock> GameVersionText;
 
 	UPROPERTY(Transient, meta = (BindWidgetAnim))
-		UWidgetAnimation* ScreenFadeAnim;
+		TObjectPtr<UWidgetAnimation> ScreenFadeAnim;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "PauseWidget")
 		TSoftObjectPtr<UWorld> MainMenuLevel;
@@ -43,8 +43,8 @@ public:
 	
 protected:
 
-	UPROPERTY(Transient) class AFRPlayerBase* PlayerChar;
-	UPROPERTY(Transient) USettingsWidgetBase* SettingsWidget;
+	UPROPERTY(Transient) TObjectPtr<class AFRPlayerBase> PlayerChar;
+	UPROPERTY(Transient) TObjectPtr<USettingsWidgetBase> SettingsWidget;
 	
 	void OnResumeClicked();
 	void OnSettingsClicked();

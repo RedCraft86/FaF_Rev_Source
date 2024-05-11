@@ -110,13 +110,13 @@ public:
 private:
 
 	bool bInitializing, bLaunchWork;
-	UPROPERTY(Transient) UFRGameInstance* GameInstance;
+	UPROPERTY(Transient) TObjectPtr<UFRGameInstance> GameInstance;
 	
-	UPROPERTY(Transient) USoundMix* SoundMixObject;
-	UPROPERTY(Transient) TMap<EFRSoundType, USoundClass*> SoundTypeToClass;
+	UPROPERTY(Transient) TObjectPtr<USoundMix> SoundMixObject;
+	UPROPERTY(Transient) TMap<EFRSoundType, TObjectPtr<USoundClass>> SoundTypeToClass;
 
 	FName BrightnessParamName;
-	UPROPERTY(Transient) UMaterialParameterCollection* BrightnessMPC;
+	UPROPERTY(Transient) TObjectPtr<UMaterialParameterCollection> BrightnessMPC;
 	
 // Configs
 	

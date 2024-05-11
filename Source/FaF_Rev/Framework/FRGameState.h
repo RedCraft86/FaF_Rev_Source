@@ -19,16 +19,16 @@ public:
 	AFRGameStateBase();
 
 	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, Category = "DefaultSubobjects")
-		UAudioComponent* WorldMusicAudio;
+		TObjectPtr<UAudioComponent> WorldMusicAudio;
 
 	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, Category = "DefaultSubobjects")
-		UAudioComponent* SuspicionMusicAudio;
+		TObjectPtr<UAudioComponent> SuspicionMusicAudio;
 
 	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, Category = "DefaultSubobjects")
-		UAudioComponent* ChaseMusicAudio;
+		TObjectPtr<UAudioComponent> ChaseMusicAudio;
 
 	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, Category = "DefaultSubobjects")
-		UAudioComponent* SearchMusicAudio;
+		TObjectPtr<UAudioComponent> SearchMusicAudio;
 
 	UFUNCTION(BlueprintCallable, Category = "GameMusic")
 		void SetGameMusic(const FGameMusicID InMusicID);
@@ -43,13 +43,9 @@ protected:
 	
 	EEnemyAIMode MusicMode;
 	FTimerHandle FadeTimer;
-	
-	UPROPERTY(Transient)
-		FGameMusicData MusicTracks;
+	UPROPERTY(Transient) FGameMusicData MusicTracks;
 
-	UPROPERTY(Transient)
-		TMap<EEnemyAIMode, UAudioComponent*> EnemyModeToAudio;
-
+	UAudioComponent* GetComponentForMode(const EEnemyAIMode InMode) const;
 	virtual void BeginPlay() override;
 
 public: // Statics

@@ -19,32 +19,30 @@ public:
 	ULoadingWidgetBase(const FObjectInitializer& ObjectInitializer);
 
 	UPROPERTY(Transient, BlueprintReadOnly, Category = "Elements", meta = (BindWidget))
-		UTextBlock* LoadingLabel;
+		TObjectPtr<UTextBlock> LoadingLabel;
 
 	UPROPERTY(Transient, BlueprintReadOnly, Category = "Elements", meta = (BindWidget))
-		class UProgressBar* LoadingBar;
+		TObjectPtr<class UProgressBar> LoadingBar;
 
 	UPROPERTY(Transient, BlueprintReadOnly, Category = "Elements", meta = (BindWidget))
-		class UImage* BackgroundImage;
+		TObjectPtr<class UImage> BackgroundImage;
 	
 	UPROPERTY(Transient, BlueprintReadOnly, Category = "Elements", meta = (BindWidget))
-		UTextBlock* TipLabel;
+		TObjectPtr<UTextBlock> TipLabel;
 	
 	UPROPERTY(Transient, BlueprintReadOnly, Category = "Elements", meta = (BindWidget))
-		UTextBlock* TipText;
+		TObjectPtr<UTextBlock> TipText;
 
 	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, Category = "LoadingWidget")
 		TSoftObjectPtr<UTexture2D> DefaultBackground;
 	
 private:
-
-	UPROPERTY(Transient)
-		UTexture2D* Background;
-
+	
 	bool bUnloading;
 	int32 TotalObjs;
 	TArray<FAssetData> LoadingObjs;
 	FTimerHandle SlowTickHandle;
+	UPROPERTY(Transient) TObjectPtr<UTexture2D> Background;
 	
 	void SlowTick();
 	void Update(const bool bFinish) const;

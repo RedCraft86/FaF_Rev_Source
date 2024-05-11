@@ -17,13 +17,13 @@ public:
 	UInfoWidgetBase(const FObjectInitializer& ObjectInitializer);
 
 	UPROPERTY(Transient, meta = (BindWidget))
-		UTextBlock* FrameRateText;
+		TObjectPtr<UTextBlock> FrameRateText;
 
 	UPROPERTY(Transient, meta = (BindWidget))
-		UTextBlock* DeltaTimeText;
+		TObjectPtr<UTextBlock> DeltaTimeText;
 
 	UPROPERTY(Transient, BlueprintReadOnly, Category = "Animations", meta = (BindWidgetAnim))
-		UWidgetAnimation* SaveAnim;
+		TObjectPtr<UWidgetAnimation> SaveAnim;
 
 private:
 

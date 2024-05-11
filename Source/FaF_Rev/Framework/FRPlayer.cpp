@@ -440,36 +440,39 @@ USceneComponent* AFRPlayerBase::GetLockOnTarget() const
 
 void AFRPlayerBase::ForceExitHiding() const
 {
-	IExitInterface::Exit(HidingSpot.LoadSynchronous());
+	IExitInterface::Exit(HidingSpot);
 }
 
-void AFRPlayerBase::SetHidingSpot(const UObject* InObject)
+void AFRPlayerBase::SetHidingSpot(UObject* InObject)
 {
 	HidingSpot = InObject;
+	if (HidingSpot) LockFlags.Add(Player::LockFlags::Hiding);
+	else LockFlags.Remove(Player::LockFlags::Hiding);
 }
 
 UObject* AFRPlayerBase::GetHidingSpot() const
 {
-	return HidingSpot.LoadSynchronous();
+	return HidingSpot;
 }
 
 void AFRPlayerBase::ForceExitWorldDevice() const
 {
-	IExitInterface::Exit(WorldDevice.LoadSynchronous());
+	IExitInterface::Exit(WorldDevice);
 }
 
-void AFRPlayerBase::SetWorldDevice(const UObject* InObject)
+void AFRPlayerBase::SetWorldDevice(UObject* InObject)
 {
-	if (InObject) WorldDevice = InObject;
-	else WorldDevice.Reset();
+	WorldDevice = InObject;
+	if (WorldDevice) LockFlags.Add(Player::LockFlags::WorldDevice);
+	else LockFlags.Remove(Player::LockFlags::WorldDevice);
 }
 
 UObject* AFRPlayerBase::GetWorldDevice() const
 {
-	return WorldDevice.LoadSynchronous();
+	return WorldDevice;
 }
 
-void AFRPlayerBase::AddEnemy(const UObject* InObject, const EEnemyAIMode InMode)
+void AFRPlayerBase::AddEnemy(UObject* InObject, const EEnemyAIMode InMode)
 {
 	if (InMode == EEnemyAIMode::None)
 	{

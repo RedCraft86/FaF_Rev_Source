@@ -25,7 +25,6 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "PlayerTeleporter")
 		void TeleportPlayer() const;
 
-
 private:
 	virtual void BeginPlay() override;
 #if WITH_EDITOR

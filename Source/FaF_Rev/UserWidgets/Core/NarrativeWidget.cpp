@@ -228,7 +228,7 @@ void UNarrativeWidgetBase::OnQuestTaskProgressChanged(const UQuest* Quest, const
 void UNarrativeWidgetBase::SelectDialogueReply(UDialogueNode_Player* Reply)
 {
 	NarrativeComponent->SelectDialogueOption(Reply);
-	for (const TPair<FName, UDialogueOptionWidgetBase*>& DialogueReply : DialogueReplies)
+	for (const TPair<FName, TObjectPtr<UDialogueOptionWidgetBase>>& DialogueReply : DialogueReplies)
 	{
 		if (!DialogueReply.Value) continue;
 		DialogueReply.Value->SetColorAndOpacity(FLinearColor::Gray);

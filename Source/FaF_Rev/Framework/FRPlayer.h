@@ -24,19 +24,19 @@ public:
 	AFRPlayerBase();
 
 	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, Category = "DefaultSubobjects")
-		class USpringArmComponent* CameraArm;
+		TObjectPtr<class USpringArmComponent> CameraArm;
 	
 	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, Category = "DefaultSubobjects")
-		class UCameraComponent* PlayerCamera;
+		TObjectPtr<class UCameraComponent> PlayerCamera;
 
 	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, Category = "DefaultSubobjects")
-		USceneComponent* EquipmentRoot;
+		TObjectPtr<USceneComponent> EquipmentRoot;
 
 	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, Category = "DefaultSubobjects")
-		UAudioComponent* FootstepAudio;
+		TObjectPtr<UAudioComponent> FootstepAudio;
 
 	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, Category = "DefaultSubobjects")
-		UPointLightComponent* PlayerLight;
+		TObjectPtr<UPointLightComponent> PlayerLight;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Tick", meta = (ClampMin = 0.05f, UIMin = 0.05f))
 		float SlowTickInterval;
@@ -134,35 +134,36 @@ public:
 		FPointLightProperties PlayerLightSettings;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Settings", AdvancedDisplay)
-		AActor* UltraDynamicSky;
+		TObjectPtr<AActor> UltraDynamicSky;
 	
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Settings", AdvancedDisplay)
-		AInspectionActor* InspectionActor;
+		TObjectPtr<AInspectionActor> InspectionActor;
 	
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Settings", AdvancedDisplay, meta = (ReadOnlyKeys, DisplayThumbnail = false))
-		TMap<FName, class UInputAction*> InputActions;
+		TMap<FName, TObjectPtr<class UInputAction>> InputActions;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Settings", AdvancedDisplay)
 		FPlayerCameraShakes CameraShakes;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Settings", AdvancedDisplay)
 		FPlayerFootsteps FootstepSounds;
-
+	
 protected:
 
-	UPROPERTY(Transient) class AFRGameModeBase* GameMode;
-	UPROPERTY(Transient) class AFRGameStateBase* GameState;
-	UPROPERTY(Transient) class AFRPlayerController* PlayerController;
-	UPROPERTY(Transient) class ULevelSequence* ActiveCutscene;
-	UPROPERTY(Transient) TMap<const UObject*, EEnemyAIMode> EnemyStack;
+	UPROPERTY(Transient) TObjectPtr<class AFRGameModeBase> GameMode;
+	UPROPERTY(Transient) TObjectPtr<class AFRGameStateBase> GameState;
+	UPROPERTY(Transient) TObjectPtr<class AFRPlayerController> PlayerController;
+
+	UPROPERTY(Transient) TObjectPtr<UObject> HidingSpot;
+	UPROPERTY(Transient) TObjectPtr<UObject> WorldDevice;
+	UPROPERTY(Transient) TObjectPtr<class ULevelSequence> ActiveCutscene;
+	UPROPERTY(Transient) TMap<TObjectPtr<UObject>, EEnemyAIMode> EnemyStack;
 
 	float SlowTickTime;
 	FVector CamPosition;
 	FGTInterpScalar FOVValue;
 	FGTInterpScalar HalfHeightValue;
 	FPlayerInteraction InteractData;
-	TSoftObjectPtr<UObject> HidingSpot;
-	TSoftObjectPtr<UObject> WorldDevice;
 	FRotator LockCurrentRot, LockTargetRot;
 	FVector2D LeanCamOffset, SwayCamOffset;
 	FVector2D CurrentCamOffset, TargetCamOffset;
@@ -295,7 +296,7 @@ public:
 		void ForceExitHiding() const;
 	
 	UFUNCTION(BlueprintCallable, Category = "Player")
-		void SetHidingSpot(const UObject* InObject);
+		void SetHidingSpot(UObject* InObject);
 
 	UFUNCTION(BlueprintPure, Category = "Player")
 		UObject* GetHidingSpot() const;
@@ -304,13 +305,13 @@ public:
 		void ForceExitWorldDevice() const;
 	
 	UFUNCTION(BlueprintCallable, Category = "Player")
-		void SetWorldDevice(const UObject* InObject);
+		void SetWorldDevice(UObject* InObject);
 
 	UFUNCTION(BlueprintPure, Category = "Player")
 		UObject* GetWorldDevice() const;
 	
 	UFUNCTION(BlueprintCallable, Category = "Player")
-		void AddEnemy(const UObject* InObject, const EEnemyAIMode InMode);
+		void AddEnemy(UObject* InObject, const EEnemyAIMode InMode);
 
 	UFUNCTION(BlueprintCallable, Category = "Player")
 		void RemoveEnemy(const UObject* InObject);

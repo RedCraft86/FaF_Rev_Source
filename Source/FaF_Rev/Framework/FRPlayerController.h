@@ -21,7 +21,7 @@ public:
 		TSubclassOf<UUserWidget> UnfocusedWidgetClass;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Settings")
-		UInputMappingContext* MappingContext;
+		TObjectPtr<UInputMappingContext> MappingContext;
 
 	class UEnhancedInputLocalPlayerSubsystem* GetInputSubsystem() const;
 	
@@ -30,8 +30,8 @@ public:
 protected:
 	
 	bool bLastPaused;
-	UPROPERTY(Transient) UUserWidget* UnfocusedWidget;
-	UPROPERTY(Transient) class UPauseWidgetBase* PauseWidget;
+	UPROPERTY(Transient) TObjectPtr<UUserWidget> UnfocusedWidget;
+	UPROPERTY(Transient) TObjectPtr<class UPauseWidgetBase> PauseWidget;
 	
 	void OnWindowFocusChanged(bool bFocused);
 	virtual void BeginPlay() override;

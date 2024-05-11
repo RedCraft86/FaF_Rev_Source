@@ -18,28 +18,28 @@ public:
 	UMessageWidgetBase(const FObjectInitializer& ObjectInitializer);
 
 	UPROPERTY(Transient, meta = (BindWidget))
-		UExprTextBlock* SmallNoticeText;
+		TObjectPtr<UExprTextBlock> SmallNoticeText;
 
 	UPROPERTY(Transient, meta = (BindWidget))
-		UExprTextBlock* LargeNoticeText;
+		TObjectPtr<UExprTextBlock> LargeNoticeText;
 	
 	UPROPERTY(Transient, meta = (BindWidget))
-		UExprTextBlock* SubtitleLineText;
+		TObjectPtr<UExprTextBlock> SubtitleLineText;
 
 	UPROPERTY(Transient, meta = (BindWidget))
-		class UTextBlock* SubtitleNameText;
+		TObjectPtr<class UTextBlock> SubtitleNameText;
 
 	UPROPERTY(Transient, meta = (BindWidgetAnim))
-		UWidgetAnimation* SmallNoticeAnim;
+		TObjectPtr<UWidgetAnimation> SmallNoticeAnim;
 
 	UPROPERTY(Transient, meta = (BindWidgetAnim))
-		UWidgetAnimation* LargeNoticeAnim;
+		TObjectPtr<UWidgetAnimation> LargeNoticeAnim;
 
 	UPROPERTY(Transient, meta = (BindWidgetAnim))
-		UWidgetAnimation* SubtitleAnim;
+		TObjectPtr<UWidgetAnimation> SubtitleAnim;
 	
 	UPROPERTY(Transient, meta = (BindWidgetAnim))
-		UWidgetAnimation* SubtitlePauseFade;
+		TObjectPtr<UWidgetAnimation> SubtitlePauseFade;
 	
 	void QueueSmallNotice(const FSimpleNoticeData& NoticeData, const bool bResetQueue = false);
 	void QueueLargeNotice(const FSimpleNoticeData& NoticeData, const bool bResetQueue = false);
@@ -49,7 +49,7 @@ public:
 protected:
 
 	FTimerHandle PauseCheckTimer;
-	UPROPERTY(Transient) AWorldSettings* WorldSettings;
+	UPROPERTY(Transient) TObjectPtr<const AWorldSettings> WorldSettings;
 
 	FTimerHandle SmallNoticeTimer;
 	TQueue<FSimpleNoticeData> SmallNoticeQueue;

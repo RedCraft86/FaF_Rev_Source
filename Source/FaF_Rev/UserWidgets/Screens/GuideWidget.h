@@ -15,43 +15,43 @@ public:
 
 	UGuideWidgetBase(const FObjectInitializer& ObjectInitializer);
 
-	void QueuePage(const FGuideBookPageID& PageID);
-	void QueuePages(const TArray<FGuideBookPageID>& PageIDs);
-
-private:
+	UPROPERTY(Transient, meta = (BindWidget))
+		TObjectPtr<class UButton> NextButton;
+	
+	UPROPERTY(Transient, meta = (BindWidget))
+		TObjectPtr<class UWidgetSwitcher> TypeSwitch;
+	
+	UPROPERTY(Transient, meta = (BindWidget))
+		TObjectPtr<UPanelWidget> CustomPageContainer;
+	
+	UPROPERTY(Transient, meta = (BindWidget))
+		TObjectPtr<class UTextBlock> LocalPageTitle;
+	
+	UPROPERTY(Transient, meta = (BindWidget))
+		TObjectPtr<class UExprTextBlock> LocalPageText;
+	
+	UPROPERTY(Transient, meta = (BindWidget))
+		TObjectPtr<class UImage> LocalPageImage;
+	
+	UPROPERTY(Transient, meta = (BindWidget))
+		TObjectPtr<class USizeBox> LocalImageContainer;
+	
+	UPROPERTY(Transient, meta = (BindWidgetAnim))
+		TObjectPtr<UWidgetAnimation> GuideFadeAnim;
+	
+	UPROPERTY(Transient, meta = (BindWidgetAnim))
+		TObjectPtr<UWidgetAnimation> NextButtonAnim;
 
 	UPROPERTY(EditAnywhere, Category = "Settings")
 		float ImageHeight;
 	
 	UPROPERTY(EditAnywhere, Category = "Settings")
-		UTexture2D* DefaultImage;
+		TObjectPtr<UTexture2D> DefaultImage;
 	
-	UPROPERTY(Transient, meta = (BindWidget))
-		class UButton* NextButton;
-	
-	UPROPERTY(Transient, meta = (BindWidget))
-		class UWidgetSwitcher* TypeSwitch;
-	
-	UPROPERTY(Transient, meta = (BindWidget))
-		UPanelWidget* CustomPageContainer;
-	
-	UPROPERTY(Transient, meta = (BindWidget))
-		class UTextBlock* LocalPageTitle;
-	
-	UPROPERTY(Transient, meta = (BindWidget))
-		class UExprTextBlock* LocalPageText;
-	
-	UPROPERTY(Transient, meta = (BindWidget))
-		class UImage* LocalPageImage;
-	
-	UPROPERTY(Transient, meta = (BindWidget))
-		class USizeBox* LocalImageContainer;
-	
-	UPROPERTY(Transient, meta = (BindWidgetAnim))
-		UWidgetAnimation* GuideFadeAnim;
-	
-	UPROPERTY(Transient, meta = (BindWidgetAnim))
-		UWidgetAnimation* NextButtonAnim;
+	void QueuePage(const FGuideBookPageID& PageID);
+	void QueuePages(const TArray<FGuideBookPageID>& PageIDs);
+
+private:
 
 	bool bActive, bPrePauseState;
 	TQueue<FGuideBookPageID> PageQueue;

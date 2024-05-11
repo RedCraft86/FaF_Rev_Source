@@ -18,7 +18,7 @@ struct FInteractionInfo
 		FText Label;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "InteractionInfo")
-		UTexture2D* Icon;
+		TObjectPtr<UTexture2D> Icon;
 	
 	FInteractionInfo() : Label(DEFAULT_INTERACT_LABEL), Icon(nullptr) {}
 };

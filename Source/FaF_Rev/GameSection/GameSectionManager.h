@@ -38,12 +38,12 @@ private:
 	float PlayTime;
 	TArray<uint8> Sequence;
 	uint8 LatentID, UnloadingLevels, LoadingLevels;
-	UPROPERTY(Transient) AFRPlayerBase* PlayerChar;
-	UPROPERTY(Transient) TSet<UObject*> LoadedObjs;
-	UPROPERTY(Transient) UGameSectionDataNode* ThisData;
-	UPROPERTY(Transient) UGameSectionDataNode* LastData;
-	UPROPERTY(Transient) class UGameSectionGraph* SectionGraph;
-	UPROPERTY(Transient) class ULoadingWidgetBase* LoadingWidget;
+	UPROPERTY(Transient) TObjectPtr<AFRPlayerBase> PlayerChar;
+	UPROPERTY(Transient) TSet<TObjectPtr<UObject>> LoadedObjs;
+	UPROPERTY(Transient) TObjectPtr<UGameSectionDataNode> ThisData;
+	UPROPERTY(Transient) TObjectPtr<UGameSectionDataNode> LastData;
+	UPROPERTY(Transient) TObjectPtr<class UGameSectionGraph> SectionGraph;
+	UPROPERTY(Transient) TObjectPtr<class ULoadingWidgetBase> LoadingWidget;
 	
 	void BeginTransition();
 	void UnloadLastData();
