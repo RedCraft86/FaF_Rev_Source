@@ -108,9 +108,19 @@ void UGameSettings::SetSensitivityX(const float SensitivityX)
 	SensitivityXY.X = SensitivityX;
 }
 
+void UGameSettings::SetInvertSensitivityX(const bool bInvertX)
+{
+	bInvertSensitivityX = bInvertX;
+}
+
 void UGameSettings::SetSensitivityY(const float SensitivityY)
 {
 	SensitivityXY.Y = SensitivityY;
+}
+
+void UGameSettings::SetInvertSensitivityY(const bool bInvertY)
+{
+	bInvertSensitivityY = bInvertY;
 }
 
 void UGameSettings::SetFieldOfView(const uint8 InFieldOfView)
@@ -191,6 +201,8 @@ void UGameSettings::SetToDefaults()
 	bShowFPS = false;
 	bSmoothCamera = true;
 	SensitivityXY = FVector2D::UnitVector;
+	bInvertSensitivityX = false;
+	bInvertSensitivityY = false;
 	FieldOfView = 90;
 	Brightness = 100;
 	bFancyBloom = true;

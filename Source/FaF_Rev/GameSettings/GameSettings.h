@@ -50,16 +50,28 @@ public:
 
 	UFUNCTION(BlueprintCallable, Category = "Settings")
 		void SetSensitivityX(const float SensitivityX);
-
+	
 	UFUNCTION(BlueprintPure, Category = "Settings")
-		float GetSensitivityX() const { return SensitivityXY.X; }
+		float GetSensitivityX() const { return bInvertSensitivityX ? -SensitivityXY.X : SensitivityXY.X; }
 
+	UFUNCTION(BlueprintCallable, Category = "Settings")
+		void SetInvertSensitivityX(const bool bInvertX);
+
+	UFUNCTION(BlueprintCallable, Category = "Settings")
+		bool GetInvertSensitivityX() const { return bInvertSensitivityX; }
+	
 	UFUNCTION(BlueprintCallable, Category = "Settings")
 		void SetSensitivityY(const float SensitivityY);
 
 	UFUNCTION(BlueprintPure, Category = "Settings")
-		float GetSensitivityY() const { return SensitivityXY.Y; }
+		float GetSensitivityY() const { return bInvertSensitivityY ? -SensitivityXY.Y : SensitivityXY.Y; }
 
+	UFUNCTION(BlueprintCallable, Category = "Settings")
+		void SetInvertSensitivityY(const bool bInvertY);
+
+	UFUNCTION(BlueprintCallable, Category = "Settings")
+		bool GetInvertSensitivityY() const { return bInvertSensitivityY; }
+	
 	UFUNCTION(BlueprintCallable, Category = "Settings")
 		void SetFieldOfView(const uint8 InFieldOfView);
 
@@ -111,6 +123,8 @@ private:
 	UPROPERTY(Config) bool bShowFPS;
 	UPROPERTY(Config) bool bSmoothCamera;
 	UPROPERTY(Config) FVector2D SensitivityXY;
+	UPROPERTY(Config) bool bInvertSensitivityX;
+	UPROPERTY(Config) bool bInvertSensitivityY;
 	UPROPERTY(Config) uint8 FieldOfView;
 	UPROPERTY(Config) uint8 Brightness;
 	UPROPERTY(Config) bool bFancyBloom;

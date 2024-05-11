@@ -4,9 +4,22 @@
 #include "GameSettings/GameSettings.h"
 #include "Libraries/GTRuntimeLibrary.h"
 
-void UFRGameInstance::ReloadLevel()
+UFRGameInstance::UFRGameInstance() : bRanFirstLoads(false), bPlayerInvincible(false)
+{
+}
+
+void UFRGameInstance::ReloadLevel() const
 {
 	UGTRuntimeLibrary::RestartLevel(this);
+}
+
+void UFRGameInstance::SetPlayerInvincible(bool bInInvincible)
+{
+	if (bPlayerInvincible != bInInvincible)
+	{
+		bPlayerInvincible = bInInvincible;
+		OnInvincibilityUpdated.Broadcast(bPlayerInvincible);
+	}
 }
 
 void UFRGameInstance::Init()
