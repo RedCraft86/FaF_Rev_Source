@@ -8,7 +8,7 @@
 
 ULoadingWidgetBase::ULoadingWidgetBase(const FObjectInitializer& ObjectInitializer)
 	: UGTUserWidget(ObjectInitializer), LoadingLabel(nullptr), LoadingBar(nullptr), BackgroundImage(nullptr)
-	, TipLabel(nullptr), TipText(nullptr), Background(nullptr), bUnloading(false), TotalObjs(0)
+	, TipLabel(nullptr), TipText(nullptr), bUnloading(false), TotalObjs(0), Background(nullptr)
 {
 	ZOrder = 100;
 	bAutoAdd = false;

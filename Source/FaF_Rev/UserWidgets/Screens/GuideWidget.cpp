@@ -11,10 +11,10 @@
 #include "Components/Image.h"
 
 UGuideWidgetBase::UGuideWidgetBase(const FObjectInitializer& ObjectInitializer)
-	: UGTUserWidget(ObjectInitializer), ImageHeight(0), DefaultImage(nullptr)
-	, NextButton(nullptr), TypeSwitch(nullptr), CustomPageContainer(nullptr)
-	, LocalPageTitle(nullptr), LocalPageText(nullptr), LocalPageImage(nullptr), LocalImageContainer(nullptr)
-	, GuideFadeAnim(nullptr), NextButtonAnim(nullptr), bActive(false), bPrePauseState(false)
+	: UGTUserWidget(ObjectInitializer), NextButton(nullptr), TypeSwitch(nullptr)
+	, CustomPageContainer(nullptr), LocalPageTitle(nullptr), LocalPageText(nullptr)
+	, LocalPageImage(nullptr), LocalImageContainer(nullptr), GuideFadeAnim(nullptr), NextButtonAnim(nullptr)
+	, ImageHeight(0), DefaultImage(nullptr), bActive(false), bPrePauseState(false)
 {
 	ZOrder = 99;
 	bAutoAdd = false;
