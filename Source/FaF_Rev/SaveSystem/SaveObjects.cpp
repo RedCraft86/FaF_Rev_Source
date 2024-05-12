@@ -4,6 +4,7 @@
 #include "Serialization/BufferArchive.h"
 #include "Compression/OodleDataCompressionUtil.h"
 #include "FRSettings.h"
+#include "FaF_Rev.h"
 
 FString USaveObjectBase::GetSavePath() const
 {
@@ -108,6 +109,7 @@ void UGameSaveObject::SerializeData(FArchive& Ar)
 	Ar << PlayTime;
 	Ar << Sequence;
 	Ar << Inventory;
+	Ar << TransientKeys;
 }
 
 void UGlobalSaveObject::DeleteFile()
@@ -118,5 +120,5 @@ void UGlobalSaveObject::DeleteFile()
 void UGlobalSaveObject::SerializeData(FArchive& Ar)
 {
 	Ar << Endings;
-	Ar << Content;
+	Ar << GlobalKeys;
 }

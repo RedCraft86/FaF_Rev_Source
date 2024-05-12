@@ -22,6 +22,17 @@ void USaveSubsystem::DeleteGameData() const
 	if (GameDataObject) GameDataObject->DeleteFile();
 }
 
+void USaveSubsystem::UnlockTransientKey(const FName InKey) const
+{
+	if (GameDataObject) GameDataObject->TransientKeys.Add(InKey);
+}
+
+bool USaveSubsystem::HasTransientKey(const FName InKey) const
+{
+	if (GameDataObject) return GameDataObject->TransientKeys.Contains(InKey);
+	return false;
+}
+
 void USaveSubsystem::SaveGlobalData() const
 {
 	if (GlobalDataObject)
@@ -41,11 +52,11 @@ void USaveSubsystem::DeleteGlobalData() const
 	if (GlobalDataObject) GlobalDataObject->DeleteFile();
 }
 
-void USaveSubsystem::UnlockContent(const TSet<FGameplayTag>& InContentIDs, const bool bSave) const
+void USaveSubsystem::UnlockGlobalKey(const FName InKey, const bool bSave) const
 {
 	if (GlobalDataObject)
 	{
-		GlobalDataObject->Content.Append(InContentIDs);
+		GlobalDataObject->GlobalKeys.Add(InKey);
 		if (bSave)
 		{
 			GlobalDataObject->SaveToFile(nullptr);
@@ -54,7 +65,13 @@ void USaveSubsystem::UnlockContent(const TSet<FGameplayTag>& InContentIDs, const
 	}
 }
 
-void USaveSubsystem::ReachEnding(const FGameplayTag InEndingID, const bool bSave) const
+bool USaveSubsystem::HasGlobalKey(const FName InKey) const
+{
+	if (GlobalDataObject) return GlobalDataObject->GlobalKeys.Contains(InKey);
+	return false;
+}
+
+void USaveSubsystem::ReachEnding(const FName InEndingID, const bool bSave) const
 {
 	if (GlobalDataObject && GlobalDataObject->Endings.FindRef(InEndingID).GetTicks() <= 0)
 	{
@@ -65,6 +82,12 @@ void USaveSubsystem::ReachEnding(const FGameplayTag InEndingID, const bool bSave
 			OnSaveStarted.Broadcast();
 		}
 	}
+}
+
+FDateTime USaveSubsystem::GetEndingReachedTime(const FName InEndingID) const
+{
+	if (GlobalDataObject) GlobalDataObject->Endings.FindOrAdd(InEndingID);
+	return {0};
 }
 
 void USaveSubsystem::Initialize(FSubsystemCollectionBase& Collection)

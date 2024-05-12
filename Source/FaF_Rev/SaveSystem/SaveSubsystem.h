@@ -23,6 +23,12 @@ public:
 		void DeleteGameData() const;
 
 	UFUNCTION(BlueprintCallable, BlueprintPure = false, Category = "SaveManager")
+		void UnlockTransientKey(const FName InKey) const;
+
+	UFUNCTION(BlueprintPure, Category = "SaveManager")
+		bool HasTransientKey(const FName InKey) const;
+	
+	UFUNCTION(BlueprintCallable, BlueprintPure = false, Category = "SaveManager")
 		void SaveGlobalData() const;
 
 	UFUNCTION(BlueprintCallable, BlueprintPure = false, Category = "SaveManager")
@@ -32,10 +38,16 @@ public:
 		void DeleteGlobalData() const;
 
 	UFUNCTION(BlueprintCallable, BlueprintPure = false, Category = "SaveManager")
-		void UnlockContent(const TSet<FGameplayTag>& InContentIDs, const bool bSave = true) const;
+		void UnlockGlobalKey(const FName InKey, const bool bSave = true) const;
+
+	UFUNCTION(BlueprintPure, Category = "SaveManager")
+		bool HasGlobalKey(const FName InKey) const;
+	
+	UFUNCTION(BlueprintCallable, BlueprintPure = false, Category = "SaveManager")
+		void ReachEnding(const FName InEndingID, const bool bSave = true) const;
 
 	UFUNCTION(BlueprintCallable, BlueprintPure = false, Category = "SaveManager")
-		void ReachEnding(const FGameplayTag InEndingID, const bool bSave = true) const;
+		FDateTime GetEndingReachedTime(const FName InEndingID) const;
 
 	DECLARE_MULTICAST_DELEGATE(FPromptSaveIcon)
 	FPromptSaveIcon OnSaveStarted;

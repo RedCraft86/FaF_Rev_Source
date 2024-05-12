@@ -59,6 +59,9 @@ public:
 	UPROPERTY(BlueprintReadOnly, Category = "SaveObject")
 		TMap<FGameplayTag, FString> Inventory;
 
+	UPROPERTY(BlueprintReadOnly, Category = "SaveObject")
+		TSet<FName> TransientKeys;
+
 	virtual void DeleteFile() override;
 
 private:
@@ -77,10 +80,10 @@ public:
 	UGlobalSaveObject() {}
 
 	UPROPERTY(BlueprintReadOnly, Category = "SaveObject")
-		TMap<FGameplayTag, FDateTime> Endings;
+		TMap<FName, FDateTime> Endings;
 	
 	UPROPERTY(BlueprintReadOnly, Category = "SaveObject")
-		TSet<FGameplayTag> Content;
+		TSet<FName> GlobalKeys;
 	
 	virtual void DeleteFile() override;
 
