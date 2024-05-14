@@ -48,6 +48,8 @@ public:
 	void EquipmentUse();
 	void EquipmentUseAlt(bool bPressed);
 	void SetInspectionActor(AInspectionActor* InActor);
+	AInspectionActor* GetInspectionActor() { return InspectionActor; }
+	TArray<FGuid> GetSortedSlots();
 
 	void LoadSaveData(const FInventorySaveData& InData);
 	FInventorySaveData ExportSaveData();

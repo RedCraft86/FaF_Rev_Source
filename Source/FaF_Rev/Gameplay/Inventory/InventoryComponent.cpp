@@ -1,6 +1,7 @@
 ﻿// Copyright (C) RedCraft86. All Rights Reserved.
 
 #include "InventoryComponent.h"
+#include "InventoryItemData.h"
 #include "Menus/InventoryWidget.h"
 #include "FRPlayerController.h"
 #include "FRGameMode.h"
@@ -56,8 +57,27 @@ void UInventoryComponent::SetInspectionActor(AInspectionActor* InActor)
 	InspectionActor->Inventory = this;
 }
 
+TArray<FGuid> UInventoryComponent::GetSortedSlots()
+{
+	CleanInventory();
+	TArray<FGuid> Result;
+	ItemSlots.GenerateKeyArray(Result);
+	Result.Sort([this](const FGuid& A, const FGuid& B)->bool
+	{
+		const UInventoryItemData* ItemA = ItemSlots[A].GetItemData<UInventoryItemData>();
+		const UInventoryItemData* ItemB = ItemSlots[B].GetItemData<UInventoryItemData>();
+		return ItemA->DisplayName.ToString() < ItemB->DisplayName.ToString() && ItemA->Priority <= ItemB->Priority;
+	});
+
+	return Result;
+}
+
 void UInventoryComponent::LoadSaveData(const FInventorySaveData& InData)
 {
+	CurrencyData = InData.CurrencyData;
+	ItemSlots = InData.ItemSlots;
+
+	ON_UPDATE();
 }
 
 FInventorySaveData UInventoryComponent::ExportSaveData()
