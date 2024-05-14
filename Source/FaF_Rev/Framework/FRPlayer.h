@@ -9,7 +9,6 @@
 #include "Data/LightingData.h"
 #include "InputActionValue.h"
 #include "GameFramework/Character.h"
-#include "Inspection/InspectionActor.h"
 #include "FRPlayer.generated.h"
 
 #define FRPlayer(Context) AFRPlayerBase::Get<AFRPlayerBase>(Context)
@@ -135,9 +134,6 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Settings", AdvancedDisplay)
 		TObjectPtr<AActor> UltraDynamicSky;
-	
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Settings", AdvancedDisplay)
-		TObjectPtr<AInspectionActor> InspectionActor;
 	
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Settings", AdvancedDisplay, meta = (ReadOnlyKeys, DisplayThumbnail = false))
 		TMap<FName, TObjectPtr<class UInputAction>> InputActions;

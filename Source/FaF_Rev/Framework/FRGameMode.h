@@ -21,9 +21,6 @@ public:
 
 	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, Category = "DefaultSubobjects")
 		TObjectPtr<class UInventoryComponent> Inventory;
-
-	UPROPERTY(Transient, BlueprintReadOnly, Category = "GameMode")
-		TObjectPtr<class AInspectionActor> InspectionActor;
 	
 	UPROPERTY(Transient, BlueprintReadOnly, Category = "GameMode")
 		TObjectPtr<class AFRPlayerController> PlayerController;

@@ -3,16 +3,16 @@
 #pragma once
 
 #include "GameFramework/Actor.h"
-#include "InspectionActor.generated.h"
+#include "InventoryInspectable.generated.h"
 
 UCLASS()
-class FAF_REV_API AInspectionActor final : public AActor
+class FAF_REV_API AInventoryInspectable final : public AActor
 {
 	GENERATED_BODY()
 
 public:
 
-	AInspectionActor();
+	AInventoryInspectable();
 
 protected:
 
