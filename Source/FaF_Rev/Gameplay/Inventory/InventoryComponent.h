@@ -10,6 +10,8 @@ class FAF_REV_API UInventoryComponent : public UInventoryComponentBase
 {
 	GENERATED_BODY()
 
+	friend class AInspectionManager;
+
 public:
 
 	UInventoryComponent();
