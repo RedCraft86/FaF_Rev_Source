@@ -12,12 +12,12 @@ class FAF_REV_API UInventoryItemData : public UInventoryItemDataBase
 	GENERATED_BODY()
 
 public:
-
-	UPROPERTY(EditAnywhere, Category = "Inspection")
-		TArray<FTransformMeshData> MeshData;
-
-	UPROPERTY(EditAnywhere, Category = "Inspection")
+	
+	UPROPERTY(EditAnywhere, Category = "ItemData|Inspection")
 		FVector2D MeshZoomRange;
+	
+	UPROPERTY(EditAnywhere, Category = "ItemData|Inspection")
+		TArray<FTransformMeshData> MeshData;
 
 	FTransformMeshData GetMeshData(const TMap<FName, FString>& InMetadata) const;
 
