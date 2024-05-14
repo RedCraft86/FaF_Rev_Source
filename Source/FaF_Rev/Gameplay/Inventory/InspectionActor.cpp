@@ -93,12 +93,14 @@ void AInspectionActor::SetItem(const FGuid& InItemKey)
 	if (InItemKey.IsValid() && Inventory->ItemSlots.Contains(InItemKey))
 	{
 		ItemKey = InItemKey;
-		const UInventoryItemData* ItemData = Inventory->ItemSlots.FindRef(InItemKey).GetItemData<UInventoryItemData>();
-		UPrimitiveDataLibrary::SetStaticMeshProperties(InspectionMesh, ItemData->InspectionData);
-		InspectionMesh->SetRelativeTransform(ItemData->InspectionTransform);
+		const FInventorySlotData& SlotData = Inventory->ItemSlots.FindRef(InItemKey);
+		const UInventoryItemData* ItemData = SlotData.GetItemData<UInventoryItemData>();
+		const FTransformMeshData& MeshData = ItemData->GetMeshData(SlotData.Metadata);
+		UPrimitiveDataLibrary::SetStaticMeshProperties(InspectionMesh, MeshData);
+		InspectionMesh->SetRelativeTransform(MeshData.Transform);
 		InspectionMesh->SetHiddenInGame(false);
 		
-		ZoomRange = ItemData->InspectionZoomRange;
+		ZoomRange = ItemData->MeshZoomRange;
 		ZoomValue.TargetValue = (ZoomRange.X + ZoomRange.Y) * 0.5f;
 		ZoomValue.SnapToTarget();
 		

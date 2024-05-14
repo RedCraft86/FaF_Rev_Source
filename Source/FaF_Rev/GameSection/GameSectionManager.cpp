@@ -183,18 +183,16 @@ void UGameSectionManager::FinishTransition()
 		for (const FInventorySlotData& Item : ThisData->EnsureItems)
 		{
 			if (!Item.IsValidSlot()) continue;
-			FGuid Slot = Inventory->FindSlot(Item.ItemData.LoadSynchronous(),
-				{}, EInventoryMetaFilter::MatchAny);
-
-			if (Slot.IsValid())
+			FGuid Slot = Inventory->FindSlot(Item.ItemData.LoadSynchronous()); 
+			if (!Slot.IsValid() || Item.ItemData.LoadSynchronous()->StackingMode == EInventoryItemStackType::Unique)
+			{
+				Inventory->AddItem(Item.ItemData.LoadSynchronous(), Item.Amount, Item.Metadata, true);
+			}
+			else
 			{
 				FInventorySlotData* SlotData = Inventory->ItemSlots.Find(Slot);
 				SlotData->Amount = FMath::Max(SlotData->Amount, Item.Amount);
 				SlotData->Metadata.Append(Item.Metadata);
-			}
-			else
-			{
-				Inventory->AddItem(Item.ItemData.LoadSynchronous(), Item.Amount, Item.Metadata, true);
 			}
 		}
 

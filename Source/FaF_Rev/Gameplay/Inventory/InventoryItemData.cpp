@@ -2,24 +2,38 @@
 
 #include "InventoryItemData.h"
 
+#define ALT_MESH_KEY TEXT("AltMeshIndex")
+
+const FTransformMeshData& UInventoryItemData::GetMeshData(const TMap<FName, FString>& InMetadata) const
+{
+	FTransformMeshData Data = MeshData.IsEmpty() ? FTransformMeshData() : MeshData[0];
+	if (const FString& IndexValue = InMetadata.FindRef(ALT_MESH_KEY); !IndexValue.IsEmpty())
+	{
+		const int32 Idx = FCString::Atoi(*IndexValue);
+		if (MeshData.IsValidIndex(Idx)) Data = MeshData[Idx];
+	}
+
+	return Data;
+}
+
 #if WITH_EDITOR
 void UInventoryItemData::PostEditChangeProperty(FPropertyChangedEvent& PropertyChangedEvent)
 {
 	Super::PostEditChangeProperty(PropertyChangedEvent);
-	if (PropertyChangedEvent.GetPropertyName() == GET_MEMBER_NAME_CHECKED(ThisClass, InspectionZoomRange.X))
+	if (PropertyChangedEvent.GetPropertyName() == GET_MEMBER_NAME_CHECKED(ThisClass, MeshZoomRange.X))
 	{
-		if (InspectionZoomRange.X < 0.1f) InspectionZoomRange.X = 0.1f;
-		if (InspectionZoomRange.X > InspectionZoomRange.Y)
+		if (MeshZoomRange.X < 0.1f) MeshZoomRange.X = 0.1f;
+		if (MeshZoomRange.X > MeshZoomRange.Y)
 		{
-			InspectionZoomRange.Y = InspectionZoomRange.X + 0.1f;
+			MeshZoomRange.Y = MeshZoomRange.X + 0.1f;
 		}
 	}
-	if (PropertyChangedEvent.GetPropertyName() == GET_MEMBER_NAME_CHECKED(ThisClass, InspectionZoomRange.Y))
+	if (PropertyChangedEvent.GetPropertyName() == GET_MEMBER_NAME_CHECKED(ThisClass, MeshZoomRange.Y))
 	{
-		if (InspectionZoomRange.Y < 0.2f) InspectionZoomRange.Y = 0.2f;
-		if (InspectionZoomRange.Y < InspectionZoomRange.X)
+		if (MeshZoomRange.Y < 0.2f) MeshZoomRange.Y = 0.2f;
+		if (MeshZoomRange.Y < MeshZoomRange.X)
 		{
-			InspectionZoomRange.X = InspectionZoomRange.Y - 0.1f;
+			MeshZoomRange.X = MeshZoomRange.Y - 0.1f;
 		}
 	}
 }

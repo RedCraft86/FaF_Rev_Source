@@ -2,25 +2,28 @@
 
 #pragma once
 
-#include "Data/MiscTypes.h"
 #include "InspectionActor.h"
 #include "Inventory/InventoryComponentBase.h"
 #include "InventoryComponent.generated.h"
 
 USTRUCT(BlueprintInternalUseOnly)
-struct GTRUNTIME_API FInventorySaveData
+struct FAF_REV_API FInventorySaveData
 {
 	GENERATED_BODY()
 
 	FGuid ActiveEquipment;
-	FGameCurrency MoneyData;
+	FGameCurrency CurrencyData;
 	TMap<FGuid, FInventorySlotData> ItemSlots;
 
-	FInventorySaveData() : ActiveEquipment({}), ItemSlots({}) {}
+	FInventorySaveData() : ActiveEquipment({}), CurrencyData({}), ItemSlots({}) {}
+	FInventorySaveData(const FGuid InEquipment, const FGameCurrency InCurrency, const TMap<FGuid, FInventorySlotData>& InSlots)
+		: ActiveEquipment(InEquipment), CurrencyData(InCurrency), ItemSlots(InSlots)
+	{}
+	
 	friend FArchive& operator<<(FArchive& Ar, FInventorySaveData& SaveData)
 	{
 		Ar << SaveData.ActiveEquipment;
-		Ar << SaveData.MoneyData;
+		Ar << SaveData.CurrencyData;
 		Ar << SaveData.ItemSlots;
 		return Ar;
 	}

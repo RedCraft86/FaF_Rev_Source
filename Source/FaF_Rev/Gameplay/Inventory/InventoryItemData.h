@@ -14,13 +14,12 @@ class FAF_REV_API UInventoryItemData : public UInventoryItemDataBase
 public:
 
 	UPROPERTY(EditAnywhere, Category = "Inspection")
-		FStaticMeshProperties InspectionData;
+		TArray<FTransformMeshData> MeshData;
 
 	UPROPERTY(EditAnywhere, Category = "Inspection")
-		FTransform InspectionTransform;
+		FVector2D MeshZoomRange;
 
-	UPROPERTY(EditAnywhere, Category = "Inspection")
-		FVector2D InspectionZoomRange;
+	const FTransformMeshData& GetMeshData(const TMap<FName, FString>& InMetadata) const;
 
 private:
 #if WITH_EDITOR

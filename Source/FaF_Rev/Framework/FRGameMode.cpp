@@ -3,6 +3,7 @@
 #include "FRGameMode.h"
 #include "NarrativeComponent.h"
 #include "Inventory/InventoryComponent.h"
+#include "UserWidgets/Menus/InventoryWidget.h"
 #include "FRPlayerController.h"
 #include "FRGameState.h"
 #include "FRPlayer.h"

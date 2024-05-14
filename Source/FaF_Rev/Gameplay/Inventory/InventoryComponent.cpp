@@ -32,8 +32,8 @@ void UInventoryComponent::CloseUI() const
 {
 	if (!InventoryWidget->IsInViewport()) return;
 	PlayerChar->AddLockFlag(Player::LockFlags::Inventory);
-	PlayerChar->GetPlayerController()->SetPause(false);
 	PlayerChar->GetGameMode()->SetGameInputMode(EGameInputMode::GameOnly);
+	PlayerChar->GetPlayerController()->SetPause(false);
 	
 	InventoryWidget->RemoveWidget();
 	if (InspectionActor)
@@ -62,4 +62,5 @@ void UInventoryComponent::LoadSaveData(const FInventorySaveData& InData)
 
 FInventorySaveData UInventoryComponent::ExportSaveData()
 {
+	return {{}, CurrencyData, ItemSlots};
 }
