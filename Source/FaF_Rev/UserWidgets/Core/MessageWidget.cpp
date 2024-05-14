@@ -9,7 +9,7 @@ UMessageWidgetBase::UMessageWidgetBase(const FObjectInitializer& ObjectInitializ
 	, SubtitleLineText(nullptr), SubtitleNameText(nullptr), SmallNoticeAnim(nullptr)
 	, LargeNoticeAnim(nullptr), SubtitleAnim(nullptr), SubtitlePauseFade(nullptr), WorldSettings(nullptr)
 {
-	ZOrder = 96;
+	ZOrder = 97;
 	bAutoAdd = true;
 }
 

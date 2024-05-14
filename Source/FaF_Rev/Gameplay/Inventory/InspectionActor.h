@@ -2,18 +2,23 @@
 
 #pragma once
 
-#include "Data/PrimitiveData.h"
+#include "Data/MathTypes.h"
+#include "InputActionValue.h"
 #include "GameFramework/Actor.h"
-#include "InventoryInspection.generated.h"
+#include "InspectionActor.generated.h"
+
+class UInputAction;
 
 UCLASS()
-class FAF_REV_API AInventoryInspection : public AActor
+class FAF_REV_API AInspectionActor final : public AActor
 {
 	GENERATED_BODY()
 
+	friend class UInventoryComponent;
+
 public:
 
-	AInventoryInspection();
+	AInspectionActor();
 
 	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, Category = "Subobjects")
 		TObjectPtr<USceneComponent> SceneRoot;
@@ -33,10 +38,30 @@ public:
 	UPROPERTY(EditAnywhere, Category = "Settings")
 		float TurnSpeed;
 
-	void SetMeshData(const FStaticMeshProperties& InProperties, const FTransform& RelativeTransform) const;
+	UPROPERTY(EditAnywhere, Category = "Settings")
+		float ZoomSpeed;
+	
+	UPROPERTY(EditAnywhere, Category = "Settings", meta = (DisplayThumbnail = false))
+		TObjectPtr<UInputAction> TurnInput;
+	
+	UPROPERTY(EditAnywhere, Category = "Settings", meta = (DisplayThumbnail = false))
+		TObjectPtr<UInputAction> ZoomInput;
+
+	void SetItem(const FGuid& InItemKey);
 
 protected:
 
+	FGuid ItemKey;
+	FVector2D ZoomRange;
+	FGTInterpScalar ZoomValue;
+	UPROPERTY(Transient) TObjectPtr<UInventoryComponent> Inventory;
+
+	void Initialize();
+	void Deinitialize();
+	void InputBinding_Turn(const FInputActionValue& InValue);
+	void InputBinding_Zoom(const FInputActionValue& InValue);
+	
 	virtual void BeginPlay() override;
+	virtual void Tick(float DeltaSeconds) override;
 	virtual void OnConstruction(const FTransform& Transform) override;
 };

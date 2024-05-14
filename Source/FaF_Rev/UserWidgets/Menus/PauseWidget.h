@@ -53,5 +53,7 @@ protected:
 	
 	void FadeScreen(const TFunction<void()>& Callback);
 	virtual void Return_Implementation(UUserWidget* From) override;
+	virtual void NativeConstruct() override;
+	virtual void NativeDestruct() override;
 	virtual void InitWidget() override;
 };

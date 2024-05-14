@@ -9,12 +9,13 @@
 #include "Components/SizeBox.h"
 #include "Components/Button.h"
 #include "Components/Image.h"
+#include "FRGameMode.h"
 
 UGuideWidgetBase::UGuideWidgetBase(const FObjectInitializer& ObjectInitializer)
 	: UGTUserWidget(ObjectInitializer), NextButton(nullptr), TypeSwitch(nullptr)
 	, CustomPageContainer(nullptr), LocalPageTitle(nullptr), LocalPageText(nullptr)
-	, LocalPageImage(nullptr), LocalImageContainer(nullptr), GuideFadeAnim(nullptr), NextButtonAnim(nullptr)
-	, ImageHeight(0), DefaultImage(nullptr), bActive(false), bPrePauseState(false)
+	, LocalPageImage(nullptr), LocalImageContainer(nullptr), GuideFadeAnim(nullptr)
+	, NextButtonAnim(nullptr), ImageHeight(0), DefaultImage(nullptr), bActive(false), bPrePauseState(false)
 {
 	ZOrder = 99;
 	bAutoAdd = false;
@@ -116,5 +117,15 @@ void UGuideWidgetBase::InitWidget()
 void UGuideWidgetBase::NativeConstruct()
 {
 	Super::NativeConstruct();
+	
 	ResetBook();
+	PreInputMode = GetGameMode<AFRGameModeBase>()->GetInputModeData();
+	GetGameMode<AFRGameModeBase>()->SetGameInputMode(EGameInputMode::GameAndUI, true,
+		EMouseLockMode::LockAlways, false, this);
+}
+
+void UGuideWidgetBase::NativeDestruct()
+{
+	Super::NativeDestruct();
+	GetGameMode<AFRGameModeBase>()->SetInputModeData(PreInputMode);
 }

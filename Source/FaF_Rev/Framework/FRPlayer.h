@@ -134,6 +134,9 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Settings", AdvancedDisplay)
 		TObjectPtr<AActor> UltraDynamicSky;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Settings", AdvancedDisplay)
+		TObjectPtr<class AInspectionActor> InspectionActor;
 	
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Settings", AdvancedDisplay, meta = (ReadOnlyKeys, DisplayThumbnail = false))
 		TMap<FName, TObjectPtr<class UInputAction>> InputActions;

@@ -67,6 +67,19 @@ void UPauseWidgetBase::Return_Implementation(UUserWidget* From)
 	SetWidgetHidden(false);
 }
 
+void UPauseWidgetBase::NativeConstruct()
+{
+	Super::NativeConstruct();
+	GetGameMode<AFRGameModeBase>()->SetGameInputMode(EGameInputMode::GameAndUI, true,
+		EMouseLockMode::LockAlways, false, this);
+}
+
+void UPauseWidgetBase::NativeDestruct()
+{
+	Super::NativeDestruct();
+	GetGameMode<AFRGameModeBase>()->SetGameInputMode(EGameInputMode::GameOnly);
+}
+
 void UPauseWidgetBase::InitWidget()
 {
 	PlayerChar = FRPlayer(this);

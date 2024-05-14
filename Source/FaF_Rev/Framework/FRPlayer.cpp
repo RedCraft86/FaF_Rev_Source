@@ -1,15 +1,17 @@
 ﻿// Copyright (C) RedCraft86. All Rights Reserved.
+// ReSharper disable CppMemberFunctionMayBeConst
 // ReSharper disable CppParameterMayBeConst
 
-// ReSharper disable CppMemberFunctionMayBeConst
 #include "FRPlayer.h"
 #include "FRGameMode.h"
 #include "FRGameState.h"
 #include "ExitInterface.h"
 #include "UltraDynamicSky.h"
 #include "FRPlayerController.h"
+#include "Core/NarrativeWidget.h"
 #include "Libraries/GTMathLibrary.h"
 #include "GameSettings/GameSettings.h"
+#include "Inventory/InventoryComponent.h"
 #include "Interaction/InteractionInterface.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "GameFramework/SpringArmComponent.h"
@@ -131,6 +133,7 @@ void AFRPlayerBase::ResetStates()
 	CutsceneEnd();
 	ForceExitHiding();
 	ForceExitWorldDevice();
+	GameMode->Inventory->CloseUI();
 	
 	LockFlags.Remove(NAME_None);
 	for (const FName& Flag : Player::LockFlags::CanReset)
@@ -772,12 +775,14 @@ void AFRPlayerBase::SlowTick(const float DeltaTime)
 
 void AFRPlayerBase::InputBinding_Pause(const FInputActionValue& InValue)
 {
-	if (IsGamePaused() || IsValid(ActiveCutscene)) return;
+	if (LockFlags.Contains(Player::LockFlags::GuideScreen) || IsValid(ActiveCutscene)) return;
 	if (LockFlags.Contains(Player::LockFlags::Inventory))
 	{
-		// Force exit inventory
+		GameMode->Inventory->CloseUI();
+		return;
 	}
 
+	if (IsGamePaused()) return;
 	if (LockFlags.Contains(Player::LockFlags::WorldDevice))
 	{
 		ForceExitWorldDevice();
@@ -786,7 +791,7 @@ void AFRPlayerBase::InputBinding_Pause(const FInputActionValue& InValue)
 
 	if (!ShouldLock())
 	{
-		// Pausing code
+		PlayerController->SetPauseState(true);
 	}
 }
 
@@ -874,14 +879,14 @@ void AFRPlayerBase::InputBinding_Lean(const FInputActionValue& InValue)
 
 void AFRPlayerBase::InputBinding_Inventory(const FInputActionValue& InValue)
 {
-	if (IsGamePaused()) return;
+	if (LockFlags.Contains(Player::LockFlags::GuideScreen)) return;
 	if (LockFlags.Contains(Player::LockFlags::Inventory))
 	{
-		// Close
+		GameMode->Inventory->CloseUI();
 	}
-	else if (!ShouldLock())
+	else if (INPUT_CHECK())
 	{
-		// Open
+		GameMode->Inventory->OpenUI();
 	}
 }
 
@@ -889,7 +894,10 @@ void AFRPlayerBase::InputBinding_HideQuests(const FInputActionValue& InValue)
 {
 	if (INPUT_CHECK())
 	{
-		
+		if (UNarrativeWidgetBase* Widget = GameMode->GetWidget<UNarrativeWidgetBase>())
+		{
+			Widget->SetQuestsHidden(!Widget->AreQuestsHidden());
+		}
 	}
 }
 
@@ -929,7 +937,7 @@ void AFRPlayerBase::InputBinding_Equipment(const FInputActionValue& InValue)
 {
 	if (INPUT_CHECK())
 	{
-		
+		GameMode->Inventory->EquipmentUse();
 	}
 }
 
@@ -937,7 +945,7 @@ void AFRPlayerBase::InputBinding_Equipment_Alt(const FInputActionValue& InValue)
 {
 	if (INPUT_CHECK())
 	{
-		
+		GameMode->Inventory->EquipmentUseAlt(InValue.Get<bool>());
 	}
 }
 
@@ -974,6 +982,9 @@ void AFRPlayerBase::BeginPlay()
 	GameMode->PlayerCharacter = this;
 	GameMode->PlayerController = PlayerController;
 	GameState = GameMode->GetGameState<AFRGameStateBase>();
+
+	GameMode->Inventory->PlayerChar = this;
+	GameMode->Inventory->SetInspectionActor(InspectionActor);
 
 	FTimerManager& TM = GetWorldTimerManager();
 	TM.SetTimer(StaminaTimer, this, &AFRPlayerBase::TickStamina, 0.1f, true);
@@ -1075,6 +1086,11 @@ void AFRPlayerBase::OnConstruction(const FTransform& Transform)
 		if (Actor->Implements<UUDSInterface>())
 		{
 			UltraDynamicSky = Actor;
+		}
+
+		if (Actor->IsA<AInspectionActor>())
+		{
+			InspectionActor = Cast<AInspectionActor>(Actor);
 		}
 	}
 }

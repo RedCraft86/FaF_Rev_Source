@@ -17,3 +17,9 @@ AFRGameModeBase::AFRGameModeBase()
 	Narrative = CreateDefaultSubobject<UNarrativeComponent>("Narrative");
 	Inventory = CreateDefaultSubobject<UInventoryComponent>("Inventory");
 }
+
+void AFRGameModeBase::BeginPlay()
+{
+	Super::BeginPlay();
+	Inventory->InventoryWidget = GetWidget<UInventoryWidgetBase>();
+}

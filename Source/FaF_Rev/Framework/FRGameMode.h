@@ -27,4 +27,8 @@ public:
 	
 	UPROPERTY(Transient, BlueprintReadOnly, Category = "GameMode")
 		TObjectPtr<class AFRPlayerBase> PlayerCharacter;
+
+private:
+
+	virtual void BeginPlay() override;
 };

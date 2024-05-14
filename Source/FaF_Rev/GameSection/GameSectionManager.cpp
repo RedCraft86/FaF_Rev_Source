@@ -43,13 +43,6 @@ void UGameSectionManager::SetSequence(const TArray<uint8>& InSequence)
 	{
 		Sequence = FixedSequence;
 		BeginTransition();
-		
-		if (const USaveSubsystem* Subsystem = USaveSubsystem::Get(this))
-		{
-			Subsystem->GetGameDataObject()->Sequence = Sequence;
-			Subsystem->SaveGameData(PlayTime);
-			PlayTime = 0.0f;
-		}
 	}
 }
 
@@ -63,11 +56,17 @@ void UGameSectionManager::Step(const uint8 Index)
 void UGameSectionManager::BeginTransition()
 {
 	bLoading = true;
-	if (PlayerChar)
+	PlayerChar->FadeToBlack(0.25f);
+	PlayerChar->AddLockFlag(Player::LockFlags::Loading);
+	
+	if (ThisData)
 	{
-		PlayerChar->AddLockFlag(Player::LockFlags::Loading);
-		PlayerChar->FadeToBlack(0.25f);
+		SaveSystem->GetGameDataObject()->Inventory.Add(ThisData->InventoryKey.GetTagName(),
+			PlayerChar->GetGameMode()->Inventory->ExportSaveData());
 	}
+	SaveSystem->GetGameDataObject()->Sequence = Sequence;
+	SaveSystem->SaveGameData(PlayTime);
+	PlayTime = 0.0f;
 	
 	UGameSectionNode* Node = SectionGraph->GetNodeBySequence<UGameSectionNode>(Sequence);
 	if (!Node || !Node->IsA(UGameSectionDataNode::StaticClass()))
@@ -95,15 +94,12 @@ void UGameSectionManager::BeginTransition()
 
 void UGameSectionManager::UnloadLastData()
 {
-	if (PlayerChar)
-	{
-		PlayerChar->ResetStates();
-		PlayerChar->TeleportPlayer(FVector::ZeroVector, FRotator::ZeroRotator);
-		PlayerChar->GetGameMode()->Narrative->ForgetQuest(LastData->Quest.LoadSynchronous());
-		PlayerChar->GetGameState()->StopGameMusic();
+	PlayerChar->ResetStates();
+	PlayerChar->TeleportPlayer(FVector::ZeroVector, FRotator::ZeroRotator);
+	PlayerChar->GetGameMode()->Narrative->ForgetQuest(LastData->Quest.LoadSynchronous());
+	PlayerChar->GetGameState()->StopGameMusic();
 
-		IUDSInterface::SetCustomSettings(PlayerChar->UltraDynamicSky, ThisData->SkyWeatherSettings);
-	}
+	IUDSInterface::SetCustomSettings(PlayerChar->UltraDynamicSky, ThisData->SkyWeatherSettings);
 	
 	LoadedObjs.Empty(ThisData ? ThisData->PreloadObjects.Num() : 0);
 	UnloadingLevels = 0;
@@ -165,10 +161,7 @@ void UGameSectionManager::FinishLoading()
 		Teleporter->TeleportPlayer();
 	}
 
-	if (PlayerChar)
-	{
-		PlayerChar->SetPlayerSettings(ThisData->PlayerSettings);
-	}
+	PlayerChar->SetPlayerSettings(ThisData->PlayerSettings);
 
 	FTimerHandle Handle;
 	GetWorld()->GetTimerManager().SetTimer(Handle, this,
@@ -179,13 +172,36 @@ void UGameSectionManager::FinishTransition()
 {
 	HideLoadingWidget([this]()
 	{
-		if (PlayerChar)
+		UInventoryComponent* Inventory = PlayerChar->GetGameMode()->Inventory;
+		
+		// Only load an inventory from save if this is the first data or the keys are different
+		if (!LastData || LastData->InventoryKey != ThisData->InventoryKey)
 		{
-			PlayerChar->FadeFromBlack(1.0f);
-			PlayerChar->ClearLockFlag(Player::LockFlags::Loading);
-			PlayerChar->GetGameState()->SetGameMusic(ThisData->MusicID);
-			PlayerChar->GetGameMode()->Narrative->BeginQuest(LastData->Quest.LoadSynchronous());
+			Inventory->LoadSaveData(SaveSystem->GetGameDataObject()->Inventory.FindRef(ThisData->InventoryKey.GetTagName()));
 		}
+
+		for (const FInventorySlotData& Item : ThisData->EnsureItems)
+		{
+			if (!Item.IsValidSlot()) continue;
+			FGuid Slot = Inventory->FindSlot(Item.ItemData.LoadSynchronous(),
+				{}, EInventoryMetaFilter::MatchAny);
+
+			if (Slot.IsValid())
+			{
+				FInventorySlotData* SlotData = Inventory->ItemSlots.Find(Slot);
+				SlotData->Amount = FMath::Max(SlotData->Amount, Item.Amount);
+				SlotData->Metadata.Append(Item.Metadata);
+			}
+			else
+			{
+				Inventory->AddItem(Item.ItemData.LoadSynchronous(), Item.Amount, Item.Metadata, true);
+			}
+		}
+
+		PlayerChar->FadeFromBlack(1.0f);
+		PlayerChar->ClearLockFlag(Player::LockFlags::Loading);
+		PlayerChar->GetGameState()->SetGameMusic(ThisData->MusicID);
+		PlayerChar->GetGameMode()->Narrative->BeginQuest(ThisData->Quest.LoadSynchronous());
 		
 		bLoading = false;	
 	});
@@ -293,6 +309,7 @@ void UGameSectionManager::Tick(float DeltaTime)
 void UGameSectionManager::OnWorldBeginPlay(UWorld& InWorld)
 {
 	Super::OnWorldBeginPlay(InWorld);
+	SaveSystem = USaveSubsystem::Get(this);
 	PlayerChar = FRPlayer(this);
 }
 

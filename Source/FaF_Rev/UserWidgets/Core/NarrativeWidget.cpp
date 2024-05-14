@@ -127,7 +127,7 @@ UNarrativeWidgetBase::UNarrativeWidgetBase(const FObjectInitializer& ObjectIniti
 	, DialogueFadeAnim(nullptr), RepliesFadeAnim(nullptr), HideFadeAnim(nullptr), NarrativeComponent(nullptr)
 	, bQuestsHidden(false), HideCheckTime(0.0f), WorldSettings(nullptr), PlayerChar(nullptr)
 {
-	ZOrder = 97;
+	ZOrder = 96;
 	bAutoAdd = true;
 
 	DialoguePlayerColor = FLinearColor::Yellow;

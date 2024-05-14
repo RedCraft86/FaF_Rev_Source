@@ -44,6 +44,7 @@ private:
 	UPROPERTY(Transient) TObjectPtr<UGameSectionDataNode> LastData;
 	UPROPERTY(Transient) TObjectPtr<class UGameSectionGraph> SectionGraph;
 	UPROPERTY(Transient) TObjectPtr<class ULoadingWidgetBase> LoadingWidget;
+	UPROPERTY(Transient) TObjectPtr<class USaveSubsystem> SaveSystem;
 	
 	void BeginTransition();
 	void UnloadLastData();

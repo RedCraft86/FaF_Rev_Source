@@ -7,8 +7,9 @@
 #include "GameMusicData.h"
 #include "UltraDynamicSky.h"
 #include "PlayerTeleporter.h"
-#include "AssetRegistry/IAssetRegistry.h"
 #include "GameSection/GameSectionNode.h"
+#include "Inventory/InventoryComponentBase.h"
+#include "AssetRegistry/IAssetRegistry.h"
 #include "GameSectionData.generated.h"
 
 UCLASS()
@@ -46,6 +47,12 @@ public:
 
 	UPROPERTY(EditAnywhere, Category = "WorldData")
 		FUDSSettings SkyWeatherSettings;
+
+	UPROPERTY(EditAnywhere, Category = "InventoryData")
+		FGameplayTag InventoryKey;
+
+	UPROPERTY(EditAnywhere, Category = "InventoryData")
+		TArray<FInventorySlotData> EnsureItems;
 	
 	UPROPERTY(EditAnywhere, Category = "Dependencies", meta = (ClampMin = 1, UIMin = 1, ClampMax = 8, UIMax = 8, DisplayName = "Search Depth"))
 		uint8 DependencyDepth;

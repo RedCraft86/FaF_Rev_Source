@@ -2,8 +2,9 @@
 
 #pragma once
 
-#include "GameplayTagContainer.h"
 #include "UObject/Object.h"
+#include "GameplayTagContainer.h"
+#include "Inventory/InventoryComponent.h"
 #include "SaveObjects.generated.h"
 
 UENUM(BlueprintInternalUseOnly)
@@ -57,7 +58,7 @@ public:
 		TArray<uint8> Sequence;
 	
 	UPROPERTY(BlueprintReadOnly, Category = "SaveObject")
-		TMap<FGameplayTag, FString> Inventory;
+		TMap<FName, FInventorySaveData> Inventory;
 
 	UPROPERTY(BlueprintReadOnly, Category = "SaveObject")
 		TSet<FName> TransientKeys;

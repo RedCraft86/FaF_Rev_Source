@@ -4,8 +4,8 @@
 #include "FRPlayer.h"
 
 UGameWidgetBase::UGameWidgetBase(const FObjectInitializer& ObjectInitializer)
-: UGTUserWidget(ObjectInitializer), HideFadeAnim(nullptr), HideCheckTime(0.0f)
-, WorldSettings(nullptr), PlayerChar(nullptr)
+	: UGTUserWidget(ObjectInitializer), HideFadeAnim(nullptr), HideCheckTime(0.0f)
+	, WorldSettings(nullptr), PlayerChar(nullptr)
 {
 	ZOrder = 95;
 	bAutoAdd = true;

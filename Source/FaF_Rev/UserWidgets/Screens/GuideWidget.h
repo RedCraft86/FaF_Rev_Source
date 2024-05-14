@@ -3,6 +3,7 @@
 #pragma once
 
 #include "GTUserWidget.h"
+#include "InputModeData.h"
 #include "MessagingData.h"
 #include "GuideWidget.generated.h"
 
@@ -54,11 +55,14 @@ public:
 private:
 
 	bool bActive, bPrePauseState;
+	FGameInputModeData PreInputMode;
 	TQueue<FGuideBookPageID> PageQueue;
-	void ProceedNextGuide();
+	
 	void ResetBook() const;
-
+	void ProceedNextGuide();
 	UFUNCTION() void OnNextClicked();
+	
 	virtual void InitWidget() override;
 	virtual void NativeConstruct() override;
+	virtual void NativeDestruct() override;
 };
