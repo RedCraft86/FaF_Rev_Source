@@ -72,14 +72,19 @@ TArray<FGuid> UInventoryComponent::GetSortedSlots()
 	return Result;
 }
 
+void UInventoryComponent::UnequipItem()
+{
+	if (!EquipmentData.ItemID.IsValid()) return;
+}
+
 void UInventoryComponent::EquipItem(const FGuid& ItemKey)
 {
 	if (EquipmentData.ItemID.IsValid()) return;
 }
 
-void UInventoryComponent::UnequipItem(const FGuid& ItemKey)
+void UInventoryComponent::ConsumeItem(const FGuid& ItemKey)
 {
-	if (!EquipmentData.ItemID.IsValid()) return;
+	
 }
 
 void UInventoryComponent::LoadSaveData(const FInventorySaveData& InData)

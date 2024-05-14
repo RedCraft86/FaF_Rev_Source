@@ -5,6 +5,7 @@
 #include "ExprTextBlock.h"
 #include "Components/Image.h"
 #include "Components/Button.h"
+#include "Components/SizeBox.h"
 #include "Components/TextBlock.h"
 #include "Components/SceneCaptureComponent2D.h"
 #include "Engine/TextureRenderTarget2D.h"
@@ -93,11 +94,11 @@ void UInventoryWidgetBase::RefreshUI()
 		SlotsBox->ClearChildren();
 		for (const FGuid& Key : SlotKeys)
 		{
-			UInventorySlotWidgetBase* Slot = CreateWidget<UInventorySlotWidgetBase>(this, SlotWidgetClass);
-			Slot->ParentUI = this;
-			Slot->InitData(Key, Key == EquipmentKey);
-			SlotWidgets.Add(Key, Slot);
-			SlotsBox->AddChild(Slot);
+			UInventorySlotWidgetBase* NewSlot = CreateWidget<UInventorySlotWidgetBase>(this, SlotWidgetClass);
+			NewSlot->ParentUI = this;
+			NewSlot->InitData(Key, Key == EquipmentKey);
+			SlotWidgets.Add(Key, NewSlot);
+			SlotsBox->AddChild(NewSlot);
 		}
 
 		GetWorld()->GetTimerManager().SetTimerForNextTick([this](){
@@ -152,7 +153,7 @@ void UInventoryWidgetBase::UpdateItemInfo()
 		switch (ItemData->ItemType)
 		{
 		case EInventoryItemType::Viewable:
-			//if (Data.ViewImage || !Data.ViewText.IsEmptyOrWhitespace())
+			if (ItemData->ViewImage || !ItemData->ViewText.IsEmptyOrWhitespace())
 			{
 				UsageButton->SetVisibility(ESlateVisibility::Visible);
 				UsageText->SetText(ViewItemLabel);
@@ -160,15 +161,15 @@ void UInventoryWidgetBase::UpdateItemInfo()
 			break;
 			
 		case EInventoryItemType::Consumable:
-			//if (Data.ConsumableClass != NULL)
+			if (ItemData->ConsumableClass)
 			{
 				UsageButton->SetVisibility(ESlateVisibility::Visible);
-				//UsageText->SetText(ItemData->UsageLabel);
+				UsageText->SetText(ItemData->ConsumeDisplayText);
 			}
 			break;
 			
 		case EInventoryItemType::Equipment:
-			//if (Data.EquipmentClass != NULL)
+			if (ItemData->EquipmentClass)
 			{
 				UsageButton->SetVisibility(ESlateVisibility::Visible);
 				UsageText->SetText(bEquipped ? UnequipItemLabel : EquipItemLabel);
@@ -190,6 +191,54 @@ void UInventoryWidgetBase::UpdateItemInfo()
 
 void UInventoryWidgetBase::OnUsageClicked()
 {
+	if (SelectedKey.IsValid() && SlotWidgets.Contains(SelectedKey))
+	{
+		UInventoryComponent* Inventory = GET_INVENTORY;
+		const FInventorySlotData SlotData = Inventory->GetInventory()[SelectedKey];
+		const UInventoryItemData* ItemData = SlotData.GetItemData<UInventoryItemData>();
+		
+		switch (ItemData->ItemType)
+		{
+		case EInventoryItemType::Consumable:
+			Inventory->ConsumeItem(SelectedKey);
+			break;
+			
+		case EInventoryItemType::Equipment:
+			if (Inventory->GetEquipmentData().ItemID == SelectedKey)
+			{
+				Inventory->UnequipItem();
+			}
+			else
+			{
+				Inventory->EquipItem(SelectedKey);
+			}
+			break;
+
+		case EInventoryItemType::Viewable:
+			ViewingTitle->SetText(ItemData->DisplayName);
+			ReadContentText->SetText(ItemData->ViewText);
+			ViewContentImage->SetBrushFromTexture(ItemData->ViewImage);
+			ViewContentBox->SetVisibility(IsValid(ViewContentImage->GetBrush().GetResourceObject()) ?
+				ESlateVisibility::HitTestInvisible : ESlateVisibility::Collapsed);
+
+			ReadContentBox->SetVisibility(ItemData->ViewText.IsEmptyOrWhitespace() ?
+				ESlateVisibility::Collapsed : ESlateVisibility::Visible);
+			
+			if (ItemData->ViewImage && !ItemData->ViewText.IsEmptyOrWhitespace())
+			{
+				ReadContentBox->SetHeightOverride(ImageDescHeight);
+			}
+			else
+			{
+				ReadContentBox->ClearHeightOverride();
+			}
+			
+			PlayAnimation(ViewingFadeAnim);
+			break;
+
+		default: break;
+		}
+	}
 }
 
 void UInventoryWidgetBase::OnReadFinishClicked()

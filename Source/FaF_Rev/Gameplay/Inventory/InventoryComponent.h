@@ -61,9 +61,10 @@ public:
 	void SetInspectionActor(AInspectionActor* InActor);
 	AInspectionActor* GetInspectionActor() const { return InspectionActor; }
 	TArray<FGuid> GetSortedSlots();
-
+	
+	void UnequipItem();
 	void EquipItem(const FGuid& ItemKey);
-	void UnequipItem(const FGuid& ItemKey);
+	void ConsumeItem(const FGuid& ItemKey);
 	const FInventoryEquipmentData& GetEquipmentData() const { return EquipmentData; }
 		
 	void LoadSaveData(const FInventorySaveData& InData);
