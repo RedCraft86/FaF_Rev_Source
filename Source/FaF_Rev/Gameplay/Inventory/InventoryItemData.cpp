@@ -4,7 +4,7 @@
 
 #define ALT_MESH_KEY TEXT("AltMeshIndex")
 
-const FTransformMeshData& UInventoryItemData::GetMeshData(const TMap<FName, FString>& InMetadata) const
+FTransformMeshData UInventoryItemData::GetMeshData(const TMap<FName, FString>& InMetadata) const
 {
 	FTransformMeshData Data = MeshData.IsEmpty() ? FTransformMeshData() : MeshData[0];
 	if (const FString& IndexValue = InMetadata.FindRef(ALT_MESH_KEY); !IndexValue.IsEmpty())

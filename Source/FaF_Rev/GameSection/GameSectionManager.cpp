@@ -183,7 +183,7 @@ void UGameSectionManager::FinishTransition()
 		for (const FInventorySlotData& Item : ThisData->EnsureItems)
 		{
 			if (!Item.IsValidSlot()) continue;
-			FGuid Slot = Inventory->FindSlot(Item.ItemData.LoadSynchronous()); 
+			FGuid Slot = Inventory->FindSlot(Item.ItemData.LoadSynchronous(), {}); 
 			if (!Slot.IsValid() || Item.ItemData.LoadSynchronous()->StackingMode == EInventoryItemStackType::Unique)
 			{
 				Inventory->AddItem(Item.ItemData.LoadSynchronous(), Item.Amount, Item.Metadata, true);

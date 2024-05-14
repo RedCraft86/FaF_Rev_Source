@@ -19,7 +19,7 @@ public:
 	UPROPERTY(EditAnywhere, Category = "Inspection")
 		FVector2D MeshZoomRange;
 
-	const FTransformMeshData& GetMeshData(const TMap<FName, FString>& InMetadata) const;
+	FTransformMeshData GetMeshData(const TMap<FName, FString>& InMetadata) const;
 
 private:
 #if WITH_EDITOR
