@@ -29,6 +29,16 @@ struct FAF_REV_API FInventorySaveData
 	}
 };
 
+USTRUCT(BlueprintInternalUseOnly)
+struct FAF_REV_API FInventoryEquipmentData
+{
+	GENERATED_BODY()
+
+	FGuid ItemID;
+	UPROPERTY(Transient) TObjectPtr<AActor> Equipment;
+	FInventoryEquipmentData() : ItemID({}), Equipment(nullptr) {}
+};
+
 UCLASS(ClassGroup = (Game))
 class FAF_REV_API UInventoryComponent : public UInventoryComponentBase
 {
@@ -38,6 +48,7 @@ class FAF_REV_API UInventoryComponent : public UInventoryComponentBase
 	friend class AFRGameModeBase;
 	friend class AInspectionActor;
 	friend class UGameSectionManager;
+	friend class UInventorySlotWidgetBase;
 	
 public:
 
@@ -48,9 +59,13 @@ public:
 	void EquipmentUse();
 	void EquipmentUseAlt(bool bPressed);
 	void SetInspectionActor(AInspectionActor* InActor);
-	AInspectionActor* GetInspectionActor() { return InspectionActor; }
+	AInspectionActor* GetInspectionActor() const { return InspectionActor; }
 	TArray<FGuid> GetSortedSlots();
 
+	void EquipItem(const FGuid& ItemKey);
+	void UnequipItem(const FGuid& ItemKey);
+	const FInventoryEquipmentData& GetEquipmentData() const { return EquipmentData; }
+		
 	void LoadSaveData(const FInventorySaveData& InData);
 	FInventorySaveData ExportSaveData();
 
@@ -59,4 +74,5 @@ protected:
 	UPROPERTY(Transient) TObjectPtr<AFRPlayerBase> PlayerChar;
 	UPROPERTY(Transient) TObjectPtr<AInspectionActor> InspectionActor;
 	UPROPERTY(Transient) TObjectPtr<class UInventoryWidgetBase> InventoryWidget;
+	UPROPERTY(Transient) FInventoryEquipmentData EquipmentData;
 };

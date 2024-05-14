@@ -72,6 +72,16 @@ TArray<FGuid> UInventoryComponent::GetSortedSlots()
 	return Result;
 }
 
+void UInventoryComponent::EquipItem(const FGuid& ItemKey)
+{
+	if (EquipmentData.ItemID.IsValid()) return;
+}
+
+void UInventoryComponent::UnequipItem(const FGuid& ItemKey)
+{
+	if (!EquipmentData.ItemID.IsValid()) return;
+}
+
 void UInventoryComponent::LoadSaveData(const FInventorySaveData& InData)
 {
 	CurrencyData = InData.CurrencyData;

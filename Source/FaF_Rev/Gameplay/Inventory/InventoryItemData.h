@@ -24,7 +24,9 @@ public:
 
 	UInventoryItemData()
 		: Priority(1), DisplayName(INVTEXT("Unknown Item")), Description(INVTEXT("Unknown Item"))
-		, MeshZoomRange(0.1f, 1.5f), MeshData({})
+		, ItemType(EInventoryItemType::Objective) , MeshZoomRange(0.1f, 1.5f), MeshData({})
+		, ViewImage(nullptr), ViewText(FText::GetEmpty()), EquipmentClass(nullptr)
+		, ConsumableClass(nullptr), ConsumeDisplayText(INVTEXT("Use"))
 	{}
 
 	UPROPERTY(EditAnywhere, Category = "ItemData", meta = (DisplayPriority = -9))
@@ -35,6 +37,9 @@ public:
 
 	UPROPERTY(EditAnywhere, Category = "ItemData", meta = (MultiLine = true, DisplayPriority = -9))
 		FText Description;
+
+	UPROPERTY(EditAnywhere, Category = "ItemData", meta = (DisplayPriority = -9))
+		EInventoryItemType ItemType;
 	
 	UPROPERTY(EditAnywhere, Category = "ItemData|Inspection")
 		FVector2D MeshZoomRange;
@@ -42,6 +47,22 @@ public:
 	UPROPERTY(EditAnywhere, Category = "ItemData|Inspection")
 		TArray<FTransformMeshData> MeshData;
 
+	UPROPERTY(EditAnywhere, Category = "ItemData|Viewable", meta = (EditCondition = "ItemType == EInventoryItemType::Viewable", EditConditionHides))
+		TObjectPtr<UTexture2D> ViewImage;
+
+	UPROPERTY(EditAnywhere, Category = "ItemData|Viewable", meta = (EditCondition = "ItemType == EInventoryItemType::Viewable", EditConditionHides, MultiLine = true))
+		FText ViewText;
+	
+	UPROPERTY(EditAnywhere, Category = "ItemData|Equipment", meta = (EditCondition = "ItemType == EInventoryItemType::Equipment", EditConditionHides))
+		TSubclassOf<AActor> EquipmentClass;
+	
+	UPROPERTY(EditAnywhere, Category = "ItemData|Consumable", meta = (EditCondition = "ItemType == EInventoryItemType::Consumable", EditConditionHides))
+		TSubclassOf<AActor> ConsumableClass;
+
+	UPROPERTY(EditAnywhere, Category = "ItemData|Consumable", meta = (EditCondition = "ItemType == EInventoryItemType::Consumable", EditConditionHides))
+		FText ConsumeDisplayText;
+	
+	FString GetTypeString() const;
 	FTransformMeshData GetMeshData(const TMap<FName, FString>& InMetadata) const;
 
 private:

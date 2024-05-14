@@ -4,6 +4,17 @@
 
 #define ALT_MESH_KEY TEXT("AltMeshIndex")
 
+FString UInventoryItemData::GetTypeString() const
+{
+	switch (ItemType)
+	{
+	case EInventoryItemType::Consumable: return TEXT("Consumable");
+	case EInventoryItemType::Equipment: return TEXT("Equipment");
+	case EInventoryItemType::Viewable: return TEXT("Viewable Item");
+	default: return TEXT("Objective Item");
+	}
+}
+
 FTransformMeshData UInventoryItemData::GetMeshData(const TMap<FName, FString>& InMetadata) const
 {
 	FTransformMeshData Data = MeshData.IsEmpty() ? FTransformMeshData() : MeshData[0];

@@ -46,6 +46,7 @@ AInspectionActor::AInspectionActor()
 	InspectionCapture->SetupAttachment(SceneRoot);
 	
 	InspectionCapture->FOVAngle = 60.0f;
+	InspectionCapture->bCaptureEveryFrame = false;
 	InspectionCapture->bAlwaysPersistRenderingState = true;
 	InspectionCapture->ShowFlags.SetAntiAliasing(true);
 	InspectionCapture->ShowFlags.SetAtmosphere(false);
@@ -121,7 +122,6 @@ void AInspectionActor::Initialize()
 	EnableInput(GetWorld()->GetFirstPlayerController());
 	InspectionRoot->CameraRotationLagSpeed = TurnSpeed;
 	InspectionRoot->bEnableCameraRotationLag = true;
-	InspectionCapture->SetComponentTickEnabled(true);
 	SetActorTickEnabled(true);
 }
 
@@ -130,7 +130,6 @@ void AInspectionActor::Deinitialize()
 	ItemKey = {};
 	ZoomRange = FVector2D::UnitVector;
 	DisableInput(GetWorld()->GetFirstPlayerController());
-	InspectionCapture->SetComponentTickEnabled(false);
 	InspectionRoot->bEnableCameraRotationLag = false;
 	InspectionRoot->SetRelativeRotation(FRotator::ZeroRotator);
 	InspectionMesh->SetRelativeTransform(FTransform::Identity);
@@ -172,8 +171,12 @@ void AInspectionActor::BeginPlay()
 void AInspectionActor::Tick(float DeltaSeconds)
 {
 	Super::Tick(DeltaSeconds);
-	ZoomValue.Tick(DeltaSeconds);
-	InspectionRoot->SetRelativeScale3D(FVector(ZoomValue.CurrentValue));
+	if (ItemKey.IsValid())
+	{
+		ZoomValue.Tick(DeltaSeconds);
+		InspectionRoot->SetRelativeScale3D(FVector(ZoomValue.CurrentValue));
+		InspectionCapture->CaptureScene();
+	}
 }
 
 void AInspectionActor::OnConstruction(const FTransform& Transform)

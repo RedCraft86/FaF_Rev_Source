@@ -123,7 +123,7 @@ public:
 		TObjectPtr<UWidgetAnimation> ViewingFadeAnim;
 
 	UPROPERTY(EditAnywhere, Category = "InventoryWidget")
-		TSubclassOf<UInventoryComponent> SlotWidgetClass;
+		TSubclassOf<UInventorySlotWidgetBase> SlotWidgetClass;
 
 	UPROPERTY(EditAnywhere, Category = "InventoryWidget")
 		float ImageDescHeight;
@@ -141,10 +141,16 @@ public:
 	
 protected:
 
+	FGuid SelectedKey;
+	FGuid EquipmentKey;
 	TArray<FGuid> SlotKeys;
 	UPROPERTY(Transient) TMap<FGuid, TObjectPtr<UInventorySlotWidgetBase>> SlotWidgets;
 	
 	void RefreshUI();
+	void UpdateItemInfo();
+
+	UFUNCTION() void OnUsageClicked();
+	UFUNCTION() void OnReadFinishClicked();
 	
 	virtual void InitWidget() override;
 	virtual void NativeConstruct() override;
