@@ -245,6 +245,7 @@ namespace Player
 {
 	namespace LockFlags
 	{
+		inline static FName Startup			= TEXT("Startup");
 		inline static FName Loading			= TEXT("Loading");
 		inline static FName Cutscene		= TEXT("Cutscene");
 		inline static FName Dialogue		= TEXT("Dialogue");

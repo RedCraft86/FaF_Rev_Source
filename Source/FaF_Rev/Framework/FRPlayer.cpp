@@ -92,7 +92,6 @@ AFRPlayerBase::AFRPlayerBase()
 	WallTraceLength = 125.0f;
 	LeanOffsets = {75.0f, 25.0f};
 	PlayerLightSettings = {};
-	InspectionActor = nullptr;
 	InputActions = {};
 	CameraShakes = {};
 	FootstepSounds = {};
@@ -958,6 +957,8 @@ void AFRPlayerBase::OnSettingsApply()
 void AFRPlayerBase::BeginPlay()
 {
 	Super::BeginPlay();
+	LockFlags.Add(Player::LockFlags::Startup);
+	
 	FootstepSounds.LoadAssetsAsync();
 	CamPosition = CameraArm->GetRelativeLocation();
 	GetCharacterMovement()->MaxWalkSpeed = WalkingSpeed;
@@ -971,7 +972,6 @@ void AFRPlayerBase::BeginPlay()
 
 	GameMode = FRGameMode(this);
 	GameMode->PlayerCharacter = this;
-	GameMode->InspectionActor = InspectionActor;
 	GameMode->PlayerController = PlayerController;
 	GameState = GameMode->GetGameState<AFRGameStateBase>();
 
@@ -987,6 +987,8 @@ void AFRPlayerBase::BeginPlay()
 	UGameSettings* Settings = UGameSettings::Get();
 	Settings->OnManualApply.AddUObject(this, &AFRPlayerBase::OnSettingsApply);
 	Settings->OnDynamicApply.AddUObject(this, &AFRPlayerBase::OnSettingsApply);
+
+	LockFlags.Remove(Player::LockFlags::Startup);
 }
 
 void AFRPlayerBase::Tick(float DeltaTime)
@@ -1073,10 +1075,6 @@ void AFRPlayerBase::OnConstruction(const FTransform& Transform)
 		if (Actor->Implements<UUDSInterface>())
 		{
 			UltraDynamicSky = Actor;
-		}
-		else if (Actor->IsA(AInspectionActor::StaticClass()))
-		{
-			InspectionActor = Cast<AInspectionActor>(Actor);
 		}
 	}
 }
