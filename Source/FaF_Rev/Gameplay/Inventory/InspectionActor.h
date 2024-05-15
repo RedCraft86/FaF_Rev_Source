@@ -9,7 +9,7 @@
 
 class UInputAction;
 
-UCLASS()
+UCLASS(Abstract)
 class FAF_REV_API AInspectionActor final : public AActor
 {
 	GENERATED_BODY()

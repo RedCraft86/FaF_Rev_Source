@@ -54,10 +54,10 @@ public:
 		FText ViewText;
 	
 	UPROPERTY(EditAnywhere, Category = "ItemData|Equipment", meta = (EditCondition = "ItemType == EInventoryItemType::Equipment", EditConditionHides))
-		TSubclassOf<AActor> EquipmentClass;
+		TSubclassOf<class AEquipmentActor> EquipmentClass;
 	
 	UPROPERTY(EditAnywhere, Category = "ItemData|Consumable", meta = (EditCondition = "ItemType == EInventoryItemType::Consumable", EditConditionHides))
-		TSubclassOf<AActor> ConsumableClass;
+		TSubclassOf<class AConsumableActor> ConsumableClass;
 
 	UPROPERTY(EditAnywhere, Category = "ItemData|Consumable", meta = (EditCondition = "ItemType == EInventoryItemType::Consumable", EditConditionHides))
 		FText ConsumeDisplayText;

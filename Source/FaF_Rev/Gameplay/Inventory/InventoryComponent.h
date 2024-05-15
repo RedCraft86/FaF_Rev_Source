@@ -2,6 +2,7 @@
 
 #pragma once
 
+#include "EquipmentActor.h"
 #include "InspectionActor.h"
 #include "Inventory/InventoryComponentBase.h"
 #include "InventoryComponent.generated.h"
@@ -35,7 +36,7 @@ struct FAF_REV_API FInventoryEquipmentData
 	GENERATED_BODY()
 
 	FGuid ItemID;
-	UPROPERTY(Transient) TObjectPtr<AActor> Equipment;
+	UPROPERTY(Transient) TObjectPtr<AEquipmentActor> Equipment;
 	FInventoryEquipmentData() : ItemID({}), Equipment(nullptr) {}
 };
 
@@ -54,10 +55,10 @@ public:
 
 	UInventoryComponent();
 
-	void OpenUI() const;
+	void OpenUI();
 	void CloseUI() const;
-	void EquipmentUse();
-	void EquipmentUseAlt(bool bPressed);
+	void EquipmentUse() const;
+	void EquipmentUseAlt(bool bPressed) const;
 	void SetInspectionActor(AInspectionActor* InActor);
 	AInspectionActor* GetInspectionActor() const { return InspectionActor; }
 	TArray<FGuid> GetSortedSlots();

@@ -1,6 +1,8 @@
 ﻿// Copyright (C) RedCraft86. All Rights Reserved.
 
 #include "InventoryComponent.h"
+
+#include "ConsumableActor.h"
 #include "InventoryItemData.h"
 #include "Menus/InventoryWidget.h"
 #include "FRPlayerController.h"
@@ -13,14 +15,15 @@ UInventoryComponent::UInventoryComponent() : PlayerChar(nullptr), InspectionActo
 	PrimaryComponentTick.bStartWithTickEnabled = false;
 }
 
-void UInventoryComponent::OpenUI() const
+void UInventoryComponent::OpenUI()
 {
 	if (InventoryWidget->IsInViewport()) return;
 	PlayerChar->AddLockFlag(Player::LockFlags::Inventory);
 	PlayerChar->GetPlayerController()->SetPause(true);
 	PlayerChar->GetGameMode()->SetGameInputMode(EGameInputMode::GameAndUI, true,
 		EMouseLockMode::LockAlways, false, InventoryWidget);
-	
+
+	CleanInventory();
 	InventoryWidget->AddWidget();
 	if (InspectionActor)
 	{
@@ -43,12 +46,25 @@ void UInventoryComponent::CloseUI() const
 	}
 }
 
-void UInventoryComponent::EquipmentUse()
+void UInventoryComponent::EquipmentUse() const
 {
+	if (EquipmentData.Equipment)
+	{
+		EquipmentData.Equipment->OnUse();
+	}
 }
 
-void UInventoryComponent::EquipmentUseAlt(bool bPressed)
+void UInventoryComponent::EquipmentUseAlt(const bool bPressed) const
 {
+	if (!EquipmentData.Equipment) return;
+	if (bPressed)
+	{
+		EquipmentData.Equipment->OnStartAltUse();
+	}
+	else
+	{
+		EquipmentData.Equipment->OnEndAltUse();
+	}
 }
 
 void UInventoryComponent::SetInspectionActor(AInspectionActor* InActor)
@@ -84,7 +100,16 @@ void UInventoryComponent::EquipItem(const FGuid& ItemKey)
 
 void UInventoryComponent::ConsumeItem(const FGuid& ItemKey)
 {
-	
+	const UInventoryItemData* ItemData = ItemSlots.FindRef(ItemKey).GetItemData<UInventoryItemData>();
+	if (ItemData && ItemData->ItemType == EInventoryItemType::Consumable && ItemData->ConsumableClass)
+	{
+		AConsumableActor* Consumable = GetWorld()->SpawnActor<AConsumableActor>(ItemData->ConsumableClass);
+		ItemSlots[ItemKey].Amount -= Consumable->UseItem() ? 1 : 0;
+		if (ItemSlots[ItemKey].Amount <= 0)
+		{
+			ItemSlots.Remove(ItemKey);
+		}
+	}
 }
 
 void UInventoryComponent::LoadSaveData(const FInventorySaveData& InData)
@@ -97,5 +122,5 @@ void UInventoryComponent::LoadSaveData(const FInventorySaveData& InData)
 
 FInventorySaveData UInventoryComponent::ExportSaveData()
 {
-	return {{}, CurrencyData, ItemSlots};
+	return {EquipmentData.ItemID, CurrencyData, ItemSlots};
 }
