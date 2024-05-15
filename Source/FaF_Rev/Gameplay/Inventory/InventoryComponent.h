@@ -3,7 +3,7 @@
 #pragma once
 
 #include "EquipmentActor.h"
-#include "InspectionActor.h"
+#include "InventoryPreview.h"
 #include "Inventory/InventoryComponentBase.h"
 #include "InventoryComponent.generated.h"
 
@@ -47,7 +47,7 @@ class FAF_REV_API UInventoryComponent : public UInventoryComponentBase
 	
 	friend class AFRPlayerBase;
 	friend class AFRGameModeBase;
-	friend class AInspectionActor;
+	friend class AInventoryPreview;
 	friend class UGameSectionManager;
 	friend class UInventorySlotWidgetBase;
 	
@@ -59,8 +59,8 @@ public:
 	void CloseUI() const;
 	void EquipmentUse() const;
 	void EquipmentUseAlt(bool bPressed) const;
-	void SetInspectionActor(AInspectionActor* InActor);
-	AInspectionActor* GetInspectionActor() const { return InspectionActor; }
+	void SetInventoryPreview(AInventoryPreview* InActor);
+	AInventoryPreview* GetInventoryPreview() const { return InventoryPreview; }
 	TArray<FGuid> GetSortedSlots();
 	
 	void UnequipItem();
@@ -74,7 +74,7 @@ public:
 protected:
 	
 	UPROPERTY(Transient) TObjectPtr<AFRPlayerBase> PlayerChar;
-	UPROPERTY(Transient) TObjectPtr<AInspectionActor> InspectionActor;
+	UPROPERTY(Transient) TObjectPtr<AInventoryPreview> InventoryPreview;
 	UPROPERTY(Transient) TObjectPtr<class UInventoryWidgetBase> InventoryWidget;
 	UPROPERTY(Transient) FInventoryEquipmentData EquipmentData;
 };

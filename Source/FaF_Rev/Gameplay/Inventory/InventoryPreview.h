@@ -5,12 +5,12 @@
 #include "Data/MathTypes.h"
 #include "InputActionValue.h"
 #include "GameFramework/Actor.h"
-#include "InspectionActor.generated.h"
+#include "InventoryPreview.generated.h"
 
 class UInputAction;
 
 UCLASS(Abstract)
-class FAF_REV_API AInspectionActor final : public AActor
+class FAF_REV_API AInventoryPreview final : public AActor
 {
 	GENERATED_BODY()
 
@@ -18,22 +18,22 @@ class FAF_REV_API AInspectionActor final : public AActor
 
 public:
 
-	AInspectionActor();
+	AInventoryPreview();
 
 	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, Category = "Subobjects")
 		TObjectPtr<USceneComponent> SceneRoot;
 
 	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, Category = "Subobjects")
-		TObjectPtr<class USpringArmComponent> InspectionRoot;
+		TObjectPtr<class USpringArmComponent> PreviewRoot;
 
 	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, Category = "Subobjects")
-		TObjectPtr<UStaticMeshComponent> InspectionMesh;
+		TObjectPtr<UStaticMeshComponent> PreviewMesh;
 
 	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, Category = "Subobjects")
-		TObjectPtr<class USpotLightComponent> InspectionLight;
+		TObjectPtr<class USpotLightComponent> PreviewLight;
 
 	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, Category = "Subobjects")
-		TObjectPtr<USceneCaptureComponent2D> InspectionCapture;
+		TObjectPtr<USceneCaptureComponent2D> PreviewCapture;
 
 	UPROPERTY(EditAnywhere, Category = "Settings")
 		float TurnSpeed;

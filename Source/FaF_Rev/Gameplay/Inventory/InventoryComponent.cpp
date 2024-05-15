@@ -9,7 +9,7 @@
 #include "FRGameMode.h"
 #include "FRPlayer.h"
 
-UInventoryComponent::UInventoryComponent() : PlayerChar(nullptr), InspectionActor(nullptr), InventoryWidget(nullptr)
+UInventoryComponent::UInventoryComponent() : PlayerChar(nullptr), InventoryPreview(nullptr), InventoryWidget(nullptr)
 {
 	PrimaryComponentTick.bCanEverTick = false;
 	PrimaryComponentTick.bStartWithTickEnabled = false;
@@ -25,10 +25,10 @@ void UInventoryComponent::OpenUI()
 
 	CleanInventory();
 	InventoryWidget->AddWidget();
-	if (InspectionActor)
+	if (InventoryPreview)
 	{
-		InspectionActor->Initialize();
-		InspectionActor->SetItem({});
+		InventoryPreview->Initialize();
+		InventoryPreview->SetItem({});
 	}
 }
 
@@ -40,9 +40,9 @@ void UInventoryComponent::CloseUI() const
 	PlayerChar->GetPlayerController()->SetPause(false);
 	
 	InventoryWidget->RemoveWidget();
-	if (InspectionActor)
+	if (InventoryPreview)
 	{
-		InspectionActor->Deinitialize();
+		InventoryPreview->Deinitialize();
 	}
 }
 
@@ -67,10 +67,10 @@ void UInventoryComponent::EquipmentUseAlt(const bool bPressed) const
 	}
 }
 
-void UInventoryComponent::SetInspectionActor(AInspectionActor* InActor)
+void UInventoryComponent::SetInventoryPreview(AInventoryPreview* InActor)
 {
-	InspectionActor = InActor;
-	InspectionActor->Inventory = this;
+	InventoryPreview = InActor;
+	InventoryPreview->Inventory = this;
 }
 
 TArray<FGuid> UInventoryComponent::GetSortedSlots()

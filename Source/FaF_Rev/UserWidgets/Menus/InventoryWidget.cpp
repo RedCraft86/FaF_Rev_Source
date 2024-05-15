@@ -179,10 +179,10 @@ void UInventoryWidgetBase::UpdateItemInfo()
 		default: break;
 		}
 
-		if (Inventory->GetInspectionActor())
+		if (Inventory->GetInventoryPreview())
 		{
 			ItemPreviewImage->SetVisibility(ESlateVisibility::HitTestInvisible);
-			Inventory->GetInspectionActor()->SetItem(SelectedKey);
+			Inventory->GetInventoryPreview()->SetItem(SelectedKey);
 		}
 	}
 	
@@ -265,10 +265,10 @@ void UInventoryWidgetBase::NativeConstruct()
 	SlotsBox->ClearChildren();
 	UpdateItemInfo();
 
-	if (const AInspectionActor* Actor = GET_INVENTORY->GetInspectionActor())
+	if (const AInventoryPreview* Actor = GET_INVENTORY->GetInventoryPreview())
 	{
 		FSlateBrush Brush = ItemPreviewImage->GetBrush();
-		Brush.SetResourceObject(Actor->InspectionCapture->TextureTarget);
+		Brush.SetResourceObject(Actor->PreviewCapture->TextureTarget);
 		ItemPreviewImage->SetBrush(Brush);
 	}
 }

@@ -984,7 +984,7 @@ void AFRPlayerBase::BeginPlay()
 	GameState = GameMode->GetGameState<AFRGameStateBase>();
 
 	GameMode->Inventory->PlayerChar = this;
-	GameMode->Inventory->SetInspectionActor(InspectionActor);
+	GameMode->Inventory->SetInventoryPreview(InventoryPreview);
 
 	FTimerManager& TM = GetWorldTimerManager();
 	TM.SetTimer(StaminaTimer, this, &AFRPlayerBase::TickStamina, 0.1f, true);
@@ -1088,9 +1088,9 @@ void AFRPlayerBase::OnConstruction(const FTransform& Transform)
 			UltraDynamicSky = Actor;
 		}
 
-		if (Actor->IsA<AInspectionActor>())
+		if (Actor->IsA<AInventoryPreview>())
 		{
-			InspectionActor = Cast<AInspectionActor>(Actor);
+			InventoryPreview = Cast<AInventoryPreview>(Actor);
 		}
 	}
 }
