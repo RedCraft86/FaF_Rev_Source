@@ -16,13 +16,13 @@ public:
 
 	AInventoryItemActor();
 
-	UPROPERTY(VisibleAnywhere, Category = "Subobject")
+	UPROPERTY(VisibleDefaultsOnly, Category = "Subobject")
 		TObjectPtr<USceneComponent> SceneRoot;
 
-	UPROPERTY(VisibleAnywhere, Category = "Subobject")
+	UPROPERTY(VisibleDefaultsOnly, Category = "Subobject")
 		TObjectPtr<class UBoxComponent> BoxCollision;
 
-	UPROPERTY(VisibleAnywhere, Category = "Subobject")
+	UPROPERTY(VisibleDefaultsOnly, Category = "Subobject")
 		TObjectPtr<UInstancedStaticMeshComponent> InstancedStaticMesh;
 
 	UPROPERTY(EditAnywhere, Category = "Settings")
@@ -37,13 +37,13 @@ public:
 	UPROPERTY(EditAnywhere, AdvancedDisplay, Category = "Settings")
 		FInteractionInfo InteractionInfo;
 	
-	UPROPERTY(EditAnywhere, AdvancedDisplay, Category = "Settings")
+	UPROPERTY(EditAnywhere, AdvancedDisplay, Category = "Settings", meta = (MakeEditWidget = true))
 		FVector BoxExtent;
 	
 	UPROPERTY(EditAnywhere, AdvancedDisplay, Category = "Settings")
 		FPrimitiveCollision CollisionData;
 	
-	UPROPERTY(EditAnywhere, AdvancedDisplay, Category = "Settings")
+	UPROPERTY(EditAnywhere, AdvancedDisplay, Category = "Settings", meta = (MakeEditWidget = true))
 		TArray<FTransform> MeshInstances;
 
 protected:

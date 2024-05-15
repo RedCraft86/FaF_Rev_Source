@@ -38,6 +38,8 @@ void UInventoryItemData::PostEditChangeProperty(FPropertyChangedEvent& PropertyC
 		{
 			MeshZoomRange.Y = MeshZoomRange.X + 0.1f;
 		}
+
+		return;
 	}
 	if (PropertyChangedEvent.GetPropertyName() == GET_MEMBER_NAME_CHECKED(ThisClass, MeshZoomRange.Y))
 	{
@@ -46,6 +48,13 @@ void UInventoryItemData::PostEditChangeProperty(FPropertyChangedEvent& PropertyC
 		{
 			MeshZoomRange.X = MeshZoomRange.Y - 0.1f;
 		}
+
+		return;
+	}
+
+	for (FTransformMeshData& Data : MeshData)
+	{
+		Data.FillMaterials();
 	}
 }
 #endif
