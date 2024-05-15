@@ -173,8 +173,11 @@ void AInventoryPreview::Tick(float DeltaSeconds)
 	Super::Tick(DeltaSeconds);
 	if (ItemKey.IsValid())
 	{
-		ZoomValue.Tick(DeltaSeconds);
-		PreviewRoot->SetRelativeScale3D(FVector(ZoomValue.CurrentValue));
+		if (!ZoomValue.IsComplete())
+		{
+			ZoomValue.Tick(DeltaSeconds);
+			PreviewRoot->SetRelativeScale3D(FVector(ZoomValue.CurrentValue));
+		}
 		PreviewCapture->CaptureScene();
 	}
 }
