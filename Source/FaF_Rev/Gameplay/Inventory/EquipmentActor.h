@@ -22,9 +22,9 @@ public:
 	}
 
 	UPROPERTY(VisibleAnywhere, Category = "Subobject")
-		TObjectPtr<USceneComponent> SceneRoot;
+	TObjectPtr<USceneComponent> SceneRoot;
 
-	virtual void OnUse();
-	virtual void OnStartAltUse();
-	virtual void OnEndAltUse();
+	virtual void OnUse() {}
+	virtual void OnStartAltUse() {}
+	virtual void OnEndAltUse() {}
 };

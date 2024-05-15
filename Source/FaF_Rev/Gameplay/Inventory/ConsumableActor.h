@@ -34,6 +34,6 @@ public:
 
 protected:
 
-	UPROPERTY(BlueprintImplementableEvent)
+	UFUNCTION(BlueprintImplementableEvent)
 		bool OnItemUse();
 };
