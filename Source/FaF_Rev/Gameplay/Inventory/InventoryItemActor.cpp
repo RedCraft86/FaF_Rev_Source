@@ -19,8 +19,8 @@ AInventoryItemActor::AInventoryItemActor() : ItemData(nullptr), Amount(1), BoxEx
 	SceneRoot->bVisualizeComponent = true;
 #endif
 
-	BoxCollision = CreateDefaultSubobject<UBoxComponent>("BoxCollision");
-	BoxCollision->SetupAttachment(SceneRoot);
+	CollisionBox = CreateDefaultSubobject<UBoxComponent>("CollisionBox");
+	CollisionBox->SetupAttachment(SceneRoot);
 	
 	InstancedStaticMesh = CreateDefaultSubobject<UInstancedStaticMeshComponent>("InstancedStaticMesh");
 	InstancedStaticMesh->SetCollisionObjectType(ECC_WorldDynamic);
@@ -28,10 +28,10 @@ AInventoryItemActor::AInventoryItemActor() : ItemData(nullptr), Amount(1), BoxEx
 	InstancedStaticMesh->SetupAttachment(SceneRoot);
 
 	InteractionInfo.Label = INVTEXT("Take");
-	CollisionData.SetAllResponses(ECR_Ignore);
-	CollisionData.SetResponse(ECC_Visibility, ECR_Block);
-	CollisionData.CollisionEnabled = ECollisionEnabled::QueryOnly;
-	CollisionData.ObjectType = ECC_WorldDynamic;
+	BoxCollision.SetAllResponses(ECR_Ignore);
+	BoxCollision.SetResponse(ECC_Visibility, ECR_Block);
+	BoxCollision.CollisionEnabled = ECollisionEnabled::QueryOnly;
+	BoxCollision.ObjectType = ECC_WorldDynamic;
 }
 
 bool AInventoryItemActor::GetInteractionInfo_Implementation(FInteractionInfo& Info)
@@ -65,8 +65,8 @@ void AInventoryItemActor::OnBeginInteract_Implementation(AFRPlayerBase* Player, 
 void AInventoryItemActor::OnConstruction(const FTransform& Transform)
 {
 	Super::OnConstruction(Transform);
-	UPrimitiveDataLibrary::SetPrimitiveCollision(BoxCollision, CollisionData);
-	BoxCollision->SetBoxExtent({
+	UPrimitiveDataLibrary::SetPrimitiveCollision(CollisionBox, BoxCollision);
+	CollisionBox->SetBoxExtent({
 		FMath::Max(FMath::Abs(BoxExtent.X), 4.0f),
 		FMath::Max(FMath::Abs(BoxExtent.Y), 4.0f),
 		FMath::Max(FMath::Abs(BoxExtent.Z), 4.0f)

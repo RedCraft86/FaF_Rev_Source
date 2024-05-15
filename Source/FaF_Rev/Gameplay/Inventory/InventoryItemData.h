@@ -55,11 +55,15 @@ public:
 
 	UPROPERTY(EditAnywhere, Category = "ItemData|Consumable", meta = (EditCondition = "ItemType == EInventoryItemType::Consumable", EditConditionHides))
 		FText ConsumeDisplayText;
-
-	UPROPERTY(EditAnywhere, Category = "ItemMesh")
+#if WITH_EDITORONLY_DATA
+	UPROPERTY(EditAnywhere, Category = "ItemData|DisplayMesh")
+		bool bUpdate;
+#endif
+	
+	UPROPERTY(EditAnywhere, Category = "ItemData|DisplayMesh")
 		FVector2D InspectZoomRange;
 	
-	UPROPERTY(EditAnywhere, Category = "ItemMesh")
+	UPROPERTY(EditAnywhere, Category = "ItemData|DisplayMesh")
 		TArray<FTransformMeshData> MeshData;
 	
 	FString GetTypeString() const;
@@ -67,8 +71,6 @@ public:
 
 private:
 #if WITH_EDITOR
-	UFUNCTION(CallInEditor, Category = "MeshInspection") void UpdateMeshData();
 	virtual void PostEditChangeProperty(FPropertyChangedEvent& PropertyChangedEvent) override;
-	virtual void PostEditChangeChainProperty(FPropertyChangedChainEvent& PropertyChangedEvent) override;
 #endif
 };

@@ -28,45 +28,26 @@ FTransformMeshData UInventoryItemData::GetMeshData(const TMap<FName, FString>& I
 }
 
 #if WITH_EDITOR
-void UInventoryItemData::UpdateMeshData()
-{
-	for (FTransformMeshData& Data : MeshData)
-	{
-		Data.FillMaterials();
-	}
-}
-
 void UInventoryItemData::PostEditChangeProperty(FPropertyChangedEvent& PropertyChangedEvent)
 {
 	Super::PostEditChangeProperty(PropertyChangedEvent);
-	if (PropertyChangedEvent.GetPropertyName() == GET_MEMBER_NAME_CHECKED(ThisClass, MeshData))
+	if (PropertyChangedEvent.GetPropertyName() == GET_MEMBER_NAME_CHECKED(ThisClass, InspectZoomRange))
 	{
-		UpdateMeshData();
-	}
-}
-
-void UInventoryItemData::PostEditChangeChainProperty(FPropertyChangedChainEvent& PropertyChangedEvent)
-{
-	Super::PostEditChangeChainProperty(PropertyChangedEvent);
-	if (PropertyChangedEvent.GetMemberPropertyName() == GET_MEMBER_NAME_CHECKED(ThisClass, InspectZoomRange))
-	{
-		if (PropertyChangedEvent.GetPropertyName() == GET_MEMBER_NAME_CHECKED(FVector2D, X))
+		if (InspectZoomRange.X < 0.1f) InspectZoomRange.X = 0.1f;
+		if (InspectZoomRange.X > InspectZoomRange.Y)
 		{
-			if (InspectZoomRange.X < 0.1f) InspectZoomRange.X = 0.1f;
-			if (InspectZoomRange.X > InspectZoomRange.Y)
-			{
-				InspectZoomRange.Y = InspectZoomRange.X + 0.1f;
-			}
-
-		}
-		else if (PropertyChangedEvent.GetPropertyName() == GET_MEMBER_NAME_CHECKED(FVector2D, Y))
-		{
-			if (InspectZoomRange.Y < 0.2f) InspectZoomRange.Y = 0.2f;
-			if (InspectZoomRange.Y < InspectZoomRange.X)
-			{
-				InspectZoomRange.X = InspectZoomRange.Y - 0.1f;
-			}
+			InspectZoomRange.Y = InspectZoomRange.X + 0.1f;
 		}
 	}
+#if WITH_EDITORONLY_DATA
+	else if (bUpdate || PropertyChangedEvent.GetPropertyName() == GET_MEMBER_NAME_CHECKED(ThisClass, MeshData))
+	{
+		bUpdate = false;
+		for (FTransformMeshData& Data : MeshData)
+		{
+			Data.FillMaterials();
+		}
+	}
+#endif
 }
 #endif

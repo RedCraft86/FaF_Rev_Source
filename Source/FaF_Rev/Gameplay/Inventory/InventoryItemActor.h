@@ -20,7 +20,7 @@ public:
 		TObjectPtr<USceneComponent> SceneRoot;
 
 	UPROPERTY(VisibleDefaultsOnly, Category = "Subobject")
-		TObjectPtr<class UBoxComponent> BoxCollision;
+		TObjectPtr<class UBoxComponent> CollisionBox;
 
 	UPROPERTY(VisibleDefaultsOnly, Category = "Subobject")
 		TObjectPtr<UInstancedStaticMeshComponent> InstancedStaticMesh;
@@ -34,17 +34,17 @@ public:
 	UPROPERTY(EditAnywhere, Category = "Settings")
 		TMap<FName, FString> Metadata;
 
+	UPROPERTY(EditAnywhere, Category = "Settings", meta = (MakeEditWidget = true))
+		TArray<FTransform> MeshInstances;
+	
 	UPROPERTY(EditAnywhere, AdvancedDisplay, Category = "Settings")
 		FInteractionInfo InteractionInfo;
-	
-	UPROPERTY(EditAnywhere, AdvancedDisplay, Category = "Settings", meta = (MakeEditWidget = true))
-		TArray<FTransform> MeshInstances;
 
-	UPROPERTY(EditAnywhere, AdvancedDisplay, Category = "Settings|CollisionBox", meta = (MakeEditWidget = true))
+	UPROPERTY(EditAnywhere, AdvancedDisplay, Category = "Settings", meta = (MakeEditWidget = true))
 		FVector BoxExtent;
 	
-	UPROPERTY(EditAnywhere, AdvancedDisplay, Category = "Settings|CollisionBox")
-		FPrimitiveCollision CollisionData;
+	UPROPERTY(EditAnywhere, AdvancedDisplay, Category = "Settings")
+		FPrimitiveCollision BoxCollision;
 
 protected:
 	
