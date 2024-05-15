@@ -246,10 +246,10 @@ struct FPlayerStaminaDifficulty
 {
 	GENERATED_BODY()
 	
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "PlayerFootsteps", meta = (ClampMin = 0.1f, UIMin = 0.1f))
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "PlayerFootsteps", meta = (ClampMin = 0.1f, UIMin = 0.1f, ReadOnlyKeys))
 		TMap<EDifficultyMode, float> DrainMultipliers;
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "PlayerFootsteps", meta = (ClampMin = 0.1f, UIMin = 0.1f))
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "PlayerFootsteps", meta = (ClampMin = 0.1f, UIMin = 0.1f, ReadOnlyKeys))
 		TMap<EDifficultyMode, float> GainMultipliers;
 
 	FPlayerStaminaDifficulty() : DrainMultipliers({}), GainMultipliers({}) {}
@@ -271,8 +271,8 @@ struct FPlayerStaminaDifficulty
 #if WITH_EDITOR
 		for (const EDifficultyMode Mode : TEnumRange<EDifficultyMode>())
 		{
-			if (!DrainMultipliers.Contains(Mode)) DrainMultipliers.Add(Mode);
-			if (!GainMultipliers.Contains(Mode)) GainMultipliers.Add(Mode);
+			if (!DrainMultipliers.Contains(Mode)) DrainMultipliers.Add(Mode, 1.0f);
+			if (!GainMultipliers.Contains(Mode)) GainMultipliers.Add(Mode, 1.0f);
 		}
 #endif
 	}
@@ -316,6 +316,14 @@ namespace Player
 
 		inline static TSet All = {Pause, Turn, Move, Run, Crouch, Lean,
 			Inventory, HideQuests, Interact, Equipment, Equipment_Alt};
+	}
+
+	namespace InternalKeys
+	{
+		inline static FString RunFOV			= TEXT("Internal_RunFOV");
+		inline static FString CrouchFOV			= TEXT("Internal_CrouchFOV");
+		inline static FString ChaseStamina		= TEXT("Internal_ChaseStamina");
+		inline static FString DifficultyStamina	= TEXT("Internal_DifficultyStamina");
 	}
 
 	static float LeanStateToFloat(const EPlayerLeanState& State)

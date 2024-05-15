@@ -25,12 +25,6 @@
 #include "LevelSequence.h"
 #include "EngineUtils.h"
 
-
-#define RUN_FOV_KEY				TEXT("Internal_RunFOV")
-#define CROUCH_FOV_KEY			TEXT("Internal_CrouchFOV")
-#define CHASE_STAMINA_KEY		TEXT("Internal_ChaseStamina")
-#define DIFFICULTY_STAMINA_KEY	TEXT("Internal_StaminaDifficulty")
-
 #define INPUT_CHECK() !ShouldLock() && !IsGamePaused()
 #define BIND_INPUT_ACTION(Component, Type, Event, Function) \
 	if (const UInputAction* Action = InputActions.FindRef(Player::InputActions::Type)) \
@@ -314,12 +308,12 @@ void AFRPlayerBase::SetCrouchState(const bool bInState)
 		if (bCrouching)
 		{
 			SetStateFlag(PSF_Crouching);
-			AddFieldOfViewModifier(CROUCH_FOV_KEY, CrouchWalkFOV);
+			AddFieldOfViewModifier(Player::InternalKeys::CrouchFOV, CrouchWalkFOV);
 		}
 		else
 		{
 			UnsetStateFlag(PSF_Crouching);
-			RemoveFieldOfViewModifier(CROUCH_FOV_KEY);
+			RemoveFieldOfViewModifier(Player::InternalKeys::CrouchFOV);
 		}
 
 		HalfHeightValue.TargetValue = bCrouching ? HalfHeights.Y : HalfHeights.X;
@@ -570,7 +564,7 @@ void AFRPlayerBase::EnemyStackChanged()
 {
 	if (EnemyStack.IsEmpty())
 	{
-		RemoveStaminaDrainModifier(CHASE_STAMINA_KEY);
+		RemoveStaminaDrainModifier(Player::InternalKeys::ChaseStamina);
 		GameState->SetMusicMode(EEnemyAIMode::None);
 		EnemyStackChangedEvent(EEnemyAIMode::None);
 		return;
@@ -580,7 +574,7 @@ void AFRPlayerBase::EnemyStackChanged()
 	EnemyStack.GenerateValueArray(States);
 	if (States.Contains(EEnemyAIMode::Chase))
 	{
-		AddStaminaDrainModifier(CHASE_STAMINA_KEY, AdrenalineReductionMulti);
+		AddStaminaDrainModifier(Player::InternalKeys::ChaseStamina, AdrenalineReductionMulti);
 		GameState->SetMusicMode(EEnemyAIMode::Chase);
 		EnemyStackChangedEvent(EEnemyAIMode::Chase);
 	}
@@ -591,14 +585,14 @@ void AFRPlayerBase::EnemyStackChanged()
 	}
 	else if (States.Contains(EEnemyAIMode::Suspicion))
 	{
-		RemoveStaminaDrainModifier(CHASE_STAMINA_KEY);
+		RemoveStaminaDrainModifier(Player::InternalKeys::ChaseStamina);
 		GameState->SetMusicMode(EEnemyAIMode::Suspicion);
 		EnemyStackChangedEvent(EEnemyAIMode::Suspicion);
 	}
 	else
 	{
 		// Uh-oh! Something broke though. We shouldn't have an Enemy in the stack with their AI Mode saved as NONE
-		RemoveStaminaDrainModifier(CHASE_STAMINA_KEY);
+		RemoveStaminaDrainModifier(Player::InternalKeys::ChaseStamina);
 		GameState->SetMusicMode(EEnemyAIMode::None);
 		EnemyStackChangedEvent(EEnemyAIMode::None);
 	}
@@ -763,14 +757,14 @@ void AFRPlayerBase::SlowTick(const float DeltaTime)
 {
 	if (IsRunning())
 	{
-		if (!FieldOfView.Modifiers.Contains(RUN_FOV_KEY))
+		if (!FieldOfView.Modifiers.Contains(Player::InternalKeys::RunFOV))
 		{
-			FieldOfView.Modifiers.Add(RUN_FOV_KEY, RunningFOV);
+			FieldOfView.Modifiers.Add(Player::InternalKeys::RunFOV, RunningFOV);
 		}
 	}
-	else if (FieldOfView.Modifiers.Contains(RUN_FOV_KEY))
+	else if (FieldOfView.Modifiers.Contains(Player::InternalKeys::RunFOV))
 	{
-		FieldOfView.Modifiers.Remove(RUN_FOV_KEY);
+		FieldOfView.Modifiers.Remove(Player::InternalKeys::RunFOV);
 	}
 	
 	GetCharacterMovement()->MaxWalkSpeed = MoveSpeedTarget * MoveSpeedMultiplier.Evaluate();
@@ -967,8 +961,8 @@ void AFRPlayerBase::OnSettingsApply()
 
 void AFRPlayerBase::OnDifficultyChanged(const EDifficultyMode InDifficulty)
 {
-	AddStaminaDrainModifier(DIFFICULTY_STAMINA_KEY, StaminaDifficulty.GetDrain(InDifficulty));
-	AddStaminaGainModifier(DIFFICULTY_STAMINA_KEY, StaminaDifficulty.GetGain(InDifficulty));
+	AddStaminaDrainModifier(Player::InternalKeys::DifficultyStamina, StaminaDifficulty.GetDrain(InDifficulty));
+	AddStaminaGainModifier(Player::InternalKeys::DifficultyStamina, StaminaDifficulty.GetGain(InDifficulty));
 }
 
 void AFRPlayerBase::BeginPlay()
