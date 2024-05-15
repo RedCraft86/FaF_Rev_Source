@@ -48,7 +48,7 @@ void UInventoryItemData::PostEditChangeProperty(FPropertyChangedEvent& PropertyC
 void UInventoryItemData::PostEditChangeChainProperty(FPropertyChangedChainEvent& PropertyChangedEvent)
 {
 	Super::PostEditChangeChainProperty(PropertyChangedEvent);
-	if (PropertyChangedEvent.MemberProperty() == GET_MEMBER_NAME_CHECKED(ThisClass, InspectZoomRange))
+	if (PropertyChangedEvent.GetMemberPropertyName() == GET_MEMBER_NAME_CHECKED(ThisClass, InspectZoomRange))
 	{
 		if (PropertyChangedEvent.GetPropertyName() == GET_MEMBER_NAME_CHECKED(FVector2D, X))
 		{
