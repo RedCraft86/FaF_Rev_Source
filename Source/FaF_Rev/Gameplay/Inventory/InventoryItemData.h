@@ -27,7 +27,7 @@ public:
 
 	UInventoryItemData()
 		: Priority(1), DisplayName(INVTEXT("Unknown Item")), Description(INVTEXT("Unknown Item"))
-		, ItemType(EInventoryItemType::Basic) , ViewImage(nullptr), ViewText(FText::GetEmpty())
+		, ItemType(EInventoryItemType::Basic), ViewImage(nullptr), ViewText(FText::GetEmpty())
 		, EquipmentClass(nullptr), bExpectSaveData(true), ConsumableClass(nullptr)
 		, ConsumeDisplayText(INVTEXT("Use")), PreviewZoomRange(0.1f, 1.5f), MeshData({})
 	{}
@@ -41,9 +41,9 @@ public:
 	UPROPERTY(EditAnywhere, Category = "ItemData", meta = (DisplayPriority = -9, MultiLine = true))
 		FText Description;
 
-	UPROPERTY(EditAnywhere, Category = "TypeData", meta = (InlineCategoryProperty))
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "TypeData", meta = (DisplayPriority = -1))
 		EInventoryItemType ItemType;
-
+	
 	UPROPERTY(EditAnywhere, Category = "TypeData", meta = (EditCondition = "ItemType == EInventoryItemType::Viewable", EditConditionHides))
 		TObjectPtr<UTexture2D> ViewImage;
 
@@ -72,7 +72,7 @@ public:
 	
 	UPROPERTY(EditAnywhere, Category = "DisplayMesh")
 		TArray<FTransformMeshData> MeshData;
-	
+
 	FString GetTypeString() const;
 	FTransformMeshData GetMeshData(const TMap<FName, FString>& InMetadata) const;
 
