@@ -44,10 +44,10 @@ void UInventoryItemData::PostEditChangeProperty(FPropertyChangedEvent& PropertyC
 	}
 #endif
 	
-	if (InspectZoomRange.X < 0.1f) InspectZoomRange.X = 0.1f;
-	if (InspectZoomRange.X > InspectZoomRange.Y)
+	if (PreviewZoomRange.X < 0.1f) PreviewZoomRange.X = 0.1f;
+	if (PreviewZoomRange.X > PreviewZoomRange.Y)
 	{
-		InspectZoomRange.Y = InspectZoomRange.X + 0.1f;
+		PreviewZoomRange.Y = PreviewZoomRange.X + 0.1f;
 	}
 }
 #endif

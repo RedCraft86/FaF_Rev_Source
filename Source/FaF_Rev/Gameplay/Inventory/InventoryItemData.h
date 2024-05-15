@@ -27,8 +27,8 @@ public:
 	UInventoryItemData()
 		: Priority(1), DisplayName(INVTEXT("Unknown Item")), Description(INVTEXT("Unknown Item"))
 		, ItemType(EInventoryItemType::Objective) , ViewImage(nullptr), ViewText(FText::GetEmpty())
-		, EquipmentClass(nullptr), ConsumableClass(nullptr), ConsumeDisplayText(INVTEXT("Use"))
-		, InspectZoomRange(0.1f, 1.5f), MeshData({})
+		, EquipmentClass(nullptr), bExpectSaveData(true), ConsumableClass(nullptr)
+		, ConsumeDisplayText(INVTEXT("Use")), PreviewZoomRange(0.1f, 1.5f), MeshData({})
 	{}
 
 	UPROPERTY(EditAnywhere, Category = "ItemData", meta = (DisplayPriority = -9))
@@ -37,36 +37,39 @@ public:
 	UPROPERTY(EditAnywhere, Category = "ItemData", meta = (DisplayPriority = -9))
 		FText DisplayName;
 
-	UPROPERTY(EditAnywhere, Category = "ItemData", meta = (MultiLine = true, DisplayPriority = -9))
+	UPROPERTY(EditAnywhere, Category = "ItemData", meta = (DisplayPriority = -9, MultiLine = true))
 		FText Description;
 
-	UPROPERTY(EditAnywhere, Category = "ItemData", meta = (DisplayPriority = -9))
+	UPROPERTY(EditAnywhere, Category = "TypeData", meta = (InlineCategoryProperty))
 		EInventoryItemType ItemType;
 
-	UPROPERTY(EditAnywhere, Category = "ItemData|Viewable", meta = (EditCondition = "ItemType == EInventoryItemType::Viewable", EditConditionHides))
+	UPROPERTY(EditAnywhere, Category = "TypeData", meta = (EditCondition = "ItemType == EInventoryItemType::Viewable", EditConditionHides))
 		TObjectPtr<UTexture2D> ViewImage;
 
-	UPROPERTY(EditAnywhere, Category = "ItemData|Viewable", meta = (EditCondition = "ItemType == EInventoryItemType::Viewable", EditConditionHides, MultiLine = true))
+	UPROPERTY(EditAnywhere, Category = "TypeData", meta = (EditCondition = "ItemType == EInventoryItemType::Viewable", EditConditionHides, MultiLine = true))
 		FText ViewText;
 	
-	UPROPERTY(EditAnywhere, Category = "ItemData|Equipment", meta = (EditCondition = "ItemType == EInventoryItemType::Equipment", EditConditionHides))
+	UPROPERTY(EditAnywhere, Category = "TypeData", meta = (EditCondition = "ItemType == EInventoryItemType::Equipment", EditConditionHides))
 		TSubclassOf<AEquipmentActor> EquipmentClass;
+
+	UPROPERTY(EditAnywhere, Category = "TypeData", meta = (EditCondition = "ItemType == EInventoryItemType::Equipment", EditConditionHides))
+		bool bExpectSaveData;
 	
-	UPROPERTY(EditAnywhere, Category = "ItemData|Consumable", meta = (EditCondition = "ItemType == EInventoryItemType::Consumable", EditConditionHides))
+	UPROPERTY(EditAnywhere, Category = "TypeData", meta = (EditCondition = "ItemType == EInventoryItemType::Consumable", EditConditionHides))
 		TSubclassOf<AConsumableActor> ConsumableClass;
 
-	UPROPERTY(EditAnywhere, Category = "ItemData|Consumable", meta = (EditCondition = "ItemType == EInventoryItemType::Consumable", EditConditionHides))
+	UPROPERTY(EditAnywhere, Category = "TypeData", meta = (EditCondition = "ItemType == EInventoryItemType::Consumable", EditConditionHides))
 		FText ConsumeDisplayText;
 	
 #if WITH_EDITORONLY_DATA
-	UPROPERTY(EditAnywhere, Category = "ItemData|DisplayMesh")
+	UPROPERTY(EditAnywhere, Category = "DisplayMesh")
 		bool bUpdate = false;
 #endif
 	
-	UPROPERTY(EditAnywhere, Category = "ItemData|DisplayMesh")
-		FVector2D InspectZoomRange;
+	UPROPERTY(EditAnywhere, Category = "DisplayMesh")
+		FVector2D PreviewZoomRange;
 	
-	UPROPERTY(EditAnywhere, Category = "ItemData|DisplayMesh")
+	UPROPERTY(EditAnywhere, Category = "DisplayMesh")
 		TArray<FTransformMeshData> MeshData;
 	
 	FString GetTypeString() const;

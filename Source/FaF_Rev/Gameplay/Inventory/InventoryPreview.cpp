@@ -101,7 +101,7 @@ void AInventoryPreview::SetItem(const FGuid& InItemKey)
 		PreviewMesh->SetRelativeTransform(MeshData.Transform);
 		PreviewMesh->SetHiddenInGame(false);
 		
-		ZoomRange = ItemData->InspectZoomRange;
+		ZoomRange = ItemData->PreviewZoomRange;
 		ZoomValue.TargetValue = (ZoomRange.X + ZoomRange.Y) * 0.5f;
 		ZoomValue.SnapToTarget();
 		
