@@ -70,7 +70,7 @@ void UInventoryComponent::EquipmentUseAlt(const bool bPressed) const
 void UInventoryComponent::SetInventoryPreview(AInventoryPreview* InActor)
 {
 	InventoryPreview = InActor;
-	InventoryPreview->Inventory = this;
+	if(InventoryPreview) InventoryPreview->Inventory = this;
 }
 
 TArray<FGuid> UInventoryComponent::GetSortedSlots()

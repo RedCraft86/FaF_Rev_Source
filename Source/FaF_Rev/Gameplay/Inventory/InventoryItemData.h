@@ -2,6 +2,8 @@
 
 #pragma once
 
+#include "EquipmentActor.h"
+#include "ConsumableActor.h"
 #include "Data/PrimitiveData.h"
 #include "Inventory/InventoryItemDataBase.h"
 #include "InventoryItemData.generated.h"
@@ -48,17 +50,17 @@ public:
 		FText ViewText;
 	
 	UPROPERTY(EditAnywhere, Category = "ItemData|Equipment", meta = (EditCondition = "ItemType == EInventoryItemType::Equipment", EditConditionHides))
-		TSubclassOf<class AEquipmentActor> EquipmentClass;
+		TSubclassOf<AEquipmentActor> EquipmentClass;
 	
 	UPROPERTY(EditAnywhere, Category = "ItemData|Consumable", meta = (EditCondition = "ItemType == EInventoryItemType::Consumable", EditConditionHides))
-		TSubclassOf<class AConsumableActor> ConsumableClass;
+		TSubclassOf<AConsumableActor> ConsumableClass;
 
 	UPROPERTY(EditAnywhere, Category = "ItemData|Consumable", meta = (EditCondition = "ItemType == EInventoryItemType::Consumable", EditConditionHides))
 		FText ConsumeDisplayText;
 	
 #if WITH_EDITORONLY_DATA
 	UPROPERTY(EditAnywhere, Category = "ItemData|DisplayMesh")
-		bool bUpdate;
+		bool bUpdate = false;
 #endif
 	
 	UPROPERTY(EditAnywhere, Category = "ItemData|DisplayMesh")
