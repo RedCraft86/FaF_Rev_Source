@@ -2,8 +2,8 @@
 
 #pragma once
 
+#include "DifficultyData.h"
 #include "UObject/Object.h"
-#include "GameplayTagContainer.h"
 #include "Inventory/InventoryComponent.h"
 #include "SaveObjects.generated.h"
 
@@ -49,19 +49,22 @@ class FAF_REV_API UGameSaveObject final : public USaveObjectBase
 
 public:
 
-	UGameSaveObject() : PlayTime(0.0f), Sequence({}), Inventory({}) {}
+	UGameSaveObject() : Difficulty(EDifficultyMode::Normal), Inventory({}), Sequence({}), PlayTime(0.0f) {}
 
 	UPROPERTY(BlueprintReadOnly, Category = "SaveObject")
-		float PlayTime;
+		EDifficultyMode Difficulty;
+	
+	UPROPERTY(BlueprintReadOnly, Category = "SaveObject")
+		TSet<FName> TransientKeys;
+
+	UPROPERTY(BlueprintReadOnly, Category = "SaveObject")
+		TMap<FName, FInventorySaveData> Inventory;
 	
 	UPROPERTY(BlueprintReadOnly, Category = "SaveObject")
 		TArray<uint8> Sequence;
 	
 	UPROPERTY(BlueprintReadOnly, Category = "SaveObject")
-		TMap<FName, FInventorySaveData> Inventory;
-
-	UPROPERTY(BlueprintReadOnly, Category = "SaveObject")
-		TSet<FName> TransientKeys;
+		float PlayTime;
 
 	virtual void DeleteFile() override;
 

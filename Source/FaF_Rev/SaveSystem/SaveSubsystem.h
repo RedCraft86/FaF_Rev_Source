@@ -12,6 +12,9 @@ class FAF_REV_API USaveSubsystem final : public UGameInstanceSubsystem
 	GENERATED_BODY()
 
 public:
+	
+	UPROPERTY(BlueprintAssignable, DisplayName = "On Difficulty Changed")
+		FOnDifficultyChangedBP OnDifficultyChangedBP;
 
 	UFUNCTION(BlueprintCallable, BlueprintPure = false, Category = "SaveManager")
 		void SaveGameData(const float InPlayTime = 0.0f) const;
@@ -27,6 +30,12 @@ public:
 
 	UFUNCTION(BlueprintPure, Category = "SaveManager")
 		bool HasTransientKey(const FName InKey) const;
+
+	UFUNCTION(BlueprintCallable, BlueprintPure = false, Category = "SaveManager")
+		void SetDifficulty(const EDifficultyMode InDifficulty) const;
+
+	UFUNCTION(BlueprintPure, Category = "SaveManager")
+		EDifficultyMode GetDifficulty() const;
 	
 	UFUNCTION(BlueprintCallable, BlueprintPure = false, Category = "SaveManager")
 		void SaveGlobalData() const;
@@ -48,9 +57,13 @@ public:
 
 	UFUNCTION(BlueprintCallable, BlueprintPure = false, Category = "SaveManager")
 		FDateTime GetEndingReachedTime(const FName InEndingID) const;
+	
 
+	
 	DECLARE_MULTICAST_DELEGATE(FPromptSaveIcon)
 	FPromptSaveIcon OnSaveStarted;
+	
+	FOnDifficultyChanged OnDifficultyChanged;
 	
 	UGameSaveObject* GetGameDataObject() const { return GameDataObject; }
 	UGlobalSaveObject* GetGlobalDataObject() const { return GlobalDataObject; }

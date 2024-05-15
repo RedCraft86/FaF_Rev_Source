@@ -3,7 +3,7 @@
 #pragma once
 
 
-
+#include "DifficultyData.h"
 #include "FaF_Rev.h"
 #include "Data/LightingData.h"
 #include "Engine/AssetManager.h"
@@ -238,6 +238,44 @@ struct FPlayerFootsteps
 		WalkSounds.LoadAssetsAsync();
 		RunSounds.LoadAssetsAsync();
 		CrouchSounds.LoadAssetsAsync();
+	}
+};
+
+USTRUCT(BlueprintInternalUseOnly)
+struct FPlayerStaminaDifficulty
+{
+	GENERATED_BODY()
+	
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "PlayerFootsteps", meta = (ClampMin = 0.1f, UIMin = 0.1f))
+		TMap<EDifficultyMode, float> DrainMultipliers;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "PlayerFootsteps", meta = (ClampMin = 0.1f, UIMin = 0.1f))
+		TMap<EDifficultyMode, float> GainMultipliers;
+
+	FPlayerStaminaDifficulty() : DrainMultipliers({}), GainMultipliers({}) {}
+	
+	float GetDrain(const EDifficultyMode InDifficulty) const
+	{
+		if (!DrainMultipliers.Contains(InDifficulty)) return 1.0f;
+		return DrainMultipliers.FindRef(InDifficulty);
+	}
+	
+	float GetGain(const EDifficultyMode InDifficulty) const
+	{
+		if (!GainMultipliers.Contains(InDifficulty)) return 1.0f;
+		return GainMultipliers.FindRef(InDifficulty);
+	}
+
+
+	void CheckEntries()
+	{
+#if WITH_EDITOR
+		for (const EDifficultyMode Mode : TEnumRange<EDifficultyMode>())
+		{
+			if (!DrainMultipliers.Contains(Mode)) DrainMultipliers.Add(Mode);
+			if (!GainMultipliers.Contains(Mode)) GainMultipliers.Add(Mode);
+		}
+#endif
 	}
 };
 

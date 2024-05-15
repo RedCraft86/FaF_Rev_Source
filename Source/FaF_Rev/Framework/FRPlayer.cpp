@@ -10,6 +10,7 @@
 #include "FRPlayerController.h"
 #include "Core/NarrativeWidget.h"
 #include "Libraries/GTMathLibrary.h"
+#include "SaveSystem/SaveSubsystem.h"
 #include "GameSettings/GameSettings.h"
 #include "Inventory/InventoryComponent.h"
 #include "Interaction/InteractionInterface.h"
@@ -24,9 +25,11 @@
 #include "LevelSequence.h"
 #include "EngineUtils.h"
 
-#define RUN_FOV_KEY			FName(TEXT("Internal_RunFOV"))
-#define CROUCH_FOV_KEY		FName(TEXT("Internal_CrouchFOV"))
-#define CHASE_STAMINA_KEY	FName(TEXT("Internal_ChaseStamina"))
+
+#define RUN_FOV_KEY				TEXT("Internal_RunFOV")
+#define CROUCH_FOV_KEY			TEXT("Internal_CrouchFOV")
+#define CHASE_STAMINA_KEY		TEXT("Internal_ChaseStamina")
+#define DIFFICULTY_STAMINA_KEY	TEXT("Internal_StaminaDifficulty")
 
 #define INPUT_CHECK() !ShouldLock() && !IsGamePaused()
 #define BIND_INPUT_ACTION(Component, Type, Event, Function) \
@@ -379,52 +382,52 @@ bool AFRPlayerBase::GetInteractionState(FPlayerInteraction& Data) const
 	return InteractData.IsValidData();
 }
 
-void AFRPlayerBase::AddSensitivityModifier(const FName InKey, const float InValue)
+void AFRPlayerBase::AddSensitivityModifier(const FString InKey, const float InValue)
 {
 	SensitivityMulti.Modifiers.Add(InKey, InValue);
 }
 
-void AFRPlayerBase::RemoveSensitivityModifier(const FName InKey)
+void AFRPlayerBase::RemoveSensitivityModifier(const FString InKey)
 {
 	SensitivityMulti.Modifiers.Remove(InKey);
 }
 
-void AFRPlayerBase::AddFieldOfViewModifier(const FName InKey, const float InValue)
+void AFRPlayerBase::AddFieldOfViewModifier(const FString InKey, const float InValue)
 {
 	FieldOfView.Modifiers.Add(InKey, InValue);
 }
 
-void AFRPlayerBase::RemoveFieldOfViewModifier(const FName InKey)
+void AFRPlayerBase::RemoveFieldOfViewModifier(const FString InKey)
 {
 	FieldOfView.Modifiers.Remove(InKey);
 }
 
-void AFRPlayerBase::AddMoveSpeedModifier(const FName InKey, const float InValue)
+void AFRPlayerBase::AddMoveSpeedModifier(const FString InKey, const float InValue)
 {
 	MoveSpeedMultiplier.Modifiers.Add(InKey, InValue);
 }
 
-void AFRPlayerBase::RemoveMoveSpeedModifier(const FName InKey)
+void AFRPlayerBase::RemoveMoveSpeedModifier(const FString InKey)
 {
 	MoveSpeedMultiplier.Modifiers.Remove(InKey);
 }
 
-void AFRPlayerBase::AddStaminaDrainModifier(const FName InKey, const float InValue)
+void AFRPlayerBase::AddStaminaDrainModifier(const FString InKey, const float InValue)
 {
 	StaminaDrainRate.Modifiers.Add(InKey, InValue);
 }
 
-void AFRPlayerBase::RemoveStaminaDrainModifier(const FName InKey)
+void AFRPlayerBase::RemoveStaminaDrainModifier(const FString InKey)
 {
 	StaminaDrainRate.Modifiers.Remove(InKey);
 }
 
-void AFRPlayerBase::AddStaminaGainModifier(const FName InKey, const float InValue)
+void AFRPlayerBase::AddStaminaGainModifier(const FString InKey, const float InValue)
 {
 	StaminaGainRate.Modifiers.Add(InKey, InValue);
 }
 
-void AFRPlayerBase::RemoveStaminaGainModifier(const FName InKey)
+void AFRPlayerBase::RemoveStaminaGainModifier(const FString InKey)
 {
 	StaminaGainRate.Modifiers.Remove(InKey);
 }
@@ -962,6 +965,12 @@ void AFRPlayerBase::OnSettingsApply()
 	PlayerCamera->SetFieldOfView(FOVValue.CurrentValue);
 }
 
+void AFRPlayerBase::OnDifficultyChanged(const EDifficultyMode InDifficulty)
+{
+	AddStaminaDrainModifier(DIFFICULTY_STAMINA_KEY, StaminaDifficulty.GetDrain(InDifficulty));
+	AddStaminaGainModifier(DIFFICULTY_STAMINA_KEY, StaminaDifficulty.GetGain(InDifficulty));
+}
+
 void AFRPlayerBase::BeginPlay()
 {
 	Super::BeginPlay();
@@ -993,6 +1002,12 @@ void AFRPlayerBase::BeginPlay()
 	if (!HasControlFlag(PCF_UseStamina))
 	{
 		TM.PauseTimer(StaminaTimer);
+	}
+
+	if (USaveSubsystem* SaveSystem = USaveSubsystem::Get(this))
+	{
+		OnDifficultyChanged(SaveSystem->GetDifficulty());
+		SaveSystem->OnDifficultyChanged.AddUObject(this, &AFRPlayerBase::OnDifficultyChanged);
 	}
 
 	UGameSettings* Settings = UGameSettings::Get();
@@ -1073,6 +1088,7 @@ void AFRPlayerBase::OnConstruction(const FTransform& Transform)
 	Super::OnConstruction(Transform);
 	
 	FootstepSounds.CheckEntries();
+	StaminaDifficulty.CheckEntries();
 	ULightingDataLibrary::SetPointLightProperties(PlayerLight, PlayerLightSettings);
 	
 	for (const FName& ActionName : Player::InputActions::All)

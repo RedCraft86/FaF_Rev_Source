@@ -2,6 +2,9 @@
 
 #include "SaveSubsystem.h"
 
+#define DIFFICULTY_CHANGED(Difficulty) \
+	{ OnDifficultyChanged.Broadcast(Difficulty); OnDifficultyChangedBP.Broadcast(Difficulty); }
+
 void USaveSubsystem::SaveGameData(const float InPlayTime) const
 {
 	if (GameDataObject)
@@ -31,6 +34,24 @@ bool USaveSubsystem::HasTransientKey(const FName InKey) const
 {
 	if (GameDataObject) return GameDataObject->TransientKeys.Contains(InKey);
 	return false;
+}
+
+void USaveSubsystem::SetDifficulty(const EDifficultyMode InDifficulty) const
+{
+	if (GameDataObject)
+	{
+		if (InDifficulty != GameDataObject->Difficulty)
+		{
+			GameDataObject->Difficulty = InDifficulty;
+			DIFFICULTY_CHANGED(InDifficulty);
+		}
+	}
+}
+
+EDifficultyMode USaveSubsystem::GetDifficulty() const
+{
+	if (GameDataObject) return GameDataObject->Difficulty;
+	return EDifficultyMode::Normal;
 }
 
 void USaveSubsystem::SaveGlobalData() const

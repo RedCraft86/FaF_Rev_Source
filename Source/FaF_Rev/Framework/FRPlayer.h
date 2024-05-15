@@ -97,6 +97,9 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Settings|Running|Stamina")
 		FGTModifiableMultiplier StaminaGainRate;
 
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Settings|Running|Stamina")
+		FPlayerStaminaDifficulty StaminaDifficulty;
+
 	// Percent of stamina drain for when the player is in a chase: 0.1 -> 1.0
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Settings|Running|Stamina", meta = (ClampMin = 0.1f, UIMin = 0.1f))
 		float AdrenalineReductionMulti;
@@ -256,34 +259,34 @@ public:
 		bool GetInteractionState(FPlayerInteraction& Data) const;
 
 	UFUNCTION(BlueprintCallable, Category = "Player")
-		void AddSensitivityModifier(const FName InKey, const float InValue);
+		void AddSensitivityModifier(const FString InKey, const float InValue);
 
 	UFUNCTION(BlueprintCallable, Category = "Player")
-		void RemoveSensitivityModifier(const FName InKey);
+		void RemoveSensitivityModifier(const FString InKey);
 
 	UFUNCTION(BlueprintCallable, Category = "Player")
-		void AddFieldOfViewModifier(const FName InKey, const float InValue);
+		void AddFieldOfViewModifier(const FString InKey, const float InValue);
 
 	UFUNCTION(BlueprintCallable, Category = "Player")
-		void RemoveFieldOfViewModifier(const FName InKey);
+		void RemoveFieldOfViewModifier(const FString InKey);
 
 	UFUNCTION(BlueprintCallable, Category = "Player")
-		void AddMoveSpeedModifier(const FName InKey, const float InValue);
+		void AddMoveSpeedModifier(const FString InKey, const float InValue);
 
 	UFUNCTION(BlueprintCallable, Category = "Player")
-		void RemoveMoveSpeedModifier(const FName InKey);
+		void RemoveMoveSpeedModifier(const FString InKey);
 
 	UFUNCTION(BlueprintCallable, Category = "Player")
-		void AddStaminaDrainModifier(const FName InKey, const float InValue);
+		void AddStaminaDrainModifier(const FString InKey, const float InValue);
 
 	UFUNCTION(BlueprintCallable, Category = "Player")
-		void RemoveStaminaDrainModifier(const FName InKey);
+		void RemoveStaminaDrainModifier(const FString InKey);
 
 	UFUNCTION(BlueprintCallable, Category = "Player")
-		void AddStaminaGainModifier(const FName InKey, const float InValue);
+		void AddStaminaGainModifier(const FString InKey, const float InValue);
 
 	UFUNCTION(BlueprintCallable, Category = "Player")
-		void RemoveStaminaGainModifier(const FName InKey);
+		void RemoveStaminaGainModifier(const FString InKey);
 
 	UFUNCTION(BlueprintCallable, Category = "Player")
 		void SetLockOnTarget(const USceneComponent* InComponent);
@@ -378,6 +381,8 @@ protected:
 	void InputBinding_Equipment_Alt(const FInputActionValue& InValue);
 
 	void OnSettingsApply();
+	void OnDifficultyChanged(const EDifficultyMode InDifficulty);
+	
 	virtual void BeginPlay() override;
 	virtual void Tick(float DeltaTime) override;
 	virtual void OnConstruction(const FTransform& Transform) override;

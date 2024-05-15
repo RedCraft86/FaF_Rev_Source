@@ -99,17 +99,20 @@ void USaveObjectBase::DeleteFile()
 void UGameSaveObject::DeleteFile()
 {
 	Super::DeleteFile();
-	PlayTime = 0.0f;
-	Sequence.Empty();
+	Difficulty = EDifficultyMode::Normal;
+	TransientKeys = {};
 	Inventory.Empty();
+	Sequence.Empty();
+	PlayTime = 0.0f;
 }
 
 void UGameSaveObject::SerializeData(FArchive& Ar)
 {
-	Ar << PlayTime;
-	Ar << Sequence;
-	Ar << Inventory;
+	Ar << Difficulty;
 	Ar << TransientKeys;
+	Ar << Inventory;
+	Ar << Sequence;
+	Ar << PlayTime;
 }
 
 void UGlobalSaveObject::DeleteFile()
