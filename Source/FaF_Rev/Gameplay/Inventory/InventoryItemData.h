@@ -11,6 +11,7 @@
 UENUM(BlueprintType)
 enum class EInventoryItemType : uint8
 {
+	Basic,
 	Objective,
 	Viewable,
 	Consumable,
@@ -26,7 +27,7 @@ public:
 
 	UInventoryItemData()
 		: Priority(1), DisplayName(INVTEXT("Unknown Item")), Description(INVTEXT("Unknown Item"))
-		, ItemType(EInventoryItemType::Objective) , ViewImage(nullptr), ViewText(FText::GetEmpty())
+		, ItemType(EInventoryItemType::Basic) , ViewImage(nullptr), ViewText(FText::GetEmpty())
 		, EquipmentClass(nullptr), bExpectSaveData(true), ConsumableClass(nullptr)
 		, ConsumeDisplayText(INVTEXT("Use")), PreviewZoomRange(0.1f, 1.5f), MeshData({})
 	{}

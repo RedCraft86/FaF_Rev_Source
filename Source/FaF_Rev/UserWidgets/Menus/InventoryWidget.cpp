@@ -144,7 +144,7 @@ void UInventoryWidgetBase::UpdateItemInfo()
 		
 		ItemTitleText->SetText(ItemData->DisplayName);
 		ItemDescText->SetText(ItemData->Description);
-		ItemTypeText->SetText(FText::FromString(TEXT("Type: ") + ItemData->GetTypeString()));
+		ItemTypeText->SetText(FText::FromString(TEXT("Type: ") + ItemData->GetTypeString() + TEXT(" Item")));
 		if (bEquipped)
 		{
 			EquipStateBox->SetVisibility(ESlateVisibility::HitTestInvisible);

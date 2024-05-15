@@ -8,10 +8,11 @@ FString UInventoryItemData::GetTypeString() const
 {
 	switch (ItemType)
 	{
+	case EInventoryItemType::Objective: return TEXT("Objective");
 	case EInventoryItemType::Consumable: return TEXT("Consumable");
 	case EInventoryItemType::Equipment: return TEXT("Equipment");
-	case EInventoryItemType::Viewable: return TEXT("Viewable Item");
-	default: return TEXT("Objective Item");
+	case EInventoryItemType::Viewable: return TEXT("Viewable");
+	default: return TEXT("Basic");
 	}
 }
 
