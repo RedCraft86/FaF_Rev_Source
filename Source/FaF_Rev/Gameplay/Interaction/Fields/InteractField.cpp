@@ -6,7 +6,10 @@
 AInteractField::AInteractField()
 {
 	WorldEventComponent = CreateDefaultSubobject<UWorldEventComponent>("WorldEvents");
+	GetBrushComponent()->SetCollisionObjectType(ECC_WorldDynamic);
+	GetBrushComponent()->SetCollisionResponseToAllChannels(ECR_Ignore);
 	GetBrushComponent()->SetCollisionResponseToChannel(ECC_Visibility, ECR_Block);
+	GetBrushComponent()->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
 	
 	bSingleUse = true;
 }
