@@ -2,22 +2,19 @@
 
 #pragma once
 
+#include "GTActor.h"
 #include "Data/PrimitiveData.h"
-#include "GameFramework/Actor.h"
 #include "Interaction/InteractionInterface.h"
 #include "InventoryItemActor.generated.h"
 
 UCLASS()
-class FAF_REV_API AInventoryItemActor final : public AActor, public IInteractionInterface
+class FAF_REV_API AInventoryItemActor final : public AGTActor, public IInteractionInterface
 {
 	GENERATED_BODY()
 
 public:
 
 	AInventoryItemActor();
-
-	UPROPERTY(VisibleDefaultsOnly, Category = "Subobject")
-		TObjectPtr<USceneComponent> SceneRoot;
 
 	UPROPERTY(VisibleDefaultsOnly, Category = "Subobject")
 		TObjectPtr<class UBoxComponent> CollisionBox;
@@ -47,7 +44,9 @@ public:
 		FPrimitiveCollision BoxCollision;
 
 protected:
-	
+
+	virtual void SetEnabled(const bool bInEnabled) override;
+	virtual void OnEnableStateChange(const bool bIsEnabled) override;
 	virtual bool GetInteractionInfo_Implementation(FInteractionInfo& Info) override;
 	virtual void OnBeginInteract_Implementation(AFRPlayerBase* Player, const FHitResult& HitResult) override;
 	virtual void OnConstruction(const FTransform& Transform) override;

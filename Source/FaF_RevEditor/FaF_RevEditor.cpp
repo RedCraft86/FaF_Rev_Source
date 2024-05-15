@@ -2,11 +2,14 @@
 
 #include "FaF_RevEditor.h"
 #include "AssetToolsModule.h"
+#include "DetailsCustomization/GTActorDetails.h"
+#include "GTEditor.h"
+
 #include "Framework/FRPlayer.h"
 #include "Interaction/Fields/InteractField.h"
 #include "Interaction/Fields/TriggerField.h"
-#include "DetailsCustomization/GTActorDetails.h"
-#include "GTEditor.h"
+#include "Inventory/InventoryItemActor.h"
+#include "Inventory/InventoryPreview.h"
 
 #define LOCTEXT_NAMESPACE "FFaF_RevEditorModule"
 
@@ -17,6 +20,8 @@ void FFaF_RevEditorModule::StartupModule()
         REGISTER_CLASS_CUSTOMIZATION(PropertyModule, AFRPlayerBase, FGTActorDetails);
         REGISTER_CLASS_CUSTOMIZATION(PropertyModule, AInteractField, FGTActorDetails);
         REGISTER_CLASS_CUSTOMIZATION(PropertyModule, ATriggerField, FGTActorDetails);
+        REGISTER_CLASS_CUSTOMIZATION(PropertyModule, AInventoryItemActor, FGTActorDetails);
+        REGISTER_CLASS_CUSTOMIZATION(PropertyModule, AInventoryPreview, FGTActorDetails);
     }
 
     if (const FAssetToolsModule* AssetToolsModule = FModuleManager::LoadModulePtr<FAssetToolsModule>("AssetTools"))

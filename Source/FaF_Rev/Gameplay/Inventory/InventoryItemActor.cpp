@@ -13,12 +13,6 @@ AInventoryItemActor::AInventoryItemActor() : ItemData(nullptr), Amount(1), BoxEx
 	PrimaryActorTick.bCanEverTick = false;
 	PrimaryActorTick.bStartWithTickEnabled = true;
 
-	SceneRoot = CreateDefaultSubobject<USceneComponent>("SceneRoot");
-	SetRootComponent(SceneRoot);
-#if WITH_EDITOR
-	SceneRoot->bVisualizeComponent = true;
-#endif
-
 	CollisionBox = CreateDefaultSubobject<UBoxComponent>("CollisionBox");
 	CollisionBox->SetupAttachment(SceneRoot);
 	
@@ -32,6 +26,18 @@ AInventoryItemActor::AInventoryItemActor() : ItemData(nullptr), Amount(1), BoxEx
 	BoxCollision.SetResponse(ECC_Visibility, ECR_Block);
 	BoxCollision.CollisionEnabled = ECollisionEnabled::QueryOnly;
 	BoxCollision.ObjectType = ECC_WorldDynamic;
+}
+
+void AInventoryItemActor::SetEnabled(const bool bInEnabled)
+{
+	Super::SetEnabled(Amount > 0 && bInEnabled);
+}
+
+void AInventoryItemActor::OnEnableStateChange(const bool bIsEnabled)
+{
+	SetActorHiddenInGame(!bIsEnabled);
+	SetActorEnableCollision(bIsEnabled);
+	SetActorTickEnabled(PrimaryActorTick.bStartWithTickEnabled && bIsEnabled);
 }
 
 bool AInventoryItemActor::GetInteractionInfo_Implementation(FInteractionInfo& Info)
