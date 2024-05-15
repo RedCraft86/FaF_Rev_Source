@@ -31,6 +31,9 @@ public:
 	
 	UFUNCTION(BlueprintPure, Category = "GameSectionManager")
 		bool IsBusy() const { return bLoading; }
+	
+	UFUNCTION(BlueprintCallable, Category = "GameSectionManager")
+		void SaveCurrentTime();
 
 private:
 	
@@ -73,4 +76,12 @@ private:
 			WorldType == EWorldType::GamePreview || WorldType == EWorldType::GameRPC;
 	}
 	virtual TStatId GetStatId() const override { return UObject::GetStatID(); }
+
+public: // Statics
+
+	static UGameSectionManager* Get(const UObject* WorldContext)
+	{
+		const UWorld* World = WorldContext ? GEngine->GetWorldFromContextObject(WorldContext, EGetWorldErrorMode::LogAndReturnNull) : nullptr;
+		return World ? World->GetSubsystem<UGameSectionManager>() : nullptr;
+	}
 };

@@ -7,7 +7,6 @@
 #include "Libraries/GTLoadUtilsLibrary.h"
 #include "SaveSystem/SaveSubsystem.h"
 #include "NarrativeComponent.h"
-#include "FRPlayerController.h"
 #include "PlayerTeleporter.h"
 #include "LoadingWidget.h"
 #include "FRGameState.h"
@@ -17,11 +16,8 @@
 
 void UGameSectionManager::LoadSequence()
 {
-	if (const USaveSubsystem* Subsystem = USaveSubsystem::Get(this))
-	{
-		Subsystem->LoadGameData();
-		SetSequence(Subsystem->GetGameDataObject()->Sequence);
-	}
+	SaveSystem->LoadGameData();
+	SetSequence(SaveSystem->GetGameDataObject()->Sequence);
 }
 
 void UGameSectionManager::SetSequence(const TArray<uint8>& InSequence)
@@ -51,6 +47,12 @@ void UGameSectionManager::Step(const uint8 Index)
 	TArray<uint8> PostStep = Sequence;
 	PostStep.Add(PostStep.IsEmpty() ? 0 : Index);
 	SetSequence(PostStep);
+}
+
+void UGameSectionManager::SaveCurrentTime()
+{
+	SaveSystem->SaveGameData(PlayTime);
+	PlayTime = 0.0f;
 }
 
 void UGameSectionManager::BeginTransition()

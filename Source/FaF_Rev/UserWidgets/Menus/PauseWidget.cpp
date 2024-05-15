@@ -3,10 +3,11 @@
 // ReSharper disable CppMemberFunctionMayBeConst
 #include "PauseWidget.h"
 #include "Components/TextBlock.h"
-#include "Animation/UMGSequencePlayer.h"
-#include "Animation/WidgetAnimation.h"
 #include "GeneralProjectSettings.h"
 #include "Kismet/GameplayStatics.h"
+#include "Animation/WidgetAnimation.h"
+#include "Animation/UMGSequencePlayer.h"
+#include "GameSection/GameSectionManager.h"
 #include "FRPlayerController.h"
 #include "SettingsWidget.h"
 #include "SubWidgets.h"
@@ -35,6 +36,11 @@ void UPauseWidgetBase::OnSettingsClicked()
 
 void UPauseWidgetBase::OnCheckpointClicked()
 {
+	if (UGameSectionManager* Manager = UGameSectionManager::Get(this))
+	{
+		Manager->SaveCurrentTime();
+	}
+	
 	FadeScreen([this](){
 		UGameplayStatics::OpenLevel(this, *UGameplayStatics::GetCurrentLevelName(this));
 	});
@@ -42,6 +48,11 @@ void UPauseWidgetBase::OnCheckpointClicked()
 
 void UPauseWidgetBase::OnMainMenuClicked()
 {
+	if (UGameSectionManager* Manager = UGameSectionManager::Get(this))
+	{
+		Manager->SaveCurrentTime();
+	}
+	
 	FadeScreen([this](){
 		UGameplayStatics::OpenLevelBySoftObjectPtr(this, MainMenuLevel);
 	});
