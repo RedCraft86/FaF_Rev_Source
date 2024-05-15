@@ -31,23 +31,23 @@ FTransformMeshData UInventoryItemData::GetMeshData(const TMap<FName, FString>& I
 void UInventoryItemData::PostEditChangeProperty(FPropertyChangedEvent& PropertyChangedEvent)
 {
 	Super::PostEditChangeProperty(PropertyChangedEvent);
-	if (PropertyChangedEvent.GetPropertyName() == GET_MEMBER_NAME_CHECKED(ThisClass, InspectZoomRange))
-	{
-		if (InspectZoomRange.X < 0.1f) InspectZoomRange.X = 0.1f;
-		if (InspectZoomRange.X > InspectZoomRange.Y)
-		{
-			InspectZoomRange.Y = InspectZoomRange.X + 0.1f;
-		}
-	}
 #if WITH_EDITORONLY_DATA
-	else if (bUpdate || PropertyChangedEvent.GetPropertyName() == GET_MEMBER_NAME_CHECKED(ThisClass, MeshData))
+	if (bUpdate || PropertyChangedEvent.GetPropertyName() == GET_MEMBER_NAME_CHECKED(UInventoryItemData, MeshData))
 	{
 		bUpdate = false;
 		for (FTransformMeshData& Data : MeshData)
 		{
 			Data.FillMaterials();
 		}
+
+		return;
 	}
 #endif
+	
+	if (InspectZoomRange.X < 0.1f) InspectZoomRange.X = 0.1f;
+	if (InspectZoomRange.X > InspectZoomRange.Y)
+	{
+		InspectZoomRange.Y = InspectZoomRange.X + 0.1f;
+	}
 }
 #endif

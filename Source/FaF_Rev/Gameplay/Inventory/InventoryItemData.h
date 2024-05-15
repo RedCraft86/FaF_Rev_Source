@@ -55,6 +55,7 @@ public:
 
 	UPROPERTY(EditAnywhere, Category = "ItemData|Consumable", meta = (EditCondition = "ItemType == EInventoryItemType::Consumable", EditConditionHides))
 		FText ConsumeDisplayText;
+	
 #if WITH_EDITORONLY_DATA
 	UPROPERTY(EditAnywhere, Category = "ItemData|DisplayMesh")
 		bool bUpdate;
