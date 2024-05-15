@@ -266,7 +266,6 @@ struct FPlayerStaminaDifficulty
 		return GainMultipliers.FindRef(InDifficulty);
 	}
 
-
 	void CheckEntries()
 	{
 #if WITH_EDITOR
