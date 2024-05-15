@@ -101,7 +101,7 @@ void AInspectionActor::SetItem(const FGuid& InItemKey)
 		InspectionMesh->SetRelativeTransform(MeshData.Transform);
 		InspectionMesh->SetHiddenInGame(false);
 		
-		ZoomRange = ItemData->MeshZoomRange;
+		ZoomRange = ItemData->InspectZoomRange;
 		ZoomValue.TargetValue = (ZoomRange.X + ZoomRange.Y) * 0.5f;
 		ZoomValue.SnapToTarget();
 		

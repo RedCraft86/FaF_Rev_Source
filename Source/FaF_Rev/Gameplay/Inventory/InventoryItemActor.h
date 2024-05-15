@@ -25,7 +25,7 @@ public:
 	UPROPERTY(VisibleDefaultsOnly, Category = "Subobject")
 		TObjectPtr<UInstancedStaticMeshComponent> InstancedStaticMesh;
 
-	UPROPERTY(EditAnywhere, Category = "Settings")
+	UPROPERTY(EditAnywhere, Category = "Settings", meta = (DisplayThumbnail = false))
 		TObjectPtr<class UInventoryItemData> ItemData;
 
 	UPROPERTY(EditAnywhere, Category = "Settings", meta = (ClampMin = 1, UIMin = 1))
@@ -38,13 +38,13 @@ public:
 		FInteractionInfo InteractionInfo;
 	
 	UPROPERTY(EditAnywhere, AdvancedDisplay, Category = "Settings", meta = (MakeEditWidget = true))
+		TArray<FTransform> MeshInstances;
+
+	UPROPERTY(EditAnywhere, AdvancedDisplay, Category = "Settings|CollisionBox", meta = (MakeEditWidget = true))
 		FVector BoxExtent;
 	
-	UPROPERTY(EditAnywhere, AdvancedDisplay, Category = "Settings")
+	UPROPERTY(EditAnywhere, AdvancedDisplay, Category = "Settings|CollisionBox")
 		FPrimitiveCollision CollisionData;
-	
-	UPROPERTY(EditAnywhere, AdvancedDisplay, Category = "Settings", meta = (MakeEditWidget = true))
-		TArray<FTransform> MeshInstances;
 
 protected:
 	

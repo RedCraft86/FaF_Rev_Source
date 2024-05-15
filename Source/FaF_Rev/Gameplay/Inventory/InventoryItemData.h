@@ -24,9 +24,9 @@ public:
 
 	UInventoryItemData()
 		: Priority(1), DisplayName(INVTEXT("Unknown Item")), Description(INVTEXT("Unknown Item"))
-		, ItemType(EInventoryItemType::Objective) , MeshZoomRange(0.1f, 1.5f), MeshData({})
-		, ViewImage(nullptr), ViewText(FText::GetEmpty()), EquipmentClass(nullptr)
-		, ConsumableClass(nullptr), ConsumeDisplayText(INVTEXT("Use"))
+		, ItemType(EInventoryItemType::Objective) , ViewImage(nullptr), ViewText(FText::GetEmpty())
+		, EquipmentClass(nullptr), ConsumableClass(nullptr), ConsumeDisplayText(INVTEXT("Use"))
+		, InspectZoomRange(0.1f, 1.5f), MeshData({})
 	{}
 
 	UPROPERTY(EditAnywhere, Category = "ItemData", meta = (DisplayPriority = -9))
@@ -40,12 +40,6 @@ public:
 
 	UPROPERTY(EditAnywhere, Category = "ItemData", meta = (DisplayPriority = -9))
 		EInventoryItemType ItemType;
-	
-	UPROPERTY(EditAnywhere, Category = "ItemData|Inspection")
-		FVector2D MeshZoomRange;
-	
-	UPROPERTY(EditAnywhere, Category = "ItemData|Inspection")
-		TArray<FTransformMeshData> MeshData;
 
 	UPROPERTY(EditAnywhere, Category = "ItemData|Viewable", meta = (EditCondition = "ItemType == EInventoryItemType::Viewable", EditConditionHides))
 		TObjectPtr<UTexture2D> ViewImage;
@@ -61,12 +55,20 @@ public:
 
 	UPROPERTY(EditAnywhere, Category = "ItemData|Consumable", meta = (EditCondition = "ItemType == EInventoryItemType::Consumable", EditConditionHides))
 		FText ConsumeDisplayText;
+
+	UPROPERTY(EditAnywhere, Category = "ItemMesh")
+		FVector2D InspectZoomRange;
+	
+	UPROPERTY(EditAnywhere, Category = "ItemMesh")
+		TArray<FTransformMeshData> MeshData;
 	
 	FString GetTypeString() const;
 	FTransformMeshData GetMeshData(const TMap<FName, FString>& InMetadata) const;
 
 private:
 #if WITH_EDITOR
+	UFUNCTION(CallInEditor, Category = "MeshInspection") void UpdateMeshData();
 	virtual void PostEditChangeProperty(FPropertyChangedEvent& PropertyChangedEvent) override;
+	virtual void PostEditChangeChainProperty(FPropertyChangedChainEvent& PropertyChangedEvent) override;
 #endif
 };

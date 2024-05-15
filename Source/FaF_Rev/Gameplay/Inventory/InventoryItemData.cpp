@@ -28,33 +28,45 @@ FTransformMeshData UInventoryItemData::GetMeshData(const TMap<FName, FString>& I
 }
 
 #if WITH_EDITOR
-void UInventoryItemData::PostEditChangeProperty(FPropertyChangedEvent& PropertyChangedEvent)
+void UInventoryItemData::UpdateMeshData()
 {
-	Super::PostEditChangeProperty(PropertyChangedEvent);
-	if (PropertyChangedEvent.GetPropertyName() == GET_MEMBER_NAME_CHECKED(ThisClass, MeshZoomRange.X))
-	{
-		if (MeshZoomRange.X < 0.1f) MeshZoomRange.X = 0.1f;
-		if (MeshZoomRange.X > MeshZoomRange.Y)
-		{
-			MeshZoomRange.Y = MeshZoomRange.X + 0.1f;
-		}
-
-		return;
-	}
-	if (PropertyChangedEvent.GetPropertyName() == GET_MEMBER_NAME_CHECKED(ThisClass, MeshZoomRange.Y))
-	{
-		if (MeshZoomRange.Y < 0.2f) MeshZoomRange.Y = 0.2f;
-		if (MeshZoomRange.Y < MeshZoomRange.X)
-		{
-			MeshZoomRange.X = MeshZoomRange.Y - 0.1f;
-		}
-
-		return;
-	}
-
 	for (FTransformMeshData& Data : MeshData)
 	{
 		Data.FillMaterials();
+	}
+}
+
+void UInventoryItemData::PostEditChangeProperty(FPropertyChangedEvent& PropertyChangedEvent)
+{
+	Super::PostEditChangeProperty(PropertyChangedEvent);
+	if (PropertyChangedEvent.GetPropertyName() == GET_MEMBER_NAME_CHECKED(ThisClass, MeshData))
+	{
+		UpdateMeshData();
+	}
+}
+
+void UInventoryItemData::PostEditChangeChainProperty(FPropertyChangedChainEvent& PropertyChangedEvent)
+{
+	Super::PostEditChangeChainProperty(PropertyChangedEvent);
+	if (PropertyChangedEvent.MemberProperty() == GET_MEMBER_NAME_CHECKED(ThisClass, InspectZoomRange))
+	{
+		if (PropertyChangedEvent.GetPropertyName() == GET_MEMBER_NAME_CHECKED(FVector2D, X))
+		{
+			if (InspectZoomRange.X < 0.1f) InspectZoomRange.X = 0.1f;
+			if (InspectZoomRange.X > InspectZoomRange.Y)
+			{
+				InspectZoomRange.Y = InspectZoomRange.X + 0.1f;
+			}
+
+		}
+		else if (PropertyChangedEvent.GetPropertyName() == GET_MEMBER_NAME_CHECKED(FVector2D, Y))
+		{
+			if (InspectZoomRange.Y < 0.2f) InspectZoomRange.Y = 0.2f;
+			if (InspectZoomRange.Y < InspectZoomRange.X)
+			{
+				InspectZoomRange.X = InspectZoomRange.Y - 0.1f;
+			}
+		}
 	}
 }
 #endif
