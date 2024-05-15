@@ -70,8 +70,8 @@ public:
 	FString GetTypeString() const;
 	FTransformMeshData GetMeshData(const TMap<FName, FString>& InMetadata) const;
 
-private:
 #if WITH_EDITOR
+private:
 	virtual void PostEditChangeProperty(FPropertyChangedEvent& PropertyChangedEvent) override;
 #endif
 };

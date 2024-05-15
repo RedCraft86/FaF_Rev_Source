@@ -39,11 +39,11 @@ bool AInventoryItemActor::GetInteractionInfo_Implementation(FInteractionInfo& In
 	if (!ItemData || Amount <= 0)
 		return false;
 	
-	Info = InteractionInfo;
-	Info.Label = FText::FromString(InteractionInfo.Label.ToString()
-		.Replace(TEXT("{name}"), *ItemData->DisplayName.ToString())
-		.Replace(TEXT("{amount}"), *FString::FromInt(Amount))
-	);
+	FFormatNamedArguments Args;
+	Args.Add(TEXT("Amount"), Amount);
+	Args.Add(TEXT("Name"), ItemData->DisplayName);
+	Info.Label = FText::Format(InteractionInfo.Label, Args);
+	Info.Icon = InteractionInfo.Icon;
 	return true;
 }
 
