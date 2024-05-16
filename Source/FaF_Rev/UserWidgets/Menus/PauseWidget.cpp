@@ -97,8 +97,8 @@ void UPauseWidgetBase::InitWidget()
 	PlayerChar = FRPlayer(this);
 	if (const UGeneralProjectSettings* ProjectSettings = GetDefault<UGeneralProjectSettings>())
 	{
-		GameVersionText->SetText(FText::FromString(FString::Printf(TEXT("Game Version: %s - %s"),
-			*ProjectSettings->ProjectVersion, *ProjectSettings->ProjectDebugTitleInfo.ToString())));
+		GameVersionText->SetText(FText::FromString(FString::Printf(TEXT("Game Version: %s - %s Build"),
+			*ProjectSettings->ProjectVersion), LexToString(FApp::GetBuildConfiguration())));
 	}
 		
 	ResumeButton->OnClicked.AddUObject(this, &UPauseWidgetBase::OnResumeClicked);
