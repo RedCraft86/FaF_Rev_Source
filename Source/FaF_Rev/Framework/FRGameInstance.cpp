@@ -39,6 +39,6 @@ void UFRGameInstance::OnWorldBeginPlay(UWorld* InWorld)
 
 		FTimerHandle Handle;
 		GetWorld()->GetTimerManager().SetTimer(Handle, this,
-			&UFRGameInstance::ReloadLevel, 0.5f, false);
+			&UFRGameInstance::ReloadLevel, 0.2f, false);
 	}
 }

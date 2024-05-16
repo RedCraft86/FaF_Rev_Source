@@ -766,7 +766,8 @@ void AFRPlayerBase::SlowTick(const float DeltaTime)
 	{
 		FieldOfView.Modifiers.Remove(Player::InternalKeys::RunFOV);
 	}
-	
+
+	FOVValue.TargetValue = FieldOfView.Evaluate();
 	GetCharacterMovement()->MaxWalkSpeed = MoveSpeedTarget * MoveSpeedMultiplier.Evaluate();
 }
 
@@ -1008,7 +1009,11 @@ void AFRPlayerBase::BeginPlay()
 	Settings->OnManualApply.AddUObject(this, &AFRPlayerBase::OnSettingsApply);
 	Settings->OnDynamicApply.AddUObject(this, &AFRPlayerBase::OnSettingsApply);
 
-	LockFlags.Remove(Player::LockFlags::Startup);
+	FTimerHandle Handle;
+	GetWorldTimerManager().SetTimer(Handle, [this]()
+	{
+		LockFlags.Remove(Player::LockFlags::Startup);	
+	}, 0.5f, false);
 }
 
 void AFRPlayerBase::Tick(float DeltaTime)
