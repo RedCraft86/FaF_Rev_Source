@@ -193,7 +193,7 @@ protected:
 	DECLARE_MULTICAST_DELEGATE(FOnRefreshDisplay);
 	FOnRefreshDisplay OnRefreshDisplay;
 
-	uint8 ScreenIndex;
+	UPROPERTY(BlueprintReadOnly, Category = "Settings") uint8 ScreenIndex;
 	UPROPERTY(Transient) TObjectPtr<class UGameSettings> SettingsObj;
 
 	TArray<FIntPoint> Resolutions;
