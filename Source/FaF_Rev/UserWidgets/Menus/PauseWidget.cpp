@@ -106,6 +106,6 @@ void UPauseWidgetBase::InitWidget()
 	CheckpointButton->OnClicked.AddUObject(this, &UPauseWidgetBase::OnCheckpointClicked);
 	MainMenuButton->OnClicked.AddUObject(this, &UPauseWidgetBase::OnMainMenuClicked);
 
-	if (SettingsWidgetClass) SettingsWidget = CreateWidget<USettingsWidgetBase>(GetPlayerController(), SettingsWidgetClass);
+	SettingsWidget = CreateWidget<USettingsWidgetBase>(GetPlayerController(), SettingsWidgetClass);
 	if (SettingsWidget) SettingsWidget->ParentWidget = this;
 }
