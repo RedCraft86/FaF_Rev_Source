@@ -167,7 +167,7 @@ UWorld* UGameSettings::GetWorld() const
 void UGameSettings::ApplyBrightness() const
 {
 	UKismetMaterialLibrary::SetScalarParameterValue(GetWorld(), BrightnessMPC,
-		BrightnessParamName, Brightness * 0.01f);
+		BrightnessParamName, FMath::Max(0.1f, Brightness * 0.01f));
 }
 
 void UGameSettings::ApplyAudioSettings()

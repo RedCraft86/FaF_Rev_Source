@@ -19,7 +19,11 @@ public:
 	
 	UFRAnimatedButtonBase(const FObjectInitializer& ObjectInitializer)
 		: UUserWidget(ObjectInitializer), Button(nullptr), ButtonAnim(nullptr)
-	{}
+	{
+#if WITH_EDITORONLY_DATA
+		PaletteCategory = NSLOCTEXT("UMG", "Common", "Common");
+#endif
+	}
 
 	UPROPERTY(BlueprintAssignable, DisplayName = "On Clicked")
 		FSimpleSubWidgetDelegateBP OnClickedBP;
@@ -29,11 +33,6 @@ public:
 
 	UPROPERTY(Transient, meta = (BindWidgetAnim))
 		TObjectPtr<UWidgetAnimation> ButtonAnim;
-	
-#if WITH_EDITORONLY_DATA
-	UPROPERTY(EditDefaultsOnly, AdvancedDisplay, Category = "Settings")
-		FText Palette = NSLOCTEXT("UMG", "Common", "Common");
-#endif
 
 	DECLARE_MULTICAST_DELEGATE(FOnClicked);
 	FOnClicked OnClicked;
@@ -45,13 +44,6 @@ protected:
 	UFUNCTION() void OnButtonClicked();
 	UFUNCTION() void OnButtonHovered();
 	UFUNCTION() void OnButtonUnhovered();
-
-#if WITH_EDITORONLY_DATA && WITH_EDITOR
-	virtual const FText GetPaletteCategory() override
-	{
-		return Palette.IsEmptyOrWhitespace() ? Super::GetPaletteCategory() : Palette;
-	}
-#endif
 };
 
 UCLASS(Abstract, DisplayName = "Keybind Row Base")
@@ -77,11 +69,6 @@ public:
 
 	UPROPERTY(EditAnywhere, Category = "Settings")
 		FSlateBrush DividerBrush;
-		
-#if WITH_EDITORONLY_DATA
-	UPROPERTY(EditDefaultsOnly, AdvancedDisplay, Category = "Settings")
-		FText Palette = NSLOCTEXT("FaF_Rev", "UMGSettingRows", "Setting Rows");
-#endif
 
 	UFUNCTION(BlueprintImplementableEvent)
 		FSlateBrush GetIconForKey(const FKey& InKey);
@@ -90,12 +77,6 @@ protected:
 
 	void CreateIcons();
 	virtual void NativePreConstruct() override;
-#if WITH_EDITORONLY_DATA && WITH_EDITOR
-	virtual const FText GetPaletteCategory() override
-	{
-		return Palette.IsEmptyOrWhitespace() ? Super::GetPaletteCategory() : Palette;
-	}
-#endif
 };
 
 UCLASS(Abstract, NotBlueprintable, DisplayName = "Setting Row Base")
@@ -107,7 +88,11 @@ public:
 
 	UFRSettingRowBase(const FObjectInitializer& ObjectInitializer)
 		: UUserWidget(ObjectInitializer), LabelText(nullptr), ResetButton(nullptr), Label(INVTEXT("Setting"))
-	{}
+	{
+#if WITH_EDITORONLY_DATA
+		PaletteCategory = NSLOCTEXT("FaF_Rev", "UMGSettingRows", "Setting Rows");
+#endif
+	}
 
 	UPROPERTY(Transient, meta = (BindWidget))
 		TObjectPtr<UTextBlock> LabelText;
@@ -117,11 +102,6 @@ public:
 
 	UPROPERTY(EditAnywhere, Category = "Settings", meta = (DisplayPriority = -1))
 		FText Label;
-
-#if WITH_EDITORONLY_DATA
-	UPROPERTY(EditDefaultsOnly, AdvancedDisplay, Category = "Settings")
-		FText Palette = NSLOCTEXT("FaF_Rev", "UMGSettingRows", "Setting Rows");
-#endif
 
 	virtual void ResetValue() {}
 	virtual void RefreshValue() {}
@@ -133,12 +113,6 @@ protected:
 	virtual void NativeConstruct() override;
 	virtual void NativeOnInitialized() override;
 	virtual void NativePreConstruct() override;
-#if WITH_EDITORONLY_DATA && WITH_EDITOR
-	virtual const FText GetPaletteCategory() override
-	{
-		return Palette.IsEmptyOrWhitespace() ? Super::GetPaletteCategory() : Palette;
-	}
-#endif
 
 private:
 	
@@ -209,13 +183,12 @@ protected:
 	TFunction<bool()> GetterFunction;
 	TFunction<void(const bool)> SetterFunction;
 	
+	UFUNCTION() void OnToggleButtonClicked();
+	
 	virtual void NativeOnInitialized() override;
 #if WITH_EDITOR
 	virtual void NativePreConstruct() override;
 #endif
-
-	UFUNCTION()
-		void OnToggleButtonClicked();
 };
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnSliderValueChanged, float, Value);
@@ -276,24 +249,18 @@ protected:
 	bool bHaveDoneInit;
 	TFunction<float()> GetterFunction;
 	TFunction<void(const float)> SetterFunction;
-	
+
+	UFUNCTION() void OnSliderValueChanged(float Value);
+	UFUNCTION() void OnSliderMovementEnd(float Value);
+	UFUNCTION() void OnSliderValueCommitted(float Value, ETextCommit::Type Type);
+
+	void BroadcastChange() const;
 	void ApplySliderSettings() const;
 	virtual void NativeConstruct() override;
 	virtual void NativeOnInitialized() override;
 #if WITH_EDITOR
 	virtual void NativePreConstruct() override;
 #endif
-
-	void BroadcastChange() const;
-	
-	UFUNCTION()
-		void OnSliderValueChanged(float Value);
-
-	UFUNCTION()
-		void OnSliderMovementEnd(float Value);
-	
-	UFUNCTION()
-		void OnSliderValueCommitted(float Value, ETextCommit::Type Type);
 };
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FOnSwitcherValueChanged, int32, Index, FName, Value);
@@ -361,15 +328,12 @@ protected:
 	uint8 CurrentIdx;
 	TFunction<uint8()> GetterFunction;
 	TFunction<void(const uint8)> SetterFunction;
+
+	UFUNCTION() void OnPrevClicked();
+	UFUNCTION() void OnNextClicked();
 	
 	virtual void NativeOnInitialized() override;
 #if WITH_EDITOR
 	virtual void NativePreConstruct() override;
 #endif
-
-	UFUNCTION()
-		void OnPrevClicked();
-
-	UFUNCTION()
-		void OnNextClicked();
 };

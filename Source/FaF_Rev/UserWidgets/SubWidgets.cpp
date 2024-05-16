@@ -46,6 +46,10 @@ UFRKeybindRowBase::UFRKeybindRowBase(const FObjectInitializer& ObjectInitializer
 	DividerBrush.OutlineSettings.CornerRadii = FVector4(2.0f, 2.0f, 2.0f, 2.0f);
 	DividerBrush.OutlineSettings.RoundingType = ESlateBrushRoundingType::FixedRadius;
 	DividerBrush.OutlineSettings.bUseBrushTransparency = true;
+
+#if WITH_EDITORONLY_DATA
+	PaletteCategory = NSLOCTEXT("FaF_Rev", "UMGSettingRows", "Setting Rows");
+#endif
 }
 
 void UFRKeybindRowBase::CreateIcons()
@@ -143,6 +147,11 @@ bool UFRToggleSettingBase::IsDefaultValue()
 	return bCurrentValue == bDefaultValue;
 }
 
+void UFRToggleSettingBase::OnToggleButtonClicked()
+{
+	SetValue(!bCurrentValue);
+}
+
 void UFRToggleSettingBase::NativeOnInitialized()
 {
 	Super::NativeOnInitialized();
@@ -167,11 +176,6 @@ void UFRToggleSettingBase::NativePreConstruct()
 	}
 }
 #endif
-
-void UFRToggleSettingBase::OnToggleButtonClicked()
-{
-	SetValue(!bCurrentValue);
-}
 
 void UFRSliderSettingBase::SetValueSilently(const float InValue)
 {
@@ -214,6 +218,42 @@ void UFRSliderSettingBase::RefreshValue()
 bool UFRSliderSettingBase::IsDefaultValue()
 {
 	return SliderSpinBox->GetValue() == DefaultValue;
+}
+
+void UFRSliderSettingBase::OnSliderValueChanged(float Value)
+{
+	if (bHaveDoneInit && bBroadcastAnyChange)
+	{
+		CheckDefaultValue();
+		BroadcastChange();
+	}
+}
+
+void UFRSliderSettingBase::OnSliderMovementEnd(float Value)
+{
+	if (!bBroadcastAnyChange)
+	{
+		CheckDefaultValue();
+		BroadcastChange();
+	}
+}
+
+void UFRSliderSettingBase::OnSliderValueCommitted(float Value, ETextCommit::Type Type)
+{
+	if (!bBroadcastAnyChange)
+	{
+		CheckDefaultValue();
+		BroadcastChange();
+	}
+}
+
+void UFRSliderSettingBase::BroadcastChange() const
+{
+	const float Val = SliderSpinBox->GetValue();
+	if (SetterFunction) SetterFunction(Val);
+	
+	OnValueChanged.Broadcast(Val);
+	OnValueChangedBP.Broadcast(Val);
 }
 
 void UFRSliderSettingBase::ApplySliderSettings() const
@@ -259,42 +299,6 @@ void UFRSliderSettingBase::NativePreConstruct()
 }
 #endif
 
-void UFRSliderSettingBase::BroadcastChange() const
-{
-	const float Val = SliderSpinBox->GetValue();
-	if (SetterFunction) SetterFunction(Val);
-	
-	OnValueChanged.Broadcast(Val);
-	OnValueChangedBP.Broadcast(Val);
-}
-
-void UFRSliderSettingBase::OnSliderValueChanged(float Value)
-{
-	if (bHaveDoneInit && bBroadcastAnyChange)
-	{
-		CheckDefaultValue();
-		BroadcastChange();
-	}
-}
-
-void UFRSliderSettingBase::OnSliderMovementEnd(float Value)
-{
-	if (!bBroadcastAnyChange)
-	{
-		CheckDefaultValue();
-		BroadcastChange();
-	}
-}
-
-void UFRSliderSettingBase::OnSliderValueCommitted(float Value, ETextCommit::Type Type)
-{
-	if (!bBroadcastAnyChange)
-	{
-		CheckDefaultValue();
-		BroadcastChange();
-	}
-}
-
 void UFRSwitcherSettingBase::SetValueSilently(const int32 InValue)
 {
 	if (InValue >= 0 && ValueOptions.IsValidIndex(InValue))
@@ -337,6 +341,20 @@ bool UFRSwitcherSettingBase::IsDefaultValue()
 	return CurrentIdx == DefaultValue;
 }
 
+void UFRSwitcherSettingBase::OnPrevClicked()
+{
+	int32 TargetIdx = CurrentIdx - 1;
+	if (TargetIdx < 0) TargetIdx = ValueOptions.Num() - 1;
+	SetValue(TargetIdx);
+}
+
+void UFRSwitcherSettingBase::OnNextClicked()
+{
+	int32 TargetIdx = CurrentIdx + 1;
+	if (TargetIdx >= ValueOptions.Num()) TargetIdx = 0;
+	SetValue(TargetIdx);
+}
+
 void UFRSwitcherSettingBase::NativeOnInitialized()
 {
 	Super::NativeOnInitialized();
@@ -377,17 +395,3 @@ void UFRSwitcherSettingBase::NativePreConstruct()
 	}
 }
 #endif
-
-void UFRSwitcherSettingBase::OnPrevClicked()
-{
-	int32 TargetIdx = CurrentIdx - 1;
-	if (TargetIdx < 0) TargetIdx = ValueOptions.Num() - 1;
-	SetValue(TargetIdx);
-}
-
-void UFRSwitcherSettingBase::OnNextClicked()
-{
-	int32 TargetIdx = CurrentIdx + 1;
-	if (TargetIdx >= ValueOptions.Num()) TargetIdx = 0;
-	SetValue(TargetIdx);
-}
