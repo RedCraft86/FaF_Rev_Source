@@ -17,27 +17,19 @@ AInventoryItemActor::AInventoryItemActor() : ItemData(nullptr), Amount(1), BoxEx
 	CollisionBox->SetupAttachment(SceneRoot);
 	
 	InstancedStaticMesh = CreateDefaultSubobject<UInstancedStaticMeshComponent>("InstancedStaticMesh");
-	InstancedStaticMesh->SetCollisionObjectType(ECC_WorldDynamic);
-	InstancedStaticMesh->SetCollisionResponseToAllChannels(ECR_Ignore);
+	InstancedStaticMesh->SetCollisionProfileName(TEXT("NoCollision"));
 	InstancedStaticMesh->SetupAttachment(SceneRoot);
 
 	InteractionInfo.Label = INVTEXT("Take");
 	BoxCollision.SetAllResponses(ECR_Ignore);
 	BoxCollision.SetResponse(ECC_Visibility, ECR_Block);
-	BoxCollision.CollisionEnabled = ECollisionEnabled::QueryOnly;
-	BoxCollision.ObjectType = ECC_WorldDynamic;
+	BoxCollision.SetCollisionEnabled(ECollisionEnabled::QueryOnly);
+	BoxCollision.SetObjectType(ECC_WorldDynamic);
 }
 
 void AInventoryItemActor::SetEnabled(const bool bInEnabled)
 {
 	Super::SetEnabled(Amount > 0 && bInEnabled);
-}
-
-void AInventoryItemActor::OnEnableStateChange(const bool bIsEnabled)
-{
-	SetActorHiddenInGame(!bIsEnabled);
-	SetActorEnableCollision(bIsEnabled);
-	SetActorTickEnabled(PrimaryActorTick.bStartWithTickEnabled && bIsEnabled);
 }
 
 bool AInventoryItemActor::GetInteractionInfo_Implementation(FInteractionInfo& Info)
@@ -62,9 +54,7 @@ void AInventoryItemActor::OnBeginInteract_Implementation(AFRPlayerBase* Player, 
 	
 	if (Amount <= 0)
 	{
-		SetActorHiddenInGame(true);
-		SetActorEnableCollision(false);
-		SetActorTickEnabled(false);
+		SetEnabled(false);
 	}
 }
 

@@ -46,7 +46,6 @@ public:
 protected:
 
 	virtual void SetEnabled(const bool bInEnabled) override;
-	virtual void OnEnableStateChange(const bool bIsEnabled) override;
 	virtual bool GetInteractionInfo_Implementation(FInteractionInfo& Info) override;
 	virtual void OnBeginInteract_Implementation(AFRPlayerBase* Player, const FHitResult& HitResult) override;
 	virtual void OnConstruction(const FTransform& Transform) override;
