@@ -29,6 +29,11 @@ public:
 
 	UPROPERTY(Transient, meta = (BindWidgetAnim))
 		TObjectPtr<UWidgetAnimation> ButtonAnim;
+	
+#if WITH_EDITORONLY_DATA
+	UPROPERTY(EditDefaultsOnly, AdvancedDisplay, Category = "Settings")
+		FText Palette = NSLOCTEXT("UMG", "Common", "Common");
+#endif
 
 	DECLARE_MULTICAST_DELEGATE(FOnClicked);
 	FOnClicked OnClicked;
@@ -37,14 +42,16 @@ public:
 	
 protected:
 
-	UFUNCTION()
-		void OnButtonClicked();
+	UFUNCTION() void OnButtonClicked();
+	UFUNCTION() void OnButtonHovered();
+	UFUNCTION() void OnButtonUnhovered();
 
-	UFUNCTION()
-		void OnButtonHovered();
-
-	UFUNCTION()
-		void OnButtonUnhovered();
+#if WITH_EDITORONLY_DATA && WITH_EDITOR
+	virtual const FText GetPaletteCategory() override
+	{
+		return Palette.IsEmptyOrWhitespace() ? Super::GetPaletteCategory() : Palette;
+	}
+#endif
 };
 
 UCLASS(Abstract, DisplayName = "Keybind Row Base")
@@ -70,6 +77,11 @@ public:
 
 	UPROPERTY(EditAnywhere, Category = "Settings")
 		FSlateBrush DividerBrush;
+		
+#if WITH_EDITORONLY_DATA
+	UPROPERTY(EditDefaultsOnly, AdvancedDisplay, Category = "Settings")
+		FText Palette = NSLOCTEXT("FaF_Rev", "UMGSettingRows", "Setting Rows");
+#endif
 
 	UFUNCTION(BlueprintImplementableEvent)
 		FSlateBrush GetIconForKey(const FKey& InKey);
@@ -78,6 +90,12 @@ protected:
 
 	void CreateIcons();
 	virtual void NativePreConstruct() override;
+#if WITH_EDITORONLY_DATA && WITH_EDITOR
+	virtual const FText GetPaletteCategory() override
+	{
+		return Palette.IsEmptyOrWhitespace() ? Super::GetPaletteCategory() : Palette;
+	}
+#endif
 };
 
 UCLASS(Abstract, NotBlueprintable, DisplayName = "Setting Row Base")
@@ -100,6 +118,11 @@ public:
 	UPROPERTY(EditAnywhere, Category = "Settings", meta = (DisplayPriority = -1))
 		FText Label;
 
+#if WITH_EDITORONLY_DATA
+	UPROPERTY(EditDefaultsOnly, AdvancedDisplay, Category = "Settings")
+		FText Palette = NSLOCTEXT("FaF_Rev", "UMGSettingRows", "Setting Rows");
+#endif
+
 	virtual void ResetValue() {}
 	virtual void RefreshValue() {}
 	virtual bool IsDefaultValue() { return true; }
@@ -110,11 +133,16 @@ protected:
 	virtual void NativeConstruct() override;
 	virtual void NativeOnInitialized() override;
 	virtual void NativePreConstruct() override;
+#if WITH_EDITORONLY_DATA && WITH_EDITOR
+	virtual const FText GetPaletteCategory() override
+	{
+		return Palette.IsEmptyOrWhitespace() ? Super::GetPaletteCategory() : Palette;
+	}
+#endif
 
 private:
 	
-	UFUNCTION()
-		void OnResetClicked();
+	UFUNCTION() void OnResetClicked();
 };
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnToggleValueChanged, bool, bEnabled);
