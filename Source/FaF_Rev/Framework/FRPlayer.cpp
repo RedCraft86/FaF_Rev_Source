@@ -753,24 +753,6 @@ void AFRPlayerBase::LeanWallDetect()
 	}
 }
 
-void AFRPlayerBase::SlowTick(const float DeltaTime)
-{
-	if (IsRunning())
-	{
-		if (!FieldOfView.Modifiers.Contains(Player::InternalKeys::RunFOV))
-		{
-			FieldOfView.Modifiers.Add(Player::InternalKeys::RunFOV, RunningFOV);
-		}
-	}
-	else if (FieldOfView.Modifiers.Contains(Player::InternalKeys::RunFOV))
-	{
-		FieldOfView.Modifiers.Remove(Player::InternalKeys::RunFOV);
-	}
-
-	FOVValue.TargetValue = FieldOfView.Evaluate();
-	GetCharacterMovement()->MaxWalkSpeed = MoveSpeedTarget * MoveSpeedMultiplier.Evaluate();
-}
-
 void AFRPlayerBase::InputBinding_Pause(const FInputActionValue& InValue)
 {
 	if (LockFlags.Contains(Player::LockFlags::GuideScreen) || IsValid(ActiveCutscene)) return;
@@ -964,6 +946,24 @@ void AFRPlayerBase::OnDifficultyChanged(const EDifficultyMode InDifficulty)
 {
 	AddStaminaDrainModifier(Player::InternalKeys::DifficultyStamina, StaminaDifficulty.GetDrain(InDifficulty));
 	AddStaminaGainModifier(Player::InternalKeys::DifficultyStamina, StaminaDifficulty.GetGain(InDifficulty));
+}
+
+void AFRPlayerBase::SlowTick(const float DeltaTime)
+{
+	if (IsRunning())
+	{
+		if (!FieldOfView.Modifiers.Contains(Player::InternalKeys::RunFOV))
+		{
+			AddFieldOfViewModifier(Player::InternalKeys::RunFOV, RunningFOV);
+		}
+	}
+	else if (FieldOfView.Modifiers.Contains(Player::InternalKeys::RunFOV))
+	{
+		RemoveFieldOfViewModifier(Player::InternalKeys::RunFOV);
+	}
+
+	FOVValue.TargetValue = FieldOfView.Evaluate();
+	GetCharacterMovement()->MaxWalkSpeed = MoveSpeedTarget * MoveSpeedMultiplier.Evaluate();
 }
 
 void AFRPlayerBase::BeginPlay()

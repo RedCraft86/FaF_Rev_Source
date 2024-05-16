@@ -67,7 +67,7 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Settings|Camera")
 		float FieldOfViewSpeed;
 	
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Settings|Camera|LockOn")
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Settings|Camera|LockOn", meta = (DisplayThumbnail = false))
 		TSoftObjectPtr<USceneComponent> LockOnTarget;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Settings|Camera|LockOn")
@@ -366,7 +366,6 @@ protected:
 	void TickStamina();
 	void TickFootstep();
 	void LeanWallDetect();
-	void SlowTick(const float DeltaTime);
 
 	void InputBinding_Pause(const FInputActionValue& InValue);
 	void InputBinding_Turn(const FInputActionValue& InValue);
@@ -382,6 +381,7 @@ protected:
 
 	void OnSettingsApply();
 	void OnDifficultyChanged(const EDifficultyMode InDifficulty);
+	void SlowTick(const float DeltaTime);
 	
 	virtual void BeginPlay() override;
 	virtual void Tick(float DeltaTime) override;
