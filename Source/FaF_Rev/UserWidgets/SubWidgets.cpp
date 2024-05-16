@@ -50,28 +50,25 @@ UFRKeybindRowBase::UFRKeybindRowBase(const FObjectInitializer& ObjectInitializer
 
 void UFRKeybindRowBase::CreateIcons()
 {
-	if (KeybindsBox)
+	KeybindsBox->ClearChildren();
+	for (int32 i = 0; i < Keys.Num(); i++)
 	{
-		KeybindsBox->ClearChildren();
-		for (int32 i = 0; i < Keys.Num(); i++)
+		UImage* IconImage = WidgetTree->ConstructWidget<UImage>();
+		IconImage->SetBrush(GetIconForKey(Keys[i]));
+
+		UHorizontalBoxSlot* IconSlot = Cast<UHorizontalBoxSlot>(KeybindsBox->AddChild(IconImage));
+		IconSlot->SetHorizontalAlignment(HAlign_Center);
+		IconSlot->SetVerticalAlignment(VAlign_Center);
+
+		if (Keys.Num() != 1 && i != Keys.Num() - 1)
 		{
-			UImage* IconImage = WidgetTree->ConstructWidget<UImage>();
-			IconImage->SetBrush(GetIconForKey(Keys[i]));
-
-			UHorizontalBoxSlot* IconSlot = Cast<UHorizontalBoxSlot>(KeybindsBox->AddChild(IconImage));
-			IconSlot->SetHorizontalAlignment(HAlign_Center);
-			IconSlot->SetVerticalAlignment(VAlign_Center);
-
-			if (Keys.Num() != 1 && i != Keys.Num() - 1)
-			{
-				UImage* DividerImage = WidgetTree->ConstructWidget<UImage>();
-				DividerImage->SetBrush(DividerBrush);
+			UImage* DividerImage = WidgetTree->ConstructWidget<UImage>();
+			DividerImage->SetBrush(DividerBrush);
 						
-				UHorizontalBoxSlot* DividerSlot = Cast<UHorizontalBoxSlot>(KeybindsBox->AddChild(DividerImage));
-				DividerSlot->SetPadding(FMargin(5.0f, 0.0f));
-				DividerSlot->SetHorizontalAlignment(HAlign_Center);
-				DividerSlot->SetVerticalAlignment(VAlign_Fill);
-			}
+			UHorizontalBoxSlot* DividerSlot = Cast<UHorizontalBoxSlot>(KeybindsBox->AddChild(DividerImage));
+			DividerSlot->SetPadding(FMargin(5.0f, 0.0f));
+			DividerSlot->SetHorizontalAlignment(HAlign_Center);
+			DividerSlot->SetVerticalAlignment(VAlign_Fill);
 		}
 	}
 }
