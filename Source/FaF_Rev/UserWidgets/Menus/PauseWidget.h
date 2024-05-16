@@ -40,6 +40,8 @@ public:
 	
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "PauseWidget")
 		TSubclassOf<class USettingsWidgetBase> SettingsWidgetClass;
+
+	virtual void RemoveWidget(const TFunction<void()>& OnFinished) override;
 	
 protected:
 
@@ -54,6 +56,5 @@ protected:
 	void FadeScreen(const TFunction<void()>& Callback);
 	virtual void Return_Implementation(UUserWidget* From) override;
 	virtual void NativeConstruct() override;
-	virtual void NativeDestruct() override;
 	virtual void InitWidget() override;
 };

@@ -950,7 +950,7 @@ void AFRPlayerBase::OnDifficultyChanged(const EDifficultyMode InDifficulty)
 
 void AFRPlayerBase::SlowTick(const float DeltaTime)
 {
-	if (IsRunning())
+	if (IsRunning() && IsMoving())
 	{
 		if (!FieldOfView.Modifiers.Contains(Player::InternalKeys::RunFOV))
 		{
@@ -1013,7 +1013,7 @@ void AFRPlayerBase::BeginPlay()
 	GetWorldTimerManager().SetTimer(Handle, [this]()
 	{
 		LockFlags.Remove(Player::LockFlags::Startup);	
-	}, 0.5f, false);
+	}, 0.2f, false);
 }
 
 void AFRPlayerBase::Tick(float DeltaTime)

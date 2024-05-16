@@ -22,6 +22,11 @@ void AFRPlayerController::SetPauseState(const bool bInPaused)
 	if (IsPaused() != bInPaused)
 	{
 		SetPause(bInPaused);
+		if (!PauseWidget)
+		{
+			PauseWidget = FRGameMode(this)->GetWidget<UPauseWidgetBase>();
+		}
+		
 		if (bInPaused)
 		{
 			PauseWidget->AddWidget(nullptr);
@@ -57,7 +62,6 @@ void AFRPlayerController::BeginPlay()
 {
 	Super::BeginPlay();
 	PlayerCameraManager->SetTickableWhenPaused(true);
-	PauseWidget = FRGameMode(this)->GetWidget<UPauseWidgetBase>();
 	FSlateApplication::Get().OnApplicationActivationStateChanged().AddUObject(this, &AFRPlayerController::OnWindowFocusChanged);
 	GetInputSubsystem()->AddMappingContext(MappingContext, 0);
 }

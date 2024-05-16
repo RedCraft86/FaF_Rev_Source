@@ -22,6 +22,12 @@ UPauseWidgetBase::UPauseWidgetBase(const FObjectInitializer& ObjectInitializer)
 	bAutoAdd = false;
 }
 
+void UPauseWidgetBase::RemoveWidget(const TFunction<void()>& OnFinished)
+{
+	GetGameMode<AFRGameModeBase>()->SetGameInputMode(EGameInputMode::GameOnly);
+	Super::RemoveWidget(OnFinished);
+}
+
 void UPauseWidgetBase::OnResumeClicked()
 {
 	GetPlayerController<AFRPlayerController>()->SetPauseState(false);
@@ -81,14 +87,9 @@ void UPauseWidgetBase::Return_Implementation(UUserWidget* From)
 void UPauseWidgetBase::NativeConstruct()
 {
 	Super::NativeConstruct();
+	SetVisibility(ESlateVisibility::Visible);
 	GetGameMode<AFRGameModeBase>()->SetGameInputMode(EGameInputMode::GameAndUI, true,
 		EMouseLockMode::LockAlways, false, this);
-}
-
-void UPauseWidgetBase::NativeDestruct()
-{
-	Super::NativeDestruct();
-	GetGameMode<AFRGameModeBase>()->SetGameInputMode(EGameInputMode::GameOnly);
 }
 
 void UPauseWidgetBase::InitWidget()
@@ -105,6 +106,6 @@ void UPauseWidgetBase::InitWidget()
 	CheckpointButton->OnClicked.AddUObject(this, &UPauseWidgetBase::OnCheckpointClicked);
 	MainMenuButton->OnClicked.AddUObject(this, &UPauseWidgetBase::OnMainMenuClicked);
 
-	SettingsWidget = CreateWidget<USettingsWidgetBase>(GetPlayerController(), SettingsWidgetClass);
-	SettingsWidget->ParentWidget = this;
+	if (SettingsWidgetClass) SettingsWidget = CreateWidget<USettingsWidgetBase>(GetPlayerController(), SettingsWidgetClass);
+	if (SettingsWidget) SettingsWidget->ParentWidget = this;
 }
