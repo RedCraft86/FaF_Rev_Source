@@ -7,7 +7,7 @@
 
 FLinearColor CalcFrameRateColor(const FLinearColor& Good, const FLinearColor& Bad, const float Target, const float Current)
 {
-	return FLinearColor::LerpUsingHSV(Bad, Good, FMath::GetMappedRangeValueClamped(
+	return FMath::Lerp(Bad, Good, FMath::GetMappedRangeValueClamped(
 			FVector2D(0.0f, (FMath::IsNearlyZero(Target) ? 60.0f : Target) - 10.0f),
 			FVector2D(0.0f, 1.0f), Current));
 }
