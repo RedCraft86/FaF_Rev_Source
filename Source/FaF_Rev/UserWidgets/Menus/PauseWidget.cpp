@@ -37,6 +37,8 @@ void UPauseWidgetBase::OnResumeClicked()
 void UPauseWidgetBase::OnSettingsClicked()
 {
 	SettingsWidget->AddWidget(nullptr);
+	GetGameMode<AFRGameModeBase>()->SetGameInputMode(EGameInputMode::GameAndUI, true,
+		EMouseLockMode::LockAlways, false, SettingsWidget);
 	SetWidgetHidden(true);
 }
 
@@ -82,6 +84,8 @@ void UPauseWidgetBase::FadeScreen(const TFunction<void()>& Callback)
 void UPauseWidgetBase::Return_Implementation(UUserWidget* From)
 {
 	SetWidgetHidden(false);
+	GetGameMode<AFRGameModeBase>()->SetGameInputMode(EGameInputMode::GameAndUI, true,
+		EMouseLockMode::LockAlways, false, this);
 }
 
 void UPauseWidgetBase::NativeConstruct()
@@ -106,6 +110,6 @@ void UPauseWidgetBase::InitWidget()
 	CheckpointButton->OnClicked.AddUObject(this, &UPauseWidgetBase::OnCheckpointClicked);
 	MainMenuButton->OnClicked.AddUObject(this, &UPauseWidgetBase::OnMainMenuClicked);
 
-	SettingsWidget = CreateWidget<USettingsWidgetBase>(GetPlayerController(), SettingsWidgetClass);
+	SettingsWidget = CreateNew<USettingsWidgetBase>(GetPlayerController(), SettingsWidgetClass, {});
 	if (SettingsWidget) SettingsWidget->ParentWidget = this;
 }

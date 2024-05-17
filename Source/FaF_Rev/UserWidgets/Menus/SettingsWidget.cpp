@@ -74,7 +74,7 @@ void USettingsWidgetBase::RefreshUI()
 #endif
 }
 
-void USettingsWidgetBase::SetScreenIndex(const int32 InIndex)
+void USettingsWidgetBase::SetScreenIndex(const uint8 InIndex)
 {
 	if (ScreenIndex != InIndex && !IsAnimationPlaying(SwapScreenAnim))
 	{
@@ -214,7 +214,7 @@ void USettingsWidgetBase::InitWidget()
 	KeybindsButton->OnClicked.AddUObject(this, &USettingsWidgetBase::OnKeybindsButtonClicked);
 	DeveloperButton->OnClicked.AddUObject(this, &USettingsWidgetBase::OnDebuggingButtonClicked);
 
-		/* General */
+	/* General */
 	SETUP_TOGGLE(ToggleFramerateRow, GetShowFPS, SetShowFPS);
 	SETUP_SLIDER(FieldOfViewRow, true, GetFieldOfView, SetFieldOfView);
 	SETUP_TOGGLE(CameraSmoothingRow, GetUseSmoothCamera, SetUseSmoothCamera);
@@ -270,7 +270,7 @@ void USettingsWidgetBase::InitWidget()
 	SETUP_DEV_TOGGLE(InvincibilityRow, IsPlayerInvincible, SetPlayerInvincible);
 	SETUP_DEV_TOGGLE(ViewModeUnlitRow, IsUnlitViewMode, SetUnlitViewMode);
 	/* ~Developer */
-	
+
 	ConfirmResButton->OnClicked.AddDynamic(this, &USettingsWidgetBase::OnConfirmResClicked);
 	RevertResButton->OnClicked.AddDynamic(this, &USettingsWidgetBase::OnRevertResClicked);
 	ExitButton->OnClicked.AddDynamic(this, &USettingsWidgetBase::OnExitClicked);
@@ -281,7 +281,7 @@ void USettingsWidgetBase::InitWidget()
 void USettingsWidgetBase::NativeConstruct()
 {
 	Super::NativeConstruct();
-	
+
 	RefreshResolutions();
 	RefreshUI();
 }

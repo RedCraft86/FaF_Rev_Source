@@ -202,7 +202,7 @@ protected:
 	float ResolutionWaitTime;
 	float AutoDetectWaitTime;
 
-	void SetScreenIndex(const int32 InIndex);
+	void SetScreenIndex(const uint8 InIndex);
 	void OnGeneralButtonClicked() { SetScreenIndex(0); }
 	void OnGraphicsButtonClicked() { SetScreenIndex(1); }
 	void OnAudioButtonClicked() { SetScreenIndex(2); }
