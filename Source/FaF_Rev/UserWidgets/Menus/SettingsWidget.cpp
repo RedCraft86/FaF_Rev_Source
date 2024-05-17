@@ -67,12 +67,9 @@ void USettingsWidgetBase::RefreshUI()
 {
 	OnRefreshDisplay.Broadcast();
 	PlayAnimation(FadeAnim, 0.0f, 1, EUMGSequencePlayMode::Forward, 1.5f);
-#if UE_BUILD_SHIPPING
+
 	DeveloperButton->SetVisibility(UGTConfigSubsystem::Get(this)->IsDeveloperMode()
 		? ESlateVisibility::Visible : ESlateVisibility::Collapsed);
-#else
-	DeveloperButton->SetVisibility(ESlateVisibility::Visible);
-#endif
 }
 
 void USettingsWidgetBase::SetScreenIndex(const uint8 InIndex)
@@ -283,12 +280,6 @@ void USettingsWidgetBase::NativeConstruct()
 {
 	Super::NativeConstruct();
 
-	DeveloperButton->SetVisibility(ESlateVisibility::Collapsed);
-	if (const UGTConfigSubsystem* Subsystem = UGTConfigSubsystem::Get(this))
-	{
-		if (Subsystem->IsDeveloperMode()) DeveloperButton->SetVisibility(ESlateVisibility::SelfHitTestInvisible);
-	}
-	
 	RefreshResolutions();
 	RefreshUI();
 }
