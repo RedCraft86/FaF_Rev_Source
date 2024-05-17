@@ -21,14 +21,14 @@ UInfoWidgetBase::UInfoWidgetBase(const FObjectInitializer& ObjectInitializer)
 	bAutoAdd = true;
 }
 
-void UInfoWidgetBase::UpdateInfo()
+void UInfoWidgetBase::OnSaveStarted()
 {
 	PlayAnimation(SaveAnim);
 }
 
 void UInfoWidgetBase::OnSettingsUpdate()
 {
-	UpdateInfo();
+	OnSaveStarted();
 
 	TargetFPS = UGameSettings::Get()->GetFrameRateLimit();
 	
@@ -54,7 +54,7 @@ void UInfoWidgetBase::InitWidget()
 {
 	OnSettingsUpdate();
 
-	USaveSubsystem::Get(this)->OnSaveStarted.AddUObject(this, &UInfoWidgetBase::UpdateInfo);
+	USaveSubsystem::Get(this)->OnSaveStarted.AddUObject(this, &UInfoWidgetBase::OnSaveStarted);
 
 	UGameSettings* Settings = UGameSettings::Get();
 	Settings->OnDynamicApply.AddUObject(this, &UInfoWidgetBase::OnSettingsUpdate);

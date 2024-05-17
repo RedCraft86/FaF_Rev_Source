@@ -37,7 +37,7 @@ private:
 	float FPSTickTime;
 	bool bWantsFPS;
 
-	void UpdateInfo();
+	void OnSaveStarted();
 	void OnSettingsUpdate();
 	void FrameRateTick() const;
 	virtual void InitWidget() override;
