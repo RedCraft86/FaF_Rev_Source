@@ -6,6 +6,7 @@
 #include "Components/TextBlock.h"
 #include "Components/ComboBoxString.h"
 #include "GameSettings/GameSettings.h"
+#include "GTConfigSubsystem.h"
 #include "WidgetInterface.h"
 #include "FRGameInstance.h"
 #include "SubWidgets.h"
@@ -282,6 +283,12 @@ void USettingsWidgetBase::NativeConstruct()
 {
 	Super::NativeConstruct();
 
+	DeveloperButton->SetVisibility(ESlateVisibility::Collapsed);
+	if (const UGTConfigSubsystem* Subsystem = UGTConfigSubsystem::Get(this))
+	{
+		if (Subsystem->IsDeveloperMode()) DeveloperButton->SetVisibility(ESlateVisibility::SelfHitTestInvisible);
+	}
+	
 	RefreshResolutions();
 	RefreshUI();
 }
