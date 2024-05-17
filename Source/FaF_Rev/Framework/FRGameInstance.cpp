@@ -36,9 +36,6 @@ void UFRGameInstance::OnWorldBeginPlay(UWorld* InWorld)
 	{
 		bRanFirstLoads = true;
 		UGameSettings::Get()->InitializeSettings();
-
-		FTimerHandle Handle;
-		GetWorld()->GetTimerManager().SetTimer(Handle, this,
-			&UFRGameInstance::ReloadLevel, 0.2f, false);
+		GetWorld()->GetTimerManager().SetTimerForNextTick(this, &UFRGameInstance::ReloadLevel);
 	}
 }

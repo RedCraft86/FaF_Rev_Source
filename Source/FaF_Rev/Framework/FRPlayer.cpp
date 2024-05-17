@@ -1013,7 +1013,7 @@ void AFRPlayerBase::BeginPlay()
 	GetWorldTimerManager().SetTimer(Handle, [this]()
 	{
 		LockFlags.Remove(Player::LockFlags::Startup);	
-	}, 0.2f, false);
+	}, 0.1f, false);
 }
 
 void AFRPlayerBase::Tick(float DeltaTime)
