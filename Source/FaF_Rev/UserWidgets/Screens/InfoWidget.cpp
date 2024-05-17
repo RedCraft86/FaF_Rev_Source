@@ -30,12 +30,13 @@ void UInfoWidgetBase::OnSettingsUpdate()
 {
 	OnSaveStarted();
 
-	TargetFPS = UGameSettings::Get()->GetFrameRateLimit();
-	
-	bWantsFPS = UGameSettings::Get()->GetShowFPS();
+	const UGameSettings* Settings = UGameSettings::Get();
+	TargetFPS = Settings->GetFrameRateLimit();
+	bWantsFPS = Settings->GetShowFPS();
+	FrameRateTick();
+
 	FrameRateText->SetVisibility(bWantsFPS ? ESlateVisibility::HitTestInvisible : ESlateVisibility::Collapsed);
 	DeltaTimeText->SetVisibility(bWantsFPS ? ESlateVisibility::HitTestInvisible : ESlateVisibility::Collapsed);
-	FPSTickTime = 0.0f;
 }
 
 void UInfoWidgetBase::FrameRateTick() const
