@@ -5,8 +5,17 @@
 #include "GameSettings/GameSettings.h"
 #include "SaveSystem/SaveSubsystem.h"
 
+FLinearColor CalcFrameRateColor(const FLinearColor& Good, const FLinearColor& Bad, const float Target, const float Current)
+{
+	return FLinearColor::LerpUsingHSV(Bad, Good, FMath::GetMappedRangeValueClamped(
+			FVector2D(0.0f, (FMath::IsNearlyZero(Target) ? 60.0f : Target) - 10.0f),
+			FVector2D(0.0f, 1.0f), Current));
+}
+
 UInfoWidgetBase::UInfoWidgetBase(const FObjectInitializer& ObjectInitializer)
 	: UGTUserWidget(ObjectInitializer), FrameRateText(nullptr), DeltaTimeText(nullptr), SaveAnim(nullptr)
+	, GoodFrameRateColor(FLinearColor::Green), BadFrameRateColor(FLinearColor::Red), TargetFPS(60.0f)
+	, FPSTickTime(0.0f), bWantsFPS(false)
 {
 	ZOrder = 100;
 	bAutoAdd = true;
@@ -20,32 +29,46 @@ void UInfoWidgetBase::UpdateInfo()
 void UInfoWidgetBase::OnSettingsUpdate()
 {
 	UpdateInfo();
+
+	TargetFPS = UGameSettings::Get()->GetFrameRateLimit();
 	
-	const bool bWantsFPS = UGameSettings::Get()->GetShowFPS();
+	bWantsFPS = UGameSettings::Get()->GetShowFPS();
 	FrameRateText->SetVisibility(bWantsFPS ? ESlateVisibility::HitTestInvisible : ESlateVisibility::Collapsed);
 	DeltaTimeText->SetVisibility(bWantsFPS ? ESlateVisibility::HitTestInvisible : ESlateVisibility::Collapsed);
-	
-	bWantsFPS
-		? GetWorld()->GetTimerManager().UnPauseTimer(FrameRateTimer)
-		: GetWorld()->GetTimerManager().PauseTimer(FrameRateTimer);
+	FPSTickTime = 0.0f;
 }
 
 void UInfoWidgetBase::FrameRateTick() const
 {
-	FrameRateText->SetText(FText::FromString(
-		FString::Printf(TEXT("%d FPS"), FMath::RoundToInt32(1.0 / FApp::GetDeltaTime()))));
-		
-	DeltaTimeText->SetText(FText::FromString(
-		FString::Printf(TEXT("%.2f ms"), FApp::GetDeltaTime() * 1000.0f)));
+	const int32 FPS = FMath::RoundToInt32(1.0 / FApp::GetDeltaTime());
+	const FLinearColor Color = CalcFrameRateColor(GoodFrameRateColor, BadFrameRateColor, TargetFPS, FPS);
+	
+	FrameRateText->SetText(FText::FromString(FString::Printf(TEXT("%d FPS"), FPS)));
+	FrameRateText->SetColorAndOpacity(Color);
+
+	DeltaTimeText->SetText(FText::FromString(FString::Printf(TEXT("%.2f ms"), FApp::GetDeltaTime() * 1000.0f)));
+	DeltaTimeText->SetColorAndOpacity(Color);
 }
 
 void UInfoWidgetBase::InitWidget()
 {
-	GetWorld()->GetTimerManager().SetTimer(FrameRateTimer,
-		this, &UInfoWidgetBase::FrameRateTick, 0.25f, true);
-
 	OnSettingsUpdate();
 
 	USaveSubsystem::Get(this)->OnSaveStarted.AddUObject(this, &UInfoWidgetBase::UpdateInfo);
-	UGameSettings::Get()->OnDynamicApply.AddUObject(this, &UInfoWidgetBase::OnSettingsUpdate);
+
+	UGameSettings* Settings = UGameSettings::Get();
+	Settings->OnDynamicApply.AddUObject(this, &UInfoWidgetBase::OnSettingsUpdate);
+	Settings->OnManualApply.AddUObject(this, &UInfoWidgetBase::OnSettingsUpdate);
+}
+
+void UInfoWidgetBase::NativeTick(const FGeometry& MyGeometry, float InDeltaTime)
+{
+	Super::NativeTick(MyGeometry, InDeltaTime);
+	if (!bWantsFPS) return;
+	if (FPSTickTime >= 0.1f)
+	{
+		FPSTickTime = 0.0f;
+		FrameRateTick();
+	}
+	else { FPSTickTime += InDeltaTime; }
 }

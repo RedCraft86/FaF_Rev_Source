@@ -22,15 +22,24 @@ public:
 	UPROPERTY(Transient, meta = (BindWidget))
 		TObjectPtr<UTextBlock> DeltaTimeText;
 
-	UPROPERTY(Transient, BlueprintReadOnly, Category = "Animations", meta = (BindWidgetAnim))
+	UPROPERTY(Transient, meta = (BindWidgetAnim))
 		TObjectPtr<UWidgetAnimation> SaveAnim;
+
+	UPROPERTY(EditAnywhere, Category = "Settings")
+		FLinearColor GoodFrameRateColor;
+
+	UPROPERTY(EditAnywhere, Category = "Settings")
+		FLinearColor BadFrameRateColor;
 
 private:
 
-	FTimerHandle FrameRateTimer;
+	float TargetFPS;
+	float FPSTickTime;
+	bool bWantsFPS;
 
 	void UpdateInfo();
 	void OnSettingsUpdate();
 	void FrameRateTick() const;
 	virtual void InitWidget() override;
+	virtual void NativeTick(const FGeometry& MyGeometry, float InDeltaTime) override;
 };
