@@ -1,14 +1,14 @@
 ﻿// Copyright (C) RedCraft86. All Rights Reserved.
 
 #include "SubWidgets.h"
-
-#include "Blueprint/WidgetTree.h"
-#include "Components/Button.h"
-#include "Components/HorizontalBox.h"
-#include "Components/HorizontalBoxSlot.h"
 #include "Components/Image.h"
+#include "Components/Button.h"
 #include "Components/SpinBox.h"
 #include "Components/TextBlock.h"
+#include "Components/HorizontalBox.h"
+#include "Components/HorizontalBoxSlot.h"
+#include "Blueprint/WidgetTree.h"
+#include "InputMappingContext.h"
 
 void UFRAnimatedButtonBase::NativeOnInitialized()
 {
@@ -36,10 +36,8 @@ void UFRAnimatedButtonBase::OnButtonUnhovered()
 
 UFRKeybindRowBase::UFRKeybindRowBase(const FObjectInitializer& ObjectInitializer)
 	: UUserWidget(ObjectInitializer), LabelText(nullptr), KeybindsBox(nullptr)
+	, MappingContext(nullptr), Action(nullptr), DesiredSize({128.0f})
 {
-	Label = FText::FromString("Keybind");
-	Keys = {};
-
 	DividerBrush.TintColor = FLinearColor::Gray;
 	DividerBrush.DrawAs = ESlateBrushDrawType::RoundedBox;
 	DividerBrush.ImageSize = FVector2D(4.0f, 32.0f);
@@ -52,14 +50,29 @@ UFRKeybindRowBase::UFRKeybindRowBase(const FObjectInitializer& ObjectInitializer
 #endif
 }
 
-void UFRKeybindRowBase::CreateIcons()
+void UFRKeybindRowBase::NativePreConstruct()
 {
+	Super::NativePreConstruct();
 	KeybindsBox->ClearChildren();
+	if (!MappingContext || !Action) return;
+
+	LabelText->SetText(Action->ActionDescription);
+
+	TArray<FKey> Keys = {};
+	const TArray<FEnhancedActionKeyMapping>& Mappings = MappingContext->GetMappings();
+	for (const FEnhancedActionKeyMapping& Mapping : Mappings)
+	{
+		if (Mapping.Action == Action) Keys.AddUnique(Mapping.Key);
+	}
+
+	FSlateBrush Brush = {};
 	for (int32 i = 0; i < Keys.Num(); i++)
 	{
 		UImage* IconImage = WidgetTree->ConstructWidget<UImage>();
-		IconImage->SetBrush(GetIconForKey(Keys[i]));
-
+		Brush = GetIconForKey(Keys[i].GetFName()).Brush;
+		Brush.SetImageSize(DesiredSize);
+		IconImage->SetBrush(Brush);
+		
 		UHorizontalBoxSlot* IconSlot = Cast<UHorizontalBoxSlot>(KeybindsBox->AddChild(IconImage));
 		IconSlot->SetHorizontalAlignment(HAlign_Center);
 		IconSlot->SetVerticalAlignment(VAlign_Center);
@@ -75,13 +88,6 @@ void UFRKeybindRowBase::CreateIcons()
 			DividerSlot->SetVerticalAlignment(VAlign_Fill);
 		}
 	}
-}
-
-void UFRKeybindRowBase::NativePreConstruct()
-{
-	Super::NativePreConstruct();
-	if (LabelText) LabelText->SetText(Label);
-	CreateIcons();
 }
 
 void UFRSettingRowBase::CheckDefaultValue()

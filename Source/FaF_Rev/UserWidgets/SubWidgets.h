@@ -3,6 +3,7 @@
 #pragma once
 
 #include "Blueprint/UserWidget.h"
+#include "Components/RichTextBlockImageDecorator.h"
 #include "SubWidgets.generated.h"
 
 class UButton;
@@ -61,21 +62,23 @@ public:
 	UPROPERTY(Transient, meta = (BindWidget))
 		TObjectPtr<class UHorizontalBox> KeybindsBox;
 
-	UPROPERTY(EditAnywhere, Category = "Settings")
-		FText Label;
+	UPROPERTY(EditAnywhere, Category = "Settings", meta = (DisplayThumbnail = false))
+		TObjectPtr<class UInputMappingContext> MappingContext;
 
+	UPROPERTY(EditAnywhere, Category = "Settings", meta = (DisplayThumbnail = false))
+		TObjectPtr<class UInputAction> Action;
+	
 	UPROPERTY(EditAnywhere, Category = "Settings")
-		TArray<FKey> Keys;
+		FVector2D DesiredSize;
 
 	UPROPERTY(EditAnywhere, Category = "Settings")
 		FSlateBrush DividerBrush;
 
 	UFUNCTION(BlueprintImplementableEvent)
-		FSlateBrush GetIconForKey(const FKey& InKey);
+		FRichImageRow GetIconForKey(const FName& InKey);
 	
 protected:
-
-	void CreateIcons();
+	
 	virtual void NativePreConstruct() override;
 };
 
