@@ -15,7 +15,7 @@ FLinearColor CalcFrameRateColor(const FLinearColor& Good, const FLinearColor& Ba
 UInfoWidgetBase::UInfoWidgetBase(const FObjectInitializer& ObjectInitializer)
 	: UGTUserWidget(ObjectInitializer), FrameRateText(nullptr), DeltaTimeText(nullptr), SaveAnim(nullptr)
 	, GoodFrameRateColor(FLinearColor::Green), BadFrameRateColor(FLinearColor::Red), TargetFPS(60.0f)
-	, FPSTickTime(0.0f), bWantsFPS(false)
+	, FPSTickTime(0.0f), bWantsFPS(false), bInitSettings(false)
 {
 	ZOrder = 100;
 	bAutoAdd = true;
@@ -26,10 +26,14 @@ void UInfoWidgetBase::OnSaveStarted()
 	PlayAnimation(SaveAnim);
 }
 
+void UInfoWidgetBase::OnSettingsSave()
+{
+	if (bInitSettings) OnSaveStarted();
+	bInitSettings = true;
+}
+
 void UInfoWidgetBase::OnSettingsUpdate()
 {
-	OnSaveStarted();
-
 	const UGameSettings* Settings = UGameSettings::Get();
 	TargetFPS = Settings->GetFrameRateLimit();
 	bWantsFPS = Settings->GetShowFPS();
@@ -58,8 +62,8 @@ void UInfoWidgetBase::InitWidget()
 	USaveSubsystem::Get(this)->OnSaveStarted.AddUObject(this, &UInfoWidgetBase::OnSaveStarted);
 
 	UGameSettings* Settings = UGameSettings::Get();
+	Settings->OnManualApply.AddUObject(this, &UInfoWidgetBase::OnSettingsSave);
 	Settings->OnDynamicApply.AddUObject(this, &UInfoWidgetBase::OnSettingsUpdate);
-	Settings->OnManualApply.AddUObject(this, &UInfoWidgetBase::OnSettingsUpdate);
 }
 
 void UInfoWidgetBase::NativeTick(const FGeometry& MyGeometry, float InDeltaTime)

@@ -35,9 +35,10 @@ private:
 
 	float TargetFPS;
 	float FPSTickTime;
-	bool bWantsFPS;
+	bool bWantsFPS, bInitSettings;
 
 	void OnSaveStarted();
+	void OnSettingsSave();
 	void OnSettingsUpdate();
 	void FrameRateTick() const;
 	virtual void InitWidget() override;
