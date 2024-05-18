@@ -10,20 +10,6 @@
 #include "Components/BillboardComponent.h"
 #endif
 
-const FPostProcessSettings& FFRPostProcessSettings::GetScaledSettings(const bool bFancyBloom)
-{
-	if (bFancyBloom)
-	{
-		FancyBloom.AlterPostProcess(Settings);
-	}
-	else
-	{
-		SimpleBloom.AlterPostProcess(Settings);
-	}
-
-	return Settings;
-}
-
 ASmartPostProcess::ASmartPostProcess() : BlendRadius(100.0f), BlendWeight(1.0f), bEnabled(true), bUnbound(true)
 {
 	PrimaryActorTick.bCanEverTick = true;
@@ -54,6 +40,12 @@ ASmartPostProcess::ASmartPostProcess() : BlendRadius(100.0f), BlendWeight(1.0f),
 		}
 	}
 #endif
+
+	Settings.bOverride_AutoExposureMethod = true;
+	Settings.AutoExposureMethod = AEM_Manual;
+
+	Settings.bOverride_AutoExposureBias = true;
+	Settings.AutoExposureBias = 10.0f;
 }
 
 #if WITH_EDITOR
@@ -62,9 +54,7 @@ void ASmartPostProcess::CopyFromTarget()
 #if WITH_EDITORONLY_DATA
 	if (CopyTarget)
 	{
-		FFRPostProcessSettings NewSettings;
-		NewSettings.Settings = *Settings;
-	
+		FPostProcessSettings NewSettings = Settings;
 		if (const ASmartPostProcess* PPActor = Cast<ASmartPostProcess>(CopyTarget))
 		{
 			NewSettings = PPActor->Settings;
@@ -75,7 +65,7 @@ void ASmartPostProcess::CopyFromTarget()
 		}
 		else if (const APostProcessVolume* PPVolume = Cast<APostProcessVolume>(CopyTarget))
 		{
-			NewSettings.Settings = PPVolume->Settings;
+			NewSettings = PPVolume->Settings;
 			Priority = PPVolume->Priority;
 			BlendRadius = PPVolume->BlendRadius;
 			BlendWeight = PPVolume->BlendWeight;
@@ -83,12 +73,12 @@ void ASmartPostProcess::CopyFromTarget()
 		}
 		else if (const ACameraActor* CamActor = Cast<ACameraActor>(CopyTarget))
 		{
-			NewSettings.Settings = CamActor->GetCameraComponent()->PostProcessSettings;
+			NewSettings = CamActor->GetCameraComponent()->PostProcessSettings;
 			BlendWeight = CamActor->GetCameraComponent()->PostProcessBlendWeight;
 		}
 		else if (const UPostProcessComponent* PPComp = CopyTarget ? CopyTarget->FindComponentByClass<UPostProcessComponent>() : nullptr)
 		{
-			NewSettings.Settings = PPComp->Settings;
+			NewSettings = PPComp->Settings;
 			Priority = PPComp->Priority;
 			BlendRadius = PPComp->BlendRadius;
 			BlendWeight = PPComp->BlendWeight;
@@ -96,17 +86,17 @@ void ASmartPostProcess::CopyFromTarget()
 		}
 		else if (const UCameraComponent* CamComp = CopyTarget ? CopyTarget->FindComponentByClass<UCameraComponent>() : nullptr)
 		{
-			NewSettings.Settings = CamComp->PostProcessSettings;
+			NewSettings = CamComp->PostProcessSettings;
 			BlendWeight = CamComp->PostProcessBlendWeight;
 		}
 
 		if (bPreserveExposure)
 		{
-			NewSettings.Settings.bOverride_AutoExposureMethod = (*Settings).bOverride_AutoExposureMethod;
-			NewSettings.Settings.AutoExposureMethod = (*Settings).AutoExposureMethod;
+			NewSettings.bOverride_AutoExposureMethod = Settings.bOverride_AutoExposureMethod;
+			NewSettings.AutoExposureMethod = Settings.AutoExposureMethod;
 
-			NewSettings.Settings.bOverride_AutoExposureBias = (*Settings).bOverride_AutoExposureBias;
-			NewSettings.Settings.AutoExposureBias = (*Settings).AutoExposureBias;
+			NewSettings.bOverride_AutoExposureBias = Settings.bOverride_AutoExposureBias;
+			NewSettings.AutoExposureBias = Settings.AutoExposureBias;
 		}
 
 		CopyTarget = nullptr;
@@ -149,15 +139,19 @@ void ASmartPostProcess::ApplySettings()
 #if WITH_EDITOR
 	if (!FApp::IsGame())
 	{
-		PostProcess->Settings = Settings.GetScaledSettings(Settings.bStartFancy);
-		
+		bStartFancy ? FancyBloom.AlterPostProcess(Settings) : SimpleBloom.AlterPostProcess(Settings);
 	}
-	else
+	else if (GameSettings)
+#else
+	if (GameSettings)
 #endif
 	{
-		PostProcess->Settings = Settings.GetScaledSettings(UGameSettings::Get()->GetUseFancyBloom());
+		GameSettings->GetUseFancyBloom()
+			? FancyBloom.AlterPostProcess(Settings)
+			: SimpleBloom.AlterPostProcess(Settings);
 	}
 
+	PostProcess->Settings = Settings;
 	PostProcess->Priority = Priority;
 	PostProcess->BlendWeight = BlendWeight;
 	PostProcess->BlendRadius = BlendRadius;
@@ -180,6 +174,7 @@ void ASmartPostProcess::ApplyBlendables()
 void ASmartPostProcess::BeginPlay()
 {
 	Super::BeginPlay();
+	GameSettings = UGameSettings::Get();
 	ApplyBlendables();
 }
 

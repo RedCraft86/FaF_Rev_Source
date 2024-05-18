@@ -46,36 +46,6 @@ struct FAF_REV_API FPPBloomSettings
 	}
 };
 
-USTRUCT(BlueprintType, DisplayName = "Extended Post Process Settings")
-struct FAF_REV_API FFRPostProcessSettings
-{
-	GENERATED_BODY()
-
-	UPROPERTY(Interp, EditAnywhere, BlueprintReadWrite, Category = "Settings", meta = (ShowOnlyInnerProperties))
-		FPostProcessSettings Settings;
-
-	UPROPERTY(Interp, EditAnywhere, BlueprintReadWrite, Category = "Settings|Bloom")
-		bool bStartFancy;
-
-	UPROPERTY(interp, EditAnywhere, BlueprintReadWrite, Category = "Settings|Bloom")
-		FPPBloomSettings SimpleBloom;
-
-	UPROPERTY(interp, EditAnywhere, BlueprintReadWrite, Category = "Settings|Bloom")
-		FPPBloomSettings FancyBloom;
-
-	FFRPostProcessSettings() : bStartFancy(true)
-	{
-		Settings.bOverride_AutoExposureMethod = true;
-		Settings.AutoExposureMethod = AEM_Manual;
-
-		Settings.bOverride_AutoExposureBias = true;
-		Settings.AutoExposureBias = 10.0f;
-	}
-
-	FORCEINLINE const FPostProcessSettings& operator*() const { return Settings; }
-	const FPostProcessSettings& GetScaledSettings(const bool bFancyBloom);
-};
-
 UCLASS(NotBlueprintable, meta = (AllowedCategories = "Copying"))
 class FAF_REV_API ASmartPostProcess final : public AActor
 {
@@ -91,9 +61,18 @@ public:
 	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, Category = "DefaultSubobjects")
 		TObjectPtr<class UPostProcessComponent> PostProcess;
 
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Settings|Bloom", Interp, meta = (DisplayPriority = -1))
+		bool bStartFancy;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Settings|Bloom", Interp, meta = (DisplayPriority = -1))
+		FPPBloomSettings SimpleBloom;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Settings|Bloom", Interp, meta = (DisplayPriority = -1))
+		FPPBloomSettings FancyBloom;
+
 	/* Post process settings to use for this volume */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Settings", Interp)
-		FFRPostProcessSettings Settings;
+		FPostProcessSettings Settings;
 
 	/* Post process blendable materials */
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Settings", Instanced)
@@ -148,6 +127,8 @@ public:
 protected:
 	
 	float DistToPoint;
+	UPROPERTY(Transient) TObjectPtr<class UGameSettings> GameSettings;
+
 	void ApplySettings();
 	void ApplyBlendables();
 
