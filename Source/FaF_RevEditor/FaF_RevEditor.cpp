@@ -10,6 +10,7 @@
 #include "Interaction/Fields/TriggerField.h"
 #include "Inventory/InventoryItemActor.h"
 #include "Inventory/InventoryPreview.h"
+#include "PostProcess/SmartPostProcess.h"
 
 #define LOCTEXT_NAMESPACE "FFaF_RevEditorModule"
 
@@ -22,6 +23,7 @@ void FFaF_RevEditorModule::StartupModule()
         REGISTER_CLASS_CUSTOMIZATION(PropertyModule, ATriggerField, FGTActorDetails);
         REGISTER_CLASS_CUSTOMIZATION(PropertyModule, AInventoryItemActor, FGTActorDetails);
         REGISTER_CLASS_CUSTOMIZATION(PropertyModule, AInventoryPreview, FGTActorDetails);
+        REGISTER_CLASS_CUSTOMIZATION(PropertyModule, ASmartPostProcess, FGTActorDetails);
     }
 
     if (const FAssetToolsModule* AssetToolsModule = FModuleManager::LoadModulePtr<FAssetToolsModule>("AssetTools"))
