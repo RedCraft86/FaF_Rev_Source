@@ -18,6 +18,9 @@ public:
 	
 	AFRGameStateBase();
 
+	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, Category = "Subobjects")
+		TObjectPtr<USceneComponent> SceneRoot;
+
 	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, Category = "DefaultSubobjects")
 		TObjectPtr<UAudioComponent> WorldMusicAudio;
 

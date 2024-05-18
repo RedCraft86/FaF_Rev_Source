@@ -14,6 +14,9 @@
 
 AFRGameStateBase::AFRGameStateBase()
 {
+	SceneRoot = CreateDefaultSubobject<USceneComponent>("SceneRoot");
+	SetRootComponent(SceneRoot);
+	
 	CREATE_AUDIO_COMPONENT(WorldMusicAudio);
 	CREATE_AUDIO_COMPONENT(SuspicionMusicAudio);
 	CREATE_AUDIO_COMPONENT(ChaseMusicAudio);
