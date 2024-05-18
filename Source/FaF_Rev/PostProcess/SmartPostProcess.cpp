@@ -10,6 +10,20 @@
 #include "Components/BillboardComponent.h"
 #endif
 
+void FFRBloomChoice::ApplyChoice(FPostProcessSettings& Settings, const bool bFancy) const
+{
+#if WITH_EDITOR
+	if (!FApp::IsGame())
+	{
+		bStartFancy ? FancyBloom.AlterPostProcess(Settings) : SimpleBloom.AlterPostProcess(Settings);
+	}
+	else
+#endif
+	{
+		bFancy ? FancyBloom.AlterPostProcess(Settings) : SimpleBloom.AlterPostProcess(Settings);
+	}
+}
+
 ASmartPostProcess::ASmartPostProcess() : BlendRadius(100.0f), BlendWeight(1.0f), bEnabled(true), bUnbound(true)
 {
 	PrimaryActorTick.bCanEverTick = true;
@@ -136,20 +150,7 @@ USmartBlendable* ASmartPostProcess::AddSmartBlendable(const FName InName, const 
 
 void ASmartPostProcess::ApplySettings()
 {
-#if WITH_EDITOR
-	if (!FApp::IsGame())
-	{
-		bStartFancy ? FancyBloom.AlterPostProcess(Settings) : SimpleBloom.AlterPostProcess(Settings);
-	}
-	else if (GameSettings)
-#else
-	if (GameSettings)
-#endif
-	{
-		GameSettings->GetUseFancyBloom()
-			? FancyBloom.AlterPostProcess(Settings)
-			: SimpleBloom.AlterPostProcess(Settings);
-	}
+	Bloom.ApplyChoice(Settings, GameSettings ? GameSettings->GetUseFancyBloom() : true);
 
 	PostProcess->Settings = Settings;
 	PostProcess->Priority = Priority;

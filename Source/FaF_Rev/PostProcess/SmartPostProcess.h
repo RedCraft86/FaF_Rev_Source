@@ -46,6 +46,23 @@ struct FAF_REV_API FPPBloomSettings
 	}
 };
 
+USTRUCT(BlueprintInternalUseOnly)
+struct FAF_REV_API FFRBloomChoice
+{
+	GENERATED_BODY()
+	
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Settings", Interp)
+		bool bStartFancy = true;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Settings", Interp)
+		FPPBloomSettings SimpleBloom;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Settings", Interp)
+		FPPBloomSettings FancyBloom;
+
+	void ApplyChoice(FPostProcessSettings& Settings, const bool bFancy) const;
+};
+
 UCLASS(NotBlueprintable, meta = (AllowedCategories = "Copying"))
 class FAF_REV_API ASmartPostProcess final : public AActor
 {
@@ -61,17 +78,12 @@ public:
 	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, Category = "DefaultSubobjects")
 		TObjectPtr<class UPostProcessComponent> PostProcess;
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Settings|Bloom", Interp, meta = (DisplayPriority = -1))
-		bool bStartFancy;
-
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Settings|Bloom", Interp, meta = (DisplayPriority = -1))
-		FPPBloomSettings SimpleBloom;
-
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Settings|Bloom", Interp, meta = (DisplayPriority = -1))
-		FPPBloomSettings FancyBloom;
+	/* Advanced bloom control for game settings */
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Settings", Interp, meta = (DisplayPriority = -1))
+		FFRBloomChoice Bloom;
 
 	/* Post process settings to use for this volume */
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Settings", Interp)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Settings", Interp, meta = (ShowOnlyInnerProperties))
 		FPostProcessSettings Settings;
 
 	/* Post process blendable materials */
