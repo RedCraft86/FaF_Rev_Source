@@ -3,6 +3,7 @@
 #pragma once
 
 #include "GTGameMode.h"
+#include "MessagingData.h"
 #include "FRGameMode.generated.h"
 
 #define FRGameMode(Context) AGTGameModeBase::Get<AFRGameModeBase>(Context)
@@ -31,4 +32,18 @@ public:
 private:
 
 	virtual void BeginPlay() override;
+
+public: // Shortcuts
+
+	UFUNCTION(BlueprintCallable, Category = "DisplayMessages")
+		void QueueSmallNotice(const FSimpleNoticeData& NoticeData, const bool bResetQueue = false);
+
+	UFUNCTION(BlueprintCallable, Category = "DisplayMessages")
+		void QueueLargeNotice(const FSimpleNoticeData& NoticeData, const bool bResetQueue = false);
+
+	UFUNCTION(BlueprintCallable, Category = "DisplayMessages")
+		void QueueSubtitles(const TArray<FSimpleSubtitleData>& Subtitles);
+
+	UFUNCTION(BlueprintCallable, Category = "DisplayMessages")
+		void QueueSubtitle(const FSimpleSubtitleData& SubtitleData);
 };
