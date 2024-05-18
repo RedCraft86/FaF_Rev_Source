@@ -150,7 +150,7 @@ USmartBlendable* ASmartPostProcess::AddSmartBlendable(const FName InName, const 
 
 void ASmartPostProcess::ApplySettings()
 {
-	Bloom.ApplyChoice(Settings, GameSettings ? GameSettings->GetUseFancyBloom() : true);
+	Bloom.ApplyChoice(Settings, !GameSettings || GameSettings->GetUseFancyBloom());
 
 	PostProcess->Settings = Settings;
 	PostProcess->Priority = Priority;
