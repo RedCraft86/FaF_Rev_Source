@@ -155,10 +155,11 @@ protected:
 	virtual void Tick(float DeltaTime) override;
 	virtual void OnConstruction(const FTransform& Transform) override;
 	
-#if WITH_EDITOR	
+#if WITH_EDITORONLY_DATA
 private:
 	UPROPERTY() TObjectPtr<UBillboardComponent> VisualIcon;
-	virtual bool ShouldTickIfViewportsOnly() const override { return true; }
+#endif
+#if WITH_EDITOR	
 	virtual void PostEditChangeProperty(FPropertyChangedEvent& PropertyChangedEvent) override;
 #endif
 };
