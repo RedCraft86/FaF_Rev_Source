@@ -330,6 +330,9 @@ void USettingsWidgetBase::InitWidget()
 	SETUP_VOLUME_SLIDER(MusicVolRow, Music);
 	SETUP_VOLUME_SLIDER(SoundFXVolRow, SoundFX);
 	// Audio Engine
+	OnRefreshDisplay.AddUObject(SteamAudioQualityRow, &UFRSettingRowBase::RefreshValue);
+	SteamAudioQualityRow->AssignGetterFunction([this]() -> uint8 { return SteamAudioQuality; });
+	SteamAudioQualityRow->AssignSetterFunction([this](const uint8 Value) { SetSteamAudioQuality(Value); });
 	/* ~Audio */
 
 	/* Developer */
