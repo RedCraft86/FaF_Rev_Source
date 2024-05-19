@@ -143,6 +143,7 @@ public:
 	/* ~Graphics */
 
 	/* Audio */
+	// Volume
 	UPROPERTY(Transient, meta = (BindWidget))
 		TObjectPtr<UFRSliderSettingBase> MasterVolRow;
 		
@@ -154,6 +155,10 @@ public:
 		
 	UPROPERTY(Transient, meta = (BindWidget))
 		TObjectPtr<UFRSliderSettingBase> SoundFXVolRow;
+
+	// Audio Engine
+	UPROPERTY(Transient, meta = (BindWidget))
+		TObjectPtr<UFRSwitcherSettingBase> SteamAudioQualityRow;
 	/* ~Audio */
 
 	/* Developer */
@@ -174,6 +179,12 @@ public:
 		TObjectPtr<UButton> RevertResButton;
 
 	UPROPERTY(Transient, meta = (BindWidget))
+		TObjectPtr<UButton> RestartButton;
+
+	UPROPERTY(Transient, meta = (BindWidget))
+		TObjectPtr<UButton> ExitRestartButton;
+
+	UPROPERTY(Transient, meta = (BindWidget))
 		TObjectPtr<UButton> ExitButton;
 
 	UPROPERTY(Transient, meta = (BindWidgetAnim))
@@ -181,6 +192,9 @@ public:
 
 	UPROPERTY(Transient, meta = (BindWidgetAnim))
 		TObjectPtr<UWidgetAnimation> ConfirmResAnim;
+
+	UPROPERTY(Transient, meta = (BindWidgetAnim))
+		TObjectPtr<UWidgetAnimation> RestartAnim;
 
 	UPROPERTY(Transient, BlueprintReadOnly, Category = "SettingsWidget")
 		TObjectPtr<UUserWidget> ParentWidget;
@@ -195,7 +209,9 @@ protected:
 
 	UPROPERTY(BlueprintReadOnly, Category = "Settings") uint8 ScreenIndex;
 	UPROPERTY(Transient) TObjectPtr<class UGameSettings> SettingsObj;
-
+	
+	int32 SteamAudioQuality;
+	TSet<FString> RequiresRestart;
 	TArray<FIntPoint> Resolutions;
 	int32 LastConfirmedResIdx;
 	bool bIsFinalResolution;
@@ -214,10 +230,14 @@ protected:
 	void OnOverallQualityChanged(int32 Index, FName Value);
 	void OnAnyScalabilityChanged(int32 Index, FName Value);
 
+	int32 GetSteamAudioQuality();   
+	void SetSteamAudioQuality(const int32 InQuality);
+
 	UFUNCTION() void OnResolutionChanged(FString SelectedItem, ESelectInfo::Type SelectionType);
 	UFUNCTION() void OnAutoDetectClicked();
 	UFUNCTION() void OnConfirmResClicked();
 	UFUNCTION() void OnRevertResClicked();
+	UFUNCTION() void OnRestartClicked();
 	UFUNCTION() void OnExitClicked();
 
 	virtual void InitWidget() override;

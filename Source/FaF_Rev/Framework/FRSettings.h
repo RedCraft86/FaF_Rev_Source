@@ -24,6 +24,10 @@ public:
 
 		bIsDemo = false;
 		WordsPerSecond = 2;
+
+		SteamAudioRays = {6144, 8192, 10240};
+		SteamAudioBounces = {16, 32, 64};
+		SteamAudioDurations = {1.0f, 2.5f, 5.0f};
 	}
 
 	UPROPERTY(Config, EditAnywhere, Category = "Default")
@@ -58,6 +62,15 @@ public:
 
 	UPROPERTY(Config, EditAnywhere, Category = "GameSettings|PostProcessing", meta = (GetOptions = "GetMainRenderingMPCNames"))
 		FName BrightnessParamName;
+
+	UPROPERTY(Config, EditAnywhere, Category = "GameSettings|SteamAudio")
+		FIntVector SteamAudioRays;
+
+	UPROPERTY(Config, EditAnywhere, Category = "GameSettings|SteamAudio")
+		FIntVector SteamAudioBounces;
+
+	UPROPERTY(Config, EditAnywhere, Category = "GameSettings|SteamAudio")
+		FVector SteamAudioDurations;
 	
 	float CalcReadingTime(const FString& InStr) const
 	{
