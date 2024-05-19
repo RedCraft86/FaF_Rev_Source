@@ -253,6 +253,16 @@ void USettingsWidgetBase::OnExitClicked()
 	}
 	else
 	{
+		FString Constructed = TEXT("");
+		int num = RequiresRestart.Num();
+		for (const FString& Setting : RequiresRestart)
+		{
+			num--;
+			Constructed += Setting;
+			if (num <= 0) Constructed += TEXT(", ");
+		}
+		
+		RestartGameText->SetText(FText::FromString(Constructed));
 		PlayAnimation(RestartAnim);
 	}
 }

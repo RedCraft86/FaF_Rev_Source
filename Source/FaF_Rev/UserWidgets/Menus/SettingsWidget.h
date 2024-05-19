@@ -179,6 +179,9 @@ public:
 		TObjectPtr<UButton> RevertResButton;
 
 	UPROPERTY(Transient, meta = (BindWidget))
+		TObjectPtr<UTextBlock> RestartGameText;
+
+	UPROPERTY(Transient, meta = (BindWidget))
 		TObjectPtr<UButton> RestartButton;
 
 	UPROPERTY(Transient, meta = (BindWidget))
