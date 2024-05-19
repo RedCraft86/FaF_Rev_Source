@@ -68,3 +68,6 @@ FontDPI=72
 
 [/Script/Engine.Engine]
 GameUserSettingsClassName=/Script/GTRuntime.GTGameUserSettings
+
+[/Script/NarrativeDialogueEditor.DialogueEditorSettings]
+bWarnMissingSoundCues=False
