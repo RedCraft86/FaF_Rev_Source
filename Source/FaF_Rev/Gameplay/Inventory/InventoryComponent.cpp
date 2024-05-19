@@ -17,6 +17,7 @@ UInventoryComponent::UInventoryComponent() : PlayerChar(nullptr), InventoryPrevi
 
 void UInventoryComponent::OpenUI()
 {
+	if (!InventoryWidget) return;
 	if (InventoryWidget->IsInViewport()) return;
 	PlayerChar->AddLockFlag(Player::LockFlags::Inventory);
 	PlayerChar->GetPlayerController()->SetPause(true);
@@ -34,6 +35,7 @@ void UInventoryComponent::OpenUI()
 
 void UInventoryComponent::CloseUI() const
 {
+	if (!InventoryWidget) return;
 	if (!InventoryWidget->IsInViewport()) return;
 	PlayerChar->AddLockFlag(Player::LockFlags::Inventory);
 	PlayerChar->GetGameMode()->SetGameInputMode(EGameInputMode::GameOnly);
