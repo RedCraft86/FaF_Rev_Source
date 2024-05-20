@@ -114,4 +114,7 @@ public: // Statics
 	
 	static UFRSettings* Get() { return GetMutableDefault<UFRSettings>(); }
 	static const UFRSettings* GetConst() { return GetDefault<UFRSettings>(); }
+
+	UFUNCTION(BlueprintPure, Category = "GlobalStatics")
+		static float CalculateReadingTime(const FString InStr) { return GetConst()->CalcReadingTime(InStr); }
 };
