@@ -60,8 +60,7 @@ USettingsWidgetBase::USettingsWidgetBase(const FObjectInitializer& ObjectInitial
 	, MasterVolRow(nullptr), AmbienceVolRow(nullptr), MusicVolRow(nullptr), SoundFXVolRow(nullptr), InvincibilityRow(nullptr)
 	, ViewModeUnlitRow(nullptr), ConfirmResText(nullptr), ConfirmResButton(nullptr), RevertResButton(nullptr)
 	, ExitButton(nullptr), SwapScreenAnim(nullptr), ConfirmResAnim(nullptr), ParentWidget(nullptr), ScreenIndex(0)
-	, SettingsObj(nullptr), SteamAudioQuality(1), LastConfirmedResIdx(0), bIsFinalResolution(true)
-	, ResolutionWaitTime(0.0f), AutoDetectWaitTime(0.0f)
+	, SettingsObj(nullptr), LastConfirmedResIdx(0), bIsFinalResolution(true), ResolutionWaitTime(0.0f), AutoDetectWaitTime(0.0f)
 {
 	ZOrder = 98;
 	bAutoAdd = false;
@@ -133,25 +132,6 @@ void USettingsWidgetBase::OnAnyScalabilityChanged(int32 Index, FName Value)
 	OverallQualityRow->RefreshValue();
 }
 
-int32 USettingsWidgetBase::GetSteamAudioQuality()
-{
-	int32 Quality;
-	if (!GConfig->GetInt(SteamAudioCfgSection, TEXT("GlobalQuality"), Quality, GEngineIni))
-		return 1;
-
-	return FMath::Clamp(Quality, 0, 2);
-}
-
-void USettingsWidgetBase::SetSteamAudioQuality(const int32 InQuality)
-{
-	const uint8 Clamped = FMath::Clamp(InQuality, 0, 2);
-	if (SteamAudioQuality != Clamped)
-	{
-		SteamAudioQuality = Clamped;
-		RequiresRestart.Add(SteamAudioQualityRow->Label.ToString());
-	}
-}
-
 void USettingsWidgetBase::OnResolutionChanged(FString SelectedItem, ESelectInfo::Type SelectionType)
 {
 	const int32 Idx = ResolutionBox->GetSelectedIndex();
@@ -219,27 +199,15 @@ void USettingsWidgetBase::OnRevertResClicked()
 
 void USettingsWidgetBase::OnRestartClicked()
 {
-	if (RequiresRestart.Contains(SteamAudioQualityRow->Label.ToString())
-		&& SteamAudioQuality != GetSteamAudioQuality())
+	RemoveFromParent();
+	GetPlayerController()->SetPause(false);
+	GetWorld()->GetWorldSettings()->SetTimeDilation(0.00001f);
+	FTSTicker::GetCoreTicker().AddTicker(FTickerDelegate::CreateLambda([this](float)->bool
 	{
-		const UFRSettings* Settings = FRSettings;
-		GConfig->GetInt(SteamAudioCfgSection, TEXT("GlobalQuality"),
-			SteamAudioQuality, GEngineIni);
-		
-		GConfig->SetInt(SteamAudioCfgSection, TEXT("RealTimeRays"),
-			Settings->SteamAudioRays[SteamAudioQuality], GEngineIni);
-		
-		GConfig->SetInt(SteamAudioCfgSection, TEXT("RealTimeBounces"),
-			Settings->SteamAudioBounces[SteamAudioQuality], GEngineIni);
-		
-		GConfig->SetFloat(SteamAudioCfgSection, TEXT("RealTimeDuration"),
-			Settings->SteamAudioDurations[SteamAudioQuality], GEngineIni);
-		
-		GConfig->Flush(false, GEngineIni);
-	}
-
-	UKismetSystemLibrary::QuitGame(this, GetPlayerController(),
-		EQuitPreference::Quit, false);
+		UKismetSystemLibrary::QuitGame(this, GetPlayerController(),
+			EQuitPreference::Quit, false);
+		return false;
+	}), 0.5f);
 }
 
 void USettingsWidgetBase::OnExitClicked()
@@ -249,6 +217,7 @@ void USettingsWidgetBase::OnExitClicked()
 	if (RequiresRestart.IsEmpty())
 	{
 		RemoveWidget(nullptr);
+		PlayAnimationReverse(RestartAnim, 50.0f);
 		IWidgetInterface::Return(ParentWidget, this);
 	}
 	else
@@ -264,6 +233,7 @@ void USettingsWidgetBase::OnExitClicked()
 		
 		RestartGameText->SetText(FText::FromString(Constructed));
 		PlayAnimation(RestartAnim);
+		RequiresRestart.Empty();
 	}
 }
 
@@ -330,9 +300,6 @@ void USettingsWidgetBase::InitWidget()
 	SETUP_VOLUME_SLIDER(MusicVolRow, Music);
 	SETUP_VOLUME_SLIDER(SoundFXVolRow, SoundFX);
 	// Audio Engine
-	OnRefreshDisplay.AddUObject(SteamAudioQualityRow, &UFRSettingRowBase::RefreshValue);
-	SteamAudioQualityRow->AssignGetterFunction([this]() -> uint8 { return SteamAudioQuality; });
-	SteamAudioQualityRow->AssignSetterFunction([this](const uint8 Value) { SetSteamAudioQuality(Value); });
 	/* ~Audio */
 
 	/* Developer */
@@ -353,7 +320,6 @@ void USettingsWidgetBase::NativeConstruct()
 {
 	Super::NativeConstruct();
 
-	SteamAudioQuality = GetSteamAudioQuality();
 	RefreshResolutions();
 	RefreshUI();
 }

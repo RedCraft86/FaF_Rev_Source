@@ -155,10 +155,6 @@ public:
 		
 	UPROPERTY(Transient, meta = (BindWidget))
 		TObjectPtr<UFRSliderSettingBase> SoundFXVolRow;
-
-	// Audio Engine
-	UPROPERTY(Transient, meta = (BindWidget))
-		TObjectPtr<UFRSwitcherSettingBase> SteamAudioQualityRow;
 	/* ~Audio */
 
 	/* Developer */
@@ -212,8 +208,7 @@ protected:
 
 	UPROPERTY(BlueprintReadOnly, Category = "Settings") uint8 ScreenIndex;
 	UPROPERTY(Transient) TObjectPtr<class UGameSettings> SettingsObj;
-	
-	int32 SteamAudioQuality;
+
 	TSet<FString> RequiresRestart;
 	TArray<FIntPoint> Resolutions;
 	int32 LastConfirmedResIdx;
@@ -232,9 +227,6 @@ protected:
 	void OnUpdateResolution();
 	void OnOverallQualityChanged(int32 Index, FName Value);
 	void OnAnyScalabilityChanged(int32 Index, FName Value);
-
-	int32 GetSteamAudioQuality();   
-	void SetSteamAudioQuality(const int32 InQuality);
 
 	UFUNCTION() void OnResolutionChanged(FString SelectedItem, ESelectInfo::Type SelectionType);
 	UFUNCTION() void OnAutoDetectClicked();
