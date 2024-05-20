@@ -76,3 +76,14 @@ FontDPI=72
 
 [/Script/Engine.Engine]
 GameUserSettingsClassName=/Script/GTRuntime.GTGameUserSettings
+
+[/Script/Engine.PhysicsSettings]
++PhysicalSurfaces=(Type=SurfaceType1,Name="Wood")
++PhysicalSurfaces=(Type=SurfaceType2,Name="Metal")
++PhysicalSurfaces=(Type=SurfaceType3,Name="Carpet")
++PhysicalSurfaces=(Type=SurfaceType4,Name="Dirt")
++PhysicalSurfaces=(Type=SurfaceType5,Name="Grass")
++PhysicalSurfaces=(Type=SurfaceType6,Name="Leaves")
++PhysicalSurfaces=(Type=SurfaceType7,Name="Glass-Concrete")
++PhysicalSurfaces=(Type=SurfaceType8,Name="Glass-Wood")
++PhysicalSurfaces=(Type=SurfaceType9,Name="Water")
