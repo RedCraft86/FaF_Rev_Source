@@ -2,6 +2,14 @@
 GameDefaultMap=/Game/NewMap.NewMap
 EditorStartupMap=/Game/NewMap.NewMap
 
+[/Script/SteamAudio.SteamAudioSettings]
+RealTimeRays=8192
+RealTimeBounces=64
+RealTimeDuration=5.000000
+
+[/Script/NarrativeDialogueEditor.DialogueEditorSettings]
+bWarnMissingSoundCues=False
+
 [/Script/WindowsTargetPlatform.WindowsTargetSettings]
 DefaultGraphicsRHI=DefaultGraphicsRHI_DX12
 -D3D12TargetedShaderFormats=PCD3D_SM5
@@ -68,6 +76,3 @@ FontDPI=72
 
 [/Script/Engine.Engine]
 GameUserSettingsClassName=/Script/GTRuntime.GTGameUserSettings
-
-[/Script/NarrativeDialogueEditor.DialogueEditorSettings]
-bWarnMissingSoundCues=False
