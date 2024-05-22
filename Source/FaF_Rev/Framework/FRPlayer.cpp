@@ -115,6 +115,17 @@ AFRPlayerBase::AFRPlayerBase()
 	CurrentStamina = MaxStamina;
 	StaminaDelta = 0.0f;
 	LeanState = EPlayerLeanState::None;
+
+
+	PlayerLightSettings.Intensity = 0.15f;
+	PlayerLightSettings.AttenuationRadius = 500.0f;
+	PlayerLightSettings.bUseTemperature = true;
+	PlayerLightSettings.Temperature = 12000.0f;
+	PlayerLightSettings.bLightCastShadows = false;
+	PlayerLightSettings.bUseInverseSquaredFalloff = true;
+	PlayerLightSettings.LightFalloffExponent = 1.0f;
+	PlayerLightSettings.SpecularScale = 0.0f;
+	ULightingDataLibrary::SetPointLightProperties(PlayerLight, PlayerLightSettings);
 }
 
 void AFRPlayerBase::ResetStates()

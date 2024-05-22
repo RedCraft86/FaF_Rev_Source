@@ -132,7 +132,7 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Settings|Leaning")
 		FVector2D LeanOffsets;
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Settings|Misc")
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Settings", AdvancedDisplay)
 		FPointLightProperties PlayerLightSettings;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Settings", AdvancedDisplay)

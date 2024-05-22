@@ -81,7 +81,16 @@ struct FPlayerSettings
 		: ControlFlags(DEFAULT_PLAYER_CONTROL_FLAGS)
 		, MoveSpeedMultiplier(1.0f)
 		, StaminaRates({2.5f, 1.75f})
-	{}
+	{
+		LightProperties.Intensity = 0.15f;
+		LightProperties.AttenuationRadius = 500.0f;
+		LightProperties.bUseTemperature = true;
+		LightProperties.Temperature = 12000.0f;
+		LightProperties.bLightCastShadows = false;
+		LightProperties.bUseInverseSquaredFalloff = true;
+		LightProperties.LightFalloffExponent = 1.0f;
+		LightProperties.SpecularScale = 0.0f;
+	}
 };
 
 USTRUCT(BlueprintInternalUseOnly)
