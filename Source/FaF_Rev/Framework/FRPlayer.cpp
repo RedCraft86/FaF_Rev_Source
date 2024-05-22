@@ -782,6 +782,8 @@ void AFRPlayerBase::InputBinding_Pause(const FInputActionValue& InValue)
 
 	if (!ShouldLock())
 	{
+		SetRunState(false);
+		SetLeanState(EPlayerLeanState::None);
 		PlayerController->SetPauseState(true);
 	}
 }
