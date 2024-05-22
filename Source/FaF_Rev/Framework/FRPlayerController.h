@@ -28,8 +28,7 @@ public:
 	void SetPauseState(bool bInPaused);
 
 protected:
-	
-	bool bLastPaused;
+
 	UPROPERTY(Transient) TObjectPtr<UUserWidget> UnfocusedWidget;
 	UPROPERTY(Transient) TObjectPtr<class UPauseWidgetBase> PauseWidget;
 	

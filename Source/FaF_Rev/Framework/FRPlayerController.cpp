@@ -7,7 +7,7 @@
 #include "FRGameMode.h"
 
 AFRPlayerController::AFRPlayerController()
-	: MappingContext(nullptr), bLastPaused(false), UnfocusedWidget(nullptr), PauseWidget(nullptr)
+	: MappingContext(nullptr), bRevertUnfocusedPause(false), UnfocusedWidget(nullptr), PauseWidget(nullptr)
 {
 	PrimaryActorTick.bCanEverTick = true;
 }
@@ -45,16 +45,14 @@ void AFRPlayerController::OnWindowFocusChanged(bool bFocused)
 		UnfocusedWidget = CreateWidget<UUserWidget>(this, UnfocusedWidgetClass);
 	}
 	
-	if (bFocused)
+	if (bFocused && !IsPaused())
 	{
 		UnfocusedWidget->RemoveFromParent();
-		SetPause(bLastPaused);
+		SetPause(true);
 	}
-	else
+	else if (UnfocusedWidget->IsInViewport())
 	{
 		UnfocusedWidget->AddToViewport(100);
-		bLastPaused = IsPaused();
-		SetPause(true);
 	}
 }
 
