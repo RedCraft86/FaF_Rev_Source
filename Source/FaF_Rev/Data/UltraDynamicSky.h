@@ -5,15 +5,21 @@
 #include "UObject/Interface.h"
 #include "UltraDynamicSky.generated.h"
 
+UCLASS(Abstract, Blueprintable)
+class UWeatherDataAsset : public UPrimaryDataAsset
+{
+	GENERATED_BODY()
+};
+
 USTRUCT(BlueprintType, DisplayName = "UDS Settings")
 struct FAF_REV_API FUDSSettings
 {
 	GENERATED_BODY()
 
-	UPROPERTY(EditAnywhere, Category = "Settings")
-	float sample;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Settings")
+		TSoftObjectPtr<UWeatherDataAsset> WeatherPreset;
 
-	FUDSSettings() : sample(0.0f) {}
+	FUDSSettings() : WeatherPreset(nullptr) {}
 };
 
 UINTERFACE(DisplayName = "UDS Interface")
