@@ -27,6 +27,15 @@ AInventoryItemActor::AInventoryItemActor() : ItemData(nullptr), Amount(1), BoxEx
 	BoxCollision.SetObjectType(ECC_WorldDynamic);
 }
 
+void AInventoryItemActor::FillAmount(const int32 InAmount)
+{
+	if (InAmount > 0)
+	{
+		Amount += InAmount;
+		SetEnabled(true);
+	}
+}
+
 void AInventoryItemActor::SetEnabled(const bool bInEnabled)
 {
 	Super::SetEnabled(Amount > 0 && bInEnabled);

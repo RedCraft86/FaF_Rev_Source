@@ -43,6 +43,9 @@ public:
 	UPROPERTY(EditAnywhere, AdvancedDisplay, Category = "Settings")
 		FPrimitiveCollision BoxCollision;
 
+	UFUNCTION(BlueprintCallable, Category = "Inventory")
+		void FillAmount(const int32 InAmount);
+
 protected:
 
 	virtual void SetEnabled(const bool bInEnabled) override;
