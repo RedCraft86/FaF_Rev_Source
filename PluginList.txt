@@ -159,18 +159,26 @@
 			"Name": "SubversionSourceControl",
 			"Enabled": false
 		},
-		{
-			"Name": "ExpressiveText",
-			"Enabled": true,
-			"MarketplaceURL": "com.epicgames.launcher://ue/marketplace/product/fc8f100e734144179e1679596d1eee07",
-			"SupportedTargetPlatforms": [
-				"Win64",
-				"Mac",
-				"Linux"
-			]
-		},
-		{
-			"Name": "Narrative",
-			"Enabled": true,
-			"MarketplaceURL": "com.epicgames.launcher://ue/marketplace/product/b03174e0a1cc4de4b17dcfb2a0ba6884"
-		}
+         {
+         	"Name": "Text3D",
+         	"Enabled": true
+         },
+         {
+         	"Name": "RiderLink",
+         	"Enabled": true
+         },
+         {
+         	"Name": "Narrative",
+         	"Enabled": true,
+         	"MarketplaceURL": "com.epicgames.launcher://ue/marketplace/product/b03174e0a1cc4de4b17dcfb2a0ba6884"
+         },
+         {
+         	"Name": "ExpressiveText",
+         	"Enabled": true,
+         	"MarketplaceURL": "com.epicgames.launcher://ue/marketplace/product/fc8f100e734144179e1679596d1eee07",
+         	"SupportedTargetPlatforms": [
+         		"Win64",
+         		"Mac",
+         		"Linux"
+         	]
+         },
