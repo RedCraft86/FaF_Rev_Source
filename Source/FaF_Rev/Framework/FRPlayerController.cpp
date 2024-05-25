@@ -50,7 +50,7 @@ void AFRPlayerController::OnWindowFocusChanged(bool bFocused)
 		UnfocusedWidget->RemoveFromParent();
 		SetPause(false);
 	}
-	else if (!IsPaused())
+	else if (!IsPaused() && FRSettings->IsGameplayMap(this))
 	{
 		UnfocusedWidget->AddToViewport(100);
 		SetPause(true);
