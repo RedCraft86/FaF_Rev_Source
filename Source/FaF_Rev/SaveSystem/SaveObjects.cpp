@@ -103,7 +103,7 @@ FString ConvertSequenceToString(const TArray<uint8>& InSequence)
 	return Out;
 }
 
-void UGameSaveObject::SaveInventory(const TArray<uint8>& InSequence, const FName& InKey, const FInventorySaveData& InData)
+void UGameSaveObject::SaveInventory(const TArray<uint8>& InSequence, const FGameplayTag& InKey, const FInventorySaveData& InData)
 {
 	const FString SequenceStr = ConvertSequenceToString(InSequence);
 	if (FKeyedInventoryData* FoundData = Inventory.Find(SequenceStr))
@@ -118,7 +118,7 @@ void UGameSaveObject::SaveInventory(const TArray<uint8>& InSequence, const FName
 	}
 }
 
-FInventorySaveData UGameSaveObject::LoadInventory(const TArray<uint8>& InSequence, const FName& InKey)
+FInventorySaveData UGameSaveObject::LoadInventory(const TArray<uint8>& InSequence, const FGameplayTag& InKey)
 {
 	if (const FKeyedInventoryData* FoundData = Inventory.Find(ConvertSequenceToString(InSequence)))
 	{
@@ -142,9 +142,9 @@ void UGameSaveObject::SerializeData(FArchive& Ar)
 {
 	Ar << Difficulty;
 	Ar << TransientKeys;
-	Ar << Inventory;
-	Ar << Sequence;
 	Ar << PlayTime;
+	Ar << Sequence;
+	Ar << Inventory;
 }
 
 void UGlobalSaveObject::DeleteFile()
@@ -155,5 +155,6 @@ void UGlobalSaveObject::DeleteFile()
 void UGlobalSaveObject::SerializeData(FArchive& Ar)
 {
 	Ar << Endings;
+	Ar << MenuKeys;
 	Ar << GlobalKeys;
 }

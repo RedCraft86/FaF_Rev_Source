@@ -63,7 +63,7 @@ void UGameSectionManager::BeginTransition()
 	
 	if (ThisData)
 	{
-		SaveSystem->GetGameDataObject()->SaveInventory(Sequence, ThisData->InventoryKey.GetTagName(),
+		SaveSystem->GetGameDataObject()->SaveInventory(Sequence, ThisData->InventoryKey,
 			PlayerChar->GetGameMode()->Inventory->ExportSaveData());
 	}
 	SaveSystem->GetGameDataObject()->Sequence = Sequence;
@@ -80,7 +80,7 @@ void UGameSectionManager::BeginTransition()
 
 	if (ThisData)
 	{
-		SaveSystem->GetGlobalDataObject()->MenuKeys.Add(ThisData->UnlockMenu.GetTagName());
+		SaveSystem->GetGlobalDataObject()->MenuKeys.Add(ThisData->UnlockMenu);
 		SaveSystem->SaveGlobalData();
 	}
 
@@ -184,8 +184,7 @@ void UGameSectionManager::FinishTransition()
 		// Only load an inventory from save if this is the first data or the keys are different
 		if (!LastData || LastData->InventoryKey != ThisData->InventoryKey)
 		{
-			Inventory->ImportSaveData(SaveSystem->GetGameDataObject()->LoadInventory(
-				Sequence, ThisData->InventoryKey.GetTagName()));
+			Inventory->ImportSaveData(SaveSystem->GetGameDataObject()->LoadInventory(Sequence, ThisData->InventoryKey));
 		}
 
 		for (const FInventorySlotData& Item : ThisData->EnsureItems)

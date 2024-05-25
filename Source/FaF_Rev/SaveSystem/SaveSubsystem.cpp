@@ -25,12 +25,12 @@ void USaveSubsystem::DeleteGameData() const
 	if (GameDataObject) GameDataObject->DeleteFile();
 }
 
-void USaveSubsystem::UnlockTransientKey(const FName InKey) const
+void USaveSubsystem::UnlockTransientKey(const FGameplayTag InKey) const
 {
 	if (GameDataObject) GameDataObject->TransientKeys.Add(InKey);
 }
 
-bool USaveSubsystem::HasTransientKey(const FName InKey) const
+bool USaveSubsystem::HasTransientKey(const FGameplayTag InKey) const
 {
 	if (GameDataObject) return GameDataObject->TransientKeys.Contains(InKey);
 	return false;
@@ -73,7 +73,7 @@ void USaveSubsystem::DeleteGlobalData() const
 	if (GlobalDataObject) GlobalDataObject->DeleteFile();
 }
 
-void USaveSubsystem::UnlockGlobalKey(const FName InKey, const bool bSave) const
+void USaveSubsystem::UnlockGlobalKey(const FGameplayTag InKey, const bool bSave) const
 {
 	if (GlobalDataObject)
 	{
@@ -86,19 +86,19 @@ void USaveSubsystem::UnlockGlobalKey(const FName InKey, const bool bSave) const
 	}
 }
 
-bool USaveSubsystem::HasGlobalKey(const FName InKey) const
+bool USaveSubsystem::HasGlobalKey(const FGameplayTag InKey) const
 {
 	if (GlobalDataObject) return GlobalDataObject->GlobalKeys.Contains(InKey);
 	return false;
 }
 
-TArray<FName> USaveSubsystem::GetUnlockedMenus() const
+TArray<FGameplayTag> USaveSubsystem::GetUnlockedMenus() const
 {
 	if (GlobalDataObject) return GlobalDataObject->MenuKeys.Array();
 	return {};
 }
 
-void USaveSubsystem::ReachEnding(const FName InEndingID, const bool bSave) const
+void USaveSubsystem::ReachEnding(const FGameplayTag InEndingID, const bool bSave) const
 {
 	if (GlobalDataObject && GlobalDataObject->Endings.FindRef(InEndingID).GetTicks() <= 0)
 	{
@@ -111,7 +111,7 @@ void USaveSubsystem::ReachEnding(const FName InEndingID, const bool bSave) const
 	}
 }
 
-FDateTime USaveSubsystem::GetEndingReachedTime(const FName InEndingID) const
+FDateTime USaveSubsystem::GetEndingReachedTime(const FGameplayTag InEndingID) const
 {
 	if (GlobalDataObject) GlobalDataObject->Endings.FindOrAdd(InEndingID);
 	return {0};

@@ -26,10 +26,10 @@ public:
 		void DeleteGameData() const;
 
 	UFUNCTION(BlueprintCallable, BlueprintPure = false, Category = "SaveManager")
-		void UnlockTransientKey(const FName InKey) const;
+		void UnlockTransientKey(const FGameplayTag InKey) const;
 
 	UFUNCTION(BlueprintPure, Category = "SaveManager")
-		bool HasTransientKey(const FName InKey) const;
+		bool HasTransientKey(const FGameplayTag InKey) const;
 
 	UFUNCTION(BlueprintCallable, BlueprintPure = false, Category = "SaveManager")
 		void SetDifficulty(const EDifficultyMode InDifficulty) const;
@@ -47,19 +47,19 @@ public:
 		void DeleteGlobalData() const;
 
 	UFUNCTION(BlueprintCallable, BlueprintPure = false, Category = "SaveManager")
-		void UnlockGlobalKey(const FName InKey, const bool bSave = true) const;
+		void UnlockGlobalKey(const FGameplayTag InKey, const bool bSave = true) const;
 
 	UFUNCTION(BlueprintPure, Category = "SaveManager")
-		bool HasGlobalKey(const FName InKey) const;
+		bool HasGlobalKey(const FGameplayTag InKey) const;
 
 	UFUNCTION(BlueprintPure, Category = "SaveManager")
-		TArray<FName> GetUnlockedMenus() const;
+		TArray<FGameplayTag> GetUnlockedMenus() const;
 	
 	UFUNCTION(BlueprintCallable, BlueprintPure = false, Category = "SaveManager")
-		void ReachEnding(const FName InEndingID, const bool bSave = true) const;
+		void ReachEnding(const FGameplayTag InEndingID, const bool bSave = true) const;
 
 	UFUNCTION(BlueprintCallable, BlueprintPure = false, Category = "SaveManager")
-		FDateTime GetEndingReachedTime(const FName InEndingID) const;
+		FDateTime GetEndingReachedTime(const FGameplayTag InEndingID) const;
 	
 	DECLARE_MULTICAST_DELEGATE(FPromptSaveIcon)
 	FPromptSaveIcon OnSaveStarted;

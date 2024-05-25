@@ -4,6 +4,7 @@
 
 #include "DifficultyData.h"
 #include "UObject/Object.h"
+#include "GameplayTagContainer.h"
 #include "Inventory/InventoryComponent.h"
 #include "SaveObjects.generated.h"
 
@@ -47,12 +48,12 @@ struct FAF_REV_API FKeyedInventoryData
 {
 	GENERATED_BODY()
 
-	TMap<FName, FInventorySaveData> Data;
+	TMap<FGameplayTag, FInventorySaveData> Data;
 	
 	FKeyedInventoryData() : Data({}) {}
 	friend FArchive& operator<<(FArchive& Ar, FKeyedInventoryData& SaveData) { return Ar << SaveData.Data; }
-	void SetData(const FName& InKey, const FInventorySaveData& InData) { Data.Add(InKey, InData); }
-	FInventorySaveData GetData(const FName& InKey) const { return Data.FindRef(InKey); }
+	void SetData(const FGameplayTag& InKey, const FInventorySaveData& InData) { Data.Add(InKey, InData); }
+	FInventorySaveData GetData(const FGameplayTag& InKey) const { return Data.FindRef(InKey); }
 };
 
 UCLASS(BlueprintType, NotBlueprintable)
@@ -68,7 +69,7 @@ public:
 		EDifficultyMode Difficulty;
 	
 	UPROPERTY(BlueprintReadOnly, Category = "SaveObject")
-		TSet<FName> TransientKeys;
+		TSet<FGameplayTag> TransientKeys;
 
 	UPROPERTY(BlueprintReadOnly, Category = "SaveObject")
 		float PlayTime;
@@ -79,8 +80,8 @@ public:
 	UPROPERTY(BlueprintReadOnly, Category = "SaveObject")
 		TMap<FString, FKeyedInventoryData> Inventory;
 
-	void SaveInventory(const TArray<uint8>& InSequence, const FName& InKey, const FInventorySaveData& InData);
-	FInventorySaveData LoadInventory(const TArray<uint8>& InSequence, const FName& InKey);
+	void SaveInventory(const TArray<uint8>& InSequence, const FGameplayTag& InKey, const FInventorySaveData& InData);
+	FInventorySaveData LoadInventory(const TArray<uint8>& InSequence, const FGameplayTag& InKey);
 	virtual void DeleteFile() override;
 
 private:
@@ -99,13 +100,13 @@ public:
 	UGlobalSaveObject() {}
 
 	UPROPERTY(BlueprintReadOnly, Category = "SaveObject")
-		TMap<FName, FDateTime> Endings;
+		TMap<FGameplayTag, FDateTime> Endings;
 
 	UPROPERTY(BlueprintReadOnly, Category = "SaveObject")
-		TSet<FName> MenuKeys;
+		TSet<FGameplayTag> MenuKeys;
 	
 	UPROPERTY(BlueprintReadOnly, Category = "SaveObject")
-		TSet<FName> GlobalKeys;
+		TSet<FGameplayTag> GlobalKeys;
 	
 	virtual void DeleteFile() override;
 
