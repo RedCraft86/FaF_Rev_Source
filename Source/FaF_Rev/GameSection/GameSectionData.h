@@ -40,7 +40,7 @@ public:
 		FPlayerSettings PlayerSettings;
 
 	UPROPERTY(EditAnywhere, Category = "WorldData")
-		FName UnlockMenu;
+		FGameplayTag UnlockMenu;
 
 	UPROPERTY(EditAnywhere, Category = "WorldData")
 		TSoftClassPtr<UQuest> Quest;

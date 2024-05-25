@@ -80,7 +80,7 @@ void UGameSectionManager::BeginTransition()
 
 	if (ThisData)
 	{
-		SaveSystem->GetGlobalDataObject()->MenuKeys.Add(ThisData->UnlockMenu);
+		SaveSystem->GetGlobalDataObject()->MenuKeys.Add(ThisData->UnlockMenu.GetTagName());
 		SaveSystem->SaveGlobalData();
 	}
 
