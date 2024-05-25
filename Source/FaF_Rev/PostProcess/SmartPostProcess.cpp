@@ -25,10 +25,11 @@ void FFRBloomChoice::ApplyChoice(FPostProcessSettings& Settings, const bool bFan
 }
 
 ASmartPostProcess::ASmartPostProcess()
-	: BlendRadius(100.0f), BlendWeight(1.0f), bEnabled(true), bUnbound(true)
+	: UpdateInterval(0.05f), Priority(0.0f), BlendRadius(100.0f), BlendWeight(1.0f), bEnabled(true), bUnbound(true)
 {
 	PrimaryActorTick.bCanEverTick = true;
 	PrimaryActorTick.bTickEvenWhenPaused = true;
+	PrimaryActorTick.TickInterval = 0.05f;
 	bAllowTickBeforeBeginPlay = true;
 
 	SceneRoot = CreateDefaultSubobject<UBoxComponent>("SceneRoot");
@@ -153,12 +154,13 @@ void ASmartPostProcess::ApplySettings()
 {
 	Bloom.ApplyChoice(Settings, !GameSettings || GameSettings->GetUseFancyBloom());
 	
-	for (const TPair<FName, TObjectPtr<USmartBlendable>>& Pair : Blendables)
-	{
-		if (Pair.Value) Settings.AddBlendable(Pair.Value, Pair.Value->bEnabled ? 1.0f : 0.0f);
-	}
-	
 	PostProcess->Settings = Settings;
+	for (const TPair<FName, USmartBlendable*>& Pair : Blendables)
+	{
+		if (Pair.Value && Pair.Value->bEnabled)
+			PostProcess->Settings.AddBlendable(Pair.Value->GetDynamicMaterialInstance(), 1.0f);
+    }
+    
 	PostProcess->Priority = Priority;
 	PostProcess->BlendWeight = BlendWeight;
 	PostProcess->BlendRadius = BlendRadius;
@@ -168,7 +170,7 @@ void ASmartPostProcess::ApplySettings()
 
 void ASmartPostProcess::UpdateBlendables()
 {
-	for (const TPair<FName, TObjectPtr<USmartBlendable>>& Pair : Blendables)
+	for (const TPair<FName, USmartBlendable*>& Pair : Blendables)
 	{
 		if (Pair.Value)
 		{
@@ -182,13 +184,14 @@ void ASmartPostProcess::BeginPlay()
 {
 	Super::BeginPlay();
 	GameSettings = UGameSettings::Get();
+	SetActorTickInterval(UpdateInterval);
 	UpdateBlendables();
 }
 
 void ASmartPostProcess::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
-	for (const TPair<FName, TObjectPtr<USmartBlendable>>& Pair : Blendables)
+	for (const TPair<FName, USmartBlendable*>& Pair : Blendables)
 	{
 		if (Pair.Value) Pair.Value->OnTick(DeltaTime);
 	}
@@ -214,7 +217,7 @@ void ASmartPostProcess::PostEditChangeProperty(FPropertyChangedEvent& PropertyCh
 	}
 	else if (PropertyChangedEvent.GetPropertyName() == GET_MEMBER_NAME_CHECKED(ThisClass, Blendables))
 	{
-		for (TPair<FName, TObjectPtr<USmartBlendable>>& Pair : Blendables)
+		for (TPair<FName, USmartBlendable*>& Pair : Blendables)
 		{
 			if (Pair.Key.IsNone()) Pair.Key = *FGuid::NewGuid().ToString();
 			if (IsValid(Pair.Value)) Pair.Value->PostProcessActor = this;

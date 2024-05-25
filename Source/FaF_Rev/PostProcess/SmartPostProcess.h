@@ -6,8 +6,6 @@
 #include "GameFramework/Actor.h"
 #include "SmartPostProcess.generated.h"
 
-// TODO: FIX SMART BLENDABLES
-
 USTRUCT(BlueprintType, DisplayName = "Bloom Settings")
 struct FAF_REV_API FPPBloomSettings
 {
@@ -90,7 +88,11 @@ public:
 
 	/* Post process blendable materials */
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Settings", Instanced)
-		TMap<FName, TObjectPtr<USmartBlendable>> Blendables;
+		TMap<FName, USmartBlendable*> Blendables;
+	// Not using TObjectPtr because sometimes Instanced doesn't work well with it
+	
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, AdvancedDisplay, Category = "Settings")
+		float UpdateInterval;
 	
 	/* Priority of this volume. In the case of overlapping volumes the one with the highest priority
 	* overrides the lower priority ones. The order is undefined if two or more overlapping volumes have the same priority
@@ -154,7 +156,7 @@ private:
 	UPROPERTY() TObjectPtr<UBillboardComponent> VisualIcon;
 #endif
 #if WITH_EDITOR
-	virtual bool ShouldTickIfViewportsOnly() const override { return true; }
+	//virtual bool ShouldTickIfViewportsOnly() const override { return true; }
 	virtual void PostEditChangeProperty(FPropertyChangedEvent& PropertyChangedEvent) override;
 #endif
 };
