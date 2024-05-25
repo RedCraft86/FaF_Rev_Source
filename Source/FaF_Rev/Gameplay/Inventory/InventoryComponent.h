@@ -68,7 +68,7 @@ public:
 	void ConsumeItem(const FGuid& ItemKey);
 	const FInventoryEquipmentData& GetEquipmentData() const { return EquipmentData; }
 		
-	void LoadSaveData(const FInventorySaveData& InData);
+	void ImportSaveData(const FInventorySaveData& InData);
 	FInventorySaveData ExportSaveData();
 
 protected:

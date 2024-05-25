@@ -96,6 +96,38 @@ void USaveObjectBase::DeleteFile()
 	LastError = ESaveGameError::None;
 }
 
+FString ConvertSequenceToString(const TArray<uint8>& InSequence)
+{
+	FString Out = TEXT("");
+	for (const uint8& i : InSequence) { Out.AppendInt(i); }
+	return Out;
+}
+
+void UGameSaveObject::SaveInventory(const TArray<uint8>& InSequence, const FName& InKey, const FInventorySaveData& InData)
+{
+	const FString SequenceStr = ConvertSequenceToString(InSequence);
+	if (FKeyedInventoryData* FoundData = Inventory.Find(SequenceStr))
+	{
+		FoundData->SetData(InKey, InData);
+	}
+	else
+	{
+		FKeyedInventoryData KeyedData;
+		KeyedData.SetData(InKey, InData);
+		Inventory.Add(SequenceStr, KeyedData);
+	}
+}
+
+FInventorySaveData UGameSaveObject::LoadInventory(const TArray<uint8>& InSequence, const FName& InKey)
+{
+	if (const FKeyedInventoryData* FoundData = Inventory.Find(ConvertSequenceToString(InSequence)))
+	{
+		return FoundData->GetData(InKey);
+	}
+	
+	return {};
+}
+
 void UGameSaveObject::DeleteFile()
 {
 	Super::DeleteFile();

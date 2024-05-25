@@ -63,12 +63,11 @@ void UGameSectionManager::BeginTransition()
 	
 	if (ThisData)
 	{
-		SaveSystem->GetGameDataObject()->Inventory.Add(ThisData->InventoryKey.GetTagName(),
+		SaveSystem->GetGameDataObject()->SaveInventory(Sequence, ThisData->InventoryKey.GetTagName(),
 			PlayerChar->GetGameMode()->Inventory->ExportSaveData());
 	}
 	SaveSystem->GetGameDataObject()->Sequence = Sequence;
-	SaveSystem->SaveGameData(PlayTime);
-	PlayTime = 0.0f;
+	SaveCurrentTime();
 	
 	UGameSectionNode* Node = SectionGraph->GetNodeBySequence<UGameSectionNode>(Sequence);
 	if (!Node || !Node->IsA(UGameSectionDataNode::StaticClass()))
@@ -78,6 +77,12 @@ void UGameSectionManager::BeginTransition()
 	}
 	LastData = ThisData;
 	ThisData = Cast<UGameSectionDataNode>(Node);
+
+	if (ThisData)
+	{
+		SaveSystem->GetGlobalDataObject()->MenuKeys.Add(ThisData->UnlockMenu);
+		SaveSystem->SaveGlobalData();
+	}
 
 	ShowLoadingWidget();
 	
@@ -179,7 +184,8 @@ void UGameSectionManager::FinishTransition()
 		// Only load an inventory from save if this is the first data or the keys are different
 		if (!LastData || LastData->InventoryKey != ThisData->InventoryKey)
 		{
-			Inventory->LoadSaveData(SaveSystem->GetGameDataObject()->Inventory.FindRef(ThisData->InventoryKey.GetTagName()));
+			Inventory->ImportSaveData(SaveSystem->GetGameDataObject()->LoadInventory(
+				Sequence, ThisData->InventoryKey.GetTagName()));
 		}
 
 		for (const FInventorySlotData& Item : ThisData->EnsureItems)

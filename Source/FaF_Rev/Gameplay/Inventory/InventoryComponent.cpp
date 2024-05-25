@@ -114,7 +114,7 @@ void UInventoryComponent::ConsumeItem(const FGuid& ItemKey)
 	}
 }
 
-void UInventoryComponent::LoadSaveData(const FInventorySaveData& InData)
+void UInventoryComponent::ImportSaveData(const FInventorySaveData& InData)
 {
 	CurrencyData = InData.CurrencyData;
 	ItemSlots = InData.ItemSlots;

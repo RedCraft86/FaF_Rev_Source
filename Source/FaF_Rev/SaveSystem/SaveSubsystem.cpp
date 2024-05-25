@@ -92,6 +92,12 @@ bool USaveSubsystem::HasGlobalKey(const FName InKey) const
 	return false;
 }
 
+TArray<FName> USaveSubsystem::GetUnlockedMenus() const
+{
+	if (GlobalDataObject) return GlobalDataObject->MenuKeys.Array();
+	return {};
+}
+
 void USaveSubsystem::ReachEnding(const FName InEndingID, const bool bSave) const
 {
 	if (GlobalDataObject && GlobalDataObject->Endings.FindRef(InEndingID).GetTicks() <= 0)

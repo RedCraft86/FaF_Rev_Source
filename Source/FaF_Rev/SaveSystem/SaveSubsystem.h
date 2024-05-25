@@ -51,14 +51,15 @@ public:
 
 	UFUNCTION(BlueprintPure, Category = "SaveManager")
 		bool HasGlobalKey(const FName InKey) const;
+
+	UFUNCTION(BlueprintPure, Category = "SaveManager")
+		TArray<FName> GetUnlockedMenus() const;
 	
 	UFUNCTION(BlueprintCallable, BlueprintPure = false, Category = "SaveManager")
 		void ReachEnding(const FName InEndingID, const bool bSave = true) const;
 
 	UFUNCTION(BlueprintCallable, BlueprintPure = false, Category = "SaveManager")
 		FDateTime GetEndingReachedTime(const FName InEndingID) const;
-	
-
 	
 	DECLARE_MULTICAST_DELEGATE(FPromptSaveIcon)
 	FPromptSaveIcon OnSaveStarted;

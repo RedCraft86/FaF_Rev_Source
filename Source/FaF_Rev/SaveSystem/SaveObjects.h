@@ -42,6 +42,19 @@ protected:
 	virtual FString GetSaveFileName() const { return TEXT("Default"); }
 };
 
+USTRUCT(BlueprintInternalUseOnly)
+struct FAF_REV_API FKeyedInventoryData
+{
+	GENERATED_BODY()
+
+	TMap<FName, FInventorySaveData> Data;
+	
+	FKeyedInventoryData() : Data({}) {}
+	friend FArchive& operator<<(FArchive& Ar, FKeyedInventoryData& SaveData) { return Ar << SaveData.Data; }
+	void SetData(const FName& InKey, const FInventorySaveData& InData) { Data.Add(InKey, InData); }
+	FInventorySaveData GetData(const FName& InKey) const { return Data.FindRef(InKey); }
+};
+
 UCLASS(BlueprintType, NotBlueprintable)
 class FAF_REV_API UGameSaveObject final : public USaveObjectBase
 {
@@ -49,7 +62,7 @@ class FAF_REV_API UGameSaveObject final : public USaveObjectBase
 
 public:
 
-	UGameSaveObject() : Difficulty(EDifficultyMode::Normal), Inventory({}), Sequence({}), PlayTime(0.0f) {}
+	UGameSaveObject() : Difficulty(EDifficultyMode::Normal), PlayTime(0.0f), Sequence({}), Inventory({}) {}
 
 	UPROPERTY(BlueprintReadOnly, Category = "SaveObject")
 		EDifficultyMode Difficulty;
@@ -58,14 +71,16 @@ public:
 		TSet<FName> TransientKeys;
 
 	UPROPERTY(BlueprintReadOnly, Category = "SaveObject")
-		TMap<FName, FInventorySaveData> Inventory;
+		float PlayTime;
 	
 	UPROPERTY(BlueprintReadOnly, Category = "SaveObject")
 		TArray<uint8> Sequence;
-	
-	UPROPERTY(BlueprintReadOnly, Category = "SaveObject")
-		float PlayTime;
 
+	UPROPERTY(BlueprintReadOnly, Category = "SaveObject")
+		TMap<FString, FKeyedInventoryData> Inventory;
+
+	void SaveInventory(const TArray<uint8>& InSequence, const FName& InKey, const FInventorySaveData& InData);
+	FInventorySaveData LoadInventory(const TArray<uint8>& InSequence, const FName& InKey);
 	virtual void DeleteFile() override;
 
 private:
@@ -85,6 +100,9 @@ public:
 
 	UPROPERTY(BlueprintReadOnly, Category = "SaveObject")
 		TMap<FName, FDateTime> Endings;
+
+	UPROPERTY(BlueprintReadOnly, Category = "SaveObject")
+		TSet<FName> MenuKeys;
 	
 	UPROPERTY(BlueprintReadOnly, Category = "SaveObject")
 		TSet<FName> GlobalKeys;
