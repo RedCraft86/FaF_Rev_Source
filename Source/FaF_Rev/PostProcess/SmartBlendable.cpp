@@ -2,7 +2,6 @@
 
 #include "SmartBlendable.h"
 #include "SmartPostProcess.h"
-#include "Components/PostProcessComponent.h"
 
 void USmartBlendable::SetIntensity(const float NewValue)
 {
@@ -30,23 +29,15 @@ void USmartBlendable::OnInitialize()
 
 void USmartBlendable::AssignBlendable()
 {
-	if (PostProcessActor)
+	if (!DynamicInstance)
 	{
-		if (!DynamicInstance)
-		{
-			DynamicInstance = UMaterialInstanceDynamic::Create(ParentMaterial, this);
-		}
+		DynamicInstance = UMaterialInstanceDynamic::Create(ParentMaterial, this);
+	}
 
-		if (bEnabled)
-		{
-			DynamicInstance->SetScalarParameterValue(TEXT("BlendIntensity"), Intensity);
-			DynamicInstance->SetScalarParameterValue(TEXT("BlendStencilValue"), bUseStencil ? StencilValue : -1.0f);
-			PostProcessActor->PostProcess->Settings.AddBlendable(DynamicInstance, 1.0f);
-		}
-		else
-		{
-			PostProcessActor->PostProcess->Settings.RemoveBlendable(DynamicInstance);
-		}
+	if (bEnabled)
+	{
+		DynamicInstance->SetScalarParameterValue(TEXT("BlendIntensity"), Intensity);
+		DynamicInstance->SetScalarParameterValue(TEXT("BlendStencilValue"), bUseStencil ? StencilValue : -1.0f);
 	}
 }
 

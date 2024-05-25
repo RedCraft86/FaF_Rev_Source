@@ -24,7 +24,8 @@ void FFRBloomChoice::ApplyChoice(FPostProcessSettings& Settings, const bool bFan
 	}
 }
 
-ASmartPostProcess::ASmartPostProcess() : BlendRadius(100.0f), BlendWeight(1.0f), bEnabled(true), bUnbound(true)
+ASmartPostProcess::ASmartPostProcess()
+	: BlendRadius(100.0f), BlendWeight(1.0f), bEnabled(true), bUnbound(true)
 {
 	PrimaryActorTick.bCanEverTick = true;
 	PrimaryActorTick.bTickEvenWhenPaused = true;
@@ -151,7 +152,12 @@ USmartBlendable* ASmartPostProcess::AddSmartBlendable(const FName InName, const 
 void ASmartPostProcess::ApplySettings()
 {
 	Bloom.ApplyChoice(Settings, !GameSettings || GameSettings->GetUseFancyBloom());
-
+	
+	for (const TPair<FName, TObjectPtr<USmartBlendable>>& Pair : Blendables)
+	{
+		if (Pair.Value) Settings.AddBlendable(Pair.Value, Pair.Value->bEnabled ? 1.0f : 0.0f);
+	}
+	
 	PostProcess->Settings = Settings;
 	PostProcess->Priority = Priority;
 	PostProcess->BlendWeight = BlendWeight;
@@ -160,7 +166,7 @@ void ASmartPostProcess::ApplySettings()
 	PostProcess->bUnbound = bUnbound;
 }
 
-void ASmartPostProcess::ApplyBlendables()
+void ASmartPostProcess::UpdateBlendables()
 {
 	for (const TPair<FName, TObjectPtr<USmartBlendable>>& Pair : Blendables)
 	{
@@ -176,7 +182,7 @@ void ASmartPostProcess::BeginPlay()
 {
 	Super::BeginPlay();
 	GameSettings = UGameSettings::Get();
-	ApplyBlendables();
+	UpdateBlendables();
 }
 
 void ASmartPostProcess::Tick(float DeltaTime)
@@ -193,7 +199,7 @@ void ASmartPostProcess::OnConstruction(const FTransform& Transform)
 {
 	Super::OnConstruction(Transform);
 	SceneRoot->SetVisibility(!bUnbound);
-	ApplyBlendables();
+	UpdateBlendables();
 	ApplySettings();
 }
 

@@ -89,7 +89,7 @@ public:
 	/* Post process blendable materials */
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Settings", Instanced)
 		TMap<FName, TObjectPtr<USmartBlendable>> Blendables;
-
+	
 	/* Priority of this volume. In the case of overlapping volumes the one with the highest priority
 	* overrides the lower priority ones. The order is undefined if two or more overlapping volumes have the same priority
 	*/
@@ -137,12 +137,11 @@ public:
 	TArray<T*> AddSmartBlendable() const { return Cast<T>(AddSmartBlendable(T::StaticClass())); }
 	
 protected:
-	
-	float DistToPoint;
+
 	UPROPERTY(Transient) TObjectPtr<class UGameSettings> GameSettings;
 
 	void ApplySettings();
-	void ApplyBlendables();
+	void UpdateBlendables();
 
 	virtual void BeginPlay() override;
 	virtual void Tick(float DeltaTime) override;
@@ -152,7 +151,8 @@ protected:
 private:
 	UPROPERTY() TObjectPtr<UBillboardComponent> VisualIcon;
 #endif
-#if WITH_EDITOR	
+#if WITH_EDITOR
+	virtual bool ShouldTickIfViewportsOnly() const override { return true; }
 	virtual void PostEditChangeProperty(FPropertyChangedEvent& PropertyChangedEvent) override;
 #endif
 };
