@@ -330,6 +330,5 @@ void UGameSectionManager::Initialize(FSubsystemCollectionBase& Collection)
 
 bool UGameSectionManager::ShouldCreateSubsystem(UObject* Outer) const
 {
-	const bool bSuper = Super::ShouldCreateSubsystem(Outer);
-	return bSuper && FRSettings->IsGameplayMap(Outer);
+	return Super::ShouldCreateSubsystem(Outer) && FRSettings->IsGameplayMap(Outer);
 }
