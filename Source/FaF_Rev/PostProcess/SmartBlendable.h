@@ -5,6 +5,8 @@
 #include "UObject/Object.h"
 #include "SmartBlendable.generated.h"
 
+// TODO: NEEDS FIXING
+
 UCLASS(Abstract, Blueprintable, BlueprintType, EditInlineNew, DefaultToInstanced)
 class FAF_REV_API USmartBlendable final : public UObject
 {

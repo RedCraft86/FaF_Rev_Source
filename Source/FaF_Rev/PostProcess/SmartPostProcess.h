@@ -6,6 +6,8 @@
 #include "GameFramework/Actor.h"
 #include "SmartPostProcess.generated.h"
 
+// TODO: FIX SMART BLENDABLES
+
 USTRUCT(BlueprintType, DisplayName = "Bloom Settings")
 struct FAF_REV_API FPPBloomSettings
 {
