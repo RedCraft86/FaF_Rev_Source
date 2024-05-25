@@ -44,13 +44,22 @@ void AFRPlayerController::OnWindowFocusChanged(bool bFocused)
 	{
 		UnfocusedWidget = CreateWidget<UUserWidget>(this, UnfocusedWidgetClass);
 	}
+
+#if !WITH_EDITOR
+	if (!FRSettings->IsGameplayMap(this))
+	{
+		UKismetSystemLibrary::ExecuteConsoleCommand(this, FString::Printf(TEXT("t.MaxFPS %f"),
+				bFocused ? UGameSettings::Get()->GetFrameRateLimit() : 4.0f));
+		return;
+	}
+#endif
 	
 	if (bFocused && UnfocusedWidget->IsInViewport())
 	{
 		UnfocusedWidget->RemoveFromParent();
 		SetPause(false);
 	}
-	else if (!IsPaused() && FRSettings->IsGameplayMap(this))
+	else if (!IsPaused())
 	{
 		UnfocusedWidget->AddToViewport(100);
 		SetPause(true);
