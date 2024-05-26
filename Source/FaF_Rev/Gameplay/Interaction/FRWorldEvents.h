@@ -4,9 +4,61 @@
 
 #include "Quest.h"
 #include "Dialogue.h"
+#include "MessagingData.h"
 #include "NarrativeDataTask.h"
 #include "WorldEvents/WorldEvents.h"
 #include "FRWorldEvents.generated.h"
+
+USTRUCT(BlueprintType, DisplayName = "Game Notice (Small)")
+struct FAF_REV_API FWEGameNoticeSmall final : public FWorldEventBase
+{
+	GENERATED_BODY()
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Notice")
+		TArray<FSimpleNoticeData> Notices;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Notice")
+		bool bResetQueue;
+
+	FWEGameNoticeSmall() : Notices({}), bResetQueue(true) {}
+	
+protected:
+
+	virtual void RunEvent(const UObject* WorldContext) override;
+};
+
+USTRUCT(BlueprintType, DisplayName = "Game Notice (Large)")
+struct FAF_REV_API FWEGameNoticeLarge final : public FWorldEventBase
+{
+	GENERATED_BODY()
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Notice")
+		TArray<FSimpleNoticeData> Notices;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Notice")
+		bool bResetQueue;
+
+	FWEGameNoticeLarge() : Notices({}), bResetQueue(true) {}
+	
+protected:
+
+	virtual void RunEvent(const UObject* WorldContext) override;
+};
+
+USTRUCT(BlueprintType, DisplayName = "Game Subtitle")
+struct FAF_REV_API FWEGameSubtitle final : public FWorldEventBase
+{
+	GENERATED_BODY()
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Subtitle")
+		TArray<FSimpleSubtitleData> Subtitles;
+
+	FWEGameSubtitle() : Subtitles({}) {}
+	
+protected:
+
+	virtual void RunEvent(const UObject* WorldContext) override;
+};
 
 USTRUCT(BlueprintType, DisplayName = "Narrative Dialogue")
 struct FAF_REV_API FWENarrativeDialogue final : public FWorldEventBase

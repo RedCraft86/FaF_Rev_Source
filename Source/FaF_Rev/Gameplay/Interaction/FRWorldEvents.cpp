@@ -4,6 +4,32 @@
 #include "NarrativeComponent.h"
 #include "FRGameMode.h"
 
+void FWEGameNoticeSmall::RunEvent(const UObject* WorldContext)
+{
+	if (AFRGameModeBase* GM = FRGameMode(WorldContext))
+	{
+		for (const FSimpleNoticeData& Notice : Notices)
+			GM->QueueSmallNotice(Notice, bResetQueue);
+	}
+}
+
+void FWEGameNoticeLarge::RunEvent(const UObject* WorldContext)
+{
+	if (AFRGameModeBase* GM = FRGameMode(WorldContext))
+	{
+		for (const FSimpleNoticeData& Notice : Notices)
+			GM->QueueLargeNotice(Notice, bResetQueue);
+	}
+}
+
+void FWEGameSubtitle::RunEvent(const UObject* WorldContext)
+{
+	if (AFRGameModeBase* GM = FRGameMode(WorldContext))
+	{
+		GM->QueueSubtitles(Subtitles);
+	}
+}
+
 void FWENarrativeDialogue::RunEvent(const UObject* WorldContext)
 {
 	if (const AFRGameModeBase* GM = FRGameMode(WorldContext))
