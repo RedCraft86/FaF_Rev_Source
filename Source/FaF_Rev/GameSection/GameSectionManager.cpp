@@ -6,6 +6,7 @@
 #include "GameSection/GameSectionGraph.h"
 #include "Libraries/GTLoadUtilsLibrary.h"
 #include "UserWidgets/Screens/LoadingWidget.h"
+#include "Inventory/InventoryItemData.h"
 #include "SaveSystem/SaveSubsystem.h"
 #include "NarrativeComponent.h"
 #include "LevelLoadInterface.h"
@@ -193,15 +194,18 @@ void UGameSectionManager::FinishTransition()
 		for (const FInventorySlotData& Item : ThisData->EnsureItems)
 		{
 			if (!Item.IsValidSlot()) continue;
-			FGuid Slot = Inventory->FindSlot(Item.ItemData.LoadSynchronous(), {}); 
-			if (!Slot.IsValid() || Item.ItemData.LoadSynchronous()->StackingMode == EInventoryItemStackType::Unique)
+			const UInventoryItemData* ItemData = Item.GetItemData<UInventoryItemData>();
+			
+			FGuid Slot = Inventory->FindSlot(ItemData, {}); 
+			if ((!Slot.IsValid() || ItemData->StackingMode == EInventoryItemStackType::Unique)
+				&& ItemData->ItemType != EInventoryItemType::Equipment)
 			{
-				Inventory->AddItem(Item.ItemData.LoadSynchronous(), Item.Amount, Item.Metadata, true);
+				Inventory->AddItem(ItemData, Item.Amount, Item.Metadata, true);
 			}
-			else
+			else if (Slot.IsValid())
 			{
 				FInventorySlotData* SlotData = Inventory->ItemSlots.Find(Slot);
-				SlotData->Amount = FMath::Max(SlotData->Amount, Item.Amount);
+				SlotData->Amount = FMath::Min(FMath::Max(SlotData->Amount, Item.Amount), ItemData->GetStackLimit());
 				SlotData->Metadata.Append(Item.Metadata);
 			}
 		}
