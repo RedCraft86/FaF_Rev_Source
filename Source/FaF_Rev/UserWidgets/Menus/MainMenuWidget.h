@@ -6,7 +6,7 @@
 #include "WidgetInterface.h"
 #include "MainMenuWidget.generated.h"
 
-class UFRAnimatedButtonBase;
+class UButton;
 
 UCLASS(Abstract)
 class FAF_REV_API UMainMenuWidgetBase final : public UGTUserWidget, public IWidgetInterface
@@ -18,19 +18,19 @@ public:
 	UMainMenuWidgetBase(const FObjectInitializer& ObjectInitializer);
 	
 	UPROPERTY(Transient, meta = (BindWidget))
-		TObjectPtr<UFRAnimatedButtonBase> PlayButton;
+		TObjectPtr<UButton> PlayButton;
 
 	UPROPERTY(Transient, meta = (BindWidget))
-		TObjectPtr<UFRAnimatedButtonBase> SettingsButton;
+		TObjectPtr<UButton> SettingsButton;
 
 	UPROPERTY(Transient, meta = (BindWidget))
-		TObjectPtr<UFRAnimatedButtonBase> QuitButton;
+		TObjectPtr<UButton> QuitButton;
 	
 	UPROPERTY(Transient, meta = (BindWidget))
-		TObjectPtr<UFRAnimatedButtonBase> PhaseMapButton;
+		TObjectPtr<UButton> PhaseMapButton;
 
 	UPROPERTY(Transient, meta = (BindWidget))
-		TObjectPtr<UFRAnimatedButtonBase> ExtrasButton;
+		TObjectPtr<UButton> ExtrasButton;
 
 	UPROPERTY(Transient, meta = (BindWidget))
 		TObjectPtr<class UTextBlock> GameVersionText;
@@ -54,11 +54,11 @@ private:
 	UPROPERTY(Transient) TObjectPtr<USettingsWidgetBase> SettingsWidget;
 	UPROPERTY(Transient) TObjectPtr<UPhaseMapWidgetBase> PhaseMapWidget;
 
-	void OnPlayClicked();
-	void OnSettingsClicked();
-	void OnQuitClicked();
-	void OnPhaseMapClicked();
-	void OnExtrasClicked();
+	UFUNCTION() void OnPlayClicked();
+	UFUNCTION() void OnSettingsClicked();
+	UFUNCTION() void OnQuitClicked();
+	UFUNCTION() void OnPhaseMapClicked();
+	UFUNCTION() void OnExtrasClicked();
 
 	void FadeOut();
 	virtual void Return_Implementation(UUserWidget* From) override;

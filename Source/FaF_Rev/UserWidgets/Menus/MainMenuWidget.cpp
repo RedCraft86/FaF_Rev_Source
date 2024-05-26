@@ -4,6 +4,7 @@
 #include "Kismet/GameplayStatics.h"
 #include "GeneralProjectSettings.h"
 #include "Components/TextBlock.h"
+#include "Components/Button.h"
 #include "SettingsWidget.h"
 #include "PhaseMapWidget.h"
 #include "SubWidgets.h"
@@ -102,11 +103,11 @@ void UMainMenuWidgetBase::InitWidget()
 			*ProjectSettings->ProjectVersion, LexToString(FApp::GetBuildConfiguration()))));
 	}
 		
-	PlayButton->OnClicked.AddUObject(this, &UMainMenuWidgetBase::OnPlayClicked);
-	SettingsButton->OnClicked.AddUObject(this, &UMainMenuWidgetBase::OnSettingsClicked);
-	QuitButton->OnClicked.AddUObject(this, &UMainMenuWidgetBase::OnQuitClicked);
-	PhaseMapButton->OnClicked.AddUObject(this, &UMainMenuWidgetBase::OnPhaseMapClicked);
-	ExtrasButton->OnClicked.AddUObject(this, &UMainMenuWidgetBase::OnExtrasClicked);
+	PlayButton->OnClicked.AddDynamic(this, &UMainMenuWidgetBase::OnPlayClicked);
+	SettingsButton->OnClicked.AddDynamic(this, &UMainMenuWidgetBase::OnSettingsClicked);
+	QuitButton->OnClicked.AddDynamic(this, &UMainMenuWidgetBase::OnQuitClicked);
+	PhaseMapButton->OnClicked.AddDynamic(this, &UMainMenuWidgetBase::OnPhaseMapClicked);
+	ExtrasButton->OnClicked.AddDynamic(this, &UMainMenuWidgetBase::OnExtrasClicked);
 
 	PhaseMapButton->SetIsEnabled(false);
 	ExtrasButton->SetIsEnabled(false);
