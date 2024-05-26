@@ -158,4 +158,5 @@ void UGlobalSaveObject::SerializeData(FArchive& Ar)
 	Ar << Endings;
 	Ar << Menus;
 	Ar << Content;
+	Ar << SectionNodes;
 }

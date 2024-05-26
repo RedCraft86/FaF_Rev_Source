@@ -118,6 +118,12 @@ bool USaveSubsystem::IsContentUnlocked(const FGameplayTag InContentID) const
 	return false;
 }
 
+bool USaveSubsystem::IsSectionNodeUnlocked(const FGuid InNodeID) const
+{
+	if (GlobalDataObject) return GlobalDataObject->SectionNodes.Contains(InNodeID);
+	return false;
+}
+
 void USaveSubsystem::Initialize(FSubsystemCollectionBase& Collection)
 {
 	Super::Initialize(Collection);

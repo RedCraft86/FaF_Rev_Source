@@ -110,6 +110,9 @@ public:
 
 	UPROPERTY(BlueprintReadOnly, Category = "SaveObject")
 		TSet<FGameplayTag> Content;
+
+	UPROPERTY(BlueprintReadOnly, Category = "SaveObject")
+		TSet<FGuid> SectionNodes;
 	
 	virtual void DeleteFile() override;
 

@@ -80,7 +80,9 @@ void UGameSectionManager::BeginTransition()
 
 	if (ThisData)
 	{
-		SaveSystem->GetGlobalDataObject()->Menus.Add(ThisData->UnlockMenu);
+		UGlobalSaveObject* GlobalObject = SaveSystem->GetGlobalDataObject();
+		GlobalObject->SectionNodes.Add(ThisData->UniqueID);
+		GlobalObject->Menus.Add(ThisData->UnlockMenu);
 		SaveSystem->SaveGlobalData();
 	}
 

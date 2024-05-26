@@ -61,6 +61,9 @@ public:
 	UFUNCTION(BlueprintPure, Category = "SaveManager")
 		bool IsContentUnlocked(const FGameplayTag InContentID) const;
 
+	UFUNCTION(BlueprintPure, Category = "SaveManager")
+		bool IsSectionNodeUnlocked(const FGuid InNodeID) const;
+	
 	DECLARE_MULTICAST_DELEGATE(FPromptSaveIcon)
 	FPromptSaveIcon OnSaveStarted;
 	
