@@ -2,9 +2,26 @@
 
 #include "FRWorldEvents.h"
 #include "NarrativeComponent.h"
+#include "SaveSystem/SaveSubsystem.h"
 #include "FRGameMode.h"
 
-void FWEGameNoticeSmall::RunEvent(const UObject* WorldContext)
+void FWEUnlockTransientKey::RunEvent(const UObject* WorldContext)
+{
+	if (const USaveSubsystem* Subsystem = USaveSubsystem::Get(WorldContext))
+	{
+		Subsystem->UnlockTransientKey(TransientKey);
+	}
+}
+
+void FWEUnlockContentKey::RunEvent(const UObject* WorldContext)
+{
+	if (const USaveSubsystem* Subsystem = USaveSubsystem::Get(WorldContext))
+	{
+		Subsystem->UnlockContent(ContentKey);
+	}
+}
+
+void FWESimpleNoticeSmall::RunEvent(const UObject* WorldContext)
 {
 	if (AFRGameModeBase* GM = FRGameMode(WorldContext))
 	{
@@ -13,7 +30,7 @@ void FWEGameNoticeSmall::RunEvent(const UObject* WorldContext)
 	}
 }
 
-void FWEGameNoticeLarge::RunEvent(const UObject* WorldContext)
+void FWESimpleNoticeLarge::RunEvent(const UObject* WorldContext)
 {
 	if (AFRGameModeBase* GM = FRGameMode(WorldContext))
 	{
@@ -22,7 +39,7 @@ void FWEGameNoticeLarge::RunEvent(const UObject* WorldContext)
 	}
 }
 
-void FWEGameSubtitle::RunEvent(const UObject* WorldContext)
+void FWESimpleSubtitle::RunEvent(const UObject* WorldContext)
 {
 	if (AFRGameModeBase* GM = FRGameMode(WorldContext))
 	{

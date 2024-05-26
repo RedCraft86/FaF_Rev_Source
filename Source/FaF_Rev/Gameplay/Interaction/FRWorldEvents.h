@@ -9,8 +9,38 @@
 #include "WorldEvents/WorldEvents.h"
 #include "FRWorldEvents.generated.h"
 
-USTRUCT(BlueprintType, DisplayName = "Game Notice (Small)")
-struct FAF_REV_API FWEGameNoticeSmall final : public FWorldEventBase
+USTRUCT(BlueprintType, DisplayName = "Unlock Transient Key")
+struct FAF_REV_API FWEUnlockTransientKey final : public FWorldEventBase
+{
+	GENERATED_BODY()
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "UnlockTransientKey")
+		FGameplayTag TransientKey;
+
+	FWEUnlockTransientKey() : TransientKey({}) {}
+	
+protected:
+
+	virtual void RunEvent(const UObject* WorldContext) override;
+};
+
+USTRUCT(BlueprintType, DisplayName = "Unlock Content Key")
+struct FAF_REV_API FWEUnlockContentKey final : public FWorldEventBase
+{
+	GENERATED_BODY()
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "UnlockContentKey")
+		FGameplayTag ContentKey;
+
+	FWEUnlockContentKey() : ContentKey({}) {}
+	
+protected:
+
+	virtual void RunEvent(const UObject* WorldContext) override;
+};
+
+USTRUCT(BlueprintType, DisplayName = "Simple Notice (Small)")
+struct FAF_REV_API FWESimpleNoticeSmall final : public FWorldEventBase
 {
 	GENERATED_BODY()
 
@@ -20,15 +50,15 @@ struct FAF_REV_API FWEGameNoticeSmall final : public FWorldEventBase
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Notice")
 		bool bResetQueue;
 
-	FWEGameNoticeSmall() : Notices({}), bResetQueue(true) {}
+	FWESimpleNoticeSmall() : Notices({}), bResetQueue(true) {}
 	
 protected:
 
 	virtual void RunEvent(const UObject* WorldContext) override;
 };
 
-USTRUCT(BlueprintType, DisplayName = "Game Notice (Large)")
-struct FAF_REV_API FWEGameNoticeLarge final : public FWorldEventBase
+USTRUCT(BlueprintType, DisplayName = "Simple Notice (Large)")
+struct FAF_REV_API FWESimpleNoticeLarge final : public FWorldEventBase
 {
 	GENERATED_BODY()
 
@@ -38,22 +68,22 @@ struct FAF_REV_API FWEGameNoticeLarge final : public FWorldEventBase
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Notice")
 		bool bResetQueue;
 
-	FWEGameNoticeLarge() : Notices({}), bResetQueue(true) {}
+	FWESimpleNoticeLarge() : Notices({}), bResetQueue(true) {}
 	
 protected:
 
 	virtual void RunEvent(const UObject* WorldContext) override;
 };
 
-USTRUCT(BlueprintType, DisplayName = "Game Subtitle")
-struct FAF_REV_API FWEGameSubtitle final : public FWorldEventBase
+USTRUCT(BlueprintType, DisplayName = "Simple Subtitle")
+struct FAF_REV_API FWESimpleSubtitle final : public FWorldEventBase
 {
 	GENERATED_BODY()
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Subtitle")
 		TArray<FSimpleSubtitleData> Subtitles;
 
-	FWEGameSubtitle() : Subtitles({}) {}
+	FWESimpleSubtitle() : Subtitles({}) {}
 	
 protected:
 
