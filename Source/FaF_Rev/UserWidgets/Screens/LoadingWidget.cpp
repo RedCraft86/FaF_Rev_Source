@@ -4,6 +4,7 @@
 #include "Components/Image.h"
 #include "Components/TextBlock.h"
 #include "Components/ProgressBar.h"
+#include "Components/WidgetSwitcher.h"
 #include "FaF_Rev.h"
 
 ULoadingWidgetBase::ULoadingWidgetBase(const FObjectInitializer& ObjectInitializer)
@@ -55,12 +56,20 @@ void ULoadingWidgetBase::Update(const bool bFinish) const
 	}
 }
 
+void ULoadingWidgetBase::SetMinimalMode(const bool bInMinimalMode) const
+{
+	SwitcherWidget->SetActiveWidgetIndex(bInMinimalMode ? 1 : 0);
+}
+
 void ULoadingWidgetBase::FinishLoading(const TFunction<void()>& OnFinished)
 {
-	GetWorld()->GetTimerManager().PauseTimer(SlowTickHandle);
-	Background = nullptr;
-	LoadingObjs.Empty();
-	Update(true);
+	if (SwitcherWidget->GetActiveWidgetIndex() == 0)
+	{
+		GetWorld()->GetTimerManager().PauseTimer(SlowTickHandle);
+		Background = nullptr;
+		LoadingObjs.Empty();
+		Update(true);
+	}
 
 	FTimerHandle Handle;
 	GetWorld()->GetTimerManager().SetTimer(Handle, [WEAK_THIS, OnFinished]()
@@ -71,20 +80,24 @@ void ULoadingWidgetBase::FinishLoading(const TFunction<void()>& OnFinished)
 
 void ULoadingWidgetBase::BeginLoading(const TSet<FAssetData>& InObjects, const TSoftObjectPtr<UTexture2D>& InBackground, const TPair<FString, FText>& InTip)
 {
-	bUnloading = true;
-	TotalObjs = InObjects.Num();
-	LoadingObjs = InObjects.Array();
-	Background = InBackground.IsNull() ? DefaultBackground.LoadSynchronous() : InBackground.LoadSynchronous();
+	if (SwitcherWidget->GetActiveWidgetIndex() == 0)
+	{
+		bUnloading = true;
+		TotalObjs = InObjects.Num();
+		LoadingObjs = InObjects.Array();
+		Background = InBackground.IsNull() ? DefaultBackground.LoadSynchronous() : InBackground.LoadSynchronous();
 	
-	LoadingBar->SetPercent(0.0f);
-	LoadingLabel->SetText(INVTEXT("Starting Load..."));
-	BackgroundImage->SetBrushFromTexture(Background);
-	TipLabel->SetText(FText::FromString(InTip.Key));
-	TipText->SetText(InTip.Value);
-	AddWidget(nullptr);
+		LoadingBar->SetPercent(0.0f);
+		LoadingLabel->SetText(INVTEXT("Starting Load..."));
+		BackgroundImage->SetBrushFromTexture(Background);
+		TipLabel->SetText(FText::FromString(InTip.Key));
+		TipText->SetText(InTip.Value);
 
-	Update(false);
-	if (TotalObjs > 0) GetWorld()->GetTimerManager().UnPauseTimer(SlowTickHandle);
+		Update(false);
+		if (TotalObjs > 0) GetWorld()->GetTimerManager().UnPauseTimer(SlowTickHandle);
+	}
+	
+	AddWidget(nullptr);
 }
 
 void ULoadingWidgetBase::NativeOnInitialized()

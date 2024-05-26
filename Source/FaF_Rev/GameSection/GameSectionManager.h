@@ -58,10 +58,10 @@ private:
 	bool UnloadLevel(const TSoftObjectPtr<UWorld>& InMap);
 	bool LoadLevel(const TPair<TSoftObjectPtr<UWorld>, bool>& InMap);
 	uint8 GetLatentID() { return LatentID++; }
-
-	void HideLoadingWidget(const TFunction<void()>& OnFinished);
+	
 	void ShowLoadingWidget();
-
+	void HideLoadingWidget(const TFunction<void()>& OnFinished);
+	
 	UFUNCTION() void OnLevelUnloaded();
 	UFUNCTION() void OnLevelLoaded();
 

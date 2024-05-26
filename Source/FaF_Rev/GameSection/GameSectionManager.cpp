@@ -5,10 +5,10 @@
 #include "GameSection/GameSectionNode.h"
 #include "GameSection/GameSectionGraph.h"
 #include "Libraries/GTLoadUtilsLibrary.h"
+#include "UserWidgets/Screens/LoadingWidget.h"
 #include "SaveSystem/SaveSubsystem.h"
 #include "NarrativeComponent.h"
 #include "PlayerTeleporter.h"
-#include "LoadingWidget.h"
 #include "FRGameState.h"
 #include "FRGameMode.h"
 #include "FRSettings.h"
@@ -262,21 +262,22 @@ bool UGameSectionManager::LoadLevel(const TPair<TSoftObjectPtr<UWorld>, bool>& I
 	return true;
 }
 
-void UGameSectionManager::HideLoadingWidget(const TFunction<void()>& OnFinished)
-{
-	if (ULoadingWidgetBase* Widget = GetLoadingWidget())
-	{
-		Widget->FinishLoading(OnFinished);
-	}
-}
-
 void UGameSectionManager::ShowLoadingWidget()
 {
 	if (!ThisData) return;
 	if (ULoadingWidgetBase* Widget = GetLoadingWidget())
 	{
+		Widget->SetMinimalMode(ThisData->bMinimalLoadingScreen);
 		Widget->BeginLoading(ThisData->GetDependencies(),
 			ThisData->GetBackground(), ThisData->GetTip());
+	}
+}
+
+void UGameSectionManager::HideLoadingWidget(const TFunction<void()>& OnFinished)
+{
+	if (ULoadingWidgetBase* Widget = GetLoadingWidget())
+	{
+		Widget->FinishLoading(OnFinished);
 	}
 }
 

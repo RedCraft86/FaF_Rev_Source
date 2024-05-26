@@ -6,6 +6,8 @@
 TSet<FAssetData> UGameSectionDataNode::GetDependencies()
 {
 	TSet<FAssetData> Result;
+	if (bMinimalLoadingScreen) return Result;
+	
 	for (const FName& Package : Dependencies)
 	{
 		TArray<FAssetData> Assets;
@@ -24,6 +26,7 @@ TSet<FAssetData> UGameSectionDataNode::GetDependencies()
 
 TSoftObjectPtr<UTexture2D> UGameSectionDataNode::GetBackground()
 {
+	if (Backgrounds.IsEmpty() || bMinimalLoadingScreen) return nullptr;
 	Backgrounds.RemoveAll([](const TSoftObjectPtr<UTexture2D>& Element) -> bool { return Element.IsNull(); });
 	Algo::RandomShuffle(Backgrounds); Algo::RandomShuffle(Backgrounds); // Twice
 	return Backgrounds.IsEmpty() ? nullptr : Backgrounds[0];
@@ -31,7 +34,7 @@ TSoftObjectPtr<UTexture2D> UGameSectionDataNode::GetBackground()
 
 TPair<FString, FText> UGameSectionDataNode::GetTip() const
 {
-	if (LoadingTips.IsEmpty()) return{};
+	if (LoadingTips.IsEmpty() || bMinimalLoadingScreen) return{};
 	
 	TArray<FString> TipKeys;
 	LoadingTips.GenerateKeyArray(TipKeys);

@@ -18,19 +18,22 @@ public:
 
 	ULoadingWidgetBase(const FObjectInitializer& ObjectInitializer);
 
-	UPROPERTY(Transient, BlueprintReadOnly, Category = "Elements", meta = (BindWidget))
+	UPROPERTY(Transient, meta = (BindWidget))
+		TObjectPtr<class UWidgetSwitcher> SwitcherWidget;
+	
+	UPROPERTY(Transient, meta = (BindWidget))
 		TObjectPtr<UTextBlock> LoadingLabel;
 
-	UPROPERTY(Transient, BlueprintReadOnly, Category = "Elements", meta = (BindWidget))
+	UPROPERTY(Transient, meta = (BindWidget))
 		TObjectPtr<class UProgressBar> LoadingBar;
 
-	UPROPERTY(Transient, BlueprintReadOnly, Category = "Elements", meta = (BindWidget))
+	UPROPERTY(Transient, meta = (BindWidget))
 		TObjectPtr<class UImage> BackgroundImage;
 	
-	UPROPERTY(Transient, BlueprintReadOnly, Category = "Elements", meta = (BindWidget))
+	UPROPERTY(Transient, meta = (BindWidget))
 		TObjectPtr<UTextBlock> TipLabel;
 	
-	UPROPERTY(Transient, BlueprintReadOnly, Category = "Elements", meta = (BindWidget))
+	UPROPERTY(Transient, meta = (BindWidget))
 		TObjectPtr<UTextBlock> TipText;
 
 	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, Category = "LoadingWidget")
@@ -46,7 +49,7 @@ private:
 	
 	void SlowTick();
 	void Update(const bool bFinish) const;
-	
+	void SetMinimalMode(const bool bInMinimalMode) const;
 	void FinishLoading(const TFunction<void()>& OnFinished);
 	void BeginLoading(const TSet<FAssetData>& InObjects, const TSoftObjectPtr<UTexture2D>& InBackground, const TPair<FString, FText>& InTip);
 	virtual void NativeOnInitialized() override;

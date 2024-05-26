@@ -26,11 +26,14 @@ public:
 	
 	UPROPERTY(EditAnywhere, Category = "SectionData")
 		TSet<TSoftObjectPtr<UObject>> PreloadObjects;
-	
+
 	UPROPERTY(EditAnywhere, Category = "LoadingScreen")
+		bool bMinimalLoadingScreen;
+	
+	UPROPERTY(EditAnywhere, Category = "LoadingScreen", meta = (EditCondition = "!bMinimalLoadingScreen"))
 		TMap<FString, FText> LoadingTips;
 	
-	UPROPERTY(EditAnywhere, Category = "LoadingScreen", meta = (NoElementDuplicate))
+	UPROPERTY(EditAnywhere, Category = "LoadingScreen", meta = (EditCondition = "!bMinimalLoadingScreen", NoElementDuplicate))
 		TArray<TSoftObjectPtr<UTexture2D>> Backgrounds;
 	
 	UPROPERTY(EditAnywhere, Category = "PlayerData")
