@@ -8,6 +8,7 @@
 #include "UserWidgets/Screens/LoadingWidget.h"
 #include "SaveSystem/SaveSubsystem.h"
 #include "NarrativeComponent.h"
+#include "LevelLoadInterface.h"
 #include "PlayerTeleporter.h"
 #include "FRGameState.h"
 #include "FRGameMode.h"
@@ -220,6 +221,8 @@ bool UGameSectionManager::UnloadLevel(const TSoftObjectPtr<UWorld>& InMap)
 	ULevelStreaming* Level = UGameplayStatics::GetStreamingLevel(this, MapName);
 	if (!Level || !Level->IsLevelLoaded()) return false;
 
+	ILevelLoadInterface::Unload(Level->GetLevelScriptActor());
+
 	// Let's not unload something only to load it again...
 	if (ThisData && ThisData->Levels.Contains(InMap))
 	{
@@ -250,6 +253,7 @@ bool UGameSectionManager::LoadLevel(const TPair<TSoftObjectPtr<UWorld>, bool>& I
 	if (Level && Level->IsLevelLoaded())
 	{
 		Level->SetShouldBeVisible(InMap.Value);
+		ILevelLoadInterface::Load(Level->GetLevelScriptActor());
 		return false;
 	}
 	
@@ -261,6 +265,9 @@ bool UGameSectionManager::LoadLevel(const TPair<TSoftObjectPtr<UWorld>, bool>& I
 	Info.ExecutionFunction = TEXT("OnLevelLoaded");
 	UGameplayStatics::LoadStreamLevel(this, MapName,
 		InMap.Value, false, Info);
+	
+	Level = UGameplayStatics::GetStreamingLevel(this, MapName);
+	if (Level) ILevelLoadInterface::Load(Level->GetLevelScriptActor());
 	return true;
 }
 

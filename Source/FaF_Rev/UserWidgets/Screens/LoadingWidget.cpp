@@ -5,7 +5,7 @@
 #include "Components/TextBlock.h"
 #include "Components/ProgressBar.h"
 #include "Components/WidgetSwitcher.h"
-#include "FaF_Rev.h"
+#include "FRGameMode.h"
 
 ULoadingWidgetBase::ULoadingWidgetBase(const FObjectInitializer& ObjectInitializer)
 	: UGTUserWidget(ObjectInitializer), LoadingLabel(nullptr), LoadingBar(nullptr), BackgroundImage(nullptr)
@@ -72,9 +72,10 @@ void ULoadingWidgetBase::FinishLoading(const TFunction<void()>& OnFinished)
 	}
 
 	FTimerHandle Handle;
-	GetWorld()->GetTimerManager().SetTimer(Handle, [WEAK_THIS, OnFinished]()
+	GetWorld()->GetTimerManager().SetTimer(Handle, [this, OnFinished]()
 	{
-		if (WeakThis.IsValid()) WeakThis->RemoveWidget(OnFinished);
+		RemoveWidget(OnFinished);
+		GetGameMode<AFRGameModeBase>()->SetGameInputMode(EGameInputMode::GameOnly);
 	}, 0.5f, false);
 }
 
@@ -98,6 +99,7 @@ void ULoadingWidgetBase::BeginLoading(const TSet<FAssetData>& InObjects, const T
 	}
 	
 	AddWidget(nullptr);
+	GetGameMode<AFRGameModeBase>()->SetGameInputMode(EGameInputMode::UI_Only, true);
 }
 
 void ULoadingWidgetBase::NativeOnInitialized()
