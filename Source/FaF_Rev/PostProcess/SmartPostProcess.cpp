@@ -117,6 +117,7 @@ void ASmartPostProcess::CopyFromTarget()
 
 		CopyTarget = nullptr;
 		Settings = NewSettings;
+		SceneRoot->SetVisibility(!bUnbound);
 		ApplySettings();
 	}
 #endif
