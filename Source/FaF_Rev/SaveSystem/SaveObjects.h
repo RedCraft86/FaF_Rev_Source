@@ -100,13 +100,13 @@ public:
 	UGlobalSaveObject() {}
 
 	UPROPERTY(BlueprintReadOnly, Category = "SaveObject")
+		TSet<FName> Achievements;
+
+	UPROPERTY(BlueprintReadOnly, Category = "SaveObject")
 		TMap<FGameplayTag, FDateTime> Endings;
 
 	UPROPERTY(BlueprintReadOnly, Category = "SaveObject")
-		TSet<FGameplayTag> MenuKeys;
-	
-	UPROPERTY(BlueprintReadOnly, Category = "SaveObject")
-		TSet<FGameplayTag> GlobalKeys;
+		TSet<FGameplayTag> Menus;
 	
 	virtual void DeleteFile() override;
 

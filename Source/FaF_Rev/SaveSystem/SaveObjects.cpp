@@ -154,7 +154,7 @@ void UGlobalSaveObject::DeleteFile()
 
 void UGlobalSaveObject::SerializeData(FArchive& Ar)
 {
+	Ar << Achievements;
 	Ar << Endings;
-	Ar << MenuKeys;
-	Ar << GlobalKeys;
+	Ar << Menus;
 }

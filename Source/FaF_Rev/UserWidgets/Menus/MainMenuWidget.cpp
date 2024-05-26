@@ -1,14 +1,16 @@
 ﻿// Copyright (C) RedCraft86. All Rights Reserved.
 
 #include "MainMenuWidget.h"
+#include "Components/Button.h"
+#include "Components/TextBlock.h"
 #include "Kismet/GameplayStatics.h"
 #include "GeneralProjectSettings.h"
-#include "Components/TextBlock.h"
-#include "Components/Button.h"
+#include "SaveSystem/SaveSubsystem.h"
 #include "SettingsWidget.h"
 #include "PhaseMapWidget.h"
 #include "SubWidgets.h"
 #include "FRGameMode.h"
+
 
 UMainMenuWidgetBase::UMainMenuWidgetBase(const FObjectInitializer& ObjectInitializer)
 	: UGTUserWidget(ObjectInitializer), PlayButton(nullptr), SettingsButton(nullptr)
@@ -109,8 +111,13 @@ void UMainMenuWidgetBase::InitWidget()
 	PhaseMapButton->OnClicked.AddDynamic(this, &UMainMenuWidgetBase::OnPhaseMapClicked);
 	ExtrasButton->OnClicked.AddDynamic(this, &UMainMenuWidgetBase::OnExtrasClicked);
 
-	PhaseMapButton->SetIsEnabled(false);
-	ExtrasButton->SetIsEnabled(false);
+	if (const USaveSubsystem* SaveManager = USaveSubsystem::Get(this))
+	{
+		PhaseMapButton->SetVisibility(SaveManager->HasAnyEnding()
+			? ESlateVisibility::Visible : ESlateVisibility::Collapsed);
+		
+		ExtrasButton->SetVisibility(PhaseMapButton->GetVisibility());
+	}
 
 	SettingsWidget = CreateNew<USettingsWidgetBase>(GetPlayerController(), SettingsWidgetClass, {});
 	if (SettingsWidget) SettingsWidget->ParentWidget = this;

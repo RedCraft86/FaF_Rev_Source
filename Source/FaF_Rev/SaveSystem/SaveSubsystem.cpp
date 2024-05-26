@@ -68,33 +68,9 @@ void USaveSubsystem::LoadGlobalData() const
 	if (GlobalDataObject) GlobalDataObject->LoadFromFile(nullptr);
 }
 
-void USaveSubsystem::DeleteGlobalData() const
-{
-	if (GlobalDataObject) GlobalDataObject->DeleteFile();
-}
-
-void USaveSubsystem::UnlockGlobalKey(const FGameplayTag InKey, const bool bSave) const
-{
-	if (GlobalDataObject)
-	{
-		GlobalDataObject->GlobalKeys.Add(InKey);
-		if (bSave)
-		{
-			GlobalDataObject->SaveToFile(nullptr);
-			OnSaveStarted.Broadcast();
-		}
-	}
-}
-
-bool USaveSubsystem::HasGlobalKey(const FGameplayTag InKey) const
-{
-	if (GlobalDataObject) return GlobalDataObject->GlobalKeys.Contains(InKey);
-	return false;
-}
-
 TArray<FGameplayTag> USaveSubsystem::GetUnlockedMenus() const
 {
-	if (GlobalDataObject) return GlobalDataObject->MenuKeys.Array();
+	if (GlobalDataObject) return GlobalDataObject->Menus.Array();
 	return {};
 }
 
@@ -115,6 +91,12 @@ FDateTime USaveSubsystem::GetEndingReachedTime(const FGameplayTag InEndingID) co
 {
 	if (GlobalDataObject) GlobalDataObject->Endings.FindOrAdd(InEndingID);
 	return {0};
+}
+
+bool USaveSubsystem::HasAnyEnding() const
+{
+	if (GlobalDataObject) return !GlobalDataObject->Endings.IsEmpty();
+	return false;
 }
 
 void USaveSubsystem::Initialize(FSubsystemCollectionBase& Collection)
