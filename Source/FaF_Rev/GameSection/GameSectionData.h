@@ -19,8 +19,15 @@ class FAF_REV_API UGameSectionDataNode final : public UGameSectionNode
 
 public:
 
-	UGameSectionDataNode() : DependencyDepth(4) {}
-	
+	UGameSectionDataNode() : bMinimalLoadingScreen(false), DependencyDepth(4)
+	{
+		LoadingTips = {
+			{TEXT("Endings"), INVTEXT("This game has multiple endings but only one is canon. You will get access to a Phase Map to help you reach all the endings once you've achieved at least one ending.")},
+			{TEXT("Game History 1"), INVTEXT("This game is actually a spritual successor to my cancelled game \"Fazbear Entertainment: Chapter 2.\"")},
+			{TEXT("Game History 2"), INVTEXT("This game went through at least 4 versions before getting to this one. I kept rewriting the code and story to be better than the last.")}
+		};
+	}
+
 	UPROPERTY(EditAnywhere, Category = "SectionData")
 		TMap<TSoftObjectPtr<UWorld>, bool> Levels;
 	
