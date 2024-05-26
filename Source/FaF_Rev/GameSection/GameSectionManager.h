@@ -14,7 +14,7 @@ class FAF_REV_API UGameSectionManager : public UTickableWorldSubsystem
 public:
 
 	UGameSectionManager()
-		: bLoading(false), PlayTime(0.0f), Sequence({0})
+		: bLoading(false), PlayTime(0.0f), Sequence({})
 		, LatentID(0), UnloadingLevels(0), LoadingLevels(0)
 		, PlayerChar(nullptr), ThisData(nullptr), LastData(nullptr)
 		, SectionGraph(nullptr), LoadingWidget(nullptr)
