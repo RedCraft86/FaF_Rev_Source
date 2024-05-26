@@ -47,6 +47,7 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "MainMenuWidget")
 		TSubclassOf<class UPhaseMapWidgetBase> PhaseMapWidgetClass;
 
+	virtual void AddWidget(const TFunction<void()>& OnFinished) override;
 	virtual void RemoveWidget(const TFunction<void()>& OnFinished) override;
 	
 private:

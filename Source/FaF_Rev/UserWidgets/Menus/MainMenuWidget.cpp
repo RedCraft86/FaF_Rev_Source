@@ -5,12 +5,11 @@
 #include "Components/TextBlock.h"
 #include "Kismet/GameplayStatics.h"
 #include "GeneralProjectSettings.h"
+#include "Animation/UMGSequencePlayer.h"
 #include "SaveSystem/SaveSubsystem.h"
 #include "SettingsWidget.h"
 #include "PhaseMapWidget.h"
-#include "SubWidgets.h"
 #include "FRGameMode.h"
-
 
 UMainMenuWidgetBase::UMainMenuWidgetBase(const FObjectInitializer& ObjectInitializer)
 	: UGTUserWidget(ObjectInitializer), PlayButton(nullptr), SettingsButton(nullptr)
@@ -19,6 +18,31 @@ UMainMenuWidgetBase::UMainMenuWidgetBase(const FObjectInitializer& ObjectInitial
 {
 	ZOrder = 90;
 	bAutoAdd = true;
+}
+
+void UMainMenuWidgetBase::AddWidget(const TFunction<void()>& OnFinished)
+{
+	//Super::AddWidget(OnFinished);
+
+	if (IsInViewport()) return;
+
+	AddToViewport(ZOrder);
+	if (FadeAnim)
+	{
+		if (UUMGSequencePlayer* Player = PlayAnimationForward(FadeAnim, 0.5f))
+		{
+			if (!OnFinished) return;
+			Player->OnSequenceFinishedPlaying().Clear();
+			Player->OnSequenceFinishedPlaying().AddLambda([OnFinished](UUMGSequencePlayer&)
+			{
+				if (OnFinished) OnFinished();
+			});
+		}
+	}
+	else if (OnFinished)
+	{
+		OnFinished();
+	}
 }
 
 void UMainMenuWidgetBase::RemoveWidget(const TFunction<void()>& OnFinished)
