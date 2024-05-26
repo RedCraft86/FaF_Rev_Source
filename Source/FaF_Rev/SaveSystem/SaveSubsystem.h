@@ -42,9 +42,6 @@ public:
 
 	UFUNCTION(BlueprintCallable, BlueprintPure = false, Category = "SaveManager")
 		void LoadGlobalData() const;
-
-	UFUNCTION(BlueprintPure, Category = "SaveManager")
-		TArray<FGameplayTag> GetUnlockedMenus() const;
 	
 	UFUNCTION(BlueprintCallable, BlueprintPure = false, Category = "SaveManager")
 		void ReachEnding(const FGameplayTag InEndingID, const bool bSave = true) const;
@@ -54,6 +51,15 @@ public:
 
 	UFUNCTION(BlueprintPure, Category = "SaveManager")
 		bool HasAnyEnding() const;
+
+	UFUNCTION(BlueprintPure, Category = "SaveManager")
+		TSet<FGameplayTag> GetUnlockedMenus() const;
+
+	UFUNCTION(BlueprintCallable, BlueprintPure = false, Category = "SaveManager")
+		void UnlockContent(const FGameplayTag InContentID, const bool bSave = true) const;
+
+	UFUNCTION(BlueprintPure, Category = "SaveManager")
+		bool IsContentUnlocked(const FGameplayTag InContentID) const;
 
 	DECLARE_MULTICAST_DELEGATE(FPromptSaveIcon)
 	FPromptSaveIcon OnSaveStarted;

@@ -107,6 +107,9 @@ public:
 
 	UPROPERTY(BlueprintReadOnly, Category = "SaveObject")
 		TSet<FGameplayTag> Menus;
+
+	UPROPERTY(BlueprintReadOnly, Category = "SaveObject")
+		TSet<FGameplayTag> Content;
 	
 	virtual void DeleteFile() override;
 

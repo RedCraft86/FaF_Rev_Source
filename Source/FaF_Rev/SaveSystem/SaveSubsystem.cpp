@@ -68,12 +68,6 @@ void USaveSubsystem::LoadGlobalData() const
 	if (GlobalDataObject) GlobalDataObject->LoadFromFile(nullptr);
 }
 
-TArray<FGameplayTag> USaveSubsystem::GetUnlockedMenus() const
-{
-	if (GlobalDataObject) return GlobalDataObject->Menus.Array();
-	return {};
-}
-
 void USaveSubsystem::ReachEnding(const FGameplayTag InEndingID, const bool bSave) const
 {
 	if (GlobalDataObject && GlobalDataObject->Endings.FindRef(InEndingID).GetTicks() <= 0)
@@ -96,6 +90,31 @@ FDateTime USaveSubsystem::GetEndingReachedTime(const FGameplayTag InEndingID) co
 bool USaveSubsystem::HasAnyEnding() const
 {
 	if (GlobalDataObject) return !GlobalDataObject->Endings.IsEmpty();
+	return false;
+}
+
+TSet<FGameplayTag> USaveSubsystem::GetUnlockedMenus() const
+{
+	if (GlobalDataObject) return GlobalDataObject->Menus;
+	return {};
+}
+
+void USaveSubsystem::UnlockContent(const FGameplayTag InContentID, const bool bSave) const
+{
+	if (GlobalDataObject && !GlobalDataObject->Content.Contains(InContentID))
+	{
+		GlobalDataObject->Content.Add(InContentID);
+		if (bSave)
+		{
+			GlobalDataObject->SaveToFile(nullptr);
+			OnSaveStarted.Broadcast();
+		}
+	}
+}
+
+bool USaveSubsystem::IsContentUnlocked(const FGameplayTag InContentID) const
+{
+	if (GlobalDataObject) return GlobalDataObject->Content.Contains(InContentID);
 	return false;
 }
 

@@ -157,4 +157,5 @@ void UGlobalSaveObject::SerializeData(FArchive& Ar)
 	Ar << Achievements;
 	Ar << Endings;
 	Ar << Menus;
+	Ar << Content;
 }
