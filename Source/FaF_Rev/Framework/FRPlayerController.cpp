@@ -45,14 +45,15 @@ void AFRPlayerController::OnWindowFocusChanged(bool bFocused)
 		UnfocusedWidget = CreateWidget<UUserWidget>(this, UnfocusedWidgetClass);
 	}
 
-#if !WITH_EDITOR
+
 	if (!FRSettings->IsGameplayMap(this))
 	{
+		#if !WITH_EDITOR
 		UKismetSystemLibrary::ExecuteConsoleCommand(this, FString::Printf(TEXT("t.MaxFPS %f"),
 				bFocused ? UGameSettings::Get()->GetFrameRateLimit() : 4.0f));
+#endif
 		return;
 	}
-#endif
 	
 	if (bFocused && UnfocusedWidget->IsInViewport())
 	{
