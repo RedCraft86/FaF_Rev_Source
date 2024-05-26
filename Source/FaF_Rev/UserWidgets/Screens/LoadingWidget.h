@@ -36,7 +36,7 @@ public:
 	UPROPERTY(Transient, meta = (BindWidget))
 		TObjectPtr<UTextBlock> TipText;
 
-	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, Category = "LoadingWidget")
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "LoadingWidget")
 		TSoftObjectPtr<UTexture2D> DefaultBackground;
 	
 private:
