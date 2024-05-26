@@ -48,7 +48,7 @@ void AFRPlayerController::OnWindowFocusChanged(bool bFocused)
 
 	if (!FRSettings->IsGameplayMap(this))
 	{
-		#if !WITH_EDITOR
+#if !WITH_EDITOR
 		UKismetSystemLibrary::ExecuteConsoleCommand(this, FString::Printf(TEXT("t.MaxFPS %f"),
 				bFocused ? UGameSettings::Get()->GetFrameRateLimit() : 4.0f));
 #endif
