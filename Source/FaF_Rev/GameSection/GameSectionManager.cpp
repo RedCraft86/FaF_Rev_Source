@@ -117,12 +117,18 @@ void UGameSectionManager::UnloadLastData()
 	bool bHasMaps = false;
 	if (LastData)
 	{
+		for (TObjectPtr<ALevelScriptActor> Script : Levels)
+		{
+			ILevelLoadInterface::Unload(Script);
+		}
+		
 		for (const TPair<TSoftObjectPtr<UWorld>, bool>& Pair : LastData->Levels)
 		{
 			if (UnloadLevel(Pair.Key)) bHasMaps = true;
 		}
 	}
 
+	Levels.Empty(ThisData->Levels.Num());
 	if (!bHasMaps)
 	{
 		FTimerHandle Handle;
@@ -183,6 +189,11 @@ void UGameSectionManager::FinishTransition()
 {
 	HideLoadingWidget([this]()
 	{
+		for (TObjectPtr<ALevelScriptActor> Script : Levels)
+		{
+			ILevelLoadInterface::Load(Script);
+		}
+		
 		UInventoryComponent* Inventory = PlayerChar->GetGameMode()->Inventory;
 		
 		// Only load an inventory from save if this is the first data or the keys are different
@@ -225,8 +236,6 @@ bool UGameSectionManager::UnloadLevel(const TSoftObjectPtr<UWorld>& InMap)
 	ULevelStreaming* Level = UGameplayStatics::GetStreamingLevel(this, MapName);
 	if (!Level || !Level->IsLevelLoaded()) return false;
 
-	ILevelLoadInterface::Unload(Level->GetLevelScriptActor());
-
 	// Let's not unload something only to load it again...
 	if (ThisData && ThisData->Levels.Contains(InMap))
 	{
@@ -257,7 +266,7 @@ bool UGameSectionManager::LoadLevel(const TPair<TSoftObjectPtr<UWorld>, bool>& I
 	if (Level && Level->IsLevelLoaded())
 	{
 		Level->SetShouldBeVisible(InMap.Value);
-		ILevelLoadInterface::Load(Level->GetLevelScriptActor());
+		Levels.Add(Level->GetLevelScriptActor());
 		return false;
 	}
 	
@@ -271,7 +280,7 @@ bool UGameSectionManager::LoadLevel(const TPair<TSoftObjectPtr<UWorld>, bool>& I
 		InMap.Value, false, Info);
 	
 	Level = UGameplayStatics::GetStreamingLevel(this, MapName);
-	if (Level) ILevelLoadInterface::Load(Level->GetLevelScriptActor());
+	if (Level) Levels.Add(Level->GetLevelScriptActor());
 	return true;
 }
 
