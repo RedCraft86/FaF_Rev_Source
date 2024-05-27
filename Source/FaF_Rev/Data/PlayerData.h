@@ -164,6 +164,7 @@ struct FPlayerFootstepSounds
 		FStreamableManager& Manager = UAssetManager::GetStreamableManager();
 		for (TSoftObjectPtr<USoundBase>& Sound : Sounds)
 		{
+			if (Sound.IsNull()) continue;
 			Manager.RequestAsyncLoad(Sound.ToSoftObjectPath());
 		}
 	}
