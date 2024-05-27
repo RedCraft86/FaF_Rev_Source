@@ -2,6 +2,7 @@
 
 #include "GameSectionManager.h"
 #include "Kismet/GameplayStatics.h"
+#include "Engine/LevelScriptActor.h"
 #include "GameSection/GameSectionNode.h"
 #include "GameSection/GameSectionGraph.h"
 #include "Libraries/GTLoadUtilsLibrary.h"
@@ -9,12 +10,12 @@
 #include "Inventory/InventoryItemData.h"
 #include "SaveSystem/SaveSubsystem.h"
 #include "NarrativeComponent.h"
-#include "LevelLoadInterface.h"
 #include "PlayerTeleporter.h"
 #include "FRGameState.h"
 #include "FRGameMode.h"
 #include "FRSettings.h"
 #include "FaF_Rev.h"
+
 
 void UGameSectionManager::LoadSequence()
 {
