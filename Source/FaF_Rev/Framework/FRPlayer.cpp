@@ -22,7 +22,7 @@
 #include "Camera/CameraComponent.h"
 #include "Kismet/GameplayStatics.h"
 #include "EnhancedInputComponent.h"
-#include "LevelSequence.h"
+#include "LevelSequencePlayer.h"
 #include "EngineUtils.h"
 
 #define INPUT_CHECK() !ShouldLock() && !IsGamePaused()
@@ -557,7 +557,7 @@ void AFRPlayerBase::ClearFade() const
 	}
 }
 
-void AFRPlayerBase::CutsceneStart(ULevelSequence* InSequence)
+void AFRPlayerBase::CutsceneStart(ULevelSequencePlayer* InSequence)
 {
 	if (!InSequence) return;
 	LockFlags.Add(Player::LockFlags::Cutscene);
@@ -1022,11 +1022,7 @@ void AFRPlayerBase::BeginPlay()
 	Settings->OnManualApply.AddUObject(this, &AFRPlayerBase::OnSettingsApply);
 	Settings->OnDynamicApply.AddUObject(this, &AFRPlayerBase::OnSettingsApply);
 
-	FTimerHandle Handle;
-	GetWorldTimerManager().SetTimer(Handle, [this]()
-	{
-		LockFlags.Remove(Player::LockFlags::Startup);	
-	}, 0.1f, false);
+	LockFlags.Remove(Player::LockFlags::Startup);	
 }
 
 void AFRPlayerBase::Tick(float DeltaTime)

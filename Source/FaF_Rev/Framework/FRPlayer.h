@@ -158,7 +158,7 @@ protected:
 
 	UPROPERTY(Transient) TObjectPtr<UObject> HidingSpot;
 	UPROPERTY(Transient) TObjectPtr<UObject> WorldDevice;
-	UPROPERTY(Transient) TObjectPtr<class ULevelSequence> ActiveCutscene;
+	UPROPERTY(Transient) TObjectPtr<class ULevelSequencePlayer> ActiveCutscene;
 	UPROPERTY(Transient) TMap<TObjectPtr<UObject>, EEnemyAIMode> EnemyStack;
 
 	float SlowTickTime;
@@ -334,7 +334,7 @@ public:
 		void ClearFade() const;
 
 	UFUNCTION(BlueprintCallable, Category = "Player")
-		void CutsceneStart(ULevelSequence* InSequence);
+		void CutsceneStart(ULevelSequencePlayer* InSequence);
 	
 	UFUNCTION(BlueprintCallable, Category = "Player")
 		void CutsceneEnd();
@@ -349,7 +349,7 @@ public:
 		AFRPlayerController* GetPlayerController() const { return PlayerController; }
 	
 	UFUNCTION(BlueprintPure, Category = "Player")
-		ULevelSequence* GetActiveCutscene() const { return ActiveCutscene; }
+		ULevelSequencePlayer* GetActiveCutscene() const { return ActiveCutscene; }
 	
 	void EnemyStackChanged();
 	void TeleportPlayer(const FVector& InLocation, const FRotator& InRotation);
