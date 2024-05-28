@@ -22,6 +22,7 @@ class FAF_REV_API UGameSettings final : public UGTGameUserSettings
 	GENERATED_BODY()
 
 	friend class UFRGameInstance;
+	friend class USettingsWidgetBase;
 
 public:
 
@@ -108,8 +109,9 @@ public:
 	virtual UWorld* GetWorld() const override;
 
 private:
-
+	
 	bool bInitializing, bLaunchWork;
+	TArray<uint8, TFixedAllocator<10>> ScalabilityDefaults;
 	UPROPERTY(Transient) TObjectPtr<UFRGameInstance> GameInstance;
 	
 	UPROPERTY(Transient) TObjectPtr<USoundMix> SoundMixObject;
@@ -130,6 +132,7 @@ private:
 	UPROPERTY(Config) bool bFancyBloom;
 	UPROPERTY(Config) TMap<EFRSoundType, uint8> SoundTypeToVolume;
 
+	void CacheScalabilityDefaults();
 	void ApplyBrightness() const;
 	void ApplyAudioSettings();
 	

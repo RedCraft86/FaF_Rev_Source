@@ -8,15 +8,9 @@
 #include "FRSettings.h"
 
 UGameSettings::UGameSettings()
+	: bInitializing(false), bLaunchWork(false), ScalabilityDefaults({3, 2, 2, 2, 2, 2, 2, 2, 2, 2})
+	, GameInstance(nullptr), SoundMixObject(nullptr), BrightnessParamName(NAME_None), BrightnessMPC(nullptr)
 {
-	bInitializing = false;
-	bLaunchWork = false;
-	GameInstance = nullptr;
-	SoundMixObject = nullptr;
-	SoundTypeToClass = {};
-	BrightnessParamName = NAME_None;
-	BrightnessMPC = nullptr;
-	
 	UGameSettings::SetToDefaults();
 }
 
@@ -33,19 +27,18 @@ void UGameSettings::InitializeSettings()
 		if (Settings->SoundClasses.FindRef(Type).IsNull()) continue;
 		SoundTypeToClass.Add(Type, Settings->SoundClasses.FindRef(Type).LoadSynchronous());
 	}
-	
+
+	SetToDefaults();
 	if (UGTConfigSubsystem::Get(GameInstance)->IsFirstLaunch() && !bLaunchWork)
 	{
 		bLaunchWork = true;
-#if !WITH_EDITOR
-		this->SetToDefaults();
-		this->SetOverallQuality(3);
-		this->SetResScalePercent(100.0f);
-#endif
+		RunHardwareBenchmark();
+		ApplyHardwareBenchmarkResults();
+		SetResScalePercent(100.0f);
+		CacheScalabilityDefaults();
 	}
 	else
 	{
-		SetToDefaults();
 		LoadSettings(true);
 	}
 	
@@ -164,6 +157,21 @@ UWorld* UGameSettings::GetWorld() const
 	return World;
 }
 
+void UGameSettings::CacheScalabilityDefaults()
+{
+	ScalabilityDefaults[0] = GetOverallQuality();
+	ScalabilityDefaults[1] = GetViewDistanceQuality();
+	ScalabilityDefaults[2] = GetAntiAliasingQuality();
+	ScalabilityDefaults[3] = GetShadowQuality();
+	ScalabilityDefaults[4] = GetGlobalIlluminationQuality();
+	ScalabilityDefaults[5] = GetReflectionQuality();
+	ScalabilityDefaults[6] = GetPostProcessingQuality();
+	ScalabilityDefaults[7] = GetTextureQuality();
+	ScalabilityDefaults[8] = GetVisualEffectQuality();
+	ScalabilityDefaults[9] = GetFoliageQuality();
+	ScalabilityDefaults[10] = GetShadingQuality();
+}
+
 void UGameSettings::ApplyBrightness() const
 {
 	UKismetMaterialLibrary::SetScalarParameterValue(GetWorld(), BrightnessMPC,
@@ -196,7 +204,7 @@ void UGameSettings::ApplyAudioSettings()
 void UGameSettings::SetToDefaults()
 {
 	Super::SetToDefaults();
-	SetOverallQuality(2);
+	SetOverallQuality(3);
 	
 	bShowFPS = false;
 	bSmoothCamera = true;
