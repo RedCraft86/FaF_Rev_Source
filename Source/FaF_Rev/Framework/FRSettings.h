@@ -22,12 +22,12 @@ public:
 		CategoryName = TEXT("Project");
 		SectionName = TEXT("Game Project");
 
-		bIsDemo = false;
+		DemoVersion = 0;
 		WordsPerSecond = 2;
 	}
 
 	UPROPERTY(Config, EditAnywhere, Category = "Default")
-		bool bIsDemo;
+		uint8 DemoVersion;
 	
 	UPROPERTY(Config, EditAnywhere, Category = "Text", meta = (ClampMin = 1, UIMin = 1))
 		uint8 WordsPerSecond;

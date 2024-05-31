@@ -8,7 +8,12 @@
 
 FString USaveObjectBase::GetSavePath() const
 {
-	return FPaths::ProjectSavedDir() / TEXT("SaveGame/") + (FRSettings->bIsDemo ? TEXT("Demo") : TEXT("")) / GetSaveFileName();
+	FString Directory(FPaths::ProjectSavedDir() / TEXT("SaveGame/"));
+	
+	const uint8 DemoVersion = FRSettings->DemoVersion;
+	Directory += DemoVersion > 0 ? TEXT("Demo") + FString::FromInt(DemoVersion) : TEXT("");
+	
+	return Directory / GetSaveFileName();
 }
 
 void USaveObjectBase::SaveToFile(const TFunction<void(const ESaveGameError)>& Callback)
