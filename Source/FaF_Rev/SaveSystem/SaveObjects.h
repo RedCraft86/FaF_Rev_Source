@@ -119,5 +119,5 @@ public:
 private:
 
 	virtual void SerializeData(FArchive& Ar);
-	virtual FString GetSaveFileName() const { return TEXT("Persistent"); }
+	virtual FString GetSaveFileName() const { return TEXT("Global"); }
 };
