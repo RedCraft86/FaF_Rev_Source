@@ -11,7 +11,7 @@ FString USaveObjectBase::GetSavePath() const
 	FString Directory(FPaths::ProjectSavedDir() / TEXT("SaveGame/"));
 	
 	const uint8 DemoVersion = FRSettings->DemoVersion;
-	Directory += DemoVersion > 0 ? TEXT("Demo") + FString::FromInt(DemoVersion) : TEXT("");
+	if (DemoVersion > 0) Directory += TEXT("Demo") + FString::FromInt(DemoVersion);
 	
 	return Directory / GetSaveFileName();
 }
