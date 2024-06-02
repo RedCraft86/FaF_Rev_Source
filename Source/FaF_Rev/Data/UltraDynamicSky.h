@@ -11,10 +11,21 @@ class UWeatherDataAsset : public UPrimaryDataAsset
 	GENERATED_BODY()
 };
 
+UENUM(BlueprintType, DisplayName = "UDS Cloud Type")
+enum class EUDSCloudType : uint8
+{
+	Volumetric,
+	Dynamic2D,
+	None,
+};
+
 USTRUCT(BlueprintType, DisplayName = "UDS Settings")
 struct FAF_REV_API FUDSSettings
 {
 	GENERATED_BODY()
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Settings")
+		EUDSCloudType CloudType;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Settings|Weather")
 		TSoftObjectPtr<UWeatherDataAsset> WeatherPreset;
@@ -22,7 +33,7 @@ struct FAF_REV_API FUDSSettings
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Settings|Weather")
 		float WeatherFadeTime;
 
-	FUDSSettings() : WeatherPreset(nullptr), WeatherFadeTime(1.0f) {}
+	FUDSSettings() : CloudType(EUDSCloudType::Volumetric), WeatherPreset(nullptr), WeatherFadeTime(1.0f) {}
 };
 
 UINTERFACE(DisplayName = "UDS Interface")
