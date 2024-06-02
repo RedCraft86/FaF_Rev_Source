@@ -45,10 +45,18 @@ TPair<FString, FText> UGameSectionDataNode::GetTip() const
 #if WITH_EDITOR
 uint32 UGameSectionDataNode::CalcChecksum()
 {
+#if WITH_EDITORONLY_DATA
 	uint32 Hash = GetTypeHash(DependencyDepth);
+	for (const FName& Object : ExcludedObjects)
+	{
+		Hash = HashCombine(Hash, GetTypeHash(Object));
+	}
+#else
+	uint32 Hash = 0;
+#endif
 	for (const TPair<TSoftObjectPtr<UWorld>, bool>& Pair : Levels)
 	{
-		if (!Pair.Key.IsNull()) Hash = HashCombineFast(Hash, GetTypeHash(Pair));
+		if (!Pair.Key.IsNull()) Hash = HashCombine(Hash, GetTypeHash(Pair));
 	}
 	return Hash;
 }
@@ -63,6 +71,7 @@ void UGameSectionDataNode::CheckDisplayName()
 
 void UGameSectionDataNode::FindAllDependencies()
 {
+#if WITH_EDITORONLY_DATA
 	TArray<FName> Packages;
 	for (const TPair<TSoftObjectPtr<UWorld>, bool>& Pair : Levels)
 	{
@@ -82,9 +91,16 @@ void UGameSectionDataNode::FindAllDependencies()
 		{
 			TArray<FName> TempPackages;
 			GetAssetRegistry()->GetDependencies(Package, TempPackages);
-			TempPackages.RemoveAll([](const FName& InPackage) -> bool
+			TempPackages.RemoveAll([this](const FName& InPackage) -> bool
 			{
-				return !InPackage.ToString().StartsWith(TEXT("/Game/"));
+				if (!InPackage.ToString().StartsWith(TEXT("/Game/"))) return true;
+				for (const FName& Object : ExcludedObjects)
+				{
+					if (InPackage.ToString().Contains(Object.ToString()))
+						return true;
+				}
+
+				return false;
 			});
 			SubPackages.Append(TempPackages);
 		}
@@ -93,6 +109,7 @@ void UGameSectionDataNode::FindAllDependencies()
 		Dependencies.Append(SubPackages);
 		CurrentDepth--;
 	}
+#endif
 }
 
 void UGameSectionDataNode::PostInitProperties()

@@ -19,7 +19,7 @@ class FAF_REV_API UGameSectionDataNode final : public UGameSectionNode
 
 public:
 
-	UGameSectionDataNode() : bMinimalLoadingScreen(false), DependencyDepth(4)
+	UGameSectionDataNode() : bMinimalLoadingScreen(false)
 	{
 		LoadingTips = {
 			{TEXT("Endings"), INVTEXT("This game has multiple endings but only one is canon. You will get access to a Phase Map to help you reach all the endings once you've achieved at least one ending.")},
@@ -66,10 +66,15 @@ public:
 
 	UPROPERTY(EditAnywhere, Category = "InventoryData")
 		TArray<FInventorySlotData> EnsureItems;
-	
-	UPROPERTY(EditAnywhere, Category = "Dependencies", meta = (ClampMin = 1, UIMin = 1, ClampMax = 8, UIMax = 8, DisplayName = "Search Depth"))
-		uint8 DependencyDepth;
 
+#if WITH_EDITORONLY_DATA
+	UPROPERTY(EditAnywhere, Category = "Dependencies", meta = (ClampMin = 1, UIMin = 1, ClampMax = 10, UIMax = 10, DisplayName = "Search Depth"))
+		uint8 DependencyDepth = 4;
+
+	UPROPERTY(EditAnywhere, Category = "Dependencies")
+		TSet<FName> ExcludedObjects = {TEXT("BP_")};
+#endif
+	
 	UPROPERTY(VisibleAnywhere, Category = "Dependencies", meta = (NoResetToDefault))
 		TSet<FName> Dependencies;
 
