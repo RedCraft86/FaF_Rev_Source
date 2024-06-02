@@ -43,24 +43,6 @@ TPair<FString, FText> UGameSectionDataNode::GetTip() const
 }
 
 #if WITH_EDITOR
-uint32 UGameSectionDataNode::CalcChecksum()
-{
-#if WITH_EDITORONLY_DATA
-	uint32 Hash = GetTypeHash(DependencyDepth);
-	for (const FName& Object : ExcludedObjects)
-	{
-		Hash = HashCombine(Hash, GetTypeHash(Object));
-	}
-#else
-	uint32 Hash = 0;
-#endif
-	for (const TPair<TSoftObjectPtr<UWorld>, bool>& Pair : Levels)
-	{
-		if (!Pair.Key.IsNull()) Hash = HashCombine(Hash, GetTypeHash(Pair));
-	}
-	return Hash;
-}
-
 void UGameSectionDataNode::CheckDisplayName()
 {
 	if (DisplayLabel.IsEmptyOrWhitespace())
@@ -121,10 +103,13 @@ void UGameSectionDataNode::PostInitProperties()
 void UGameSectionDataNode::PostEditChangeProperty(FPropertyChangedEvent& PropertyChangedEvent)
 {
 	Super::PostEditChangeProperty(PropertyChangedEvent);
-	const uint32 TempChecksum = CalcChecksum();
-	if (Checksum != TempChecksum)
+	if (PropertyChangedEvent.GetPropertyName() == GET_MEMBER_NAME_CHECKED(ThisClass, Levels)
+#if WITH_EDITORONLY_DATA
+		|| PropertyChangedEvent.GetPropertyName() == GET_MEMBER_NAME_CHECKED(ThisClass, DependencyDepth)
+		|| PropertyChangedEvent.GetPropertyName() == GET_MEMBER_NAME_CHECKED(ThisClass, ExcludedObjects)
+#endif
+		)
 	{
-		Checksum = TempChecksum;
 		FindAllDependencies();
 	}
 

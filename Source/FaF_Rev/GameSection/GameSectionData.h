@@ -87,8 +87,6 @@ private:
 	UFUNCTION(CallInEditor, Category = "SectionData")
 		void QueryDependencies() { FindAllDependencies(); }
 
-	uint32 Checksum = 0;
-	uint32 CalcChecksum();
 	void CheckDisplayName();
 	void FindAllDependencies();
 	virtual void PostInitProperties() override;
