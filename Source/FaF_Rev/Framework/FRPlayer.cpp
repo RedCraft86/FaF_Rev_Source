@@ -164,11 +164,14 @@ void AFRPlayerBase::ResetStates()
 
 void AFRPlayerBase::SetPlayerSettings(const FPlayerSettings& InSettings)
 {
-	OverrideControlFlags(InSettings.ControlFlags);
-	SetLightProperties(InSettings.LightProperties);
-	MoveSpeedMultiplier.BaseValue = InSettings.MoveSpeedMultiplier;
-	StaminaDrainRate.BaseValue = InSettings.StaminaRates.X;
-	StaminaGainRate.BaseValue = InSettings.StaminaRates.Y;
+	if (InSettings.bOverride_ControlFlags) OverrideControlFlags(InSettings.ControlFlags);
+	if (InSettings.bOverride_LightProperties) SetLightProperties(InSettings.LightProperties);
+	if (InSettings.bOverride_MoveSpeed) MoveSpeedMultiplier.BaseValue = InSettings.MoveSpeedMultiplier;
+	if (InSettings.bOverride_StaminaRates)
+	{
+		StaminaDrainRate.BaseValue = InSettings.StaminaRates.X;
+		StaminaGainRate.BaseValue = InSettings.StaminaRates.Y;
+	}
 }
 
 void AFRPlayerBase::OverrideControlFlags(int32 InFlags)

@@ -63,24 +63,37 @@ USTRUCT(BlueprintType)
 struct FPlayerSettings
 {
 	GENERATED_BODY()
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Settings", meta = (InlineEditConditionToggle))
+		bool bOverride_ControlFlags;
 	
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Settings", meta = (Bitmask, BitmaskEnum = "/Script/FaF_Rev.EPlayerControlFlags"))
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Settings", meta = (EditCondition = "bOverride_ControlFlags", Bitmask, BitmaskEnum = "/Script/FaF_Rev.EPlayerControlFlags"))
 		int32 ControlFlags;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Settings", meta = (InlineEditConditionToggle))
+		bool bOverride_MoveSpeed;
 	
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Settings|Movement")
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Settings", meta = (EditCondition = "bOverride_MoveSpeed"))
 		float MoveSpeedMultiplier;
 
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Settings", meta = (InlineEditConditionToggle))
+		bool bOverride_StaminaRates;
+	
 	// X: Gain, Y: Drain
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Settings|Running|Stamina", meta = (ClampMin = 0.0f, UIMin = 0.0f, ClampMax = 5.0f, UIMax = 5.0f))
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Settings", meta = (EditCondition = "bOverride_StaminaRates", ClampMin = 0.0f, UIMin = 0.0f, ClampMax = 5.0f, UIMax = 5.0f))
 		FVector2D StaminaRates;
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Settings|Misc")
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Settings", meta = (InlineEditConditionToggle))
+		bool bOverride_LightProperties;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Settings", meta = (EditCondition = "bOverride_LightProperties"))
 		FPointLightProperties LightProperties;
 
 	FPlayerSettings()
-		: ControlFlags(DEFAULT_PLAYER_CONTROL_FLAGS)
-		, MoveSpeedMultiplier(1.0f)
-		, StaminaRates({2.5f, 1.75f})
+		: bOverride_ControlFlags(false), ControlFlags(DEFAULT_PLAYER_CONTROL_FLAGS)
+		, bOverride_MoveSpeed(false), MoveSpeedMultiplier(1.0f)
+		, bOverride_StaminaRates(false), StaminaRates({2.5f, 1.75f})
+		, bOverride_LightProperties(false)
 	{
 		LightProperties.Intensity = 0.15f;
 		LightProperties.AttenuationRadius = 500.0f;

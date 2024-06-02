@@ -5,6 +5,17 @@
 #include "SaveSystem/SaveSubsystem.h"
 #include "FRGameMode.h"
 
+void FWEPlayerSettings::RunEvent(const UObject* WorldContext)
+{
+	if (!Target.LoadSynchronous())
+		Target = AFRPlayerBase::Get(WorldContext);
+
+	if (AFRPlayerBase* Player = Target.LoadSynchronous())
+	{
+		Player->SetPlayerSettings(Settings);
+	}
+}
+
 void FWEUnlockTransientKey::RunEvent(const UObject* WorldContext)
 {
 	if (const USaveSubsystem* Subsystem = USaveSubsystem::Get(WorldContext))

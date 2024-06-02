@@ -4,10 +4,29 @@
 
 #include "Quest.h"
 #include "Dialogue.h"
+#include "FRPlayer.h"
 #include "MessagingData.h"
 #include "NarrativeDataTask.h"
 #include "WorldEvents/WorldEvents.h"
 #include "FRWorldEvents.generated.h"
+
+USTRUCT(BlueprintType, DisplayName = "Change Player Settings")
+struct FAF_REV_API FWEPlayerSettings final : public FWorldEventBase
+{
+	GENERATED_BODY()
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "PlayerSettings")
+		FPlayerSettings Settings;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "PlayerSettings")
+		TSoftObjectPtr<AFRPlayerBase> Target;
+
+	FWEPlayerSettings() : Settings({}), Target(nullptr) {}
+	
+protected:
+
+	virtual void RunEvent(const UObject* WorldContext) override;
+};
 
 USTRUCT(BlueprintType, DisplayName = "Unlock Transient Key")
 struct FAF_REV_API FWEUnlockTransientKey final : public FWorldEventBase
