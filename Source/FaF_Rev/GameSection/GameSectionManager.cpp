@@ -110,8 +110,6 @@ void UGameSectionManager::UnloadLastData()
 	PlayerChar->TeleportPlayer(FVector::ZeroVector, FRotator::ZeroRotator);
 	PlayerChar->GetGameMode()->Narrative->ForgetQuest(LastData->Quest.LoadSynchronous());
 	PlayerChar->GetGameState()->StopGameMusic();
-
-	IUDSInterface::SetCustomSettings(PlayerChar->UltraDynamicSky, ThisData->SkyWeatherSettings);
 	
 	LoadedObjs.Empty(ThisData ? ThisData->PreloadObjects.Num() : 0);
 	UnloadingLevels = 0;
@@ -138,7 +136,9 @@ void UGameSectionManager::LoadCurrentData()
 	UGTLoadUtilsLibrary::ForceGarbageCollection();
 	checkf(ThisData, TEXT("Trying to load without any valid data."))
 
-	if (ULoadingWidgetBase* Widget = GetLoadingWidget()) Widget->bUnloading = false;
+	IUDSInterface::SetCustomSettings(PlayerChar->UltraDynamicSky, ThisData->SkyWeatherSettings);
+	if (ULoadingWidgetBase* Widget = GetLoadingWidget())
+		Widget->bUnloading = false;
 
 	LoadingLevels = 0;
 	bool bHasMaps = false;
