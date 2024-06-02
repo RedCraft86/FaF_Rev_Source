@@ -26,6 +26,8 @@ void AInteractField::OnConstruction(const FTransform& Transform)
 void AInteractField::OnBeginInteract_Implementation(AFRPlayerBase* Player, const FHitResult& HitResult)
 {
 	if (!bEnabled) return;
+	OnInteracted.Broadcast(Player);
+	OnInteractedEvent.Broadcast(Player);
 	WorldEventComponent->RunEvents();
 	if (bSingleUse) SetEnabled(false);
 }
