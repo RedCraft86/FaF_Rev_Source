@@ -148,9 +148,6 @@ public:
 		TObjectPtr<UFRSliderSettingBase> MasterVolRow;
 		
 	UPROPERTY(Transient, meta = (BindWidget))
-		TObjectPtr<UFRSliderSettingBase> AmbienceVolRow;
-		
-	UPROPERTY(Transient, meta = (BindWidget))
 		TObjectPtr<UFRSliderSettingBase> MusicVolRow;
 		
 	UPROPERTY(Transient, meta = (BindWidget))

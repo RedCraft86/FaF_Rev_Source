@@ -9,12 +9,10 @@ UENUM(BlueprintType, DisplayName = "Sound Type")
 enum class EFRSoundType : uint8
 {
 	Master,
-	Ambience,
 	Music,
-	SoundFX,
-	Voice
+	SoundFX
 };
-ENUM_RANGE_BY_FIRST_AND_LAST(EFRSoundType, EFRSoundType::Master, EFRSoundType::Voice);
+ENUM_RANGE_BY_FIRST_AND_LAST(EFRSoundType, EFRSoundType::Master, EFRSoundType::SoundFX);
 
 UCLASS(BlueprintType)
 class FAF_REV_API UGameSettings final : public UGTGameUserSettings

@@ -57,7 +57,7 @@ USettingsWidgetBase::USettingsWidgetBase(const FObjectInitializer& ObjectInitial
 	, OverallQualityRow(nullptr), ViewDistQualityRow(nullptr), AAliasingQualityRow(nullptr), ShadowQualityRow(nullptr)
 	, GIlluminationQualityRow(nullptr), ReflectionQualityRow(nullptr), PostProcessQualityRow(nullptr)
 	, TextureQualityRow(nullptr), EffectsQualityRow(nullptr), FoliageQualityRow(nullptr), ShadingQualityRow(nullptr)
-	, MasterVolRow(nullptr), AmbienceVolRow(nullptr), MusicVolRow(nullptr), SoundFXVolRow(nullptr), InvincibilityRow(nullptr)
+	, MasterVolRow(nullptr), MusicVolRow(nullptr), SoundFXVolRow(nullptr), InvincibilityRow(nullptr)
 	, ViewModeUnlitRow(nullptr), ConfirmResText(nullptr), ConfirmResButton(nullptr), RevertResButton(nullptr)
 	, ExitButton(nullptr), SwapScreenAnim(nullptr), ConfirmResAnim(nullptr), ParentWidget(nullptr), ScreenIndex(0)
 	, SettingsObj(nullptr), LastConfirmedResIdx(0), bIsFinalResolution(true), ResolutionWaitTime(0.0f), AutoDetectWaitTime(0.0f)
@@ -307,7 +307,6 @@ void USettingsWidgetBase::InitWidget()
 	/* Audio */
 	// Volume
 	SETUP_VOLUME_SLIDER(MasterVolRow, Master);
-	SETUP_VOLUME_SLIDER(AmbienceVolRow, Ambience);
 	SETUP_VOLUME_SLIDER(MusicVolRow, Music);
 	SETUP_VOLUME_SLIDER(SoundFXVolRow, SoundFX);
 	// Audio Engine
