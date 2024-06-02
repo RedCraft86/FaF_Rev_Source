@@ -27,13 +27,33 @@ struct FAF_REV_API FUDSSettings
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Settings")
 		EUDSCloudType CloudType;
 
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Settings")
+		float NightBrightness;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Settings")
+		float FogBrightness;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Settings")
+		float SkyLightIntensity;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Settings|Weather")
+		float WeatherVolume;
+	
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Settings|Weather")
 		TSoftObjectPtr<UWeatherDataAsset> WeatherPreset;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Settings|Weather")
 		float WeatherFadeTime;
 
-	FUDSSettings() : CloudType(EUDSCloudType::Volumetric), WeatherPreset(nullptr), WeatherFadeTime(1.0f) {}
+	FUDSSettings()
+		: CloudType(EUDSCloudType::Volumetric)
+		, NightBrightness(2.5f)
+		, FogBrightness(1.0f)
+		, SkyLightIntensity(4.0f)
+		, WeatherVolume(1.0f)
+		, WeatherPreset(nullptr)
+		, WeatherFadeTime(1.0f)
+	{}
 };
 
 UINTERFACE(DisplayName = "UDS Interface")
