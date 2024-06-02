@@ -225,7 +225,7 @@ void UGameSectionManager::FinishTransition()
 
 bool UGameSectionManager::UnloadLevel(const TSoftObjectPtr<UWorld>& InMap)
 {
-	const FName MapName(InMap.GetLongPackageName());
+	const FName MapName(*FPackageName::ObjectPathToPackageName(InMap.ToString()));
 	ULevelStreaming* Level = UGameplayStatics::GetStreamingLevel(this, MapName);
 	if (!Level || !Level->IsLevelLoaded()) return false;
 
@@ -254,7 +254,7 @@ bool UGameSectionManager::UnloadLevel(const TSoftObjectPtr<UWorld>& InMap)
 
 bool UGameSectionManager::LoadLevel(const TPair<TSoftObjectPtr<UWorld>, bool>& InMap)
 {
-	const FName MapName(InMap.Key.GetLongPackageName());
+	const FName MapName(*FPackageName::ObjectPathToPackageName(InMap.Key.ToString()));
 	ULevelStreaming* Level = UGameplayStatics::GetStreamingLevel(this, MapName);
 	if (Level && Level->IsLevelLoaded())
 	{
