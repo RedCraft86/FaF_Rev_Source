@@ -16,10 +16,13 @@ struct FAF_REV_API FUDSSettings
 {
 	GENERATED_BODY()
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Settings")
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Settings|Weather")
 		TSoftObjectPtr<UWeatherDataAsset> WeatherPreset;
 
-	FUDSSettings() : WeatherPreset(nullptr) {}
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Settings|Weather")
+		float WeatherFadeTime;
+
+	FUDSSettings() : WeatherPreset(nullptr), WeatherFadeTime(1.0f) {}
 };
 
 UINTERFACE(DisplayName = "UDS Interface")
