@@ -191,6 +191,7 @@ void AFRPlayerBase::OverrideControlFlags(int32 InFlags)
 
 void AFRPlayerBase::SetControlFlag(const TEnumAsByte<EPlayerControlFlags> InFlag)
 {
+	if (InFlag.GetValue() == PCF_None) return;
 	if (!HasControlFlag(InFlag))
 	{
 		ControlFlags |= InFlag.GetValue();
@@ -205,6 +206,7 @@ void AFRPlayerBase::SetControlFlag(const TEnumAsByte<EPlayerControlFlags> InFlag
 
 void AFRPlayerBase::UnsetControlFlag(const TEnumAsByte<EPlayerControlFlags> InFlag)
 {
+	if (InFlag.GetValue() == PCF_None) return;
 	if (HasControlFlag(InFlag))
 	{
 		ControlFlags &= ~InFlag.GetValue();
@@ -222,21 +224,25 @@ void AFRPlayerBase::UnsetControlFlag(const TEnumAsByte<EPlayerControlFlags> InFl
 
 bool AFRPlayerBase::HasControlFlag(const TEnumAsByte<EPlayerControlFlags> InFlag) const
 {
+	if (InFlag.GetValue() == PCF_None) return false;
 	return ControlFlags & InFlag.GetValue();
 }
 
 void AFRPlayerBase::SetStateFlag(const TEnumAsByte<EPlayerStateFlags> InFlag)
 {
+	if (InFlag.GetValue() == PSF_None) return;
 	StateFlags |= InFlag.GetValue();
 }
 
 void AFRPlayerBase::UnsetStateFlag(const TEnumAsByte<EPlayerStateFlags> InFlag)
 {
+	if (InFlag.GetValue() == PSF_None) return;
 	StateFlags &= ~InFlag.GetValue();
 }
 
 bool AFRPlayerBase::HasStateFlag(const TEnumAsByte<EPlayerStateFlags> InFlag) const
 {
+	if (InFlag.GetValue() == PSF_None) return false;
 	return StateFlags & InFlag.GetValue();
 }
 
@@ -538,8 +544,15 @@ void AFRPlayerBase::FadeToBlack(const float InTime, const bool bAudio) const
 {
 	if (PlayerController && PlayerController->PlayerCameraManager)
 	{
-		PlayerController->PlayerCameraManager->StartCameraFade(0.0f, 1.0f,
-			InTime, FLinearColor::Black, bAudio, true);
+		if (FMath::IsNearlyZero(InTime))
+		{
+			PlayerController->PlayerCameraManager->SetManualCameraFade(1.0f, FLinearColor::Black, bAudio);
+		}
+		else
+		{
+			PlayerController->PlayerCameraManager->StartCameraFade(0.0f, 1.0f,
+			   InTime, FLinearColor::Black, bAudio, true);
+		}
 	}
 }
 
@@ -617,6 +630,8 @@ void AFRPlayerBase::TeleportPlayer(const FVector& InLocation, const FRotator& In
 	PlayerController->PlayerCameraManager->SetGameCameraCutThisFrame();
 	SetActorLocation(InLocation, false, nullptr, ETeleportType::ResetPhysics);
 
+	const bool bSmooth = CameraArm->bEnableCameraRotationLag;
+	CameraArm->bEnableCameraRotationLag = false;
 	FRotator Rot(InRotation); Rot.Roll = 0.0f;
 	if (IsPlayerControlled())
 	{
@@ -630,6 +645,8 @@ void AFRPlayerBase::TeleportPlayer(const FVector& InLocation, const FRotator& In
 		Rot.Pitch = 0.0f;
 		SetActorRotation(Rot, ETeleportType::ResetPhysics);
 	}
+
+	CameraArm->bEnableCameraRotationLag = bSmooth;
 }
 
 void AFRPlayerBase::SetActorHiddenInGame(bool bNewHidden)
