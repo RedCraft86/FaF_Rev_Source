@@ -117,7 +117,7 @@ AFRPlayerBase::AFRPlayerBase()
 	LeanState = EPlayerLeanState::None;
 
 
-	PlayerLightSettings.Intensity = 0.15f;
+	PlayerLightSettings.Intensity = 0.025f;
 	PlayerLightSettings.AttenuationRadius = 500.0f;
 	PlayerLightSettings.bUseTemperature = true;
 	PlayerLightSettings.Temperature = 12000.0f;

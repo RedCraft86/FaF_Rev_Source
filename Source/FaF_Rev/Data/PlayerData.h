@@ -95,7 +95,7 @@ struct FPlayerSettings
 		, bOverride_StaminaRates(false), StaminaRates({2.5f, 1.75f})
 		, bOverride_LightProperties(false)
 	{
-		LightProperties.Intensity = 0.15f;
+		LightProperties.Intensity = 0.025f;
 		LightProperties.AttenuationRadius = 500.0f;
 		LightProperties.bUseTemperature = true;
 		LightProperties.Temperature = 12000.0f;
