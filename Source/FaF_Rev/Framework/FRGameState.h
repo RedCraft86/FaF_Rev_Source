@@ -53,7 +53,7 @@ protected:
 
 public: // Statics
 
-	UFUNCTION(BlueprintPure, Category = "Game", DisplayName = "Get Game State (Smart)", meta = (DynamicOutputParam = "ReturnValue", DeterminesOutputType = "Class", WorldContext = "WorldContextObject"))
+	UFUNCTION(BlueprintPure, Category = "Game", DisplayName = "Get Game State (Smart)", meta = (DynamicOutputParam = "ReturnValue", DeterminesOutputType = "Class", WorldContext = "WorldContextObject", AdvancedDisplay = "Class"))
 		static AFRGameStateBase* GetGameStateSmart(const UObject* WorldContextObject, const TSubclassOf<AFRGameStateBase> Class);
 	
 	UFUNCTION(BlueprintCallable, Category = "Game", DisplayName = "Get Game State (Checked)", meta = (DynamicOutputParam = "OutObject", DeterminesOutputType = "Class", ExpandEnumAsExecs = "ReturnValue", WorldContext = "WorldContextObject"))
