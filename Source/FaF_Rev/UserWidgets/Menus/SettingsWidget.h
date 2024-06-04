@@ -220,6 +220,7 @@ protected:
 	void OnKeybindsButtonClicked() { SetScreenIndex(3); }
 	void OnDebuggingButtonClicked() { SetScreenIndex(4); }
 
+	void RefreshScalability();
 	void RefreshResolutions();
 	void OnUpdateResolution();
 	void OnOverallQualityChanged(int32 Index, FName Value);

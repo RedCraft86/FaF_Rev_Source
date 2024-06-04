@@ -84,6 +84,21 @@ void USettingsWidgetBase::SetScreenIndex(const uint8 InIndex)
 	}
 }
 
+void USettingsWidgetBase::RefreshScalability()
+{
+	OverallQualityRow->DefaultValue = SettingsObj->ScalabilityDefaults[0];
+	ViewDistQualityRow->DefaultValue = SettingsObj->ScalabilityDefaults[1];
+	AAliasingQualityRow->DefaultValue = SettingsObj->ScalabilityDefaults[2];
+	ShadowQualityRow->DefaultValue = SettingsObj->ScalabilityDefaults[3];
+	GIlluminationQualityRow->DefaultValue = SettingsObj->ScalabilityDefaults[4];
+	ReflectionQualityRow->DefaultValue = SettingsObj->ScalabilityDefaults[5];
+	PostProcessQualityRow->DefaultValue = SettingsObj->ScalabilityDefaults[6];
+	TextureQualityRow->DefaultValue = SettingsObj->ScalabilityDefaults[7];
+	EffectsQualityRow->DefaultValue = SettingsObj->ScalabilityDefaults[8];
+	FoliageQualityRow->DefaultValue = SettingsObj->ScalabilityDefaults[9];
+	ShadingQualityRow->DefaultValue = SettingsObj->ScalabilityDefaults[10];
+}
+
 void USettingsWidgetBase::RefreshResolutions()
 {
 	ResolutionBox->OnSelectionChanged.RemoveAll(this);
@@ -281,27 +296,16 @@ void USettingsWidgetBase::InitWidget()
 	AutoDetectButton->OnClicked.AddDynamic(this, &USettingsWidgetBase::OnAutoDetectClicked);
 	OverallQualityRow->OnValueChanged.AddUObject(this, &USettingsWidgetBase::OnOverallQualityChanged);
 	SETUP_SWITCHER(OverallQualityRow, GetOverallQuality, SetOverallQuality);
-	OverallQualityRow->DefaultValue = SettingsObj->ScalabilityDefaults[0];
 	SETUP_QUALITY_SWITCHER(ViewDistQualityRow, GetViewDistanceQuality, SetViewDistanceQuality);
-	ViewDistQualityRow->DefaultValue = SettingsObj->ScalabilityDefaults[1];
 	SETUP_QUALITY_SWITCHER(AAliasingQualityRow, GetAntiAliasingQuality, SetAntiAliasingQuality);
-	AAliasingQualityRow->DefaultValue = SettingsObj->ScalabilityDefaults[2];
 	SETUP_QUALITY_SWITCHER(ShadowQualityRow, GetShadowQuality, SetShadowQuality);
-	ShadowQualityRow->DefaultValue = SettingsObj->ScalabilityDefaults[3];
 	SETUP_QUALITY_SWITCHER(GIlluminationQualityRow, GetGlobalIlluminationQuality, SetGlobalIlluminationQuality);
-	GIlluminationQualityRow->DefaultValue = SettingsObj->ScalabilityDefaults[4];
 	SETUP_QUALITY_SWITCHER(ReflectionQualityRow, GetReflectionQuality, SetReflectionQuality);
-	ReflectionQualityRow->DefaultValue = SettingsObj->ScalabilityDefaults[5];
 	SETUP_QUALITY_SWITCHER(PostProcessQualityRow, GetPostProcessingQuality, SetPostProcessingQuality);
-	PostProcessQualityRow->DefaultValue = SettingsObj->ScalabilityDefaults[6];
 	SETUP_QUALITY_SWITCHER(TextureQualityRow, GetTextureQuality, SetTextureQuality);
-	TextureQualityRow->DefaultValue = SettingsObj->ScalabilityDefaults[7];
 	SETUP_QUALITY_SWITCHER(EffectsQualityRow, GetVisualEffectQuality, SetVisualEffectQuality);
-	EffectsQualityRow->DefaultValue = SettingsObj->ScalabilityDefaults[8];
 	SETUP_QUALITY_SWITCHER(FoliageQualityRow, GetFoliageQuality, SetFoliageQuality);
-	FoliageQualityRow->DefaultValue = SettingsObj->ScalabilityDefaults[9];
 	SETUP_QUALITY_SWITCHER(ShadingQualityRow, GetShadingQuality, SetShadingQuality);
-	ShadingQualityRow->DefaultValue = SettingsObj->ScalabilityDefaults[10];
 	/* ~Graphics */
 
 	/* Audio */
@@ -330,6 +334,7 @@ void USettingsWidgetBase::NativeConstruct()
 {
 	Super::NativeConstruct();
 
+	RefreshScalability();
 	RefreshResolutions();
 	RefreshUI();
 }
