@@ -24,7 +24,7 @@ struct FAF_REV_API FLightMeshData
 		uint8 FlickerIndex;
 };
 
-UCLASS(Abstract, meta = (AllowedCategories = "Rendering"))
+UCLASS(Abstract)
 class FAF_REV_API AElectricLightBase final : public AElectricActorBase
 {
 	GENERATED_BODY()
