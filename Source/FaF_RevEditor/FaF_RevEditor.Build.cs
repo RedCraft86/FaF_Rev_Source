@@ -16,7 +16,6 @@ public class FaF_RevEditor : ModuleRules
                 "UnrealEd", 
                 "Engine",
                 "AssetTools",
-                "StructUtils",
                 "DeveloperSettings",
                 "PulldownBuilder",
                 "GTEditor", 
