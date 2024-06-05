@@ -8,8 +8,9 @@
 #include "FRSettings.h"
 
 UGameSettings::UGameSettings()
-	: bInitializing(false), bLaunchWork(false), ScalabilityDefaults({3, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2})
-	, GameInstance(nullptr), SoundMixObject(nullptr), BrightnessParamName(NAME_None), BrightnessMPC(nullptr)
+	: bInitializing(false), bLaunchWork(false), GameInstance(nullptr), SoundMixObject(nullptr)
+	, BrightnessParamName(NAME_None), BrightnessMPC(nullptr)
+	, ScalabilityDefaults({3, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2})
 {
 	UGameSettings::SetToDefaults();
 }
