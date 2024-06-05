@@ -14,18 +14,16 @@ struct FAF_REV_API FInventorySaveData
 
 	FGuid ActiveEquipment;
 	FGameCurrency CurrencyData;
-	TMap<FGuid, FInventorySlotData> ItemSlots;
 
-	FInventorySaveData() : ActiveEquipment({}), CurrencyData({}), ItemSlots({}) {}
-	FInventorySaveData(const FGuid InEquipment, const FGameCurrency InCurrency, const TMap<FGuid, FInventorySlotData>& InSlots)
-		: ActiveEquipment(InEquipment), CurrencyData(InCurrency), ItemSlots(InSlots)
+	FInventorySaveData() : ActiveEquipment({}), CurrencyData({}) {}
+	FInventorySaveData(const FGuid InEquipment, const FGameCurrency InCurrency)
+		: ActiveEquipment(InEquipment), CurrencyData(InCurrency)
 	{}
 	
 	friend FArchive& operator<<(FArchive& Ar, FInventorySaveData& SaveData)
 	{
 		Ar << SaveData.ActiveEquipment;
 		Ar << SaveData.CurrencyData;
-		Ar << SaveData.ItemSlots;
 		return Ar;
 	}
 };

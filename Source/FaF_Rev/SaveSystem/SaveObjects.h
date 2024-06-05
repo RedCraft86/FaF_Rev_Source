@@ -43,19 +43,6 @@ protected:
 	virtual FString GetSaveFileName() const { return TEXT("Default"); }
 };
 
-USTRUCT(BlueprintInternalUseOnly)
-struct FAF_REV_API FKeyedInventoryData
-{
-	GENERATED_BODY()
-
-	TMap<FGameplayTag, FInventorySaveData> Data;
-	
-	FKeyedInventoryData() : Data({}) {}
-	friend FArchive& operator<<(FArchive& Ar, FKeyedInventoryData& SaveData) { return Ar << SaveData.Data; }
-	void SetData(const FGameplayTag& InKey, const FInventorySaveData& InData) { Data.Add(InKey, InData); }
-	FInventorySaveData GetData(const FGameplayTag& InKey) const { return Data.FindRef(InKey); }
-};
-
 UCLASS(BlueprintType, NotBlueprintable)
 class FAF_REV_API UGameSaveObject final : public USaveObjectBase
 {
@@ -78,10 +65,8 @@ public:
 		TArray<uint8> Sequence;
 
 	UPROPERTY(BlueprintReadOnly, Category = "SaveObject")
-		TMap<FString, FKeyedInventoryData> Inventory;
+		FInventorySaveData Inventory;
 
-	void SaveInventory(const TArray<uint8>& InSequence, const FGameplayTag& InKey, const FInventorySaveData& InData);
-	FInventorySaveData LoadInventory(const TArray<uint8>& InSequence, const FGameplayTag& InKey);
 	virtual void DeleteFile() override;
 
 private:

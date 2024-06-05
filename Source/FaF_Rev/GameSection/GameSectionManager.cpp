@@ -16,7 +16,6 @@
 #include "FRSettings.h"
 #include "FaF_Rev.h"
 
-
 void UGameSectionManager::LoadSequence()
 {
 	SaveSystem->LoadGameData();
@@ -64,14 +63,6 @@ void UGameSectionManager::BeginTransition()
 	PlayerChar->FadeToBlack(0.25f);
 	PlayerChar->AddLockFlag(Player::LockFlags::Loading);
 	
-	if (ThisData)
-	{
-		SaveSystem->GetGameDataObject()->SaveInventory(Sequence, ThisData->InventoryKey,
-			PlayerChar->GetGameMode()->Inventory->ExportSaveData());
-	}
-	SaveSystem->GetGameDataObject()->Sequence = Sequence;
-	SaveCurrentTime();
-	
 	UGameSectionNode* Node = SectionGraph->GetNodeBySequence<UGameSectionNode>(Sequence);
 	if (!Node || !Node->IsA(UGameSectionDataNode::StaticClass()))
 	{
@@ -80,7 +71,11 @@ void UGameSectionManager::BeginTransition()
 	}
 	LastData = ThisData;
 	ThisData = Cast<UGameSectionDataNode>(Node);
-
+	
+	SaveSystem->GetGameDataObject()->Sequence = Sequence;
+	SaveSystem->GetGameDataObject()->Inventory = PlayerChar->GetGameMode()->Inventory->ExportSaveData();
+	SaveCurrentTime();
+	
 	if (ThisData)
 	{
 		UGlobalSaveObject* GlobalObject = SaveSystem->GetGlobalDataObject();
@@ -186,14 +181,7 @@ void UGameSectionManager::FinishTransition()
 	HideLoadingWidget([this]()
 	{
 		UInventoryComponent* Inventory = PlayerChar->GetGameMode()->Inventory;
-		
-		// Only load an inventory from save if this is the first data or the keys are different
-		if (!LastData || LastData->InventoryKey != ThisData->InventoryKey)
-		{
-			Inventory->ImportSaveData(SaveSystem->GetGameDataObject()->LoadInventory(Sequence, ThisData->InventoryKey));
-		}
-
-		for (const FInventorySlotData& Item : ThisData->EnsureItems)
+		for (const FInventorySlotData& Item : ThisData->Inventory)
 		{
 			if (!Item.IsValidSlot()) continue;
 			const UInventoryItemData* ItemData = Item.GetItemData<UInventoryItemData>();
@@ -211,6 +199,8 @@ void UGameSectionManager::FinishTransition()
 				SlotData->Metadata.Append(Item.Metadata);
 			}
 		}
+		
+		Inventory->ImportSaveData(SaveSystem->GetGameDataObject()->Inventory);
 
 		PlayerChar->FadeFromBlack(1.0f);
 		PlayerChar->ClearLockFlag(Player::LockFlags::Loading);

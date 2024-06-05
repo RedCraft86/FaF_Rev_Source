@@ -62,10 +62,7 @@ public:
 		FUDSSettings SkyWeatherSettings;
 
 	UPROPERTY(EditAnywhere, Category = "InventoryData")
-		FGameplayTag InventoryKey;
-
-	UPROPERTY(EditAnywhere, Category = "InventoryData")
-		TArray<FInventorySlotData> EnsureItems;
+		TArray<FInventorySlotData> Inventory;
 
 #if WITH_EDITORONLY_DATA
 	UPROPERTY(EditAnywhere, Category = "Dependencies", meta = (ClampMin = 1, UIMin = 1, ClampMax = 10, UIMax = 10, DisplayName = "Search Depth"))

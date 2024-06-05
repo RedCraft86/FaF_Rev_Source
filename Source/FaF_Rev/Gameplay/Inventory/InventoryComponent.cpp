@@ -117,12 +117,15 @@ void UInventoryComponent::ConsumeItem(const FGuid& ItemKey)
 void UInventoryComponent::ImportSaveData(const FInventorySaveData& InData)
 {
 	CurrencyData = InData.CurrencyData;
-	ItemSlots = InData.ItemSlots;
+	if (ItemSlots.Contains(InData.ActiveEquipment))
+	{
+		// EQUIPMENT
+	}
 
 	ON_UPDATE();
 }
 
 FInventorySaveData UInventoryComponent::ExportSaveData()
 {
-	return {EquipmentData.ItemID, CurrencyData, ItemSlots};
+	return {EquipmentData.ItemID, CurrencyData};
 }
