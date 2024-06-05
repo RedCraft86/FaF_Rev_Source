@@ -6,11 +6,10 @@
 #include "Components/BrushComponent.h"
 #include "Kismet/GameplayStatics.h"
 
-ATriggerField::ATriggerField()
+ATriggerField::ATriggerField() : bSingleUse(true)
 {
 	WorldEventComponent = CreateDefaultSubobject<UWorldEventComponent>("WorldEvents");
 	GetBrushComponent()->SetCollisionResponseToChannel(ECC_Pawn, ECR_Overlap);
-	bSingleUse = true;
 }
 
 void ATriggerField::NotifyActorBeginOverlap(AActor* OtherActor)
