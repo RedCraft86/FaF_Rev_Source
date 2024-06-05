@@ -3,21 +3,16 @@
 #include "ElectricLight.h"
 #include "Components/LightComponent.h"
 
-bool AElectricLightBase::GetState()
+void AElectricLightBase::SetFlickerState(const bool bNewFlicker)
 {
-	return GetEnergy() >= MinEnergy;
-}
-
-void AElectricLightBase::SetBrokenState(const bool bNewBroken)
-{
-	if (bBroken != bNewBroken)
+	if (bFlicker != bNewFlicker)
 	{
-		bBroken = bNewBroken;
-		OnLightUpdate(bCachedState);
+		bFlicker = bNewFlicker;
+		OnFlickerUpdate();
 	}
 }
 
-void AElectricLightBase::OnLightUpdate(const bool bState)
+void AElectricLightBase::OnFlickerUpdate() const
 {
 	TSet<ULightComponent*> Lights;
 	TArray<FLightMeshData> Meshes;
@@ -25,18 +20,24 @@ void AElectricLightBase::OnLightUpdate(const bool bState)
 
 	for (ULightComponent* Light : Lights)
 	{
-		if (Light) Light->SetLightFunctionMaterial(bBroken ? FlickerFunction : nullptr);
+		if (Light) Light->SetLightFunctionMaterial(bFlicker ? FlickerFunction : nullptr);
 	}
 	
 	for (const FLightMeshData& Mesh : Meshes)
 	{
 		if (!Mesh.MeshComponent) continue;
-		Mesh.MeshComponent->SetCustomPrimitiveDataFloat(Mesh.FlickerIndex, bBroken ? 1.0f : 0.0f);
+		Mesh.MeshComponent->SetCustomPrimitiveDataFloat(Mesh.FlickerIndex, bFlicker ? 1.0f : 0.0f);
 	}
+}
 
-	if (bCachedState == bState) return;
-	bCachedState = bState;
-
+void AElectricLightBase::OnStateChanged(const bool bState)
+{
+	OnFlickerUpdate();
+	
+	TSet<ULightComponent*> Lights;
+	TArray<FLightMeshData> Meshes;
+	GetLightInfo(Lights, Meshes);
+	
 	for (ULightComponent* Light : Lights)
 	{
 		if (Light) Light->SetHiddenInGame(!bState);
@@ -52,32 +53,21 @@ void AElectricLightBase::OnLightUpdate(const bool bState)
 		else
 		{
 			Mesh.MeshComponent->SetHiddenInGame(true);
-			for (const TPair<uint8, FIntPoint>& Value : Mesh.PrimitiveValues)
+			for (const TPair<uint8, FVector2D>& Value : Mesh.PrimitiveValues)
 			{
 				Mesh.MeshComponent->SetCustomPrimitiveDataFloat(Value.Key, bState ? Value.Value.Y : Value.Value.X);
 			}
 		}
 	}
 	
-	StateChangedEvent(bState);
-}
-
-void AElectricLightBase::OnEnergyChanged(const uint8 Total)
-{
-	OnLightUpdate(Total >= MinEnergy);
-	Super::OnEnergyChanged(Total);
-}
-
-void AElectricLightBase::BeginPlay()
-{
-	Super::BeginPlay();
-	OnLightUpdate(false);
+	Super::OnStateChanged(bState);
 }
 
 #if WITH_EDITORONLY_DATA
 void AElectricLightBase::OnConstruction(const FTransform& Transform)
 {
 	Super::OnConstruction(Transform);
-	OnLightUpdate(bPreviewState);
+	OnStateChanged(bPreviewState);
+	bCachedState = bPreviewState;
 }
 #endif

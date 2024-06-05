@@ -12,6 +12,7 @@
 #include "Inventory/InventoryPreview.h"
 #include "PostProcess/SmartPostProcess.h"
 #include "Electronics/ElectricActor.h"
+#include "Electronics/ElectricSwitch.h"
 
 #define LOCTEXT_NAMESPACE "FFaF_RevEditorModule"
 
@@ -26,6 +27,7 @@ void FFaF_RevEditorModule::StartupModule()
         REGISTER_CLASS_CUSTOMIZATION(PropertyModule, AInventoryPreview, FGTActorDetails);
         REGISTER_CLASS_CUSTOMIZATION(PropertyModule, ASmartPostProcess, FGTActorDetails);
         REGISTER_CLASS_CUSTOMIZATION(PropertyModule, AElectricActorBase, FGTActorDetails);
+        REGISTER_CLASS_CUSTOMIZATION(PropertyModule, AElectricSwitchBase, FGTActorDetails);
     }
 
     if (const FAssetToolsModule* AssetToolsModule = FModuleManager::LoadModulePtr<FAssetToolsModule>("AssetTools"))
@@ -49,6 +51,7 @@ void FFaF_RevEditorModule::ShutdownModule()
         UNREGISTER_CLASS_CUSTOMIZATION(PropertyModule, AInventoryPreview);
         UNREGISTER_CLASS_CUSTOMIZATION(PropertyModule, ASmartPostProcess);
         UNREGISTER_CLASS_CUSTOMIZATION(PropertyModule, AElectricActorBase);
+        UNREGISTER_CLASS_CUSTOMIZATION(PropertyModule, AElectricSwitchBase);
     }
 
     if (const FAssetToolsModule* AssetToolsModule = FModuleManager::GetModulePtr<FAssetToolsModule>("AssetTools"))

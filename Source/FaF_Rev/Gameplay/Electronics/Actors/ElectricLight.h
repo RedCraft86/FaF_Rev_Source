@@ -2,7 +2,7 @@
 
 #pragma once
 
-#include "ElectricActor.h"
+#include "Electronics/ElectricActor.h"
 #include "ElectricLight.generated.h"
 
 USTRUCT(BlueprintType)
@@ -31,7 +31,7 @@ class FAF_REV_API AElectricLightBase final : public AElectricActorBase
 
 public:
 
-	AElectricLightBase() : bPreviewState(false), bBroken(false), MinEnergy(0), bCachedState(false) {}
+	AElectricLightBase() : bPreviewState(false), bFlicker(false) { MinEnergy = 0; }
 
 #if WITH_EDITORONLY_DATA
 	UPROPERTY(EditAnywhere, Category = "Settings")
@@ -39,34 +39,22 @@ public:
 #endif
 
 	UPROPERTY(EditAnywhere, Category = "Settings")
-		bool bBroken;
-	
-	UPROPERTY(EditAnywhere, Category = "Settings")
-		uint8 MinEnergy;
+		bool bFlicker;
 
 	UPROPERTY(EditDefaultsOnly, Category = "Settings")
 		TObjectPtr<UMaterialInterface> FlickerFunction;
 
-	UFUNCTION(BlueprintPure, Category = "ElectricActor|Light")
-		bool GetState();
-
 	UFUNCTION(BlueprintCallable, Category = "ElectricActor|Light")
-		void SetBrokenState(const bool bNewBroken);
+		void SetFlickerState(const bool bNewFlicker);
 	
 	UFUNCTION(BlueprintImplementableEvent)
 		void GetLightInfo(TSet<ULightComponent*>& Lights, TArray<FLightMeshData>& Meshes) const;
-	
-	UFUNCTION(BlueprintImplementableEvent, DisplayName = "State Changed")
-		void StateChangedEvent(const bool bState);
 
 protected:
+	
+	void OnFlickerUpdate() const;
+	void OnStateChanged(const bool bState) override;
 
-	bool bCachedState;
-	
-	void OnLightUpdate(const bool bState);
-	void OnEnergyChanged(const uint8 Total) override;
-	
-	virtual void BeginPlay() override;
 #if WITH_EDITORONLY_DATA
 	virtual void OnConstruction(const FTransform& Transform) override;
 #endif

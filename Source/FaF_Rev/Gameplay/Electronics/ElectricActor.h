@@ -17,6 +17,9 @@ public:
 	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, Category = "Subobjects")
 		TObjectPtr<USceneComponent> SceneRoot;
 
+	UPROPERTY(EditAnywhere, Category = "Settings", meta = (DisplayPriority = -1))
+		uint8 MinEnergy;
+
 	UFUNCTION(BlueprintCallable, Category = "ElectricActor")
 		void AddEnergy(const FName Key, const uint8 Value);
 
@@ -26,13 +29,22 @@ public:
 	UFUNCTION(BlueprintPure, Category = "ElectricActor")
 		uint8 GetEnergy();
 
+	UFUNCTION(BlueprintPure, Category = "ElectricActor")
+		bool GetState();
+
 	UFUNCTION(BlueprintImplementableEvent, DisplayName = "Energy Changed")
 		void EnergyChangedEvent(const uint8 Total);
 	
-protected:
+	UFUNCTION(BlueprintImplementableEvent, DisplayName = "State Changed")
+		void StateChangedEvent(const bool bState);
 	
+protected:
+
+	bool bCachedState;
 	TMap<FName, uint8> Energy;
 	TPair<bool, uint8> CachedEnergy;
 	
 	virtual void OnEnergyChanged(const uint8 Total);
+	virtual void OnStateChanged(const bool bState);
+	virtual void BeginPlay() override;
 };
