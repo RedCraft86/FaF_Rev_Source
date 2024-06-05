@@ -109,7 +109,6 @@ public:
 private:
 	
 	bool bInitializing, bLaunchWork;
-	TArray<uint8, TFixedAllocator<11>> ScalabilityDefaults;
 	UPROPERTY(Transient) TObjectPtr<UFRGameInstance> GameInstance;
 	
 	UPROPERTY(Transient) TObjectPtr<USoundMix> SoundMixObject;
@@ -129,6 +128,7 @@ private:
 	UPROPERTY(Config) uint8 Brightness;
 	UPROPERTY(Config) bool bFancyBloom;
 	UPROPERTY(Config) TMap<EFRSoundType, uint8> SoundTypeToVolume;
+	UPROPERTY(Config) TArray<uint8> ScalabilityDefaults;
 
 	void CacheScalabilityDefaults();
 	void ApplyBrightness() const;
