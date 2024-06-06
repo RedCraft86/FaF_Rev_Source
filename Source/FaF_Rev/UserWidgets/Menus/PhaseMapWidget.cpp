@@ -5,4 +5,6 @@
 UPhaseMapWidgetBase::UPhaseMapWidgetBase(const FObjectInitializer& ObjectInitializer)
 	: UGTUserWidget(ObjectInitializer), ParentWidget(nullptr)
 {
+	ZOrder = 91;
+	bAutoAdd = false;
 }

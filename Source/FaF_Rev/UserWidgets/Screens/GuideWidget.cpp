@@ -17,7 +17,7 @@ UGuideWidgetBase::UGuideWidgetBase(const FObjectInitializer& ObjectInitializer)
 	, LocalPageImage(nullptr), LocalImageContainer(nullptr), GuideFadeAnim(nullptr)
 	, NextButtonAnim(nullptr), ImageHeight(0), DefaultImage(nullptr), bActive(false), bPrePauseState(false)
 {
-	ZOrder = 99;
+	ZOrder = 97;
 	bAutoAdd = false;
 }
 

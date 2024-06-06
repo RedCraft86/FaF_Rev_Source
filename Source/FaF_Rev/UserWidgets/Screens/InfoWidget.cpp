@@ -17,7 +17,7 @@ UInfoWidgetBase::UInfoWidgetBase(const FObjectInitializer& ObjectInitializer)
 	, GoodFrameRateColor(FLinearColor::Green), BadFrameRateColor(FLinearColor::Red), TargetFPS(60.0f)
 	, FPSTickTime(0.0f), bWantsFPS(false)
 {
-	ZOrder = 100;
+	ZOrder = 99;
 	bAutoAdd = true;
 }
 

@@ -32,10 +32,10 @@ public:
 		TObjectPtr<UWidgetAnimation> HideFadeAnim;
 
 	UPROPERTY(EditAnywhere, Category = "GameWidget")
-		TObjectPtr<UTexture2D*> DefaultInteractIcon;
+		TObjectPtr<UTexture2D> DefaultInteractIcon;
 
 	UPROPERTY(EditAnywhere, Category = "GameWidget")
-		float StaminaBarSpeed;
+		FVector2D StaminaBarSpeed;
 
 protected:
 
@@ -45,7 +45,7 @@ protected:
 	UPROPERTY(Transient) TObjectPtr<class AFRPlayerBase> PlayerChar;
 
 	void HideCheck();
-	void InteractCheck();
+	void InteractCheck() const;
 	
 	virtual void InitWidget() override;
 	virtual void NativeConstruct() override;

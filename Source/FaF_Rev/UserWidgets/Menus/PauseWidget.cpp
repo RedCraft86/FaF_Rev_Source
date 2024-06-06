@@ -18,7 +18,7 @@ UPauseWidgetBase::UPauseWidgetBase(const FObjectInitializer& ObjectInitializer)
 	: UGTUserWidget(ObjectInitializer), ResumeButton(nullptr), SettingsButton(nullptr), CheckpointButton(nullptr)
 	, MainMenuButton(nullptr), GameVersionText(nullptr), ScreenFadeAnim(nullptr), PlayerChar(nullptr), SettingsWidget(nullptr)
 {
-	ZOrder = 98;
+	ZOrder = 96;
 	bAutoAdd = false;
 }
 

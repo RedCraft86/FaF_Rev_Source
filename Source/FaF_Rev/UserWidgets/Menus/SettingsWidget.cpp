@@ -62,7 +62,7 @@ USettingsWidgetBase::USettingsWidgetBase(const FObjectInitializer& ObjectInitial
 	, ExitButton(nullptr), SwapScreenAnim(nullptr), ConfirmResAnim(nullptr), ParentWidget(nullptr), ScreenIndex(0)
 	, SettingsObj(nullptr), LastConfirmedResIdx(0), bIsFinalResolution(true), ResolutionWaitTime(0.0f), AutoDetectWaitTime(0.0f)
 {
-	ZOrder = 98;
+	ZOrder = 96;
 	bAutoAdd = false;
 }
 

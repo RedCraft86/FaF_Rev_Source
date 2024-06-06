@@ -49,7 +49,7 @@ UInventoryWidgetBase::UInventoryWidgetBase(const FObjectInitializer& ObjectIniti
 	, EquipItemLabel(LOCTEXT("EquipLabel", "Equip")), UnequipItemLabel(LOCTEXT("UnequipLabel", "Unequip"))
 	, ViewItemLabel(LOCTEXT("ViewLabel", "Read/View"))
 {
-	ZOrder = 97;
+	ZOrder = 94;
 	bAutoAdd = false;
 }
 
