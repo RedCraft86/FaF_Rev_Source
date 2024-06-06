@@ -60,7 +60,7 @@ protected:
 	void MarkSelected(const bool bSelected) const;
 };
 
-UCLASS()
+UCLASS(Abstract)
 class FAF_REV_API UInventoryWidgetBase final : public UGTUserWidget
 {
 	GENERATED_BODY()
