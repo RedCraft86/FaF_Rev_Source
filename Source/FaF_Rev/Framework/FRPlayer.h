@@ -228,9 +228,6 @@ public:
 	UFUNCTION(BlueprintPure, Category = "Player")
 		bool IsMoving() const;
 
-	UFUNCTION(BlueprintPure, Category = "Player")
-		bool IsStaminaChanging() const;
-
 	UFUNCTION(BlueprintCallable, Category = "Player")
 		void SetRunState(const bool bInState);
 

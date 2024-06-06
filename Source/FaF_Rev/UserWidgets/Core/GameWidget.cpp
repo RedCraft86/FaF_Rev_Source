@@ -5,10 +5,11 @@
 #include "Components/ProgressBar.h"
 #include "Components/TextBlock.h"
 #include "FRPlayer.h"
+#include "FRSettings.h"
 
 UGameWidgetBase::UGameWidgetBase(const FObjectInitializer& ObjectInitializer)
 	: UGTUserWidget(ObjectInitializer), InteractIcon(nullptr), InteractLabel(nullptr), StaminaBar(nullptr)
-	, HideFadeAnim(nullptr), StaminaBarSpeed(2.0f, 5.0f), HideCheckTime(0.0f)
+	, HideFadeAnim(nullptr), StaminaBarSpeed(0.25f, 5.0f), bInitFade(false), HideCheckTime(0.0f)
 	, WorldSettings(nullptr), PlayerChar(nullptr)
 {
 	ZOrder = 92;
@@ -60,7 +61,11 @@ void UGameWidgetBase::InitWidget()
 void UGameWidgetBase::NativeConstruct()
 {
 	Super::NativeConstruct();
-
+	if (FRSettings->IsGameplayMap(this))
+	{
+		SetWidgetHidden(true);
+	}
+	
 	GetWorld()->GetTimerManager().SetTimer(InteractCheckHandle, this,
 		&UGameWidgetBase::InteractCheck, 0.05f, true);
 }
@@ -71,16 +76,16 @@ void UGameWidgetBase::NativeTick(const FGeometry& MyGeometry, float InDeltaTime)
 	if (HideCheckTime >= 0.25f) { HideCheck(); }
 	else { HideCheckTime += InDeltaTime; }
 
-	if (PlayerChar && PlayerChar->IsStaminaChanging())
+	if (PlayerChar && PlayerChar->GetStaminaPercent() != StaminaBar->GetPercent())
 	{
 		StaminaBar->SetPercent(FMath::FInterpConstantTo(StaminaBar->GetPercent(),
 			PlayerChar->GetStaminaPercent(), InDeltaTime, StaminaBarSpeed.X));
 
 		StaminaBar->SetRenderOpacity(FMath::GetMappedRangeValueClamped(FVector2D(0.85f, 1.0f),
-			FVector2D(1.0f, 0.0f), StaminaBar->GetPercent()));
+			FVector2D(1.0f, 0.05f), StaminaBar->GetPercent()));
 
 		StaminaBar->SetFillColorAndOpacity(FMath::CInterpTo(StaminaBar->GetFillColorAndOpacity(),
-			PlayerChar->IsStaminaPunished() ? FLinearColor::Red : FLinearColor::Red,
+			PlayerChar->IsStaminaPunished() ? FLinearColor::Red : FLinearColor::White,
 			InDeltaTime, StaminaBarSpeed.Y));
 	}
 }

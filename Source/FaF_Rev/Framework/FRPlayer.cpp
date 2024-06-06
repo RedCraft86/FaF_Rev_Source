@@ -290,11 +290,6 @@ bool AFRPlayerBase::IsMoving() const
 	return GetVelocity().Size2D() > 50.0f;
 }
 
-bool AFRPlayerBase::IsStaminaChanging() const
-{
-	return HasControlFlag(PCF_UseStamina) && CurrentStamina < MaxStamina;
-}
-
 void AFRPlayerBase::SetRunState(const bool bInState)
 {
 	bool bRunning = IsRunning();
