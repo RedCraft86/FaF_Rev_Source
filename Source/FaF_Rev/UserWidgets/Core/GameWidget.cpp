@@ -9,8 +9,8 @@
 
 UGameWidgetBase::UGameWidgetBase(const FObjectInitializer& ObjectInitializer)
 	: UGTUserWidget(ObjectInitializer), InteractIcon(nullptr), InteractLabel(nullptr), StaminaBar(nullptr)
-	, HideFadeAnim(nullptr), StaminaBarSpeed(0.25f, 5.0f), bInitFade(false), HideCheckTime(0.0f)
-	, WorldSettings(nullptr), PlayerChar(nullptr)
+	, HideFadeAnim(nullptr), DefaultInteractIcon(nullptr), DefaultInteractSize(35.0f), StaminaBarSpeed(0.2f, 5.0f)
+	, bInitFade(false), HideCheckTime(0.0f), WorldSettings(nullptr), PlayerChar(nullptr)
 {
 	ZOrder = 92;
 	bAutoAdd = true;
@@ -36,11 +36,16 @@ void UGameWidgetBase::InteractCheck() const
 	FPlayerInteraction InteractionData;
 	if (PlayerChar && PlayerChar->TraceInteraction(HitResult, InteractionData))
 	{
+		FSlateBrush Brush = InteractIcon->GetBrush();
+		const bool bHasIcon = IsValid(InteractionData.InteractInfo.Icon);
+		Brush.SetImageSize(bHasIcon ? InteractionData.InteractInfo.IconSize : DefaultInteractSize);
+		Brush.SetResourceObject(bHasIcon ? InteractionData.InteractInfo.Icon : DefaultInteractIcon);
+		InteractIcon->SetBrush(Brush);
+		
 		InteractLabel->SetText(InteractionData.InteractInfo.Label);
-		InteractIcon->SetBrushFromTexture(InteractionData.InteractInfo.Icon
-			? InteractionData.InteractInfo.Icon : DefaultInteractIcon);
-
-		Crosshair->SetVisibility(ESlateVisibility::Collapsed);
+		OffsetInteractLabel(InteractLabel, Brush.GetImageSize().Size() / DefaultInteractSize.Size());
+		
+		Crosshair->SetVisibility(bHasIcon ? ESlateVisibility::Collapsed : ESlateVisibility::HitTestInvisible);
 		InteractIcon->SetVisibility(ESlateVisibility::HitTestInvisible);
 		InteractLabel->SetVisibility(ESlateVisibility::HitTestInvisible);
 	}
@@ -61,7 +66,7 @@ void UGameWidgetBase::InitWidget()
 void UGameWidgetBase::NativeConstruct()
 {
 	Super::NativeConstruct();
-	if (FRSettings->IsGameplayMap(this))
+	if (!FRSettings->IsGameplayMap(this))
 	{
 		SetWidgetHidden(true);
 	}
@@ -82,7 +87,7 @@ void UGameWidgetBase::NativeTick(const FGeometry& MyGeometry, float InDeltaTime)
 			PlayerChar->GetStaminaPercent(), InDeltaTime, StaminaBarSpeed.X));
 
 		StaminaBar->SetRenderOpacity(FMath::GetMappedRangeValueClamped(FVector2D(0.85f, 1.0f),
-			FVector2D(1.0f, 0.05f), StaminaBar->GetPercent()));
+			FVector2D(1.0f, 0.1f), StaminaBar->GetPercent()));
 
 		StaminaBar->SetFillColorAndOpacity(FMath::CInterpTo(StaminaBar->GetFillColorAndOpacity(),
 			PlayerChar->IsStaminaPunished() ? FLinearColor::Red : FLinearColor::White,

@@ -34,9 +34,15 @@ public:
 	UPROPERTY(EditAnywhere, Category = "GameWidget")
 		TObjectPtr<UTexture2D> DefaultInteractIcon;
 
-	UPROPERTY(EditAnywhere, Category = "GameWidget")
+	UPROPERTY(EditAnywhere, Category = "GameWidget", meta = (AllowPreserveRatio = true, ClampMin = 0.1f, UIMin = 0.1f))
+		FVector2D DefaultInteractSize;
+
+	UPROPERTY(EditAnywhere, Category = "GameWidget", meta = (ClampMin = 0.05f, UIMin = 0.05f))
 		FVector2D StaminaBarSpeed;
 
+	UFUNCTION(BlueprintImplementableEvent)
+		void OffsetInteractLabel(UTextBlock* Label, const float IconSizeRatio) const;
+	
 protected:
 
 	bool bInitFade;
