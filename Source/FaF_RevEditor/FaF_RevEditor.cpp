@@ -21,13 +21,9 @@ void FFaF_RevEditorModule::StartupModule()
     if (FPropertyEditorModule* PropertyModule = FModuleManager::LoadModulePtr<FPropertyEditorModule>("PropertyEditor"))
     {
         REGISTER_CLASS_CUSTOMIZATION(PropertyModule, AFRPlayerBase, FGTActorDetails);
-        REGISTER_CLASS_CUSTOMIZATION(PropertyModule, AInteractField, FGTActorDetails);
-        REGISTER_CLASS_CUSTOMIZATION(PropertyModule, ATriggerField, FGTActorDetails);
-        REGISTER_CLASS_CUSTOMIZATION(PropertyModule, AInventoryItemActor, FGTActorDetails);
         REGISTER_CLASS_CUSTOMIZATION(PropertyModule, AInventoryPreview, FGTActorDetails);
         REGISTER_CLASS_CUSTOMIZATION(PropertyModule, ASmartPostProcess, FGTActorDetails);
         REGISTER_CLASS_CUSTOMIZATION(PropertyModule, AElectricActorBase, FGTActorDetails);
-        REGISTER_CLASS_CUSTOMIZATION(PropertyModule, AElectricSwitchBase, FGTActorDetails);
     }
 
     if (const FAssetToolsModule* AssetToolsModule = FModuleManager::LoadModulePtr<FAssetToolsModule>("AssetTools"))
@@ -45,13 +41,9 @@ void FFaF_RevEditorModule::ShutdownModule()
     if (FPropertyEditorModule* PropertyModule = FModuleManager::GetModulePtr<FPropertyEditorModule>("PropertyEditor"))
     {
         UNREGISTER_CLASS_CUSTOMIZATION(PropertyModule, AFRPlayerBase);
-        UNREGISTER_CLASS_CUSTOMIZATION(PropertyModule, AInteractField);
-        UNREGISTER_CLASS_CUSTOMIZATION(PropertyModule, ATriggerField);
-        UNREGISTER_CLASS_CUSTOMIZATION(PropertyModule, AInventoryItemActor);
         UNREGISTER_CLASS_CUSTOMIZATION(PropertyModule, AInventoryPreview);
         UNREGISTER_CLASS_CUSTOMIZATION(PropertyModule, ASmartPostProcess);
         UNREGISTER_CLASS_CUSTOMIZATION(PropertyModule, AElectricActorBase);
-        UNREGISTER_CLASS_CUSTOMIZATION(PropertyModule, AElectricSwitchBase);
     }
 
     if (const FAssetToolsModule* AssetToolsModule = FModuleManager::GetModulePtr<FAssetToolsModule>("AssetTools"))
