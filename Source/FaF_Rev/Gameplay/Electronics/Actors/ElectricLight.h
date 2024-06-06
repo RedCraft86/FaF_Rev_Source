@@ -22,6 +22,8 @@ struct FAF_REV_API FLightMeshData
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "LightMeshData")
 		uint8 FlickerIndex;
+
+	FLightMeshData() : MeshComponent(nullptr), bHideCompletely(false), PrimitiveValues({}), FlickerIndex(0) {}
 };
 
 UCLASS(Abstract)
