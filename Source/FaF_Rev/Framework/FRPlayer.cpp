@@ -290,6 +290,11 @@ bool AFRPlayerBase::IsMoving() const
 	return GetVelocity().Size2D() > 50.0f;
 }
 
+bool AFRPlayerBase::IsStaminaChanging() const
+{
+	return HasControlFlag(PCF_UseStamina) && CurrentStamina < MaxStamina;
+}
+
 void AFRPlayerBase::SetRunState(const bool bInState)
 {
 	bool bRunning = IsRunning();
@@ -699,7 +704,8 @@ bool AFRPlayerBase::TraceInteraction(FHitResult& OutHitResult, FPlayerInteractio
 	if (ShouldLock()) return false;
 	
 	FVector Start, End = FVector::ZeroVector;
-	UGTMathLibrary::GetCameraLineTraceVectors(this, EVectorDirection::Forward, ReachDistance, Start, End);
+	UGTMathLibrary::GetComponentLineTraceVectors(PlayerCamera,
+		EVectorDirection::Forward, ReachDistance, Start, End);
 
 	FHitResult HitResult;
 	if (GetWorld()->LineTraceSingleByChannel(HitResult, Start, End, InteractTraceChannel,

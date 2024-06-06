@@ -18,6 +18,8 @@ class FAF_REV_API AFRPlayerBase final : public ACharacter
 {
 	GENERATED_BODY()
 
+	friend class UGameWidgetBase;
+
 public:
 
 	AFRPlayerBase();
@@ -225,6 +227,9 @@ public:
 
 	UFUNCTION(BlueprintPure, Category = "Player")
 		bool IsMoving() const;
+
+	UFUNCTION(BlueprintPure, Category = "Player")
+		bool IsStaminaChanging() const;
 
 	UFUNCTION(BlueprintCallable, Category = "Player")
 		void SetRunState(const bool bInState);
