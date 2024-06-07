@@ -125,7 +125,7 @@ UNarrativeWidgetBase::UNarrativeWidgetBase(const FObjectInitializer& ObjectIniti
 	: UGTUserWidget(ObjectInitializer), QuestBranchBox(nullptr), DialogueNameText(nullptr), DialogueTitleText(nullptr)
 	, DialogueLineText(nullptr), SkipLineButton(nullptr), DialogueReplyBox(nullptr), QuestFadeAnim(nullptr)
 	, DialogueFadeAnim(nullptr), RepliesFadeAnim(nullptr), HideFadeAnim(nullptr), NarrativeComponent(nullptr)
-	, bQuestsHidden(false), HideCheckTime(0.0f), WorldSettings(nullptr), PlayerChar(nullptr)
+	, bHideQuests(false), bAutoHidden(false), HideCheckTime(0.0f), WorldSettings(nullptr), PlayerChar(nullptr)
 {
 	ZOrder = 93;
 	bAutoAdd = true;
@@ -137,10 +137,10 @@ UNarrativeWidgetBase::UNarrativeWidgetBase(const FObjectInitializer& ObjectIniti
 
 void UNarrativeWidgetBase::SetQuestsHidden(const bool bInHidden)
 {
-	if (bQuestsHidden != bInHidden && IsAnimationPlaying(QuestFadeAnim))
+	if (bHideQuests != bInHidden && IsAnimationPlaying(QuestFadeAnim))
 	{
-		bQuestsHidden = bInHidden;
-		bQuestsHidden ? PlayAnimationForward(QuestFadeAnim) : PlayAnimationReverse(QuestFadeAnim);
+		bHideQuests = bInHidden;
+		bHideQuests ? PlayAnimationForward(QuestFadeAnim) : PlayAnimationReverse(QuestFadeAnim);
 	}
 }
 
@@ -166,7 +166,7 @@ void UNarrativeWidgetBase::RefreshQuestList(const UQuest* Quest, const UQuestBra
 		}
 
 		QuestUpdatedNotify();
-		bQuestsHidden = false;
+		bHideQuests = false;
 		PlayAnimation(QuestFadeAnim, 0.0f, 1, EUMGSequencePlayMode::Reverse);
 	}
 }
@@ -188,7 +188,7 @@ void UNarrativeWidgetBase::OnQuestNewState(UQuest* Quest, const UQuestState* New
 		}
 
 		QuestUpdatedNotify();
-		bQuestsHidden = false;
+		bHideQuests = false;
 		PlayAnimation(QuestFadeAnim, 0.0f, 1, EUMGSequencePlayMode::Reverse);
 	}
 	else
@@ -315,14 +315,12 @@ void UNarrativeWidgetBase::OnLineSkipClicked()
 void UNarrativeWidgetBase::HideCheck()
 {
 	HideCheckTime = 0.0f;
-	if (!PlayerChar || !WorldSettings) return;
-	if (PlayerChar->GetActiveCutscene() || WorldSettings->GetPauserPlayerState())
+	if (!PlayerChar || !WorldSettings || IsAnimationPlaying(HideFadeAnim)) return;
+	const bool bNewAutoHidden = PlayerChar->GetActiveCutscene() || WorldSettings->GetPauserPlayerState();
+	if (bAutoHidden != bNewAutoHidden)
 	{
-		PlayAnimationForward(HideFadeAnim);
-	}
-	else if (!IsAnimationPlaying(HideFadeAnim) && GetAnimationCurrentTime(HideFadeAnim) > 0.1f)
-	{
-		PlayAnimationReverse(HideFadeAnim);
+		bAutoHidden = bNewAutoHidden;
+		bAutoHidden ? PlayAnimationForward(HideFadeAnim) : PlayAnimationReverse(HideFadeAnim);
 	}
 }
 

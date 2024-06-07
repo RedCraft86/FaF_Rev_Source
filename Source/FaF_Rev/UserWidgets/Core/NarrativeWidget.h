@@ -161,11 +161,12 @@ public:
 		void SetQuestsHidden(const bool bInHidden);
 
 	UFUNCTION(BlueprintPure, Category = "NarrativeWidget")
-		bool AreQuestsHidden() const { return bQuestsHidden; }
+		bool AreQuestsHidden() const { return bHideQuests; }
 	
 protected:
 
-	bool bQuestsHidden;
+	bool bHideQuests;
+	bool bAutoHidden;
 	float HideCheckTime;
 	UPROPERTY(Transient) TObjectPtr<const AWorldSettings> WorldSettings;
 	UPROPERTY(Transient) TObjectPtr<class AFRPlayerBase> PlayerChar;

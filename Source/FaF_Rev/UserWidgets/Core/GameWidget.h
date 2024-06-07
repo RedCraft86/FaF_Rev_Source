@@ -46,6 +46,7 @@ public:
 protected:
 
 	bool bInitFade;
+	bool bAutoHidden;
 	float HideCheckTime;
 	FTimerHandle InteractCheckHandle;
 	UPROPERTY(Transient) TObjectPtr<const AWorldSettings> WorldSettings;

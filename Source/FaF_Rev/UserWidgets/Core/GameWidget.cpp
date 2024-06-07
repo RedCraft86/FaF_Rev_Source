@@ -10,7 +10,7 @@
 UGameWidgetBase::UGameWidgetBase(const FObjectInitializer& ObjectInitializer)
 	: UGTUserWidget(ObjectInitializer), InteractIcon(nullptr), InteractLabel(nullptr), StaminaBar(nullptr)
 	, HideFadeAnim(nullptr), DefaultInteractIcon(nullptr), DefaultInteractSize(35.0f), StaminaBarSpeed(0.2f, 5.0f)
-	, bInitFade(false), HideCheckTime(0.0f), WorldSettings(nullptr), PlayerChar(nullptr)
+	, bInitFade(false), bAutoHidden(false), HideCheckTime(0.0f), WorldSettings(nullptr), PlayerChar(nullptr)
 {
 	ZOrder = 92;
 	bAutoAdd = true;
@@ -19,14 +19,12 @@ UGameWidgetBase::UGameWidgetBase(const FObjectInitializer& ObjectInitializer)
 void UGameWidgetBase::HideCheck()
 {
 	HideCheckTime = 0.0f;
-	if (!PlayerChar || !WorldSettings) return;
-	if (PlayerChar->GetActiveCutscene() || WorldSettings->GetPauserPlayerState())
+	if (!PlayerChar || !WorldSettings || IsAnimationPlaying(HideFadeAnim)) return;
+	const bool bNewAutoHidden = PlayerChar->GetActiveCutscene() || WorldSettings->GetPauserPlayerState();
+	if (bAutoHidden != bNewAutoHidden)
 	{
-		PlayAnimationForward(HideFadeAnim);
-	}
-	else if (!IsAnimationPlaying(HideFadeAnim) && GetAnimationCurrentTime(HideFadeAnim) > 0.1f)
-	{
-		PlayAnimationReverse(HideFadeAnim);
+		bAutoHidden = bNewAutoHidden;
+		bAutoHidden ? PlayAnimationForward(HideFadeAnim) : PlayAnimationReverse(HideFadeAnim);
 	}
 }
 
@@ -87,7 +85,7 @@ void UGameWidgetBase::NativeTick(const FGeometry& MyGeometry, float InDeltaTime)
 			PlayerChar->GetStaminaPercent(), InDeltaTime, StaminaBarSpeed.X));
 
 		StaminaBar->SetRenderOpacity(FMath::GetMappedRangeValueClamped(FVector2D(0.85f, 1.0f),
-			FVector2D(1.0f, 0.1f), StaminaBar->GetPercent()));
+			FVector2D(1.0f, 0.25f), StaminaBar->GetPercent()));
 
 		StaminaBar->SetFillColorAndOpacity(FMath::CInterpTo(StaminaBar->GetFillColorAndOpacity(),
 			PlayerChar->IsStaminaPunished() ? FLinearColor::Red : FLinearColor::White,
