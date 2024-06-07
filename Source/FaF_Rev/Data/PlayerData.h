@@ -40,7 +40,6 @@ enum EPlayerStateFlags
 	PSF_Running		= 1 << 0	UMETA(DisplayName = "Running"),
 	PSF_RunLocked	= 1 << 1	UMETA(DisplayName = "Stamina Punished"),
 	PSF_Crouching	= 1 << 2	UMETA(DisplayName = "Crouching"),
-	PSF_ShouldInt	= 1 << 3	UMETA(DisplayName = "Should Interact"),
 };
 ENUM_CLASS_FLAGS(EPlayerStateFlags);
 

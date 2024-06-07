@@ -189,12 +189,12 @@ void AFRPlayerBase::OverrideControlFlags(int32 InFlags)
 	}
 }
 
-void AFRPlayerBase::SetControlFlag(const TEnumAsByte<EPlayerControlFlags> InFlag)
+void AFRPlayerBase::SetControlFlag(const int32 InFlag)
 {
-	if (InFlag.GetValue() == PCF_None) return;
+	if (InFlag == PCF_None) return;
 	if (!HasControlFlag(InFlag))
 	{
-		ControlFlags |= InFlag.GetValue();
+		ControlFlags |= InFlag;
 
 		switch (InFlag)
 		{
@@ -204,12 +204,12 @@ void AFRPlayerBase::SetControlFlag(const TEnumAsByte<EPlayerControlFlags> InFlag
 	}
 }
 
-void AFRPlayerBase::UnsetControlFlag(const TEnumAsByte<EPlayerControlFlags> InFlag)
+void AFRPlayerBase::UnsetControlFlag(const int32 InFlag)
 {
-	if (InFlag.GetValue() == PCF_None) return;
+	if (InFlag == PCF_None) return;
 	if (HasControlFlag(InFlag))
 	{
-		ControlFlags &= ~InFlag.GetValue();
+		ControlFlags &= ~InFlag;
 
 		switch (InFlag)
 		{
@@ -222,28 +222,28 @@ void AFRPlayerBase::UnsetControlFlag(const TEnumAsByte<EPlayerControlFlags> InFl
 	}
 }
 
-bool AFRPlayerBase::HasControlFlag(const TEnumAsByte<EPlayerControlFlags> InFlag) const
+bool AFRPlayerBase::HasControlFlag(const int32 InFlag) const
 {
-	if (InFlag.GetValue() == PCF_None) return false;
-	return ControlFlags & InFlag.GetValue();
+	if (InFlag == PCF_None) return false;
+	return ControlFlags & InFlag;
 }
 
-void AFRPlayerBase::SetStateFlag(const TEnumAsByte<EPlayerStateFlags> InFlag)
+void AFRPlayerBase::SetStateFlag(const int32 InFlag)
 {
-	if (InFlag.GetValue() == PSF_None) return;
-	StateFlags |= InFlag.GetValue();
+	if (InFlag == PSF_None) return;
+	StateFlags |= InFlag;
 }
 
-void AFRPlayerBase::UnsetStateFlag(const TEnumAsByte<EPlayerStateFlags> InFlag)
+void AFRPlayerBase::UnsetStateFlag(const int32 InFlag)
 {
-	if (InFlag.GetValue() == PSF_None) return;
-	StateFlags &= ~InFlag.GetValue();
+	if (InFlag == PSF_None) return;
+	StateFlags &= ~InFlag;
 }
 
-bool AFRPlayerBase::HasStateFlag(const TEnumAsByte<EPlayerStateFlags> InFlag) const
+bool AFRPlayerBase::HasStateFlag(const int32 InFlag) const
 {
-	if (InFlag.GetValue() == PSF_None) return false;
-	return StateFlags & InFlag.GetValue();
+	if (InFlag == PSF_None) return false;
+	return StateFlags & InFlag;
 }
 
 void AFRPlayerBase::AddLockFlag(const FPlayerLockFlag InFlag)
@@ -707,11 +707,12 @@ bool AFRPlayerBase::TraceInteraction(FHitResult& OutHitResult, FPlayerInteractio
 		FCollisionQueryParams(NAME_None, false, this)))
 	{
 		FInteractionInfo Info;
-		if (IInteract::GetInteractionInfo(HitResult.GetActor(), Info))
+		AActor* Actor = HitResult.GetActor();
+		if (IInteract::GetInteractionInfo(Actor, Info))
 		{
 			OutHitResult = HitResult;
 			OutData.InteractInfo = Info;
-			OutData.Target = HitResult.GetActor();
+			OutData.Target = Actor;
 			return true;
 		}
 	}
@@ -919,28 +920,19 @@ void AFRPlayerBase::InputBinding_Interact(const FInputActionValue& InValue)
 {
 	if (INPUT_CHECK() && HasControlFlag(PCF_CanInteract) && InValue.Get<bool>())
 	{
-		if (HasStateFlag(PSF_ShouldInt))
+		FHitResult HitResult;
+		FPlayerInteraction NewInteract;
+		if (TraceInteraction(HitResult, NewInteract))
 		{
-			FHitResult HitResult;
-			FPlayerInteraction NewData;
-			if (TraceInteraction(HitResult, NewData))
+			if (InteractData != NewInteract)
 			{
-				if (NewData != InteractData)
-				{
-					IInteract::EndInteract(InteractData.Target, this);
-					IInteract::BeginInteract(NewData.Target, this, HitResult);
-					InteractData = NewData;
-				}
-
-				return;
+				IInteract::EndInteract(InteractData.Target, this);
+				IInteract::BeginInteract(NewInteract.Target, this, HitResult);
+				InteractData = NewInteract;
 			}
-
-			UnsetStateFlag(PSF_ShouldInt);
+			
+			return;
 		}
-	}
-	else
-	{
-		SetStateFlag(PSF_ShouldInt);
 	}
 
 	IInteract::EndInteract(InteractData.Target, this);
