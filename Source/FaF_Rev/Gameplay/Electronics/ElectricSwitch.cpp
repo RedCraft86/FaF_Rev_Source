@@ -29,6 +29,8 @@ void AElectricSwitchBase::UpdateStates()
 	{
 		bState ? Target->AddEnergy(GetFName(), PowerValue) : Target->RemoveEnergy(GetFName());
 	}
+
+	StateChangedEvent(bState);
 }
 
 bool AElectricSwitchBase::GetInteractionInfo_Implementation(FInteractionInfo& Info)
