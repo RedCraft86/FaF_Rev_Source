@@ -71,5 +71,5 @@ void AElectricActorBase::OnStateChanged(const bool bState)
 void AElectricActorBase::BeginPlay()
 {
 	Super::BeginPlay();
-	OnEnergyChanged(0);
+	OnStateChanged(GetState());
 }
