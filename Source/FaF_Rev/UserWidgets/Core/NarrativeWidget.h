@@ -189,5 +189,6 @@ protected:
 	
 	void HideCheck();
 	virtual void InitWidget() override;
+	virtual void NativeConstruct() override;
 	virtual void NativeTick(const FGeometry& MyGeometry, float InDeltaTime) override;
 };

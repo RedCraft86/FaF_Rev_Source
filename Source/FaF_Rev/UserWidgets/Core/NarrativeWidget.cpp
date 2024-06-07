@@ -344,6 +344,15 @@ void UNarrativeWidgetBase::InitWidget()
 	SkipLineButton->OnClicked.AddDynamic(this, &UNarrativeWidgetBase::OnLineSkipClicked);
 }
 
+void UNarrativeWidgetBase::NativeConstruct()
+{
+	Super::NativeConstruct();
+	if (!FRSettings->IsGameplayMap(this))
+	{
+		SetVisibility(ESlateVisibility::Collapsed);
+	}
+}
+
 void UNarrativeWidgetBase::NativeTick(const FGeometry& MyGeometry, float InDeltaTime)
 {
 	Super::NativeTick(MyGeometry, InDeltaTime);

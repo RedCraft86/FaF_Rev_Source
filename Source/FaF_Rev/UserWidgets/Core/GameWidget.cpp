@@ -66,7 +66,7 @@ void UGameWidgetBase::NativeConstruct()
 	Super::NativeConstruct();
 	if (!FRSettings->IsGameplayMap(this))
 	{
-		SetWidgetHidden(true);
+		SetVisibility(ESlateVisibility::Collapsed);
 	}
 	
 	GetWorld()->GetTimerManager().SetTimer(InteractCheckHandle, this,
