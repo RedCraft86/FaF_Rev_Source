@@ -33,7 +33,7 @@ class FAF_REV_API AElectricLightBase final : public AElectricActorBase
 
 public:
 
-	AElectricLightBase() : bPreviewState(false), bFlicker(false) { MinEnergy = 0; }
+	AElectricLightBase() : bPreviewState(true), bFlicker(false) { MinEnergy = 0; }
 
 #if WITH_EDITORONLY_DATA
 	UPROPERTY(EditAnywhere, Category = "Settings")
