@@ -30,6 +30,9 @@ public:
 	UPROPERTY(EditAnywhere, AdvancedDisplay, Category = "Settings")
 		FInteractionInfo InteractionInfo;
 
+	UFUNCTION(BlueprintImplementableEvent, DisplayName = "State Changed")
+		void StateChangedEvent(const bool bNewState);
+
 	UFUNCTION(BlueprintCallable, Category = "ElectricSwitch")
 		void SetState(const bool bNewState);
 
