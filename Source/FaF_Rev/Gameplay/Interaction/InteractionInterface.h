@@ -7,7 +7,7 @@
 
 class AFRPlayerBase;
 
-#define DEFAULT_INTERACT_LABEL NSLOCTEXT("FaF_Rev", "InteractLabel_Default", "Interact")
+#define DEFAULT_INTERACT_LABEL INVTEXT("Interact")
 
 USTRUCT(BlueprintType)
 struct FInteractionInfo
