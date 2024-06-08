@@ -3,6 +3,12 @@
 #include "ElectricLight.h"
 #include "Components/LightComponent.h"
 
+AElectricLightBase::AElectricLightBase() : bPreviewState(true), bFlicker(false)
+{
+	MinEnergy = 0;
+	SmartCulling = CreateDefaultSubobject<USmartCullingComponent>("SmartCulling");
+}
+
 void AElectricLightBase::SetFlickerState(const bool bNewFlicker)
 {
 	if (bFlicker != bNewFlicker)

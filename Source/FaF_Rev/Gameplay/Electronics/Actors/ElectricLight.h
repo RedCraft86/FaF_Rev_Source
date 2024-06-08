@@ -2,6 +2,7 @@
 
 #pragma once
 
+#include "Optimization/SmartCulling.h"
 #include "Electronics/ElectricActor.h"
 #include "ElectricLight.generated.h"
 
@@ -35,7 +36,10 @@ class FAF_REV_API AElectricLightBase final : public AElectricActorBase
 
 public:
 
-	AElectricLightBase() : bPreviewState(true), bFlicker(false) { MinEnergy = 0; }
+	AElectricLightBase();
+
+	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, Category = "Subobjects")
+		TObjectPtr<USmartCullingComponent> SmartCulling;
 
 #if WITH_EDITORONLY_DATA
 	UPROPERTY(EditAnywhere, Category = "Settings", meta = (DisplayPriority = -1))
