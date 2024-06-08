@@ -3,6 +3,7 @@
 #pragma once
 
 #include "GameFramework/Actor.h"
+#include "Optimization/SmartCulling.h"
 #include "ElectricActor.generated.h"
 
 UCLASS(Abstract)
@@ -16,6 +17,9 @@ public:
 
 	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, Category = "Subobjects")
 		TObjectPtr<USceneComponent> SceneRoot;
+
+	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, Category = "Subobjects")
+		TObjectPtr<USmartCullingComponent> SmartCulling;
 
 	UPROPERTY(EditAnywhere, Category = "Settings", meta = (DisplayPriority = -1))
 		uint8 MinEnergy;

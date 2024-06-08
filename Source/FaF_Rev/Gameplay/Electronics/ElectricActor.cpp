@@ -9,6 +9,8 @@ AElectricActorBase::AElectricActorBase() : MinEnergy(1), bCachedState(false)
 	
 	SceneRoot = CreateDefaultSubobject<USceneComponent>("SceneRoot");
 	SetRootComponent(SceneRoot);
+
+	SmartCulling = CreateDefaultSubobject<USmartCullingComponent>("SmartCulling");
 	
 #if WITH_EDITORONLY_DATA
 	SceneRoot->bVisualizeComponent = true;
