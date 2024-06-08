@@ -6,26 +6,28 @@
 #include "ElectricLight.generated.h"
 
 USTRUCT(BlueprintType)
-struct FAF_REV_API FLightMeshData
+struct FAF_REV_API FLightMeshProperties
 {
 	GENERATED_BODY()
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "LightMeshData")
-		TObjectPtr<UStaticMeshComponent> MeshComponent;
+	UPROPERTY(EditAnywhere, Category = "LightMeshProperties")
+		float Intensity;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "LightMeshData")
-		bool bHideCompletely;
+	UPROPERTY(EditAnywhere, Category = "LightMeshProperties")
+		float Fresnel;
 
-	// Index -> Off, On
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "LightMeshData")
-		TMap<uint8, FVector2D> PrimitiveValues;
+	UPROPERTY(EditAnywhere, Category = "LightMeshProperties")
+		float Flicker;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "LightMeshData")
-		uint8 FlickerIndex;
-
-	FLightMeshData() : MeshComponent(nullptr), bHideCompletely(false), PrimitiveValues({}), FlickerIndex(0) {}
+	FLightMeshProperties() : Intensity(1.0f), Fresnel(0.5f), Flicker(1.0f) {}
 };
 
+/*
+* Mesh Primitive Idx 0 -> 3	: Color and Base Intensity
+* Mesh Primitive Idx 4		: Fresnel
+* Mesh Primitive Idx 5		: Intensity Multi
+* Mesh Primitive Idx 6		: Flicker Amount
+*/
 UCLASS(Abstract)
 class FAF_REV_API AElectricLightBase final : public AElectricActorBase
 {
@@ -36,21 +38,24 @@ public:
 	AElectricLightBase() : bPreviewState(true), bFlicker(false) { MinEnergy = 0; }
 
 #if WITH_EDITORONLY_DATA
-	UPROPERTY(EditAnywhere, Category = "Settings")
+	UPROPERTY(EditAnywhere, Category = "Settings", meta = (DisplayPriority = -1))
 		bool bPreviewState;
 #endif
 
-	UPROPERTY(EditAnywhere, Category = "Settings")
+	UPROPERTY(EditAnywhere, Category = "Settings", meta = (DisplayPriority = -1))
 		bool bFlicker;
 
-	UPROPERTY(EditDefaultsOnly, Category = "Settings")
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Settings")
+		FLightMeshProperties MeshProperties;
+
+	UPROPERTY(EditAnywhere, Category = "Settings", AdvancedDisplay)
 		TObjectPtr<UMaterialInterface> FlickerFunction;
 
 	UFUNCTION(BlueprintCallable, Category = "ElectricActor|Light")
 		void SetFlickerState(const bool bNewFlicker);
 	
 	UFUNCTION(BlueprintImplementableEvent)
-		void GetLightInfo(TSet<ULightComponent*>& Lights, TArray<FLightMeshData>& Meshes) const;
+		void GetLightInfo(TSet<ULightComponent*>& Lights, TMap<UStaticMeshComponent*, bool>& Meshes) const;
 
 protected:
 	
@@ -60,4 +65,9 @@ protected:
 #if WITH_EDITORONLY_DATA
 	virtual void OnConstruction(const FTransform& Transform) override;
 #endif
+
+public: // Statics
+
+	UFUNCTION(BlueprintCallable, Category = "ElectronicActor|Light", meta = (DefaultToSelf = "Target"))
+		static void SetLightMeshSettings(UStaticMeshComponent* Target, const ULightComponent* Source, const FLightMeshProperties& Properties);
 };

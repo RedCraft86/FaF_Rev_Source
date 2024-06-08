@@ -15,7 +15,7 @@ void AElectricLightBase::SetFlickerState(const bool bNewFlicker)
 void AElectricLightBase::OnFlickerUpdate() const
 {
 	TSet<ULightComponent*> Lights;
-	TArray<FLightMeshData> Meshes;
+	TMap<UStaticMeshComponent*, bool> Meshes;
 	GetLightInfo(Lights, Meshes);
 
 	for (ULightComponent* Light : Lights)
@@ -23,10 +23,16 @@ void AElectricLightBase::OnFlickerUpdate() const
 		if (Light) Light->SetLightFunctionMaterial(bFlicker ? FlickerFunction : nullptr);
 	}
 	
-	for (const FLightMeshData& Mesh : Meshes)
+	for (const TPair<UStaticMeshComponent*, bool>& Mesh : Meshes)
 	{
-		if (!Mesh.MeshComponent) continue;
-		Mesh.MeshComponent->SetCustomPrimitiveDataFloat(Mesh.FlickerIndex, bFlicker ? 1.0f : 0.0f);
+#if WITH_EDITOR
+		if (!FApp::IsGame())
+		{
+			if (Mesh.Key) Mesh.Key->SetDefaultCustomPrimitiveDataFloat(6, bFlicker ? MeshProperties.Flicker : 0.0f);
+			continue;
+		}
+#endif
+		if (Mesh.Key) Mesh.Key->SetCustomPrimitiveDataFloat(6, bFlicker ? MeshProperties.Flicker : 0.0f);
 	}
 }
 
@@ -35,28 +41,33 @@ void AElectricLightBase::OnStateChanged(const bool bState)
 	OnFlickerUpdate();
 	
 	TSet<ULightComponent*> Lights;
-	TArray<FLightMeshData> Meshes;
+	TMap<UStaticMeshComponent*, bool> Meshes;
 	GetLightInfo(Lights, Meshes);
 	
 	for (ULightComponent* Light : Lights)
 	{
-		if (Light) Light->SetHiddenInGame(!bState);
+		if (Light) Light->SetVisibility(bState);
 	}
 	
-	for (const FLightMeshData& Mesh : Meshes)
+	for (const TPair<UStaticMeshComponent*, bool>& Mesh : Meshes)
 	{
-		if (!Mesh.MeshComponent) continue;
-		if (Mesh.bHideCompletely)
+		if (!Mesh.Key) continue;
+		if (Mesh.Value)
 		{
-			Mesh.MeshComponent->SetHiddenInGame(!bState);
+			Mesh.Key->SetVisibility(bState);
 		}
 		else
 		{
-			Mesh.MeshComponent->SetHiddenInGame(true);
-			for (const TPair<uint8, FVector2D>& Value : Mesh.PrimitiveValues)
+			Mesh.Key->SetVisibility(true);
+
+#if WITH_EDITOR
+			if (!FApp::IsGame())
 			{
-				Mesh.MeshComponent->SetCustomPrimitiveDataFloat(Value.Key, bState ? Value.Value.Y : Value.Value.X);
+				if (Mesh.Key) Mesh.Key->SetDefaultCustomPrimitiveDataFloat(5, bState ? 1.0f : 0.0f);
+				continue;
 			}
+#endif
+			if (Mesh.Key) Mesh.Key->SetCustomPrimitiveDataFloat(5, bState ? 1.0f : 0.0f);
 		}
 	}
 	
@@ -71,3 +82,27 @@ void AElectricLightBase::OnConstruction(const FTransform& Transform)
 	bCachedState = bPreviewState;
 }
 #endif
+void AElectricLightBase::SetLightMeshSettings(UStaticMeshComponent* Target, const ULightComponent* Source, const FLightMeshProperties& Properties)
+{
+	if (!Target || !Source) return;
+
+	FLinearColor Color = Source->GetLightColor();
+	if (Source->bUseTemperature)
+	{
+		Color *= FLinearColor::MakeFromColorTemperature(Source->Temperature);
+	}
+
+	Color.A = Source->Intensity * FMath::Max(0.0f, Properties.Intensity);
+
+#if WITH_EDITOR
+	if (!FApp::IsGame())
+	{
+		Target->SetDefaultCustomPrimitiveDataVector4(0, Color);
+		Target->SetDefaultCustomPrimitiveDataFloat(4, Properties.Fresnel);
+		return;
+	}
+#endif
+
+	Target->SetCustomPrimitiveDataVector4(0, Color);
+	Target->SetCustomPrimitiveDataFloat(4, Properties.Fresnel);
+}
