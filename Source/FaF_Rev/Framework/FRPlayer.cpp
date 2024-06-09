@@ -292,7 +292,7 @@ bool AFRPlayerBase::IsMoving() const
 
 void AFRPlayerBase::SetRunState(const bool bInState)
 {
-	bool bRunning = IsRunning();
+	bool bRunning = HasRunFlag();
 	if (bRunning != bInState)
 	{
 		const bool bCrouching = IsCrouching();
@@ -313,9 +313,14 @@ void AFRPlayerBase::SetRunState(const bool bInState)
 	}
 }
 
-bool AFRPlayerBase::IsRunning() const
+bool AFRPlayerBase::HasRunFlag() const
 {
 	return HasStateFlag(PSF_Running);
+}
+
+bool AFRPlayerBase::IsRunning() const
+{
+	return HasStateFlag(PSF_Running) && GetVelocity().Size() > WalkingSpeed;
 }
 
 void AFRPlayerBase::SetCrouchState(const bool bInState)
@@ -722,8 +727,7 @@ bool AFRPlayerBase::TraceInteraction(FHitResult& OutHitResult, FPlayerInteractio
 
 void AFRPlayerBase::TickStamina()
 {
-	const bool bShouldDrain = IsMoving() && IsRunning();
-	StaminaDelta = bShouldDrain ? -StaminaDrainRate.Evaluate() : StaminaGainRate.Evaluate();
+	StaminaDelta = IsRunning() ? -StaminaDrainRate.Evaluate() : StaminaGainRate.Evaluate();
 	CurrentStamina = FMath::Clamp(StaminaDelta + CurrentStamina, 0.0f, MaxStamina);
 	if (CurrentStamina < 0.01f && !IsStaminaPunished())
 	{

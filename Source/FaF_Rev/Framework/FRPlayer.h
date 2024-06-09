@@ -232,6 +232,9 @@ public:
 		void SetRunState(const bool bInState);
 
 	UFUNCTION(BlueprintPure, Category = "Player")
+		bool HasRunFlag() const;
+	
+	UFUNCTION(BlueprintPure, Category = "Player")
 		bool IsRunning() const;
 
 	UFUNCTION(BlueprintCallable, Category = "Player")
