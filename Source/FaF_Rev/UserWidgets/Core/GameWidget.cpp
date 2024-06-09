@@ -9,7 +9,7 @@
 
 UGameWidgetBase::UGameWidgetBase(const FObjectInitializer& ObjectInitializer)
 	: UGTUserWidget(ObjectInitializer), InteractIcon(nullptr), InteractLabel(nullptr), StaminaBar(nullptr)
-	, HideFadeAnim(nullptr), DefaultInteractIcon(nullptr), DefaultInteractSize(35.0f), StaminaBarSpeed(0.2f, 5.0f)
+	, HideFadeAnim(nullptr), DefaultInteractIcon(nullptr), DefaultInteractSize(35.0f), StaminaBarSpeed(0.1f, 10.0f)
 	, bInitFade(false), bAutoHidden(false), HideCheckTime(0.0f), WorldSettings(nullptr), PlayerChar(nullptr)
 {
 	ZOrder = 92;
@@ -79,13 +79,17 @@ void UGameWidgetBase::NativeTick(const FGeometry& MyGeometry, float InDeltaTime)
 	if (HideCheckTime >= 0.25f) { HideCheck(); }
 	else { HideCheckTime += InDeltaTime; }
 
-	if (PlayerChar && PlayerChar->GetStaminaPercent() != StaminaBar->GetPercent())
+	if (PlayerChar)
 	{
-		StaminaBar->SetPercent(FMath::FInterpConstantTo(StaminaBar->GetPercent(),
-			PlayerChar->GetStaminaPercent(), InDeltaTime, StaminaBarSpeed.X));
+		if (PlayerChar->GetStaminaPercent() != StaminaBar->GetPercent())
+		{
+			StaminaBar->SetPercent(FMath::FInterpConstantTo(StaminaBar->GetPercent(),
+				PlayerChar->GetStaminaPercent(), InDeltaTime,
+				FMath::Abs(PlayerChar->StaminaDelta) * StaminaBarSpeed.X));
 
-		StaminaBar->SetRenderOpacity(FMath::GetMappedRangeValueClamped(FVector2D(0.85f, 1.0f),
-			FVector2D(1.0f, 0.25f), StaminaBar->GetPercent()));
+			StaminaBar->SetRenderOpacity(FMath::GetMappedRangeValueClamped(FVector2D(0.85f, 1.0f),
+				FVector2D(1.0f, 0.25f), StaminaBar->GetPercent()));
+		}
 
 		StaminaBar->SetFillColorAndOpacity(FMath::CInterpTo(StaminaBar->GetFillColorAndOpacity(),
 			PlayerChar->IsStaminaPunished() ? FLinearColor::Red : FLinearColor::White,
