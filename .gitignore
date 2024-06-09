@@ -49,6 +49,3 @@ Plugins/GameTemplatePlugin/Source/GamejoltAPI/Private/GamejoltKeys.h
 
 !/Config/DefaultEngine.default
 !/Config/DefaultGame.default
-
-!Saved/Config/WindowsEditor/Game.ini
-!Saved/Config/WindowsEditor/GameUserSettings.ini
