@@ -24,6 +24,7 @@ UInfoWidgetBase::UInfoWidgetBase(const FObjectInitializer& ObjectInitializer)
 void UInfoWidgetBase::OnSaveStarted()
 {
 	PlayAnimation(SaveAnim);
+	OnSettingsUpdate();
 }
 
 void UInfoWidgetBase::OnSettingsUpdate()
