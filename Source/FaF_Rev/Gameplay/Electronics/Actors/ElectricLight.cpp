@@ -31,14 +31,7 @@ void AElectricLightBase::OnFlickerUpdate() const
 	
 	for (const TPair<UStaticMeshComponent*, bool>& Mesh : Meshes)
 	{
-#if WITH_EDITOR
-		if (!FApp::IsGame())
-		{
-			if (Mesh.Key) Mesh.Key->SetDefaultCustomPrimitiveDataFloat(6, bFlicker ? MeshProperties.Flicker : 0.0f);
-			continue;
-		}
-#endif
-		if (Mesh.Key) Mesh.Key->SetCustomPrimitiveDataFloat(6, bFlicker ? MeshProperties.Flicker : 0.0f);
+		if (Mesh.Key) Mesh.Key->SetDefaultCustomPrimitiveDataFloat(6, bFlicker ? MeshProperties.Flicker : 0.0f);
 	}
 }
 
@@ -65,15 +58,7 @@ void AElectricLightBase::OnStateChanged(const bool bState)
 		else
 		{
 			Mesh.Key->SetVisibility(true);
-
-#if WITH_EDITOR
-			if (!FApp::IsGame())
-			{
-				if (Mesh.Key) Mesh.Key->SetDefaultCustomPrimitiveDataFloat(5, bState ? 1.0f : 0.0f);
-				continue;
-			}
-#endif
-			if (Mesh.Key) Mesh.Key->SetCustomPrimitiveDataFloat(5, bState ? 1.0f : 0.0f);
+			if (Mesh.Key) Mesh.Key->SetDefaultCustomPrimitiveDataFloat(5, bState ? 1.0f : 0.0f);
 		}
 	}
 	
@@ -100,15 +85,6 @@ void AElectricLightBase::SetLightMeshSettings(UStaticMeshComponent* Target, cons
 
 	Color.A = Source->Intensity * FMath::Max(0.0f, Properties.Intensity);
 
-#if WITH_EDITOR
-	if (!FApp::IsGame())
-	{
-		Target->SetDefaultCustomPrimitiveDataVector4(0, Color);
-		Target->SetDefaultCustomPrimitiveDataFloat(4, Properties.Fresnel);
-		return;
-	}
-#endif
-
-	Target->SetCustomPrimitiveDataVector4(0, Color);
-	Target->SetCustomPrimitiveDataFloat(4, Properties.Fresnel);
+	Target->SetDefaultCustomPrimitiveDataVector4(0, Color);
+	Target->SetDefaultCustomPrimitiveDataFloat(4, Properties.Fresnel);
 }
