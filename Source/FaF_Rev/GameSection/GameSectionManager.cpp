@@ -30,7 +30,7 @@ void UGameSectionManager::SetSequence(const TArray<uint8>& InSequence)
 		return;
 	}
 	
-	if (IsBusy())
+	if (IsLoading())
 	{
 		SMART_LOG(Warning, TEXT("Game Section Manager is busy, the Transition request will be ignored."));
 		return;

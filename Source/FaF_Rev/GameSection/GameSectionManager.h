@@ -30,7 +30,7 @@ public:
 		void Step(const uint8 Index);
 	
 	UFUNCTION(BlueprintPure, Category = "GameSectionManager")
-		bool IsBusy() const { return bLoading; }
+		bool IsLoading() const { return bLoading; }
 	
 	UFUNCTION(BlueprintCallable, Category = "GameSectionManager")
 		void SaveCurrentTime();

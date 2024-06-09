@@ -3,6 +3,7 @@
 #include "FRPlayerController.h"
 #include "Blueprint/UserWidget.h"
 #include "EnhancedInputSubsystems.h"
+#include "GameSection/GameSectionManager.h"
 #include "Menus/PauseWidget.h"
 #include "FRGameMode.h"
 
@@ -46,7 +47,7 @@ void AFRPlayerController::OnWindowFocusChanged(bool bFocused)
 	}
 
 
-	if (!FRSettings->IsGameplayMap(this))
+	if (!FRSettings->IsGameplayMap(this) || UGameSectionManager::Get(this)->IsLoading())
 	{
 #if !WITH_EDITOR
 		UKismetSystemLibrary::ExecuteConsoleCommand(this, FString::Printf(TEXT("t.MaxFPS %f"),
@@ -54,6 +55,11 @@ void AFRPlayerController::OnWindowFocusChanged(bool bFocused)
 #endif
 		return;
 	}
+
+#if !WITH_EDITOR
+	UKismetSystemLibrary::ExecuteConsoleCommand(this, FString::Printf(TEXT("t.MaxFPS %f"),
+		UGameSettings::Get()->GetFrameRateLimit()));
+#endif
 	
 	if (bFocused && UnfocusedWidget->IsInViewport())
 	{
