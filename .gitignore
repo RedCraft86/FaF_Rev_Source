@@ -36,7 +36,6 @@ DerivedDataCache/
 Intermediate/
 /Config/
 /Content/
-/Plugins/
 /Saved/
 # /Source/
 
@@ -45,6 +44,12 @@ Build/*
 Build/*/**
 !/Build/*/PakBlacklist*.txt
 !/Build/**/*.ico
+
+/Plugins/
+!Plugins/GameTemplatePlugin/GameTemplatePlugin.uplugin
+!/Plugins/GameTemplatePlugin/Content/
+!/Plugins/GameTemplatePlugin/Resources/
+!/Plugins/GameTemplatePlugin/Source/
 
 !/Config/DefaultEngine.default
 !/Config/DefaultGame.default
