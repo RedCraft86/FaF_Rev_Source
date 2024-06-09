@@ -158,7 +158,7 @@ void USettingsWidgetBase::OnResolutionChanged(FString SelectedItem, ESelectInfo:
 #if WITH_EDITOR
 	if (Idx == 0)
 	{
-		SettingsObj->SetFullscreenMode(GIsPlayInEditorWorld ? EWindowMode::WindowedFullscreen : EWindowMode::Fullscreen);
+		SettingsObj->SetFullscreenMode(EWindowMode::WindowedFullscreen);
 	}
 	else
 	{
