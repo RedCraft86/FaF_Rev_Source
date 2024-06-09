@@ -44,11 +44,7 @@ Build/*/**
 !/Build/*/PakBlacklist*.txt
 !/Build/**/*.ico
 
-/Plugins/
-!Plugins/GameTemplatePlugin/GameTemplatePlugin.uplugin
-!/Plugins/GameTemplatePlugin/Content/
-!/Plugins/GameTemplatePlugin/Resources/
-!/Plugins/GameTemplatePlugin/Source/
+/Plugins/SteamAudio/
 Plugins/GameTemplatePlugin/Source/GamejoltAPI/Private/GamejoltKeys.h
 
 !/Config/DefaultEngine.default
