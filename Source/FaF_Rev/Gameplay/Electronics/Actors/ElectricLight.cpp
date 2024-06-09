@@ -69,8 +69,11 @@ void AElectricLightBase::OnStateChanged(const bool bState)
 void AElectricLightBase::OnConstruction(const FTransform& Transform)
 {
 	Super::OnConstruction(Transform);
-	OnStateChanged(bPreviewState);
-	bCachedState = bPreviewState;
+	if (!FApp::IsGame())
+	{
+		bCachedState = bPreviewState;
+		OnStateChanged(bPreviewState);
+	}
 }
 #endif
 void AElectricLightBase::SetLightMeshSettings(UStaticMeshComponent* Target, const ULightComponent* Source, const FLightMeshProperties& Properties)
