@@ -37,7 +37,6 @@ Intermediate/
 /Config/
 /Content/
 /Saved/
-# /Source/
 
 Build/*
 !Build/*/
@@ -50,6 +49,7 @@ Build/*/**
 !/Plugins/GameTemplatePlugin/Content/
 !/Plugins/GameTemplatePlugin/Resources/
 !/Plugins/GameTemplatePlugin/Source/
+Plugins/GameTemplatePlugin/Source/GamejoltAPI/Private/GamejoltKeys.h
 
 !/Config/DefaultEngine.default
 !/Config/DefaultGame.default
