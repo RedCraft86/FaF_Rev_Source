@@ -14,10 +14,7 @@ TSet<FAssetData> UGameSectionDataNode::GetDependencies()
 		GetAssetRegistry()->GetAssetsByPackageName(Package, Assets);
 		for (FAssetData& Asset : Assets)
 		{
-			if (Asset.IsValid() && !Asset.IsAssetLoaded())
-			{
-				Result.Add(Asset);
-			}
+			if (Asset.IsValid()) Result.Add(Asset);
 		}
 	}
 

@@ -105,7 +105,7 @@ void ULoadingWidgetBase::BeginLoading(const TSet<FAssetData>& InObjects, const T
 void ULoadingWidgetBase::NativeOnInitialized()
 {
 	Super::NativeOnInitialized();
-	GetWorld()->GetTimerManager().SetTimer(SlowTickHandle, this, &ULoadingWidgetBase::SlowTick, 0.05, true);
+	GetWorld()->GetTimerManager().SetTimer(SlowTickHandle, this, &ULoadingWidgetBase::SlowTick, 0.05f, true);
 	GetWorld()->GetTimerManager().PauseTimer(SlowTickHandle);
 }
 
