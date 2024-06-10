@@ -9,7 +9,7 @@ FGTActorIconData::FGTActorIconData(const FString& BaseIconPath)
 	Transform = {
 		FRotator::ZeroRotator,
 		FVector::ZeroVector,
-		FVector{0.5f}
+		FVector{0.25f}
 	};
 #if WITH_EDITOR
 	BaseSprite = FSoftObjectPath(BaseIconPath.IsEmpty()
