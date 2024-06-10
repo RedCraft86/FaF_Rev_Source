@@ -19,7 +19,7 @@ public:
 	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, Category = "Subobjects")
 		TObjectPtr<UBillboardComponent> IconComponent;
 
-	UPROPERTY(BlueprintAssignable, DisplayName = "OnEnableStateChanged")
+	UPROPERTY(BlueprintAssignable, DisplayName = "On Enable State Changed")
 		FActorEnableChangedSignature OnEnableStateChangedEvent;
 	
 	UFUNCTION(BlueprintCallable, Category = "Actor")

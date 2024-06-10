@@ -21,7 +21,7 @@ public:
 	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, Category = "Subobjects")
 		TObjectPtr<USceneComponent> SceneRoot;
 
-	UPROPERTY(BlueprintAssignable, DisplayName = "OnEnableStateChanged")
+	UPROPERTY(BlueprintAssignable, DisplayName = "On Enable State Changed")
 		FActorEnableChangedSignature OnEnableStateChangedEvent;
 	
 	UFUNCTION(BlueprintCallable, Category = "Actor")
