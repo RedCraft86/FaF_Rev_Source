@@ -19,7 +19,7 @@ struct FAF_REV_API FSimpleNoticeData
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "TextData")
 		float ExtraTime;
 
-	FSimpleNoticeData() : Message(FText::GetEmpty()), ExtraTime(1.0f) {}
+	FSimpleNoticeData() : Message(FText::GetEmpty()), ExtraTime(0.25f) {}
 	FSimpleNoticeData(const FText& InMessage, const float InTime) : Message(InMessage), ExtraTime(InTime) {}
 	friend uint32 GetTypeHash(const FSimpleNoticeData& Data)
 	{
@@ -44,7 +44,7 @@ struct FAF_REV_API FSimpleSubtitleData
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "SubtitleData")
 		float ExtraTime;
 
-	FSimpleSubtitleData() : Speaker(INVTEXT("You")), Line(FText::GetEmpty()), ExtraTime(1.0f) {}
+	FSimpleSubtitleData() : Speaker(INVTEXT("You")), Line(FText::GetEmpty()), ExtraTime(0.25f) {}
 	FSimpleSubtitleData(const FText& InLabel,const FText& InLine, const float InTime) : Speaker(InLabel), Line(InLine), ExtraTime(InTime) {}
 	friend uint32 GetTypeHash(const FSimpleSubtitleData& Data)
 	{
