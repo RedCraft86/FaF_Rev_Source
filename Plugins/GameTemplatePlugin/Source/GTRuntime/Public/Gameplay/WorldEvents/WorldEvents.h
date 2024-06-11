@@ -80,10 +80,10 @@ struct GTRUNTIME_API FWCFlipFlop final : public FWorldEventBase
 {
 	GENERATED_BODY()
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "FlipFlop", meta = (BaseStruct = "/Script/GTRuntime.WorldEventBase", ExcludeBaseStruct))
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "FlipFlop", DisplayName = "Flip", meta = (BaseStruct = "/Script/GTRuntime.WorldEventBase", ExcludeBaseStruct))
 		TArray<FInstancedStruct> EventsA;
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "FlipFlop", meta = (BaseStruct = "/Script/GTRuntime.WorldEventBase", ExcludeBaseStruct))
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "FlipFlop", DisplayName = "Flop", meta = (BaseStruct = "/Script/GTRuntime.WorldEventBase", ExcludeBaseStruct))
 		TArray<FInstancedStruct> EventsB;
 
 	FWCFlipFlop() : bIsA(false) {}
@@ -219,8 +219,8 @@ struct GTRUNTIME_API FWEActorEnabled final : public FWorldEventBase
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "ActorEnabled", meta = (EditCondition = "ChangeType == EWEChangeType::Set", EditConditionHides))
 		bool bEnabled;
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "ActorEnabled")
-		TSet<TSoftObjectPtr<AGTActor>> Targets;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "ActorEnabled", meta = (AllowedClasses = "/Script/GTRuntime.GTActor,/Script/GTRuntime.GTVolume"))
+		TSet<TSoftObjectPtr<AActor>> Targets;
 
 	FWEActorEnabled() : ChangeType(EWEChangeType::Set), bEnabled(true), Targets({}) {}
 

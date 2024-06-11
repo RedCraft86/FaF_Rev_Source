@@ -10,6 +10,7 @@
 #include "Sound/AmbientSound.h"
 #include "GTGlobalSubsystem.h"
 #include "GTActor.h"
+#include "GTVolume.h"
 
 void FWCDelay::RunEvent(const UObject* WorldContext)
 {
@@ -170,21 +171,35 @@ void FWEActorEnabled::RunEvent(const UObject* WorldContext)
 	switch (ChangeType)
 	{
 	case EWEChangeType::Set:
-		for (const TSoftObjectPtr<AGTActor>& Actor : Targets)
+		for (const TSoftObjectPtr<AActor>& Actor : Targets)
 		{
-			if (AGTActor* ActorPtr = Actor.LoadSynchronous())
+			if (AActor* ActorPtr = Actor.LoadSynchronous())
 			{
-				ActorPtr->SetEnabled(bEnabled);
+				if (AGTActor* GTActor = Cast<AGTActor>(ActorPtr))
+				{
+					GTActor->SetEnabled(bEnabled);
+				}
+				else if (AGTVolume* GTVolume = Cast<AGTVolume>(ActorPtr))
+				{
+					GTVolume->SetEnabled(bEnabled);
+				}
 			}
 		}
 		break;
 
 	case EWEChangeType::Toggle:
-		for (const TSoftObjectPtr<AGTActor>& Actor : Targets)
+		for (const TSoftObjectPtr<AActor>& Actor : Targets)
 		{
-			if (AGTActor* ActorPtr = Actor.LoadSynchronous())
+			if (AActor* ActorPtr = Actor.LoadSynchronous())
 			{
-				ActorPtr->SetEnabled(!ActorPtr->IsEnabled());
+				if (AGTActor* GTActor = Cast<AGTActor>(ActorPtr))
+				{
+					GTActor->SetEnabled(!GTActor->IsEnabled());
+				}
+				else if (AGTVolume* GTVolume = Cast<AGTVolume>(ActorPtr))
+				{
+					GTVolume->SetEnabled(!GTVolume->IsEnabled());
+				}
 			}
 		}
 		break;
