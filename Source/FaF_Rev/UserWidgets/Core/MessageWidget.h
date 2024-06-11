@@ -48,7 +48,8 @@ public:
 
 protected:
 
-	FTimerHandle PauseCheckTimer;
+	bool bAutoHidden;
+	float HideCheckTime;
 	UPROPERTY(Transient) TObjectPtr<const AWorldSettings> WorldSettings;
 
 	FTimerHandle SmallNoticeTimer;
@@ -63,6 +64,7 @@ protected:
 	TQueue<FSimpleSubtitleData> SubtitleQueue;
 	void UpdateSubtitle();
 
-	void PauseCheck();
+	void HideCheck();
 	virtual void InitWidget() override;
+	virtual void NativeTick(const FGeometry& MyGeometry, float InDeltaTime) override;
 };

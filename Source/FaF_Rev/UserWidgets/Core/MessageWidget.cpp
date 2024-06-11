@@ -2,13 +2,15 @@
 
 #include "MessageWidget.h"
 #include "ExprTextBlock.h"
-#include "Animation/WidgetAnimation.h"
 #include "Components/TextBlock.h"
+#include "Animation/WidgetAnimation.h"
+#include "GameFramework/PlayerState.h"
 
 UMessageWidgetBase::UMessageWidgetBase(const FObjectInitializer& ObjectInitializer)
 	: UGTUserWidget(ObjectInitializer), SmallNoticeText(nullptr), LargeNoticeText(nullptr)
 	, SubtitleLineText(nullptr), SubtitleNameText(nullptr), SmallNoticeAnim(nullptr)
-	, LargeNoticeAnim(nullptr), SubtitleAnim(nullptr), SubtitlePauseFade(nullptr), WorldSettings(nullptr)
+	, LargeNoticeAnim(nullptr), SubtitleAnim(nullptr), SubtitlePauseFade(nullptr)
+	, bAutoHidden(false), HideCheckTime(0.0f), WorldSettings(nullptr)
 {
 	ZOrder = 95;
 	bAutoAdd = true;
@@ -149,20 +151,26 @@ void UMessageWidgetBase::UpdateSubtitle()
 	}
 }
 
-void UMessageWidgetBase::PauseCheck()
+void UMessageWidgetBase::HideCheck()
 {
-	if (WorldSettings && WorldSettings->GetPauserPlayerState())
+	HideCheckTime = 0.0f;
+	if (!WorldSettings || IsAnimationPlaying(SubtitlePauseFade)) return;
+	const bool bNewAutoHidden = IsValid(WorldSettings->GetPauserPlayerState());
+	if (bAutoHidden != bNewAutoHidden)
 	{
-		PlayAnimationForward(SubtitlePauseFade);
-	}
-	else if (!IsAnimationPlaying(SubtitlePauseFade) && GetAnimationCurrentTime(SubtitlePauseFade) > 0.1f)
-	{
-		PlayAnimationReverse(SubtitlePauseFade);
+		bAutoHidden = bNewAutoHidden;
+		bAutoHidden ? PlayAnimationForward(SubtitlePauseFade) : PlayAnimationReverse(SubtitlePauseFade);
 	}
 }
 
 void UMessageWidgetBase::InitWidget()
 {
 	WorldSettings = GetWorld()->GetWorldSettings();
-	GetWorld()->GetTimerManager().SetTimer(PauseCheckTimer, this, &UMessageWidgetBase::PauseCheck, 0.25f, true);
+}
+
+void UMessageWidgetBase::NativeTick(const FGeometry& MyGeometry, float InDeltaTime)
+{
+	Super::NativeTick(MyGeometry, InDeltaTime);
+	if (HideCheckTime >= 0.25f) { HideCheck(); }
+	else { HideCheckTime += InDeltaTime; }
 }
