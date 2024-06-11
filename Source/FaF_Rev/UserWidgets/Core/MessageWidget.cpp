@@ -2,6 +2,7 @@
 
 #include "MessageWidget.h"
 #include "ExprTextBlock.h"
+#include "Animation/WidgetAnimation.h"
 #include "Components/TextBlock.h"
 
 UMessageWidgetBase::UMessageWidgetBase(const FObjectInitializer& ObjectInitializer)
@@ -139,6 +140,12 @@ void UMessageWidgetBase::UpdateSubtitle()
 	{
 		PlayAnimationReverse(SubtitleAnim);
 		SubtitleTimer.Invalidate();
+		
+		FTimerHandle Handle;
+		GetWorld()->GetTimerManager().SetTimer(Handle, [this]()
+		{
+			if (!SubtitleTimer.IsValid()) SubtitleLineText->SetText(INVTEXT(""));
+		}, SubtitleAnim->GetEndTime() - SubtitleAnim->GetStartTime(), false);
 	}
 }
 
