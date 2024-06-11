@@ -4,7 +4,7 @@
 #include "Components/BillboardComponent.h"
 
 FGTActorIconData::FGTActorIconData(const FString& BaseIconPath)
-	: Sprite(nullptr), bScreenSizeScaled(false), ScreenSizeScale(0.0025f)
+	: Sprite(nullptr), bScreenSizeScaled(true), ScreenSizeScale(0.0025f)
 {
 	Transform = {
 		FRotator::ZeroRotator,
