@@ -42,20 +42,16 @@ void ASplinePolygon::Construct()
 	
 	ProceduralMesh->ClearAllMeshSections();
 	ProceduralMesh->ClearCollisionConvexMeshes();
+	ProceduralMesh->bUseComplexAsSimpleCollision = true;
 	
 	TArray<FVector> Vertices;
-	TArray<FVector> CollisionVerts;
 	for (int i = 0; i < PointCount; i++)
 	{
 		const FVector Vert = SplineComponent->GetLocationAtSplinePoint(i, ESplineCoordinateSpace::Local);
 		const FVector UpVector = SplineComponent->GetUpVectorAtSplinePoint(i, ESplineCoordinateSpace::Local);
 		
 		Vertices.Add(Vert);
-		CollisionVerts.Add(Vert + UpVector);
-		CollisionVerts.Add(Vert - UpVector);
 	}
-	
-	ProceduralMesh->AddCollisionConvexMesh(CollisionVerts);
 
 	TArray<int> Triangles;
 	TArray<UE::Geometry::FIndex3i> Tris;
