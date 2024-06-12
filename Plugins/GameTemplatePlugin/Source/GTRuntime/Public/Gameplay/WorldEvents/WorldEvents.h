@@ -352,7 +352,7 @@ protected:
 	virtual void RunEvent(const UObject* WorldContext) override;
 };
 
-USTRUCT(BlueprintType, DisplayName = "Load Stream Level")
+USTRUCT(BlueprintType, DisplayName = "Unload Stream Level")
 struct GTRUNTIME_API FWELevelStreamUnload final : public FWorldEventBase
 {
 	GENERATED_BODY()
