@@ -159,3 +159,24 @@ protected:
 
 	virtual void RunEvent(const UObject* WorldContext) override;
 };
+
+USTRUCT(BlueprintType, DisplayName = "Step into Sequence")
+struct FAF_REV_API FWEStepSequence final : public FWorldEventBase
+{
+	GENERATED_BODY()
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "StepSequence")
+		uint8 Index;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "StepSequence|Player")
+		bool bLock;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "StepSequence|Player", meta = (ClampMin = 0.0f, UIMin = 0.0f))
+		float FadeTime;
+
+	FWEStepSequence() : Index(0), bLock(true), FadeTime(1.0f) {}
+
+protected:
+
+	virtual void RunEvent(const UObject* WorldContext) override;
+};

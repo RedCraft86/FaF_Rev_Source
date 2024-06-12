@@ -3,6 +3,7 @@
 #include "FRWorldEvents.h"
 #include "NarrativeComponent.h"
 #include "SaveSystem/SaveSubsystem.h"
+#include "GameSection/GameSectionManager.h"
 #include "FRGameMode.h"
 
 void FWEPlayerSettings::RunEvent(const UObject* WorldContext)
@@ -82,5 +83,28 @@ void FWENarrativeTask::RunEvent(const UObject* WorldContext)
 	{
 		if (!Task.IsNull() && !Argument.IsEmpty() && Quantity > 0)
 			GM->Narrative->CompleteNarrativeDataTask(Task.LoadSynchronous(), Argument, Quantity);
+	}
+}
+
+void FWEStepSequence::RunEvent(const UObject* WorldContext)
+{
+	if (AFRPlayerBase* Player = AFRPlayerBase::Get(WorldContext))
+	{
+		if (bLock) Player->AddLockFlag(Player::LockFlags::Loading);
+		if (FMath::Abs(FadeTime) > 0.01f) Player->FadeToBlack(FMath::Abs(FadeTime));
+	}
+
+	if (const UWorld* World = GEngine->GetWorldFromContextObject(WorldContext, EGetWorldErrorMode::LogAndReturnNull))
+	{
+		FTimerManager& Timer = World->GetTimerManager();
+
+		FTimerHandle Handle;
+		Timer.SetTimer(Handle, [this, WorldContext]()
+		{
+			if (UGameSectionManager* Manager = UGameSectionManager::Get(WorldContext))
+			{
+				Manager->Step(Index);
+			}
+		}, FMath::Abs(FadeTime), false);
 	}
 }
