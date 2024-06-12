@@ -233,7 +233,7 @@ void FWEStaticMeshPrimitiveData::RunEvent(const UObject* WorldContext)
 		{
 			for (const TPair<uint8, float>& Pair : Data)
 			{
-				MeshComp->SetCustomPrimitiveDataFloat(Pair.Key, Pair.Value);
+				MeshComp->SetDefaultCustomPrimitiveDataFloat(Pair.Key, Pair.Value);
 			}
 		}
 	}
@@ -284,6 +284,7 @@ void FWESequencePlay::RunEvent(const UObject* WorldContext)
 	if (FMath::IsNearlyZero(PlayRate)) return;
 	if (ULevelSequencePlayer* Player = Target.IsNull() ? nullptr : Target.LoadSynchronous()->GetSequencePlayer())
 	{
+		Player->StopAtCurrentTime();
 		Player->SetPlayRate(FMath::Abs(PlayRate));
 		PlayRate < 0.0f ? Player->PlayReverse() : Player->Play();
 	}
