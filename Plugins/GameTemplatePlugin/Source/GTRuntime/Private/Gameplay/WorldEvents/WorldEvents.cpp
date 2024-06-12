@@ -286,7 +286,16 @@ void FWESequencePlay::RunEvent(const UObject* WorldContext)
 	{
 		Player->StopAtCurrentTime();
 		Player->SetPlayRate(FMath::Abs(PlayRate));
-		PlayRate < 0.0f ? Player->PlayReverse() : Player->Play();
+		if (PlayRate < 0.0f)
+		{
+			Player->GoToEndAndStop();
+			Player->PlayReverse();
+		}
+		else
+		{
+			Player->SetPlaybackPosition({Player->GetStartTime().Time, EUpdatePositionMethod::Jump});
+			Player->Play();
+		}
 	}
 }
 
