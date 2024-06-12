@@ -26,6 +26,9 @@ public:
 	UPROPERTY(EditAnywhere, Category = "Settings", meta = (ClampMin = 0.5f, UIMin = 0.5f))
 		float WallHeight;
 
+	UPROPERTY(EditAnywhere, Category = "Settings", meta = (ClampMin = 0, UIMin = 0))
+		TSet<int32> SkipIndexes;
+
 	UPROPERTY(EditAnywhere, Category = "Settings")
 		FPrimitiveCollision Collision;
 	

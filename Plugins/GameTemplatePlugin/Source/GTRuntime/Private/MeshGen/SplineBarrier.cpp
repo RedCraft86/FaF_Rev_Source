@@ -68,6 +68,8 @@ void ASplineBarrier::Construct()
 	
 	for (int32 i = 0; i < GenPointCount; i++)
 	{
+		if (SkipIndexes.Contains(i)) continue;
+		
 		FVector Location, Tangent;
 		SplineComponent->GetLocalLocationAndTangentAtSplinePoint(i, Location, Tangent);
 		const float DistB = SplineComponent->GetDistanceAlongSplineAtSplinePoint(i + 1);
