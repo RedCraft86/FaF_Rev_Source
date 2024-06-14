@@ -17,6 +17,46 @@ void FWEPlayerSettings::RunEvent(const UObject* WorldContext)
 	}
 }
 
+void FWEPlayerAddLockFlag::RunEvent(const UObject* WorldContext)
+{
+	if (!Target.LoadSynchronous())
+		Target = AFRPlayerBase::Get(WorldContext);
+
+	if (AFRPlayerBase* Player = Target.LoadSynchronous())
+	{
+		Player->AddLockFlag(LockFlag.SelectedValue);
+	}
+}
+
+void FWEPlayerClearLockFlag::RunEvent(const UObject* WorldContext)
+{
+	if (!Target.LoadSynchronous())
+		Target = AFRPlayerBase::Get(WorldContext);
+
+	if (AFRPlayerBase* Player = Target.LoadSynchronous())
+	{
+		Player->ClearLockFlag(LockFlag.SelectedValue);
+	}
+}
+
+void FWEPlayerFade::RunEvent(const UObject* WorldContext)
+{
+	if (!Target.LoadSynchronous())
+		Target = AFRPlayerBase::Get(WorldContext);
+
+	if (const AFRPlayerBase* Player = Target.LoadSynchronous())
+	{
+		if (bFadeOut)
+		{
+			Player->FadeToBlack(FadeTime, bFadeAudio);
+		}
+		else
+		{
+			Player->FadeFromBlack(FadeTime, bFadeAudio);
+		}
+	}
+}
+
 void FWEUnlockTransientKey::RunEvent(const UObject* WorldContext)
 {
 	if (const USaveSubsystem* Subsystem = USaveSubsystem::Get(WorldContext))
@@ -88,10 +128,13 @@ void FWENarrativeTask::RunEvent(const UObject* WorldContext)
 
 void FWEStepSequence::RunEvent(const UObject* WorldContext)
 {
-	if (AFRPlayerBase* Player = AFRPlayerBase::Get(WorldContext))
+	if (!Player.LoadSynchronous())
+		Player = AFRPlayerBase::Get(WorldContext);
+
+	if (AFRPlayerBase* PlayerPtr = Player.LoadSynchronous())
 	{
-		if (bLock) Player->AddLockFlag(Player::LockFlags::Loading);
-		if (FMath::Abs(FadeTime) > 0.01f) Player->FadeToBlack(FMath::Abs(FadeTime));
+		if (bLock) PlayerPtr->AddLockFlag(Player::LockFlags::Loading);
+		if (FMath::Abs(FadeTime) > 0.01f) PlayerPtr->FadeToBlack(FMath::Abs(FadeTime));
 	}
 
 	if (const UWorld* World = GEngine->GetWorldFromContextObject(WorldContext, EGetWorldErrorMode::LogAndReturnNull))

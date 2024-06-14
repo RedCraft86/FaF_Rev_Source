@@ -565,8 +565,15 @@ void AFRPlayerBase::FadeFromBlack(const float InTime, const bool bAudio) const
 {
 	if (PlayerController && PlayerController->PlayerCameraManager)
 	{
-		PlayerController->PlayerCameraManager->StartCameraFade(1.0f, 0.0f,
-			InTime, FLinearColor::Black, bAudio, true);
+		if (FMath::IsNearlyZero(InTime))
+		{
+			PlayerController->PlayerCameraManager->SetManualCameraFade(0.0f, FLinearColor::Black, bAudio);
+		}
+		else
+		{
+			PlayerController->PlayerCameraManager->StartCameraFade(1.0f, 0.0f,
+			   InTime, FLinearColor::Black, bAudio, true);
+		}
 	}
 }
 

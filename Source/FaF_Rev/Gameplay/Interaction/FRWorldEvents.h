@@ -28,6 +28,66 @@ protected:
 	virtual void RunEvent(const UObject* WorldContext) override;
 };
 
+USTRUCT(BlueprintType, DisplayName = "Add Player Lock Flag")
+struct FAF_REV_API FWEPlayerAddLockFlag final : public FWorldEventBase
+{
+	GENERATED_BODY()
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "SetLockFlag")
+		FPlayerLockFlag LockFlag;
+	
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "PlayerSettings")
+		TSoftObjectPtr<AFRPlayerBase> Target;
+
+	FWEPlayerAddLockFlag() : LockFlag(Player::LockFlags::Custom) {}
+	
+protected:
+
+	virtual void RunEvent(const UObject* WorldContext) override;
+};
+
+USTRUCT(BlueprintType, DisplayName = "Clear Player Lock Flag")
+struct FAF_REV_API FWEPlayerClearLockFlag final : public FWorldEventBase
+{
+	GENERATED_BODY()
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "UnsetLockFlag")
+		FPlayerLockFlag LockFlag;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "PlayerSettings")
+		TSoftObjectPtr<AFRPlayerBase> Target;
+
+	FWEPlayerClearLockFlag() : LockFlag(Player::LockFlags::Custom) {}
+	
+protected:
+
+	virtual void RunEvent(const UObject* WorldContext) override;
+};
+
+USTRUCT(BlueprintType, DisplayName = "Player Fade")
+struct FAF_REV_API FWEPlayerFade final : public FWorldEventBase
+{
+	GENERATED_BODY()
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "PlayerFade")
+		bool bFadeOut;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "PlayerFade", meta = (ClampMin = 0.0f, UIMin = 0.0f))
+		float FadeTime;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "PlayerFade")
+		bool bFadeAudio;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "PlayerFade")
+		TSoftObjectPtr<AFRPlayerBase> Target;
+
+	FWEPlayerFade() : bFadeOut(false), FadeTime(1.0f), bFadeAudio(false) {}
+	
+protected:
+
+	virtual void RunEvent(const UObject* WorldContext) override;
+};
+
 USTRUCT(BlueprintType, DisplayName = "Unlock Transient Key")
 struct FAF_REV_API FWEUnlockTransientKey final : public FWorldEventBase
 {
@@ -166,15 +226,18 @@ struct FAF_REV_API FWEStepSequence final : public FWorldEventBase
 	GENERATED_BODY()
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "StepSequence")
+		TSoftObjectPtr<AFRPlayerBase> Player;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "StepSequence")
 		uint8 Index;
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "StepSequence|Player")
-		bool bLock;
-
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "StepSequence|Player", meta = (ClampMin = 0.0f, UIMin = 0.0f))
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "StepSequence", meta = (ClampMin = 0.0f, UIMin = 0.0f))
 		float FadeTime;
 
-	FWEStepSequence() : Index(0), bLock(true), FadeTime(1.0f) {}
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "StepSequence")
+		bool bLock;
+
+	FWEStepSequence() : Index(0), FadeTime(1.0f), bLock(true) {}
 
 protected:
 
