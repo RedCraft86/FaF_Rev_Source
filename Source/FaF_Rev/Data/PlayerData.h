@@ -314,12 +314,14 @@ namespace Player
 		inline static FName Inspection		= TEXT("Inspection");
 		inline static FName WorldDevice		= TEXT("WorldDevice");
 		inline static FName Hiding			= TEXT("Hiding");
+		inline static FName Custom			= TEXT("Custom");
+		inline static FName CustomNoJS		= TEXT("CustomNoJS");
 
 		inline static TSet All = {Loading, Cutscene, Dialogue, Jumpscare, GuideScreen,
-			Inventory, Inspection, WorldDevice, Hiding};
+			Inventory, Inspection, WorldDevice, Hiding, Custom, CustomNoJS};
 
-		inline static TSet CanReset = {Inventory, Inspection, WorldDevice, Hiding};
-		inline static TSet AllowJumpscare = {Inventory, Inspection, WorldDevice};
+		inline static TSet CanReset = {Inventory, Inspection, WorldDevice, Hiding, Custom, CustomNoJS};
+		inline static TSet AllowJumpscare = {Inventory, Inspection, WorldDevice, Custom};
 	}
 	
 	namespace InputActions

@@ -193,22 +193,22 @@ public:
 		void OverrideControlFlags(UPARAM(meta = (Bitmask, BitmaskEnum = "/Script/FaF_Rev.EPlayerControlFlags")) const int32 InFlags);
 
 	UFUNCTION(BlueprintCallable, Category = "Player")
-		void SetControlFlag(const int32 InFlag);
+		void SetControlFlag(UPARAM(meta = (Bitmask, BitmaskEnum = "/Script/FaF_Rev.EPlayerControlFlags")) const int32 InFlag);
 	
 	UFUNCTION(BlueprintCallable, Category = "Player")
-		void UnsetControlFlag(const int32 InFlag);
+		void UnsetControlFlag(UPARAM(meta = (Bitmask, BitmaskEnum = "/Script/FaF_Rev.EPlayerControlFlags")) const int32 InFlag);
 	
 	UFUNCTION(BlueprintPure, Category = "Player")
-		bool HasControlFlag(const int32 InFlag) const;
+		bool HasControlFlag(UPARAM(meta = (Bitmask, BitmaskEnum = "/Script/FaF_Rev.EPlayerControlFlags")) const int32 InFlag) const;
 
 	UFUNCTION(BlueprintCallable, Category = "Player")
-		void SetStateFlag(const int32 InFlag);
+		void SetStateFlag(UPARAM(meta = (Bitmask, BitmaskEnum = "/Script/FaF_Rev.EPlayerStateFlags")) const int32 InFlag);
 	
 	UFUNCTION(BlueprintCallable, Category = "Player")
-		void UnsetStateFlag(const int32 InFlag);
+		void UnsetStateFlag(UPARAM(meta = (Bitmask, BitmaskEnum = "/Script/FaF_Rev.EPlayerStateFlags")) const int32 InFlag);
 	
 	UFUNCTION(BlueprintPure, Category = "Player")
-		bool HasStateFlag(const int32 InFlag) const;
+		bool HasStateFlag(UPARAM(meta = (Bitmask, BitmaskEnum = "/Script/FaF_Rev.EPlayerStateFlags")) const int32 InFlag) const;
 
 	UFUNCTION(BlueprintCallable, Category = "Player")
 		void AddLockFlag(const FPlayerLockFlag InFlag);
