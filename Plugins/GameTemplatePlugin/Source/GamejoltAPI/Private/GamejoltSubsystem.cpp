@@ -2,10 +2,9 @@
 
 #include "GamejoltSubsystem.h"
 #include "Interfaces/IHttpResponse.h"
-#include "GenericPlatform/GenericPlatformHttp.h"
-#include "Compression/OodleDataCompressionUtil.h"
 #include "Serialization/BufferArchive.h"
-#include "Helpers/AESHelpers.h"
+#include "GenericPlatform/GenericPlatformHttp.h"
+#include "Libraries/GTDataUtilsLibrary.h"
 #include "GTConfigSubsystem.h"
 #include "GamejoltSettings.h"
 #include "GamejoltKeys.h"
@@ -348,14 +347,12 @@ void UGamejoltSubsystem::SaveCredentials() const
 	if (!Credentials.Key.IsEmpty() && !Credentials.Value.IsEmpty())
 	{
 		FString Data = FString::Printf(TEXT("%s_&&_%s"), *Credentials.Key, *Credentials.Value);
-		Data = AESHelpers::EncryptAES(Data, GamejoltAES);
+		Data = UGTDataUtilsLibrary::EncryptAES(Data, GamejoltAES);
 
 		FBufferArchive ToBinary(true);
 		ToBinary << Data;
 
-		FOodleCompressedArray::CompressTArray(CompressedData, ToBinary,
-			FOodleDataCompression::ECompressor::Kraken,
-			FOodleDataCompression::ECompressionLevel::SuperFast);
+		CompressedData = UGTDataUtilsLibrary::CompressBytes(ToBinary);
 
 		ToBinary.FlushCache();
 		ToBinary.Close();
@@ -389,16 +386,13 @@ void UGamejoltSubsystem::LoadCredentials(const TFunction<void(const FGamejoltRes
 			{
 				CALLBACK(, {false, TEXT("No existing data to load")})
 			}
-				
-			TArray<uint8> UncompressedData;
-			FOodleCompressedArray::DecompressToTArray(UncompressedData, CompressedData);
-					
-			FMemoryReader FromBinary(UncompressedData, true);
+
+			FMemoryReader FromBinary(UGTDataUtilsLibrary::DecompressBytes(CompressedData), true);
 			FromBinary.Seek(0);
 
 			FString Data;
 			FromBinary << Data;
-			Data = AESHelpers::DecryptAES(Data, GamejoltAES);
+			Data = UGTDataUtilsLibrary::DecryptAES(Data, GamejoltAES);
 
 			FromBinary.FlushCache();
 			FromBinary.Close();
@@ -409,8 +403,7 @@ void UGamejoltSubsystem::LoadCredentials(const TFunction<void(const FGamejoltRes
 			{
 				CALLBACK(, Response)
 			});
-				
-			UncompressedData.Empty();
+
 			Data = TEXT("");
 		});
 	});
