@@ -266,14 +266,14 @@ protected:
 };
 
 USTRUCT(BlueprintType, DisplayName = "World Sound")
-struct GTRUNTIME_API FWEWorldSound final : public FWorldEventBase
+struct GTRUNTIME_API FWESoundWorld final : public FWorldEventBase
 {
 	GENERATED_BODY()
 	
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "WorldSound")
 		bool bStopping;
 	
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "WorldSound")
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "WorldSound", meta = (EditCondition = "!bStopping", EditConditionHides))
 		float StartTime;
 	
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "WorldSound")
@@ -288,7 +288,7 @@ struct GTRUNTIME_API FWEWorldSound final : public FWorldEventBase
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "WorldSound")
 		TSet<TSoftObjectPtr<AAmbientSound>> Targets;
 
-	FWEWorldSound()
+	FWESoundWorld()
 		: bStopping(false), StartTime(0.0f), bFade(false), FadeTime(1.0f)
 		, FadeCurve(EAudioFaderCurve::Linear), Targets({})
 	{}
@@ -299,7 +299,7 @@ protected:
 };
 
 USTRUCT(BlueprintType, DisplayName = "Play Sound 2D")
-struct GTRUNTIME_API FWEPlaySound2D final : public FWorldEventBase
+struct GTRUNTIME_API FWESoundPlay2D final : public FWorldEventBase
 {
 	GENERATED_BODY()
 	
@@ -312,25 +312,28 @@ struct GTRUNTIME_API FWEPlaySound2D final : public FWorldEventBase
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "PlaySound2D", meta = (ClampMin = 0.1f, UIMin = 0.1f, EditCondition = "Sound"))
 		float Pitch;
 
-	FWEPlaySound2D() : Volume(1.0f), Pitch(1.0f) {}
+	FWESoundPlay2D() : Volume(1.0f), Pitch(1.0f) {}
 
 protected:
 	
 	virtual void RunEvent(const UObject* WorldContext) override;
 };
 
-USTRUCT(BlueprintType, DisplayName = "Play Sequence")
-struct GTRUNTIME_API FWESequencePlay final : public FWorldEventBase
+USTRUCT(BlueprintType, DisplayName = "Sequencer")
+struct GTRUNTIME_API FWESequencer final : public FWorldEventBase
 {
 	GENERATED_BODY()
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "PlaySequence")
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Sequencer")
 		float PlayRate;
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "PlaySequence")
-		TSoftObjectPtr<ALevelSequenceActor> Target;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Sequencer")
+		TSet<TSoftObjectPtr<ALevelSequenceActor>> PlayTargets;
 
-	FWESequencePlay() : PlayRate(1.0f), Target(nullptr) {}
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Sequencer")
+		TSet<TSoftObjectPtr<ALevelSequenceActor>> StopTargets;
+
+	FWESequencer() : PlayRate(1.0f) {}
 
 protected:
 	

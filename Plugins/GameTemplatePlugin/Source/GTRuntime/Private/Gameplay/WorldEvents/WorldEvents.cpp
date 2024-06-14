@@ -239,18 +239,17 @@ void FWEStaticMeshPrimitiveData::RunEvent(const UObject* WorldContext)
 	}
 }
 
-void FWEWorldSound::RunEvent(const UObject* WorldContext)
+void FWESoundWorld::RunEvent(const UObject* WorldContext)
 {
 	for (const TSoftObjectPtr<AAmbientSound>& Actor : Targets)
 	{
 		const AAmbientSound* ActorPtr = Actor.LoadSynchronous();
 		if (UAudioComponent* AudioComp = ActorPtr ? ActorPtr->GetAudioComponent() : nullptr)
 		{
-			if (AudioComp->IsPlaying()) return;
 			if (bFade && FadeTime > 0.0f)
 			{
 				bStopping ? AudioComp->FadeOut(FadeTime, 0.0f, FadeCurve) :
-					AudioComp->FadeIn(FadeTime, 0.0f, FMath::Max(0.0f, StartTime), FadeCurve);
+					AudioComp->FadeIn(FadeTime, 1.0f, FMath::Max(0.0f, StartTime), FadeCurve);
 			}
 			else
 			{
@@ -260,27 +259,36 @@ void FWEWorldSound::RunEvent(const UObject* WorldContext)
 	}
 }
 
-void FWEPlaySound2D::RunEvent(const UObject* WorldContext)
+void FWESoundPlay2D::RunEvent(const UObject* WorldContext)
 {
 	UGameplayStatics::PlaySound2D(WorldContext, Sound, FMath::Max(0.0f, Volume), FMath::Max(0.0f, Pitch));	
 }
 
-void FWESequencePlay::RunEvent(const UObject* WorldContext)
+void FWESequencer::RunEvent(const UObject* WorldContext)
 {
-	if (FMath::IsNearlyZero(PlayRate)) return;
-	if (ULevelSequencePlayer* Player = Target.IsNull() ? nullptr : Target.LoadSynchronous()->GetSequencePlayer())
+	for (TSoftObjectPtr<ALevelSequenceActor> StopActor : StopTargets)
 	{
-		Player->StopAtCurrentTime();
-		Player->SetPlayRate(FMath::Abs(PlayRate));
-		if (PlayRate < 0.0f)
+		if (StopActor.LoadSynchronous()) StopActor.LoadSynchronous()->GetSequencePlayer()->Stop();
+	}
+
+	if (FMath::IsNearlyZero(PlayRate)) return;
+	for (TSoftObjectPtr<ALevelSequenceActor> PlayActor : PlayTargets)
+	{
+		if (!PlayActor.LoadSynchronous()) continue;
+		if (ULevelSequencePlayer* Player = PlayActor.LoadSynchronous()->GetSequencePlayer())
 		{
-			Player->GoToEndAndStop();
-			Player->PlayReverse();
-		}
-		else
-		{
-			Player->SetPlaybackPosition({Player->GetStartTime().Time, EUpdatePositionMethod::Jump});
-			Player->Play();
+			Player->StopAtCurrentTime();
+			Player->SetPlayRate(FMath::Abs(PlayRate));
+			if (PlayRate < 0.0f)
+			{
+				Player->GoToEndAndStop();
+				Player->PlayReverse();
+			}
+			else
+			{
+				Player->SetPlaybackPosition({Player->GetStartTime().Time, EUpdatePositionMethod::Jump});
+				Player->Play();
+			}
 		}
 	}
 }
