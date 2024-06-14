@@ -3,6 +3,9 @@
 #pragma once
 
 #include "Modules/ModuleManager.h"
+#include "Classes/LowEntryExtendedStandardLibrary.h"
+
+using ULowEntryLibrary = ULowEntryExtendedStandardLibrary;
 
 class FGTCoreModule final : public IModuleInterface
 {

@@ -78,6 +78,10 @@
 			"Enabled": true
 		},
 		{
+			"Name": "LowEntryExtStdLib",
+			"Enabled": true
+		},
+		{
 			"Name": "ExpressiveText",
 			"Enabled": true
 		}

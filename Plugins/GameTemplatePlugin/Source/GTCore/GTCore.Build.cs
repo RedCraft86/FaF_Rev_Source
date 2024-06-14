@@ -23,6 +23,7 @@ public class GTCore : ModuleRules
                 "JsonUtilities",
                 "Json",
                 "UMG",
+                "LowEntryExtendedStandardLibrary"
             }
         );
     }
