@@ -17,25 +17,14 @@ void FWEPlayerSettings::RunEvent(const UObject* WorldContext)
 	}
 }
 
-void FWEPlayerAddLockFlag::RunEvent(const UObject* WorldContext)
+void FWEPlayerLockFlag::RunEvent(const UObject* WorldContext)
 {
 	if (!Target.LoadSynchronous())
 		Target = AFRPlayerBase::Get(WorldContext);
 
 	if (AFRPlayerBase* Player = Target.LoadSynchronous())
 	{
-		Player->AddLockFlag(LockFlag.SelectedValue);
-	}
-}
-
-void FWEPlayerClearLockFlag::RunEvent(const UObject* WorldContext)
-{
-	if (!Target.LoadSynchronous())
-		Target = AFRPlayerBase::Get(WorldContext);
-
-	if (AFRPlayerBase* Player = Target.LoadSynchronous())
-	{
-		Player->ClearLockFlag(LockFlag.SelectedValue);
+		bClearFlag ? Player->ClearLockFlag(LockFlag.SelectedValue) : Player->AddLockFlag(LockFlag.SelectedValue);
 	}
 }
 

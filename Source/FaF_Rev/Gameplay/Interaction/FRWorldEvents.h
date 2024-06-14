@@ -28,36 +28,21 @@ protected:
 	virtual void RunEvent(const UObject* WorldContext) override;
 };
 
-USTRUCT(BlueprintType, DisplayName = "Add Player Lock Flag")
-struct FAF_REV_API FWEPlayerAddLockFlag final : public FWorldEventBase
+USTRUCT(BlueprintType, DisplayName = "Player Lock Flag")
+struct FAF_REV_API FWEPlayerLockFlag final : public FWorldEventBase
 {
 	GENERATED_BODY()
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "SetLockFlag")
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "PlayerLockFlag")
+		bool bClearFlag;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "PlayerLockFlag")
 		FPlayerLockFlag LockFlag;
 	
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "PlayerSettings")
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "PlayerLockFlag")
 		TSoftObjectPtr<AFRPlayerBase> Target;
 
-	FWEPlayerAddLockFlag() : LockFlag(Player::LockFlags::Custom) {}
-	
-protected:
-
-	virtual void RunEvent(const UObject* WorldContext) override;
-};
-
-USTRUCT(BlueprintType, DisplayName = "Clear Player Lock Flag")
-struct FAF_REV_API FWEPlayerClearLockFlag final : public FWorldEventBase
-{
-	GENERATED_BODY()
-
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "UnsetLockFlag")
-		FPlayerLockFlag LockFlag;
-
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "PlayerSettings")
-		TSoftObjectPtr<AFRPlayerBase> Target;
-
-	FWEPlayerClearLockFlag() : LockFlag(Player::LockFlags::Custom) {}
+	FWEPlayerLockFlag() : bClearFlag(false), LockFlag(Player::LockFlags::Custom) {}
 	
 protected:
 
