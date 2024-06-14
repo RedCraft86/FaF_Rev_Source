@@ -35,14 +35,7 @@ void FWEPlayerFade::RunEvent(const UObject* WorldContext)
 
 	if (const AFRPlayerBase* Player = Target.LoadSynchronous())
 	{
-		if (bFadeOut)
-		{
-			Player->FadeToBlack(FadeTime, bFadeAudio);
-		}
-		else
-		{
-			Player->FadeFromBlack(FadeTime, bFadeAudio);
-		}
+		bFadeOut ? Player->FadeToBlack(FadeTime, bFadeAudio) : Player->FadeFromBlack(FadeTime, bFadeAudio);
 	}
 }
 

@@ -239,7 +239,7 @@ void FWEStaticMeshPrimitiveData::RunEvent(const UObject* WorldContext)
 	}
 }
 
-void FWESoundPlay::RunEvent(const UObject* WorldContext)
+void FWEWorldSound::RunEvent(const UObject* WorldContext)
 {
 	for (const TSoftObjectPtr<AAmbientSound>& Actor : Targets)
 	{
@@ -249,34 +249,20 @@ void FWESoundPlay::RunEvent(const UObject* WorldContext)
 			if (AudioComp->IsPlaying()) return;
 			if (bFade && FadeTime > 0.0f)
 			{
-				AudioComp->FadeIn(FadeTime, 0.0f, FMath::Max(0.0f, StartTime), FadeCurve);
+				bStopping ? AudioComp->FadeOut(FadeTime, 0.0f, FadeCurve) :
+					AudioComp->FadeIn(FadeTime, 0.0f, FMath::Max(0.0f, StartTime), FadeCurve);
 			}
 			else
 			{
-				AudioComp->Play();
+				bStopping ? AudioComp->Stop() : AudioComp->Play();
 			}
 		}
 	}
 }
 
-void FWESoundStop::RunEvent(const UObject* WorldContext)
+void FWEPlaySound2D::RunEvent(const UObject* WorldContext)
 {
-	for (const TSoftObjectPtr<AAmbientSound>& Actor : Targets)
-	{
-		const AAmbientSound* ActorPtr = Actor.LoadSynchronous();
-		if (UAudioComponent* AudioComp = ActorPtr ? ActorPtr->GetAudioComponent() : nullptr)
-		{
-			if (!AudioComp->IsPlaying()) return;
-			if (bFade && FadeTime > 0.0f)
-			{
-				AudioComp->FadeOut(FadeTime, 0.0f, FadeCurve);
-			}
-			else
-			{
-				AudioComp->Stop();
-			}
-		}
-	}
+	UGameplayStatics::PlaySound2D(WorldContext, Sound, FMath::Max(0.0f, Volume), FMath::Max(0.0f, Pitch));	
 }
 
 void FWESequencePlay::RunEvent(const UObject* WorldContext)

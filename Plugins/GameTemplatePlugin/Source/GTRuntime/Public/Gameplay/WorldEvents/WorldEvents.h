@@ -265,51 +265,54 @@ protected:
 	virtual void RunEvent(const UObject* WorldContext) override;
 };
 
-USTRUCT(BlueprintType, DisplayName = "Play Sound")
-struct GTRUNTIME_API FWESoundPlay final : public FWorldEventBase
+USTRUCT(BlueprintType, DisplayName = "World Sound")
+struct GTRUNTIME_API FWEWorldSound final : public FWorldEventBase
 {
 	GENERATED_BODY()
 	
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "PlaySound")
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "WorldSound")
+		bool bStopping;
+	
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "WorldSound")
 		float StartTime;
 	
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "PlaySound")
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "WorldSound")
 		bool bFade;
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "PlaySound", meta = (ClampMin = 0.1f, UIMin = 0.1f, EditCondition = "bFade", EditConditionHides))
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "WorldSound", meta = (ClampMin = 0.1f, UIMin = 0.1f, EditCondition = "bFade", EditConditionHides))
 		float FadeTime;
 	
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "PlaySound", meta = (EditCondition = "bFade", EditConditionHides))
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "WorldSound", meta = (EditCondition = "bFade", EditConditionHides))
 		EAudioFaderCurve FadeCurve;
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "PlaySound")
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "WorldSound")
 		TSet<TSoftObjectPtr<AAmbientSound>> Targets;
 
-	FWESoundPlay() : StartTime(0.0f), bFade(false), FadeTime(1.0f), FadeCurve(EAudioFaderCurve::Linear), Targets({}) {}
+	FWEWorldSound()
+		: bStopping(false), StartTime(0.0f), bFade(false), FadeTime(1.0f)
+		, FadeCurve(EAudioFaderCurve::Linear), Targets({})
+	{}
 
 protected:
 	
 	virtual void RunEvent(const UObject* WorldContext) override;
 };
 
-USTRUCT(BlueprintType, DisplayName = "Stop Sound")
-struct GTRUNTIME_API FWESoundStop final : public FWorldEventBase
+USTRUCT(BlueprintType, DisplayName = "Play Sound 2D")
+struct GTRUNTIME_API FWEPlaySound2D final : public FWorldEventBase
 {
 	GENERATED_BODY()
-
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "StopSound")
-		bool bFade;
-
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "StopSound", meta = (ClampMin = 0.1f, UIMin = 0.1f, EditCondition = "bFade", EditConditionHides))
-		float FadeTime;
 	
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "StopSound", meta = (EditCondition = "bFade", EditConditionHides))
-		EAudioFaderCurve FadeCurve;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "PlaySound2D")
+		TObjectPtr<USoundBase> Sound;
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "StopSound")
-		TSet<TSoftObjectPtr<AAmbientSound>> Targets;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "PlaySound2D", meta = (ClampMin = 0.1f, UIMin = 0.1f, EditCondition = "Sound"))
+		float Volume;
+	
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "PlaySound2D", meta = (ClampMin = 0.1f, UIMin = 0.1f, EditCondition = "Sound"))
+		float Pitch;
 
-	FWESoundStop() : bFade(false), FadeTime(1.0f), FadeCurve(EAudioFaderCurve::Linear), Targets({}) {}
+	FWEPlaySound2D() : Volume(1.0f), Pitch(1.0f) {}
 
 protected:
 	
