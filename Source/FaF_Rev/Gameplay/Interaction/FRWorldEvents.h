@@ -72,16 +72,16 @@ struct FAF_REV_API FWEPlayerFade final : public FWorldEventBase
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "PlayerFade")
 		bool bFadeOut;
 
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "PlayerFade")
+		bool bFadeAudio;
+
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "PlayerFade", meta = (ClampMin = 0.0f, UIMin = 0.0f))
 		float FadeTime;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "PlayerFade")
-		bool bFadeAudio;
-
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "PlayerFade")
 		TSoftObjectPtr<AFRPlayerBase> Target;
 
-	FWEPlayerFade() : bFadeOut(false), FadeTime(1.0f), bFadeAudio(false) {}
+	FWEPlayerFade() : bFadeOut(false), bFadeAudio(false), FadeTime(1.0f) {}
 	
 protected:
 
