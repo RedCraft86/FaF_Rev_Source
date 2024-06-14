@@ -27,11 +27,15 @@ UGamejoltSubsystem::UGamejoltSubsystem()
 
 void UGamejoltSubsystem::TestConnection(const bool bAutoLogin)
 {
-	TestConnectionData.Value = 1;
-	TestConnectionData.Key = bAutoLogin;
-	GetDataKeys(false, [this](const FGamejoltResponse& Response, const TArray<FString>&)
+	if (TestConnectionData.Value == 0)
 	{
-		if (Response.bSuccess)
+		TestConnectionData.Value = 1;
+		TestConnectionData.Key = bAutoLogin;
+	}
+	
+	CheckConnetionInternal([this](const bool bConnected)
+	{
+		if (bConnected)
 		{
 			TestConnectionData.Value = 0;
 			OnConnectionSuccessful.Broadcast();
@@ -443,13 +447,39 @@ FString UGamejoltSubsystem::ConstructURL(const FString& URL, const bool bUser) c
 	return Combined + TEXT("&signature=") + FMD5::HashAnsiString(*(Combined + GameData.Value));
 }
 
-void UGamejoltSubsystem::CreateRequest(const FString& URL, TFunction<void(const FGamejoltResponse&)> Callback) const
+void UGamejoltSubsystem::CheckConnetionInternal(TFunction<void(const bool&)> Callback) const
 {
+	if (!Callback) return;
 	if (const FHttpRequestPtr NewRequest = FHttpModule::Get().CreateRequest(); NewRequest.IsValid())
 	{
 		NewRequest->OnProcessRequestComplete().BindLambda([Callback](const FHttpRequestPtr& Request, const FHttpResponsePtr& Response, const bool bSuccess)
 		{
-			if (!Request.IsValid() || !Response.IsValid() || !bSuccess)
+			if (bSuccess && Response.IsValid() && Response->GetResponseCode() == EHttpResponseCodes::Ok)
+			{
+				Callback(true);
+			}
+
+			Callback(false);
+		});
+		
+		NewRequest->SetVerb(TEXT("GET"));
+		NewRequest->SetURL(TEXT("https://www.google.com/"));
+		NewRequest->ProcessRequest();
+	}
+	else
+	{
+		Callback(false);
+	}
+}
+
+void UGamejoltSubsystem::CreateRequest(const FString& URL, TFunction<void(const FGamejoltResponse&)> Callback) const
+{
+	if (!Callback) return;
+	if (const FHttpRequestPtr NewRequest = FHttpModule::Get().CreateRequest(); NewRequest.IsValid())
+	{
+		NewRequest->OnProcessRequestComplete().BindLambda([Callback](const FHttpRequestPtr& Request, const FHttpResponsePtr& Response, const bool bSuccess)
+		{
+			if (!Response.IsValid() || !bSuccess)
 			{
 				CALLBACK(, GamejoltResponse::InvalidURL)
 			}
@@ -467,7 +497,7 @@ void UGamejoltSubsystem::CreateRequest(const FString& URL, TFunction<void(const 
 		});
 
 		NewRequest->SetURL(URL);
-		NewRequest->SetVerb("GET");
+		NewRequest->SetVerb(TEXT("GET"));
 		NewRequest->ProcessRequest();
 
 		UE_LOG(GamejoltAPI, Display, TEXT("URL: %s"), *NewRequest->GetURL());
@@ -481,16 +511,10 @@ void UGamejoltSubsystem::CreateRequest(const FString& URL, TFunction<void(const 
 void UGamejoltSubsystem::Initialize(FSubsystemCollectionBase& Collection)
 {
 	Super::Initialize(Collection);
-	
 	if (const UGamejoltSettings* Settings = UGamejoltSettings::Get())
 	{
 		GameData.Key = Settings->GameID;
 		GameData.Value = Settings->GameKey;
-	}
-	
-	if (UGamejoltSettings::GetConst()->bAutoCheckConnection)
-	{
-		TestConnection(true);
 	}
 }
 

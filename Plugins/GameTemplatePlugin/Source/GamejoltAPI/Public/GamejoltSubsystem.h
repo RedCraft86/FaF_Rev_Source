@@ -63,6 +63,7 @@ private:
 
 	FString GetGamejoltVersion() const;
 	FString ConstructURL(const FString& URL, const bool bUser) const;
+	void CheckConnetionInternal(TFunction<void(const bool&)> Callback) const;
 	void CreateRequest(const FString& URL, TFunction<void(const FGamejoltResponse&)> Callback) const;
 	virtual void Initialize(FSubsystemCollectionBase& Collection) override;
 

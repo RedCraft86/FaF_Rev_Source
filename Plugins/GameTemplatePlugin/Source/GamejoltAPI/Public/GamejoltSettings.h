@@ -18,7 +18,6 @@ public:
 		
 		GameID = 0;
 		GameKey = TEXT("");
-		bAutoCheckConnection = true;
 	}
 
 	UPROPERTY(Config, EditAnywhere, Category = "GamejoltAPI", meta = (ConfigRestartRequired = true, ClampMin = 0, UIMin = 0))
@@ -26,9 +25,6 @@ public:
 
 	UPROPERTY(Config, EditAnywhere, Category = "GamejoltAPI", meta = (ConfigRestartRequired = true))
 		FString GameKey;
-	
-	UPROPERTY(Config, EditAnywhere, Category = "GamejoltAPI", meta = (ConfigRestartRequired = true))
-		bool bAutoCheckConnection;
 
 public: // Statics
 
