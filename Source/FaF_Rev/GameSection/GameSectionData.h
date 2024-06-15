@@ -49,6 +49,9 @@ public:
 	UPROPERTY(EditAnywhere, Category = "PlayerData")
 		FPlayerSettings PlayerSettings;
 
+	UPROPERTY(EditAnywhere, Category = "PlayerData")
+		TArray<FInventorySlotData> Inventory;
+	
 	UPROPERTY(EditAnywhere, Category = "WorldData")
 		FGameplayTag UnlockMenu;
 
@@ -60,9 +63,6 @@ public:
 
 	UPROPERTY(EditAnywhere, Category = "WorldData")
 		FUDSSettings SkyWeatherSettings;
-
-	UPROPERTY(EditAnywhere, Category = "InventoryData")
-		TArray<FInventorySlotData> Inventory;
 
 #if WITH_EDITORONLY_DATA
 	UPROPERTY(EditAnywhere, Category = "Dependencies", meta = (ClampMin = 1, UIMin = 1, ClampMax = 10, UIMax = 10, DisplayName = "Search Depth"))

@@ -10,11 +10,12 @@ bool FInventorySlotData::MatchesWith(const UInventoryItemDataBase* Item, const F
 	if (FilterData.MetaFilter == EInventoryMetaFilter::None)
 		return true;
 
+	bool bDataMatch = false;
 	for (const TPair<FName, FString>& Pair : FilterData.Metadata)
 	{
 		if (Pair.Key.IsNone()) continue;
 		const FString Value = Metadata.FindRef(Pair.Key);
-		const bool bDataMatch = Pair.Value.IsEmpty() ? !Value.IsEmpty() : Value == Pair.Value;
+		bDataMatch = Pair.Value.IsEmpty() ? !Value.IsEmpty() : Value == Pair.Value;
 		switch (FilterData.MetaFilter)
 		{
 		case EInventoryMetaFilter::None: return true;
@@ -23,7 +24,7 @@ bool FInventorySlotData::MatchesWith(const UInventoryItemDataBase* Item, const F
 		}
 	}
 
-	return false;
+	return bDataMatch;
 }
 
 UInventoryComponentBase::UInventoryComponentBase()

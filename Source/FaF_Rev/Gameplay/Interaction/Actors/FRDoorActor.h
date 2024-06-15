@@ -31,10 +31,10 @@ public:
 		TObjectPtr<class UBoxComponent> DoorBox;
 
 	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, Category = "Subobjects")
-		TObjectPtr<UAudioComponent> AudioLow;
-	
-	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, Category = "Subobjects")
 		TObjectPtr<UAudioComponent> AudioHigh;
+
+	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, Category = "Subobjects")
+		TObjectPtr<UAudioComponent> AudioLow;
 
 	UPROPERTY(EditAnywhere, Category = "Settings")
 		bool bMultidirectional;
@@ -77,6 +77,9 @@ public:
 	UPROPERTY(EditAnywhere, Category = "Settings", AdvancedDisplay)
 		TObjectPtr<USoundBase> CreakSound;
 
+	UPROPERTY(EditAnywhere, Category = "Settings", AdvancedDisplay)
+		FInteractionInfo LockedInfo;
+	
 	UFUNCTION(BlueprintCallable, Category = "DoorActor")
 		void SetState(const bool bInState);
 

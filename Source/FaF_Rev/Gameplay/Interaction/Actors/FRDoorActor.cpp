@@ -39,15 +39,29 @@ AFRDoorBase::AFRDoorBase() : bMultidirectional(false), OpenRotation(100.0f), Box
 	DoorBox->SetCollisionResponseToChannel(ECC_Visibility, ECR_Block);
 	DoorBox->SetupAttachment(DoorPivot);
 
-	AudioLow = CreateDefaultSubobject<UAudioComponent>("AudioLow");
-	AudioLow->SetupAttachment(DoorBox);
-	AudioLow->bCanPlayMultipleInstances = true;
-	AudioLow->bAutoActivate = false;
-	
 	AudioHigh = CreateDefaultSubobject<UAudioComponent>("AudioHigh");
 	AudioHigh->SetupAttachment(DoorBox);
 	AudioHigh->bCanPlayMultipleInstances = true;
 	AudioHigh->bAutoActivate = false;
+	AudioHigh->VolumeMultiplier = 0.5f;
+	AudioHigh->bOverrideAttenuation = true;
+	AudioHigh->AttenuationOverrides.AttenuationShapeExtents.X = 250.0f;
+	AudioHigh->AttenuationOverrides.FalloffDistance = 500.0f;
+	AudioHigh->AttenuationOverrides.bEnableOcclusion = true;
+	AudioHigh->AttenuationOverrides.OcclusionLowPassFilterFrequency = 10000.0f;
+	AudioHigh->AttenuationOverrides.OcclusionVolumeAttenuation = 0.5f;
+
+	AudioLow = CreateDefaultSubobject<UAudioComponent>("AudioLow");
+	AudioLow->SetupAttachment(DoorBox);
+	AudioLow->bCanPlayMultipleInstances = true;
+	AudioLow->bAutoActivate = false;
+	AudioLow->VolumeMultiplier = 0.2f;
+	AudioLow->bOverrideAttenuation = true;
+	AudioLow->AttenuationOverrides.AttenuationShapeExtents.X = 200.0f;
+	AudioLow->AttenuationOverrides.FalloffDistance = 400.0f;
+	AudioLow->AttenuationOverrides.bEnableOcclusion = true;
+	AudioLow->AttenuationOverrides.OcclusionLowPassFilterFrequency = 10000.0f;
+	AudioLow->AttenuationOverrides.OcclusionVolumeAttenuation = 0.25f;
 
 	AnimationCurve.GetRichCurve()->SetKeyTangentMode(AnimationCurve.GetRichCurve()
 		->UpdateOrAddKey(0.0f, 0.0f), RCTM_Auto);
@@ -113,12 +127,12 @@ bool AFRDoorBase::CheckKey(const AFRPlayerBase* Player)
 	{
 		KeyID = TEXT("");
 		KeyItem = nullptr;
-		PlayHigh(LockedSound)
+		PlayLow(UnlockSound)
 		DoorMesh->SetCanEverAffectNavigation(false);
 		return true;
 	}
-
-	PlayLow(UnlockSound)
+	
+	PlayHigh(LockedSound)
 	return false;
 }
 
@@ -138,7 +152,15 @@ void AFRDoorBase::OnAnimTick(const float Alpha) const
 
 bool AFRDoorBase::GetInteractionInfo_Implementation(FInteractionInfo& Info)
 {
-	Info.Label = bState ? INVTEXT("Close") : INVTEXT("Open");
+	if (IsLocked())
+	{
+		Info = LockedInfo;
+		Info.Label = FText::FromString(LockedInfo.Label.ToString().Replace(TEXT("%key"), *KeyID));
+	}
+	else
+	{
+		Info.Label = bState ? INVTEXT("Close") : INVTEXT("Open");
+	}
 	return true;
 }
 
