@@ -7,6 +7,9 @@
 #include "Components/ActorComponent.h"
 #include "InventoryComponentBase.generated.h"
 
+#define IsValidMetadata(Key, Value) !Key.IsNone() && !Value.IsEmpty()
+#define IsValidMetadataPair(Pair) IsValidMetadata(Pair.Key, Pair.Value)
+
 UENUM(BlueprintType)
 enum class EInventoryMetaFilter : uint8
 {
@@ -26,8 +29,7 @@ struct GTRUNTIME_API FInventoryItemFilter
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "SlotData", meta = (EditCondition = "MetaFilter != EInventoryMetaFilter::None"))
 		TMap<FName, FString> Metadata;
 	
-	FInventoryItemFilter() : MetaFilter(EInventoryMetaFilter::None), Metadata({})
-	{}
+	FInventoryItemFilter() : MetaFilter(EInventoryMetaFilter::None), Metadata({}) {}
 };
 
 USTRUCT(BlueprintType)
@@ -45,15 +47,31 @@ struct GTRUNTIME_API FInventorySlotData
 		TMap<FName, FString> Metadata;
 
 	FInventorySlotData() : ItemData(nullptr), Amount(0) {}
-	explicit FInventorySlotData(const UInventoryItemDataBase* Data) : ItemData(Data), Amount(1)
+	explicit FInventorySlotData(const UInventoryItemDataBase* Data) : ItemData(Data), Amount(1), Metadata({})
 	{
-		Metadata = Data ? Data->DefaultMetadata : TMap<FName, FString>();
+		if (!Data) return;
+		for (const TPair<FName, FString>& Meta : Data->DefaultMetadata)
+		{
+			if (IsValidMetadataPair(Meta))
+			{
+				Metadata.Add(Meta);
+			}
+		}
 	}
+	
 	explicit FInventorySlotData(const UInventoryItemDataBase* Data, const int32 Amount, const TMap<FName, FString>& InMetadata = {})
 		: ItemData(Data), Amount(Amount), Metadata(InMetadata)
 	{
-		Metadata.Append(Data ? Data->DefaultMetadata : TMap<FName, FString>());
+		if (!Data) return;
+		for (const TPair<FName, FString>& Meta : Data->DefaultMetadata)
+		{
+			if (IsValidMetadataPair(Meta))
+			{
+				Metadata.Add(Meta);
+			}
+		}
 	}
+	
 	friend FArchive& operator<<(FArchive& Ar, FInventorySlotData& SlotData)
 	{
 		Ar << SlotData.ItemData;
@@ -75,9 +93,6 @@ DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FInventoryIOUpdateSignature, const 
 #define ON_UPDATE() { OnInventoryUpdate(); OnUpdate.Broadcast(); OnUpdateBP.Broadcast(); }
 #define ON_ITEM_ADDED(Item, Amount) { OnItemAdded.Broadcast(Item, Amount); OnItemAddedBP.Broadcast(Item, Amount); }
 #define ON_ITEM_REMOVED(Item, Amount) { OnItemRemoved.Broadcast(Item, Amount); OnItemRemovedBP.Broadcast(Item, Amount); }
-
-#define IsValidMetadata(Key, Value) !Key.IsNone() && !Value.IsEmpty()
-#define IsValidMetadataPair(Pair) IsValidMetadata(Pair.Key, Pair.Value)
 
 UCLASS(Abstract)
 class GTRUNTIME_API UInventoryComponentBase : public UActorComponent
