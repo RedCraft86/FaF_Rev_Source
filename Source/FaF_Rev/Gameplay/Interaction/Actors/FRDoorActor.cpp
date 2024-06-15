@@ -123,7 +123,6 @@ bool AFRDoorBase::CheckKey(const AFRPlayerBase* Player)
 	{
 		KeyID = TEXT("");
 		KeyItem = nullptr;
-		PlayLow(UnlockSound)
 		DoorMesh->SetCanEverAffectNavigation(false);
 		return true;
 	}

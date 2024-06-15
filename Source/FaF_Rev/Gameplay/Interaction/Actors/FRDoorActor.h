@@ -66,9 +66,6 @@ public:
 		TObjectPtr<USoundBase> LockedSound;
 
 	UPROPERTY(EditAnywhere, Category = "Settings", AdvancedDisplay)
-		TObjectPtr<USoundBase> UnlockSound;
-
-	UPROPERTY(EditAnywhere, Category = "Settings", AdvancedDisplay)
 		TObjectPtr<USoundBase> OpenSound;
 	
 	UPROPERTY(EditAnywhere, Category = "Settings", AdvancedDisplay)
