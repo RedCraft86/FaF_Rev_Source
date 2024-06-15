@@ -76,6 +76,9 @@ DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FInventoryIOUpdateSignature, const 
 #define ON_ITEM_ADDED(Item, Amount) { OnItemAdded.Broadcast(Item, Amount); OnItemAddedBP.Broadcast(Item, Amount); }
 #define ON_ITEM_REMOVED(Item, Amount) { OnItemRemoved.Broadcast(Item, Amount); OnItemRemovedBP.Broadcast(Item, Amount); }
 
+#define IsValidMetadata(Key, Value) !Key.IsNone() && !Value.IsEmpty()
+#define IsValidMetadataPair(Pair) IsValidMetadata(Pair.Key, Pair.Value)
+
 UCLASS(Abstract)
 class GTRUNTIME_API UInventoryComponentBase : public UActorComponent
 {
@@ -102,6 +105,9 @@ public:
 	
 	UFUNCTION(BlueprintCallable, Category = "InventoryManager")
 		virtual void RemoveSlotMetadata(const FGuid& InSlot, const FName MetaKey);
+
+	UFUNCTION(BlueprintCallable, Category = "InventoryManager")
+		virtual bool SlotHasMetadata(const FGuid& InSlot, const FName MetaKey, const FString MetaValue = TEXT(""));
 	
 	UFUNCTION(BlueprintCallable, Category = "InventoryManager", meta = (AdvancedDisplay = "Filter,bSilent"))
 		virtual int32 AddItemToSlot(const FGuid& SlotKey, const int32 Amount, const bool bSilent = false);

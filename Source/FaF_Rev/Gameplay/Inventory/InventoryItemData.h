@@ -8,6 +8,15 @@
 #include "Inventory/InventoryItemDataBase.h"
 #include "InventoryItemData.generated.h"
 
+namespace NativeItemKeys
+{
+	inline static FName KeyID			= TEXT("KeyID"); // ID used for Keys
+	inline static FName SingleUseKey	= TEXT("SingleUseKey"); // If true, Keys will be removed from the inventory after use
+	inline static FName MeshIdx			= TEXT("MeshIdx");	// Alt index of the mesh to use in the preview
+
+	inline static TSet<FName> All = {KeyID, SingleUseKey, MeshIdx};
+}
+
 UENUM(BlueprintType)
 enum class EInventoryItemType : uint8
 {

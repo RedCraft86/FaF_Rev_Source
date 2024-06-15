@@ -10,10 +10,11 @@ bool FInventorySlotData::MatchesWith(const UInventoryItemDataBase* Item, const F
 	if (FilterData.MetaFilter == EInventoryMetaFilter::None)
 		return true;
 
-	bool bDataMatch = false;
 	for (const TPair<FName, FString>& Pair : FilterData.Metadata)
 	{
-		bDataMatch = Metadata.Contains(Pair.Key) && Metadata.FindRef(Pair.Key) == Pair.Value;
+		if (Pair.Key.IsNone()) continue;
+		const FString Value = Metadata.FindRef(Pair.Key);
+		const bool bDataMatch = Pair.Value.IsEmpty() ? !Value.IsEmpty() : Value == Pair.Value;
 		switch (FilterData.MetaFilter)
 		{
 		case EInventoryMetaFilter::None: return true;
@@ -54,7 +55,7 @@ TSet<FGuid> UInventoryComponentBase::FindSlots(const UInventoryItemDataBase* Ite
 
 void UInventoryComponentBase::AddSlotMetadata(const FGuid& InSlot, const FName MetaKey, const FString MetaValue)
 {
-	if (ItemSlots.Contains(InSlot))
+	if (IsValidMetadata(MetaKey, MetaValue) && ItemSlots.Contains(InSlot))
 	{
 		ItemSlots[InSlot].Metadata.Add(MetaKey, MetaValue);
 	}
@@ -64,7 +65,11 @@ void UInventoryComponentBase::AppendSlotMetadata(const FGuid& InSlot, const TMap
 {
 	if (ItemSlots.Contains(InSlot))
 	{
-		ItemSlots[InSlot].Metadata.Append(Metadata);
+		for (const TPair<FName, FString>& Meta : Metadata)
+		{
+			if (IsValidMetadataPair(Meta))
+				ItemSlots[InSlot].Metadata.Add(Meta);
+		}
 	}
 }
 
@@ -74,6 +79,17 @@ void UInventoryComponentBase::RemoveSlotMetadata(const FGuid& InSlot, const FNam
 	{
 		ItemSlots[InSlot].Metadata.Remove(MetaKey);
 	}
+}
+
+bool UInventoryComponentBase::SlotHasMetadata(const FGuid& InSlot, const FName MetaKey, const FString MetaValue)
+{
+	if (!MetaKey.IsNone() && ItemSlots.Contains(InSlot))
+	{
+		const FString Value = ItemSlots[InSlot].Metadata.FindRef(MetaKey);
+		return MetaValue.IsEmpty() ? !Value.IsEmpty() : Value == MetaValue;
+	}
+
+	return false;
 }
 
 int32 UInventoryComponentBase::AddItemToSlot(const FGuid& SlotKey, const int32 Amount, const bool bSilent)
@@ -132,7 +148,13 @@ void UInventoryComponentBase::AddItemToInventory(int32& Overflow, TSet<FGuid>& S
 			for (int i = 0; i < Final; i++)
 			{
 				const FGuid ItemGuid(FGuid::NewGuid());
-				ItemSlots.Add(ItemGuid, FInventorySlotData(Item, 1, Metadata));
+				FInventorySlotData NewSlot(Item, 1);
+				for (const TPair<FName, FString>& Meta : Metadata)
+				{
+					if (IsValidMetadataPair(Meta))
+						NewSlot.Metadata.Add(Meta);
+				}
+				ItemSlots.Add(ItemGuid, NewSlot);
 				Slots.Add(ItemGuid);
 			}
 		}
@@ -147,7 +169,11 @@ void UInventoryComponentBase::AddItemToInventory(int32& Overflow, TSet<FGuid>& S
 				Overflow = FMath::Max(Raw - Final, 0);
 				
 				ItemSlots[Slot].Amount = Final;
-				ItemSlots[Slot].Metadata.Append(Metadata);
+				for (const TPair<FName, FString>& Meta : Metadata)
+				{
+					if (IsValidMetadataPair(Meta))
+						ItemSlots[Slot].Metadata.Add(Meta);
+				}
 			}
 			else
 			{
@@ -156,7 +182,13 @@ void UInventoryComponentBase::AddItemToInventory(int32& Overflow, TSet<FGuid>& S
 				Overflow = FMath::Max(Raw - Final, 0);
 
 				const FGuid ItemGuid(FGuid::NewGuid());
-				ItemSlots.Add(ItemGuid, FInventorySlotData(Item, Final, Metadata));
+				FInventorySlotData NewSlot(Item, Final);
+				for (const TPair<FName, FString>& Meta : Metadata)
+				{
+					if (IsValidMetadataPair(Meta))
+						NewSlot.Metadata.Add(Meta);
+				}
+				ItemSlots.Add(ItemGuid, NewSlot);
 				Slots.Add(ItemGuid);
 			}
 		}

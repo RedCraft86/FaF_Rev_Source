@@ -2,8 +2,6 @@
 
 #include "InventoryItemData.h"
 
-#define ALT_MESH_KEY TEXT("AltMeshIndex")
-
 FString UInventoryItemData::GetTypeString() const
 {
 	switch (ItemType)
@@ -19,7 +17,7 @@ FString UInventoryItemData::GetTypeString() const
 FTransformMeshData UInventoryItemData::GetMeshData(const TMap<FName, FString>& InMetadata) const
 {
 	FTransformMeshData Data = MeshData.IsEmpty() ? FTransformMeshData() : MeshData[0];
-	if (const FString& IndexValue = InMetadata.FindRef(ALT_MESH_KEY); !IndexValue.IsEmpty())
+	if (const FString& IndexValue = InMetadata.FindRef(NativeItemKeys::MeshIdx); !IndexValue.IsEmpty())
 	{
 		const int32 Idx = FCString::Atoi(*IndexValue);
 		if (MeshData.IsValidIndex(Idx)) Data = MeshData[Idx];
@@ -44,6 +42,11 @@ void UInventoryItemData::PostEditChangeProperty(FPropertyChangedEvent& PropertyC
 		return;
 	}
 #endif
+
+	for (const FName Key : NativeItemKeys::All)
+	{
+		if (!DefaultMetadata.Contains(Key)) DefaultMetadata.Add(Key);
+	}
 	
 	if (PreviewZoomRange.X < 0.1f) PreviewZoomRange.X = 0.1f;
 	if (PreviewZoomRange.X > PreviewZoomRange.Y)

@@ -85,4 +85,9 @@ void AInventoryItemActor::OnConstruction(const FTransform& Transform)
 		UPrimitiveDataLibrary::SetStaticMeshProperties(InstancedStaticMesh,
 			ItemData->GetMeshData(Metadata));
 	}
+
+	for (const FName Key : NativeItemKeys::All)
+	{
+		if (!Metadata.Contains(Key)) Metadata.Add(Key);
+	}
 }

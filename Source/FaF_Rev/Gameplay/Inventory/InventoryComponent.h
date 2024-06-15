@@ -60,6 +60,8 @@ public:
 	void SetInventoryPreview(AInventoryPreview* InActor);
 	AInventoryPreview* GetInventoryPreview() const { return InventoryPreview; }
 	TArray<FGuid> GetSortedSlots();
+
+	bool UseKeyItem(const UInventoryItemDataBase* InItem, const FString& KeyID);
 	
 	void UnequipItem();
 	void EquipItem(const FGuid& ItemKey);

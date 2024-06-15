@@ -90,6 +90,23 @@ TArray<FGuid> UInventoryComponent::GetSortedSlots()
 	return Result;
 }
 
+bool UInventoryComponent::UseKeyItem(const UInventoryItemDataBase* InItem, const FString& KeyID)
+{
+	if (!InItem || KeyID.IsEmpty())
+		return false;
+	
+	FInventoryItemFilter Filter;
+	Filter.MetaFilter = EInventoryMetaFilter::MatchAll;
+	Filter.Metadata.Add(NativeItemKeys::KeyID, KeyID);
+	const FGuid Slot = FindSlot(InItem, Filter);
+	if (!Slot.IsValid()) return false;
+	
+	if (SlotHasMetadata(Slot, NativeItemKeys::SingleUseKey))
+		RemoveItemFromSlot(Slot, 1);
+	
+	return true;
+}
+
 void UInventoryComponent::UnequipItem()
 {
 	if (!EquipmentData.ItemID.IsValid()) return;
