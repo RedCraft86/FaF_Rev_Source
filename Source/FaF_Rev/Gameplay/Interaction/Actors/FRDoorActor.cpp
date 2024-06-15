@@ -50,8 +50,10 @@ AFRDoorBase::AFRDoorBase()
 	AudioHigh->bAutoActivate = false;
 	
 #if WITH_EDITORONLY_DATA
+	bRunConstructionScriptOnDrag = true;
+	
 	ForwardArrow = CreateEditorOnlyDefaultSubobject<UArrowComponent>("ForwardArrow");
-	if (ForwardArrow) ForwardArrow->bIsEditorOnly = true; DoorBox->SetupAttachment(SceneRoot);
+	if (ForwardArrow) ForwardArrow->bIsEditorOnly = true; ForwardArrow->SetupAttachment(DoorBox);
 	
 	ShapeVisualizer = CreateEditorOnlyDefaultSubobject<UDebugShapesComponent>("ShapeVisualizer");
 	if (ShapeVisualizer) ShapeVisualizer->bIsEditorOnly = true;
@@ -187,17 +189,26 @@ void AFRDoorBase::OnConstruction(const FTransform& Transform)
 		DoorMesh->SetCanEverAffectNavigation(true);
 
 	DoorBox->SetRelativeScale3D(BoxScale);
-	DoorBox->SetBoxExtent(DoorMesh->Bounds.BoxExtent);
-	DoorBox->SetWorldLocation(DoorMesh->Bounds.Origin);
+#if WITH_EDITORONLY_DATA
+	if (FMath::IsNearlyZero(PreviewAlpha))
+#endif
+	{
+		DoorBox->SetBoxExtent(DoorMesh->Bounds.BoxExtent);
+		DoorBox->SetWorldLocation(DoorMesh->Bounds.Origin);
+	}
 
 #if WITH_EDITORONLY_DATA
+	if (ForwardArrow) ForwardArrow->SetWorldScale3D(FVector::OneVector);
 	if (ShapeVisualizer)
 	{
+		const float Radius = 90.0f * DoorMesh->Bounds.BoxExtent.GetMax() / 101.0f;
 		if (bMultibirectional || OpenRotation < 0.0f)
 		{
 			FDebugArcData& N = ShapeVisualizer->DebugArcs.FindOrAdd("N");
 			N.Rotation = {0.0f, 90.0f, 0.0f};
+			N.RenderOnTopOfEverything = true;
 			N.MaxAngle = 0.0f;
+			N.Radius = Radius;
 			N.MinAngle = -FMath::Abs(OpenRotation);
 		}
 		else
@@ -209,7 +220,9 @@ void AFRDoorBase::OnConstruction(const FTransform& Transform)
 		{
 			FDebugArcData& P = ShapeVisualizer->DebugArcs.FindOrAdd("P");
 			P.Rotation = {0.0f, 90.0f, 0.0f};
+			P.RenderOnTopOfEverything = true;
 			P.MinAngle = 0.0f;
+			P.Radius = Radius;
 			P.MaxAngle = FMath::Abs(OpenRotation);
 		}
 		else
@@ -217,8 +230,8 @@ void AFRDoorBase::OnConstruction(const FTransform& Transform)
 			ShapeVisualizer->DebugArcs.Remove("P");
 		}
 
-		const float PreviewRot = PreviewAlpha * OpenRotation * -1.0f;
-		DoorPivot->SetRelativeRotation({0.0f, bMultibirectional ? PreviewRot : FMath::Abs(PreviewRot), 0.0f});
+		const float PreviewRot = PreviewAlpha * bMultibirectional ? OpenRotation : FMath::Abs(OpenRotation);
+		DoorPivot->SetRelativeRotation({0.0f, PreviewRot, 0.0f});
 	}
 #endif
 }

@@ -88,7 +88,7 @@ public:
 	
 private:
 #if WITH_EDITORONLY_DATA
-	UPROPERTY(Transient) TObjectPtr<class UArrowComponent> ForwardArrow;
+	UPROPERTY(Transient) TObjectPtr<UArrowComponent> ForwardArrow;
 	UPROPERTY(Transient) TObjectPtr<class UDebugShapesComponent> ShapeVisualizer;
 #endif
 

@@ -41,5 +41,8 @@ FVector UDebugShapesComponent::AsUpVector(const FRotator& LocalRotation) const
 void UDebugShapesComponent::BeginPlay()
 {
 	Super::BeginPlay();
-	DestroyComponent();
+	GetWorld()->GetTimerManager().SetTimerForNextTick([WeakThis = TWeakObjectPtr<ThisClass>(this)]()
+	{
+		if (WeakThis.IsValid()) WeakThis->DestroyComponent();
+	});
 }
