@@ -62,7 +62,7 @@ AFRDoorBase::AFRDoorBase() : bMultidirectional(false), OpenRotation(-100.0f), Bo
 	AnimationCurve.GetRichCurve()->SetKeyTangentMode(AnimationCurve.GetRichCurve()
 		->UpdateOrAddKey(0.5f, 0.0f), RCTM_Auto);
 
-	LockedInfo.Label = FText::FromString(TEXT("Locked") LINE_TERMINATOR TEXT("[16pt,&regular]([%key Key])"));
+	LockedInfo.Label = FText::FromString(TEXT("%key Key"));
 	
 #if WITH_EDITORONLY_DATA
 	bRunConstructionScriptOnDrag = true;
