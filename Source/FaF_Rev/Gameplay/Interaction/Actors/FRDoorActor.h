@@ -101,7 +101,7 @@ private:
 	bool bAnimFinished;
 	FVector2D AnimValues;
 
-	bool IsFrontInteract() const;
+	float CalcOpenRotation() const;
 	void PlayAnim(const bool bReverse);
 	void ApplyRotation(const float Alpha) const;
 	bool CheckKey(const AFRPlayerBase* Player);

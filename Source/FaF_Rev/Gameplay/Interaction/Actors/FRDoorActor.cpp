@@ -68,14 +68,19 @@ void AFRDoorBase::SetState(const bool bInState)
 		PlayLow(CreakSound)
 		PlayHigh(bState ? OpenSound : CloseSound)
 		DoorMesh->SetCollisionEnabled(bState ? ECollisionEnabled::NoCollision : ECollisionEnabled::QueryAndPhysics);
-		if (bState) DoorRotaton = IsFrontInteract() && bMultibirectional ? -OpenRotation : OpenRotation;
+		if (bState) DoorRotaton = CalcOpenRotation();
 		PlayAnim(!bState);
 	}
 }
 
-bool AFRDoorBase::IsFrontInteract() const
+float AFRDoorBase::CalcOpenRotation() const
 {
-	return Interactor ? FVector::DotProduct(Interactor->GetActorForwardVector(), GetActorForwardVector()) < 0.0f : false;
+	if (!bMultibirectional || !Interactor)
+		return OpenRotation;
+	
+	const float AbsRotation = FMath::Abs(OpenRotation);
+	const bool bFrontInteract = FVector::DotProduct(Interactor->GetActorForwardVector(), GetActorForwardVector()) < 0.0f;
+	return bFrontInteract ? -AbsRotation : AbsRotation;
 }
 
 void AFRDoorBase::PlayAnim(const bool bReverse)
@@ -229,9 +234,9 @@ void AFRDoorBase::OnConstruction(const FTransform& Transform)
 		{
 			ShapeVisualizer->DebugArcs.Remove("P");
 		}
-
-		const float PreviewRot = PreviewAlpha * bMultibirectional ? OpenRotation : FMath::Abs(OpenRotation);
-		DoorPivot->SetRelativeRotation({0.0f, PreviewRot, 0.0f});
+		
+		DoorPivot->SetRelativeRotation({0.0f, (bMultibirectional
+			? PreviewAlpha : FMath::Abs(PreviewAlpha)) * OpenRotation, 0.0f});
 	}
 #endif
 }
