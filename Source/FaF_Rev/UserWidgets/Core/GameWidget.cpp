@@ -3,9 +3,9 @@
 #include "GameWidget.h"
 #include "Components/Image.h"
 #include "Components/ProgressBar.h"
-#include "Components/TextBlock.h"
-#include "FRPlayer.h"
+#include "ExprTextBlock.h"
 #include "FRSettings.h"
+#include "FRPlayer.h"
 
 UGameWidgetBase::UGameWidgetBase(const FObjectInitializer& ObjectInitializer)
 	: UGTUserWidget(ObjectInitializer), InteractIcon(nullptr), InteractLabel(nullptr), StaminaBar(nullptr)

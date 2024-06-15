@@ -23,7 +23,7 @@ public:
 		TObjectPtr<UImage> InteractIcon;
 	
 	UPROPERTY(Transient, meta = (BindWidget))
-		TObjectPtr<class UTextBlock> InteractLabel;
+		TObjectPtr<class UExprTextBlock> InteractLabel;
 	
 	UPROPERTY(Transient, meta = (BindWidget))
 		TObjectPtr<class UProgressBar> StaminaBar;
@@ -41,7 +41,7 @@ public:
 		FVector2D StaminaBarSpeed;
 
 	UFUNCTION(BlueprintImplementableEvent)
-		void OffsetInteractLabel(UTextBlock* Label, const float IconSizeRatio) const;
+		void OffsetInteractLabel(UExprTextBlock* Label, const float IconSizeRatio) const;
 	
 protected:
 
