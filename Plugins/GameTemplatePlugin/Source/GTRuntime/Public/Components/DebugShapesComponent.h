@@ -20,13 +20,13 @@ struct FDebugPointData
         FLinearColor Color;
 
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "DebugPointData")
-        bool RenderOnTopOfEverything;
+        bool bRenderOnTopOfEverything;
 
     FDebugPointData()
         : Location(FVector(0.0f))
         , Size(2.0f)
         , Color(FColor::Cyan)
-        , RenderOnTopOfEverything(false)
+        , bRenderOnTopOfEverything(false)
     {}
 };
 
@@ -48,14 +48,14 @@ struct FDebugLineData
         FLinearColor Color;
 
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "DebugLineData")
-        bool RenderOnTopOfEverything;
+        bool bRenderOnTopOfEverything;
 
     FDebugLineData()
         : Start(FVector(0.0f))
         , End(FVector(0.0f))
         , Thickness(1.0f)
         , Color(FColor::Cyan)
-        , RenderOnTopOfEverything(false)
+        , bRenderOnTopOfEverything(false)
     {}
 };
 
@@ -83,7 +83,7 @@ struct FDebugCircleData
         FLinearColor Color;
 
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "DebugCircleData")
-        bool RenderOnTopOfEverything;
+        bool bRenderOnTopOfEverything;
 
     FDebugCircleData()
         : Location(FVector(0.0f))
@@ -92,7 +92,7 @@ struct FDebugCircleData
         , NumOfSides(16)
         , Thickness(1.0f)
         , Color(FColor::Cyan)
-        , RenderOnTopOfEverything(false)
+        , bRenderOnTopOfEverything(false)
     {}
 };
 
@@ -126,7 +126,7 @@ struct FDebugArcData
         FLinearColor Color;
 
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "DebugArcData")
-        bool RenderOnTopOfEverything;
+        bool bRenderOnTopOfEverything;
 
     FDebugArcData()
         : Location(FVector(0.0f))
@@ -137,7 +137,7 @@ struct FDebugArcData
         , Sections(8)
         , Thickness(1.0f)
         , Color(FColor::Cyan)
-        , RenderOnTopOfEverything(false)
+        , bRenderOnTopOfEverything(false)
     {}
 };
 
@@ -162,7 +162,7 @@ struct FDebugBoxData
         FLinearColor Color;
 
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "DebugBoxData")
-        bool RenderOnTopOfEverything;
+        bool bRenderOnTopOfEverything;
 
     FDebugBoxData()
         : Location(FVector(0.0f))
@@ -170,7 +170,7 @@ struct FDebugBoxData
         , Extents(FVector(32.0f))
         , Thickness(1.0f)
         , Color(FColor::Cyan)
-        , RenderOnTopOfEverything(false)
+        , bRenderOnTopOfEverything(false)
     {}
 };
 
@@ -195,7 +195,7 @@ struct FDebugSphereData
         FLinearColor Color;
 
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "DebugSphereData")
-        bool RenderOnTopOfEverything;
+        bool bRenderOnTopOfEverything;
 
     FDebugSphereData()
         : Location(FVector(0.0f))
@@ -203,7 +203,7 @@ struct FDebugSphereData
         , NumOfSides(16)
         , Thickness(1.0f)
         , Color(FColor::Cyan)
-        , RenderOnTopOfEverything(false)
+        , bRenderOnTopOfEverything(false)
     {}
 };
 
@@ -234,7 +234,7 @@ struct FDebugCylinderData
         FLinearColor Color;
 
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "DebugCylinderData")
-        bool RenderOnTopOfEverything;
+        bool bRenderOnTopOfEverything;
 
     FDebugCylinderData()
         : Location(FVector(0.0f))
@@ -244,7 +244,7 @@ struct FDebugCylinderData
         , NumOfSides(12)
         , Thickness(1.0f)
         , Color(FColor::Cyan)
-        , RenderOnTopOfEverything(false)
+        , bRenderOnTopOfEverything(false)
     {}
 };
 
@@ -275,7 +275,7 @@ struct FDebugCapsuleData
         FLinearColor Color;
 
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "DebugCapsuleData")
-        bool RenderOnTopOfEverything;
+        bool bRenderOnTopOfEverything;
 
     FDebugCapsuleData()
         : Location(FVector(0.0f))
@@ -285,7 +285,7 @@ struct FDebugCapsuleData
         , NumOfSides(16)
         , Thickness(1.0f)
         , Color(FColor::Cyan)
-        , RenderOnTopOfEverything(false)
+        , bRenderOnTopOfEverything(false)
     {}
 };
 

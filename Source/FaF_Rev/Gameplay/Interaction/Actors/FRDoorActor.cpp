@@ -211,7 +211,7 @@ void AFRDoorBase::OnConstruction(const FTransform& Transform)
 		{
 			FDebugArcData& N = ShapeVisualizer->DebugArcs.FindOrAdd("N");
 			N.Rotation = {0.0f, 90.0f, 0.0f};
-			N.RenderOnTopOfEverything = true;
+			N.bRenderOnTopOfEverything = true;
 			N.MaxAngle = 0.0f;
 			N.Radius = Radius;
 			N.MinAngle = -FMath::Abs(OpenRotation);
@@ -225,7 +225,7 @@ void AFRDoorBase::OnConstruction(const FTransform& Transform)
 		{
 			FDebugArcData& P = ShapeVisualizer->DebugArcs.FindOrAdd("P");
 			P.Rotation = {0.0f, 90.0f, 0.0f};
-			P.RenderOnTopOfEverything = true;
+			P.bRenderOnTopOfEverything = true;
 			P.MinAngle = 0.0f;
 			P.Radius = Radius;
 			P.MaxAngle = FMath::Abs(OpenRotation);

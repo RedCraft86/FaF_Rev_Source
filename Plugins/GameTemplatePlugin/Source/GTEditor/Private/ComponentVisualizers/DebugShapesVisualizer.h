@@ -24,14 +24,14 @@ private:
 			for (const TPair<FName, FDebugPointData>& Point : VizComponent->DebugPoints)
 			{
 				PDI->DrawPoint(VizComponent->TransformLocation(Point.Value.Location), Point.Value.Color,
-					Point.Value.Size, Point.Value.RenderOnTopOfEverything ? SDPG_Foreground : SDPG_World);
+					Point.Value.Size, Point.Value.bRenderOnTopOfEverything ? SDPG_Foreground : SDPG_World);
 			}
 
 			for (const TPair<FName, FDebugLineData>& Line : VizComponent->DebugLines)
 			{
 				PDI->DrawLine(VizComponent->TransformLocation(Line.Value.Start),
 					VizComponent->TransformLocation(Line.Value.End), Line.Value.Color,
-					Line.Value.RenderOnTopOfEverything ? SDPG_Foreground : SDPG_World, Line.Value.Thickness);
+					Line.Value.bRenderOnTopOfEverything ? SDPG_Foreground : SDPG_World, Line.Value.Thickness);
 			}
 
 			for (const TPair<FName, FDebugCircleData>& Circle : VizComponent->DebugCircles)
@@ -40,7 +40,7 @@ private:
 					VizComponent->AsForwardVector(Circle.Value.Rotation),
 					VizComponent->AsRightVector(Circle.Value.Rotation),
 					Circle.Value.Color, Circle.Value.Radius, Circle.Value.NumOfSides,
-					Circle.Value.RenderOnTopOfEverything ? SDPG_Foreground : SDPG_World, Circle.Value.Thickness);
+					Circle.Value.bRenderOnTopOfEverything ? SDPG_Foreground : SDPG_World, Circle.Value.Thickness);
 			}
 
 			for (const TPair<FName, FDebugArcData>& Arc : VizComponent->DebugArcs)
@@ -49,7 +49,7 @@ private:
 					VizComponent->AsForwardVector(Arc.Value.Rotation),
 					VizComponent->AsRightVector(Arc.Value.Rotation),
 					Arc.Value.MinAngle, Arc.Value.MaxAngle, Arc.Value.Radius, Arc.Value.Sections, Arc.Value.Color,
-					Arc.Value.RenderOnTopOfEverything ? SDPG_Foreground : SDPG_World, Arc.Value.Thickness);
+					Arc.Value.bRenderOnTopOfEverything ? SDPG_Foreground : SDPG_World, Arc.Value.Thickness);
 			}
 
 			for (const TPair<FName, FDebugBoxData>& Box : VizComponent->DebugBoxes)
@@ -59,14 +59,14 @@ private:
 					VizComponent->AsRightVector(Box.Value.Rotation),
 					VizComponent->AsUpVector(Box.Value.Rotation),
 					Box.Value.Extents, Box.Value.Color,
-					Box.Value.RenderOnTopOfEverything ? SDPG_Foreground : SDPG_World, Box.Value.Thickness);
+					Box.Value.bRenderOnTopOfEverything ? SDPG_Foreground : SDPG_World, Box.Value.Thickness);
 			}
 
 			for (const TPair<FName, FDebugSphereData>& Sphere : VizComponent->DebugSpheres)
 			{
 				DrawWireSphere(PDI, VizComponent->TransformLocation(Sphere.Value.Location),
 					Sphere.Value.Color, Sphere.Value.Radius, Sphere.Value.NumOfSides,
-					Sphere.Value.RenderOnTopOfEverything ? SDPG_Foreground : SDPG_World, Sphere.Value.Thickness);
+					Sphere.Value.bRenderOnTopOfEverything ? SDPG_Foreground : SDPG_World, Sphere.Value.Thickness);
 			}
 
 			for (const TPair<FName, FDebugCylinderData>& Cylinder : VizComponent->DebugCylinders)
@@ -76,7 +76,7 @@ private:
 					VizComponent->AsRightVector(Cylinder.Value.Rotation),
 					VizComponent->AsUpVector(Cylinder.Value.Rotation),
 					Cylinder.Value.Color, Cylinder.Value.Radius, Cylinder.Value.HalfHeight, Cylinder.Value.NumOfSides,
-					Cylinder.Value.RenderOnTopOfEverything ? SDPG_Foreground : SDPG_World, Cylinder.Value.Thickness);
+					Cylinder.Value.bRenderOnTopOfEverything ? SDPG_Foreground : SDPG_World, Cylinder.Value.Thickness);
 			}
 
 			for (const TPair<FName, FDebugCapsuleData>& Capsule : VizComponent->DebugCapsules)
@@ -86,7 +86,7 @@ private:
 					VizComponent->AsRightVector(Capsule.Value.Rotation),
 					VizComponent->AsUpVector(Capsule.Value.Rotation),
 					Capsule.Value.Color, Capsule.Value.Radius, Capsule.Value.HalfHeight, Capsule.Value.NumOfSides,
-					Capsule.Value.RenderOnTopOfEverything ? SDPG_Foreground : SDPG_World, Capsule.Value.Thickness);
+					Capsule.Value.bRenderOnTopOfEverything ? SDPG_Foreground : SDPG_World, Capsule.Value.Thickness);
 			}
 		}
 	}
