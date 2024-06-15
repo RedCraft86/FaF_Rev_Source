@@ -80,7 +80,7 @@ float AFRDoorBase::CalcOpenRotation() const
 	
 	const float AbsRotation = FMath::Abs(OpenRotation);
 	const bool bFrontInteract = FVector::DotProduct(Interactor->GetActorForwardVector(), GetActorForwardVector()) < 0.0f;
-	return bFrontInteract ? -AbsRotation : AbsRotation;
+	return bFrontInteract ? AbsRotation : -AbsRotation;
 }
 
 void AFRDoorBase::PlayAnim(const bool bReverse)
@@ -235,8 +235,8 @@ void AFRDoorBase::OnConstruction(const FTransform& Transform)
 			ShapeVisualizer->DebugArcs.Remove("P");
 		}
 		
-		DoorPivot->SetRelativeRotation({0.0f, (bMultibirectional
-			? PreviewAlpha : FMath::Abs(PreviewAlpha)) * OpenRotation, 0.0f});
+		DoorPivot->SetRelativeRotation({0.0f, (bMultibirectional ? PreviewAlpha : FMath::Abs(PreviewAlpha))
+			* (bMultibirectional ? FMath::Abs(OpenRotation) : OpenRotation), 0.0f});
 	}
 #endif
 }
