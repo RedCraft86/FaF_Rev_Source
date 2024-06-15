@@ -1,12 +1,13 @@
 ﻿// Copyright (C) RedCraft86. All Rights Reserved.
 
 #pragma once
+
 #include "CanvasItem.h"
 #include "CanvasTypes.h"
 
 namespace VisualizerHelpers
 {
-	GTEDITOR_API static void DrawArcWithThickness(FPrimitiveDrawInterface* PDI, const FVector Base, const FVector X, const FVector Y, const float MinAngle, const float MaxAngle, const float Radius, const int Sections, const FLinearColor& Color, uint8 DepthPriority, const float Thickness)
+	GTEDITOR_API inline void DrawArcWithThickness(FPrimitiveDrawInterface* PDI, const FVector Base, const FVector X, const FVector Y, const float MinAngle, const float MaxAngle, const float Radius, const int Sections, const FLinearColor& Color, uint8 DepthPriority, const float Thickness)
 	{
 		const float AngleStep = (MaxAngle - MinAngle) / Sections;
 		float CurrentAngle = MinAngle;
@@ -33,7 +34,7 @@ namespace VisualizerHelpers
 		}
 	}
 
-	GTEDITOR_API static void DrawText(const FSceneView* View, FCanvas* Canvas, const FVector& Location, const FText& Text, const uint8 FontScale = 12, const FLinearColor& Color = FLinearColor::White, const bool bDrawShadow = false, const UFont* Font = nullptr)
+	GTEDITOR_API inline void DrawText(const FSceneView* View, FCanvas* Canvas, const FVector& Location, const FText& Text, const uint8 FontScale = 12, const FLinearColor& Color = FLinearColor::White, const bool bDrawShadow = false, const UFont* Font = nullptr)
 	{
 		FVector2D ScreenPos;
 		if (FSceneView::ProjectWorldToScreen(Location, View->UnconstrainedViewRect, View->ViewMatrices.GetViewProjectionMatrix(), ScreenPos))

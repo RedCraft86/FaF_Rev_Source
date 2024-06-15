@@ -31,31 +31,31 @@ public:
 
 	/** Function to change mobility type */
 	UFUNCTION(BlueprintCallable, BlueprintPure = false, Category = Mobility)
-		GTCORE_API void SetMobility(const EComponentMobility::Type InMobility) const;
+		GTRUNTIME_API void SetMobility(const EComponentMobility::Type InMobility) const;
 
 	/** Returns StaticMeshComponent subobject **/
 	UInstancedStaticMeshComponent* GetStaticMeshComponent() const { return StaticMeshComponent; }
 
 #if WITH_EDITOR
-	GTCORE_API virtual void PostLoad() override;	
-	GTCORE_API virtual void CheckForErrors() override;
-	GTCORE_API virtual bool GetReferencedContentObjects( TArray<UObject*>& Objects ) const override;
+	GTRUNTIME_API virtual void PostLoad() override;	
+	GTRUNTIME_API virtual void CheckForErrors() override;
+	GTRUNTIME_API virtual bool GetReferencedContentObjects( TArray<UObject*>& Objects ) const override;
 #endif
-	GTCORE_API virtual void Serialize(FArchive& Ar) override;
+	GTRUNTIME_API virtual void Serialize(FArchive& Ar) override;
 	virtual ENavDataGatheringMode GetGeometryGatheringMode() const { return ENavDataGatheringMode::Default; }
 
 	/** Name of the StaticMeshComponent.  Use this name if you want to use a different class (with ObjectInitializer.SetDefaultSubobjectClass). */
-	static GTCORE_API FName StaticMeshComponentName;
+	static GTRUNTIME_API FName StaticMeshComponentName;
 
 protected:
 	
 #if WITH_EDITOR
-	GTCORE_API virtual void LoadedFromAnotherClass(const FName& OldClassName) override;
-	GTCORE_API virtual void PostEditChangeChainProperty(FPropertyChangedChainEvent& PropertyChangedEvent) override;
-	GTCORE_API virtual void OnConstruction(const FTransform& Transform) override;
+	GTRUNTIME_API virtual void LoadedFromAnotherClass(const FName& OldClassName) override;
+	GTRUNTIME_API virtual void PostEditChangeChainProperty(FPropertyChangedChainEvent& PropertyChangedEvent) override;
+	GTRUNTIME_API virtual void OnConstruction(const FTransform& Transform) override;
 #endif
-	GTCORE_API virtual FString GetDetailedInfoInternal() const override;
-	GTCORE_API virtual void BeginPlay() override;
+	GTRUNTIME_API virtual FString GetDetailedInfoInternal() const override;
+	GTRUNTIME_API virtual void BeginPlay() override;
 	
 private:
 	

@@ -318,8 +318,8 @@ struct FDebugStringData
     {}
 };
 
-UCLASS(NotBlueprintable, ClassGroup = (Debugging), meta = (BlueprintSpawnableComponent))
-class GTCORE_API UDebugShapesComponent final : public UActorComponent
+UCLASS(MinimalAPI, NotBlueprintable, ClassGroup = (Debugging), meta = (BlueprintSpawnableComponent))
+class UDebugShapesComponent final : public UActorComponent
 {
 	GENERATED_BODY()
 
@@ -355,11 +355,11 @@ public:
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Visuals")
         TMap<FName, FDebugStringData> DebugStrings;
 
-    FVector TransformLocation(const FVector& LocalLocation) const;
-    FRotator TransformRotation(const FRotator& LocalRotation) const;
-    FVector AsForwardVector(const FRotator& LocalRotation) const;
-    FVector AsRightVector(const FRotator& LocalRotation) const;
-    FVector AsUpVector(const FRotator& LocalRotation) const;
+    GTRUNTIME_API FVector TransformLocation(const FVector& LocalLocation) const;
+    GTRUNTIME_API FRotator TransformRotation(const FRotator& LocalRotation) const;
+    GTRUNTIME_API FVector AsForwardVector(const FRotator& LocalRotation) const;
+    GTRUNTIME_API FVector AsRightVector(const FRotator& LocalRotation) const;
+    GTRUNTIME_API FVector AsUpVector(const FRotator& LocalRotation) const;
 #endif
 
 protected:

@@ -28,6 +28,7 @@ public class GTDeveloper : ModuleRules
                 "WebBrowserWidget",
                 "GamejoltAPI",
                 "GTCore",
+                "GTRuntime",
             }
         );
     }

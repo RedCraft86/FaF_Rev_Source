@@ -7,7 +7,7 @@
 #include "HierarchicalInstancedStaticMeshActor.generated.h"
 
 UCLASS()
-class GTCORE_API AHierarchicalInstancedStaticMeshActor : public AInstancedStaticMeshActor
+class GTRUNTIME_API AHierarchicalInstancedStaticMeshActor : public AInstancedStaticMeshActor
 {
 	GENERATED_BODY()
 
