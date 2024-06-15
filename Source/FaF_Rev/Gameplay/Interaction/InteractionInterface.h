@@ -14,13 +14,13 @@ struct FInteractionInfo
 {
 	GENERATED_BODY()
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "InteractionInfo")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "InteractionInfo")
 		FText Label;
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "InteractionInfo")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "InteractionInfo")
 		TObjectPtr<UTexture2D> Icon;
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "InteractionInfo", meta = (AllowPreserveRatio = true, ClampMin = 0.1f, UIMin = 0.1f))
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "InteractionInfo", meta = (AllowPreserveRatio = true, ClampMin = 0.1f, UIMin = 0.1f))
 		FVector2D IconSize;
 
 	FInteractionInfo() : Label(DEFAULT_INTERACT_LABEL), Icon(nullptr), IconSize(35.0f) {}
