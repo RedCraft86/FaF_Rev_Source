@@ -14,7 +14,7 @@
 #define PlayLow(Sound) AudioLow->SetSound(Sound); AudioLow->Play();
 #define PlayHigh(Sound) AudioHigh->SetSound(Sound); AudioHigh->Play();
 
-AFRDoorBase::AFRDoorBase()
+AFRDoorBase::AFRDoorBase() : bMultibirectional(false), OpenRotation(100.0f), BoxScale(2.0f, 1.25f, 1.0f)
 {
 	PrimaryActorTick.bCanEverTick = true;
 	PrimaryActorTick.bStartWithTickEnabled = false;
@@ -48,6 +48,12 @@ AFRDoorBase::AFRDoorBase()
 	AudioHigh->SetupAttachment(DoorBox);
 	AudioHigh->bCanPlayMultipleInstances = true;
 	AudioHigh->bAutoActivate = false;
+
+	AnimationCurve.GetRichCurve()->SetKeyTangentMode(AnimationCurve.GetRichCurve()
+		->UpdateOrAddKey(0.0f, 0.0f), RCTM_Auto);
+	
+	AnimationCurve.GetRichCurve()->SetKeyTangentMode(AnimationCurve.GetRichCurve()
+		->UpdateOrAddKey(0.5f, 0.0f), RCTM_Auto);
 	
 #if WITH_EDITORONLY_DATA
 	bRunConstructionScriptOnDrag = true;
@@ -107,7 +113,7 @@ bool AFRDoorBase::CheckKey(const AFRPlayerBase* Player)
 	{
 		KeyID = TEXT("");
 		KeyItem = nullptr;
-		PlayLow(LockedSound)
+		PlayHigh(LockedSound)
 		DoorMesh->SetCanEverAffectNavigation(false);
 		return true;
 	}
