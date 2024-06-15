@@ -154,6 +154,21 @@ protected:
 	virtual void RunEvent(const UObject* WorldContext) override;
 };
 
+USTRUCT(BlueprintType, DisplayName = "Guide Pages")
+struct FAF_REV_API FWESimpleGuide final : public FWorldEventBase
+{
+	GENERATED_BODY()
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "GuidePages")
+		TArray<FGuideBookPageID> Pages;
+
+	FWESimpleGuide() : Pages({}) {}
+	
+protected:
+
+	virtual void RunEvent(const UObject* WorldContext) override;
+};
+
 USTRUCT(BlueprintType, DisplayName = "Narrative Dialogue")
 struct FAF_REV_API FWENarrativeDialogue final : public FWorldEventBase
 {

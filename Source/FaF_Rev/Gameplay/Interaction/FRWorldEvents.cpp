@@ -81,6 +81,14 @@ void FWESimpleSubtitle::RunEvent(const UObject* WorldContext)
 	}
 }
 
+void FWESimpleGuide::RunEvent(const UObject* WorldContext)
+{
+	if (AFRGameModeBase* GM = FRGameMode(WorldContext))
+	{
+		GM->QueueGuidePages(Pages);
+	}
+}
+
 void FWENarrativeDialogue::RunEvent(const UObject* WorldContext)
 {
 	if (const AFRGameModeBase* GM = FRGameMode(WorldContext))

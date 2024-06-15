@@ -4,11 +4,11 @@
 #include "NarrativeComponent.h"
 #include "Inventory/InventoryComponent.h"
 #include "Menus/InventoryWidget.h"
+#include "Screens/GuideWidget.h"
 #include "Core/MessageWidget.h"
 #include "FRPlayerController.h"
 #include "FRGameState.h"
 #include "FRPlayer.h"
-
 
 AFRGameModeBase::AFRGameModeBase()
 	: PlayerController(nullptr), PlayerCharacter(nullptr)
@@ -43,6 +43,14 @@ void AFRGameModeBase::QueueLargeNotice(const FSimpleNoticeData& NoticeData, cons
 	}
 }
 
+void AFRGameModeBase::QueueSubtitle(const FSimpleSubtitleData& SubtitleData)
+{
+	if (UMessageWidgetBase* Widget = GetWidget<UMessageWidgetBase>())
+	{
+		Widget->QueueSubtitle(SubtitleData);
+	}
+}
+
 void AFRGameModeBase::QueueSubtitles(const TArray<FSimpleSubtitleData>& Subtitles)
 {
 	if (UMessageWidgetBase* Widget = GetWidget<UMessageWidgetBase>())
@@ -51,10 +59,18 @@ void AFRGameModeBase::QueueSubtitles(const TArray<FSimpleSubtitleData>& Subtitle
 	}
 }
 
-void AFRGameModeBase::QueueSubtitle(const FSimpleSubtitleData& SubtitleData)
+void AFRGameModeBase::QueueGuidePage(const FGuideBookPageID PageID)
 {
-	if (UMessageWidgetBase* Widget = GetWidget<UMessageWidgetBase>())
+	if (UGuideWidgetBase* Widget = GetWidget<UGuideWidgetBase>())
 	{
-		Widget->QueueSubtitle(SubtitleData);
+		Widget->QueuePage(PageID);
+	}
+}
+
+void AFRGameModeBase::QueueGuidePages(const TArray<FGuideBookPageID>& PageIDs)
+{
+	if (UGuideWidgetBase* Widget = GetWidget<UGuideWidgetBase>())
+	{
+		Widget->QueuePages(PageIDs);
 	}
 }
