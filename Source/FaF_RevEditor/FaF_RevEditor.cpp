@@ -19,7 +19,7 @@ void FFaF_RevEditorModule::StartupModule()
     if (FPropertyEditorModule* PropertyModule = FModuleManager::LoadModulePtr<FPropertyEditorModule>("PropertyEditor"))
     {
         REGISTER_CLASS_CUSTOMIZATION(PropertyModule, AFRPlayerBase, FGTActorDetails);
-        REGISTER_CLASS_CUSTOMIZATION(PropertyModule, AFRDoorActor, FGTActorDetails);
+        REGISTER_CLASS_CUSTOMIZATION(PropertyModule, AFRDoorBase, FGTActorDetails);
         REGISTER_CLASS_CUSTOMIZATION(PropertyModule, AInventoryPreview, FGTActorDetails);
         REGISTER_CLASS_CUSTOMIZATION(PropertyModule, ASmartPostProcess, FGTActorDetails);
         REGISTER_CLASS_CUSTOMIZATION(PropertyModule, AElectricActorBase, FGTActorDetails);
@@ -40,6 +40,7 @@ void FFaF_RevEditorModule::ShutdownModule()
     if (FPropertyEditorModule* PropertyModule = FModuleManager::GetModulePtr<FPropertyEditorModule>("PropertyEditor"))
     {
         UNREGISTER_CLASS_CUSTOMIZATION(PropertyModule, AFRPlayerBase);
+        UNREGISTER_CLASS_CUSTOMIZATION(PropertyModule, AFRDoorBase);
         UNREGISTER_CLASS_CUSTOMIZATION(PropertyModule, AInventoryPreview);
         UNREGISTER_CLASS_CUSTOMIZATION(PropertyModule, ASmartPostProcess);
         UNREGISTER_CLASS_CUSTOMIZATION(PropertyModule, AElectricActorBase);
