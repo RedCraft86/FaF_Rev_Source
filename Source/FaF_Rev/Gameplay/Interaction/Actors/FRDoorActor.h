@@ -37,7 +37,7 @@ public:
 		TObjectPtr<UAudioComponent> AudioHigh;
 
 	UPROPERTY(EditAnywhere, Category = "Settings")
-		bool bMultibirectional;
+		bool bMultidirectional;
 
 	UPROPERTY(EditAnywhere, Category = "Settings", meta = (ClampMin = -150.0f, UIMin = -120.0f, ClampMax = 150.0f, UIMax = 120.0f))
 		float OpenRotation;

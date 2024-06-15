@@ -14,7 +14,7 @@
 #define PlayLow(Sound) AudioLow->SetSound(Sound); AudioLow->Play();
 #define PlayHigh(Sound) AudioHigh->SetSound(Sound); AudioHigh->Play();
 
-AFRDoorBase::AFRDoorBase() : bMultibirectional(false), OpenRotation(100.0f), BoxScale(2.0f, 1.25f, 1.0f)
+AFRDoorBase::AFRDoorBase() : bMultidirectional(false), OpenRotation(100.0f), BoxScale(2.0f, 1.25f, 1.0f)
 {
 	PrimaryActorTick.bCanEverTick = true;
 	PrimaryActorTick.bStartWithTickEnabled = false;
@@ -81,7 +81,7 @@ void AFRDoorBase::SetState(const bool bInState)
 
 float AFRDoorBase::CalcOpenRotation() const
 {
-	if (!bMultibirectional || !Interactor)
+	if (!bMultidirectional || !Interactor)
 		return OpenRotation;
 	
 	const float AbsRotation = FMath::Abs(OpenRotation);
@@ -213,7 +213,7 @@ void AFRDoorBase::OnConstruction(const FTransform& Transform)
 	if (ShapeVisualizer)
 	{
 		const float Radius = 90.0f * DoorMesh->Bounds.BoxExtent.GetMax() / 101.0f;
-		if (bMultibirectional || OpenRotation < 0.0f)
+		if (bMultidirectional || OpenRotation < 0.0f)
 		{
 			FDebugArcData& N = ShapeVisualizer->DebugArcs.FindOrAdd("N");
 			N.Rotation = {0.0f, 90.0f, 0.0f};
@@ -227,7 +227,7 @@ void AFRDoorBase::OnConstruction(const FTransform& Transform)
 			ShapeVisualizer->DebugArcs.Remove("N");
 		}
 
-		if (bMultibirectional || OpenRotation > 0.0f)
+		if (bMultidirectional || OpenRotation > 0.0f)
 		{
 			FDebugArcData& P = ShapeVisualizer->DebugArcs.FindOrAdd("P");
 			P.Rotation = {0.0f, 90.0f, 0.0f};
@@ -241,8 +241,8 @@ void AFRDoorBase::OnConstruction(const FTransform& Transform)
 			ShapeVisualizer->DebugArcs.Remove("P");
 		}
 		
-		DoorPivot->SetRelativeRotation({0.0f, (bMultibirectional ? PreviewAlpha : FMath::Abs(PreviewAlpha))
-			* (bMultibirectional ? FMath::Abs(OpenRotation) : OpenRotation), 0.0f});
+		DoorPivot->SetRelativeRotation({0.0f, (bMultidirectional ? PreviewAlpha : FMath::Abs(PreviewAlpha))
+			* (bMultidirectional ? FMath::Abs(OpenRotation) : OpenRotation), 0.0f});
 	}
 #endif
 }
