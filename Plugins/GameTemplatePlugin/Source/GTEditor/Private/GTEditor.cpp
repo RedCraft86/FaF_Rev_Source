@@ -6,9 +6,11 @@
 #include "DetailsCustomization/InlineCurveDetails.h"
 #include "DetailsCustomization/PrimitiveCollisionDetails.h"
 #include "DetailsCustomization/PropertyMetadataDetails.h"
+#include "ComponentVisualizers/DebugShapesVisualizer.h"
 #include "CustomAssets/Inventory/ItemDataAssetActions.h"
 #include "BlueprintEditorModule.h"
 #include "AssetToolsModule.h"
+#include "UnrealEd.h"
 
 #include "GTActor.h"
 #include "GTVolume.h"
@@ -37,6 +39,11 @@ void FGTEditorModule::StartupModule()
 		REGISTER_STRUCT_CUSTOMIZATION(PropertyModule, FInlineVectorCurve, FInlineCurveDetails);
 		REGISTER_STRUCT_CUSTOMIZATION(PropertyModule, FInlineColorCurve, FInlineCurveDetails);
 		REGISTER_STRUCT_CUSTOMIZATION(PropertyModule, FPrimitiveCollision, FPrimitiveCollisionDetails);
+	}
+
+	if (GUnrealEd)
+	{
+		REGISTER_VISUALIZER(UDebugShapesComponent, FDebugShapesVisualizer);
 	}
 
 	if (const FAssetToolsModule* AssetToolsModule = FModuleManager::LoadModulePtr<FAssetToolsModule>("AssetTools"))
@@ -69,6 +76,11 @@ void FGTEditorModule::ShutdownModule()
 		UNREGISTER_STRUCT_CUSTOMIZATION(PropertyModule, FInlineVectorCurve);
 		UNREGISTER_STRUCT_CUSTOMIZATION(PropertyModule, FInlineColorCurve);
 		UNREGISTER_STRUCT_CUSTOMIZATION(PropertyModule, FPrimitiveCollision);
+	}
+
+	if (GUnrealEd)
+	{
+		UNREGISTER_VISUALIZER(UDebugShapesComponent);
 	}
 
 	if (const FAssetToolsModule* AssetToolsModule = FModuleManager::GetModulePtr<FAssetToolsModule>("AssetTools"))

@@ -21,6 +21,7 @@ public class GTEditor : ModuleRules
                 "Projects",
                 "EditorSubsystem",
                 "DeveloperSettings",
+                "ComponentVisualizers",
                 "PropertyEditor",
                 "GTRuntime",
                 "GTCore",

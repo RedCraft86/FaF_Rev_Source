@@ -5,7 +5,7 @@
 #include "DetailLayoutBuilder.h"
 #include "IDetailCustomization.h"
 
-class GTEDITOR_API FGTActorDetails final : public IDetailCustomization
+class GTEDITOR_API FGTActorDetails : public IDetailCustomization
 {
 public:
 

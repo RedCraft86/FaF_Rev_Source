@@ -10,6 +10,14 @@
 #define REGISTER_STRUCT_CUSTOMIZATION(Module, Property, Customization) Module->RegisterCustomPropertyTypeLayout(Property::StaticStruct()->GetFName(), FOnGetPropertyTypeCustomizationInstance::CreateStatic(&Customization::MakeInstance));
 #define UNREGISTER_STRUCT_CUSTOMIZATION(Module, Property) Module->UnregisterCustomPropertyTypeLayout(Property::StaticStruct()->GetFName());
 
+#define REGISTER_VISUALIZER(Component, Visualizer) \
+	{ \
+		TSharedPtr<FComponentVisualizer> VisualizerInstance = Visualizer::MakeInstance(); \
+		GUnrealEd->RegisterComponentVisualizer(Component::StaticClass()->GetFName(), VisualizerInstance); \
+		VisualizerInstance->OnRegister(); \
+	}
+#define UNREGISTER_VISUALIZER(Component) GUnrealEd->UnregisterComponentVisualizer(Component::StaticClass()->GetFName());
+
 class FGTEditorModule final : public IModuleInterface
 {
 public:
