@@ -11,7 +11,6 @@
 #include "Components/DebugShapesComponent.h"
 #endif
 
-#define PlayLow(Sound) AudioLow->SetSound(Sound); AudioLow->Play();
 #define PlayHigh(Sound) AudioHigh->SetSound(Sound); AudioHigh->Play();
 
 AFRDoorBase::AFRDoorBase() : bMultidirectional(false), OpenRotation(100.0f), BoxScale(2.0f, 1.25f, 1.0f)
@@ -63,7 +62,7 @@ AFRDoorBase::AFRDoorBase() : bMultidirectional(false), OpenRotation(100.0f), Box
 	AnimationCurve.GetRichCurve()->SetKeyTangentMode(AnimationCurve.GetRichCurve()
 		->UpdateOrAddKey(0.5f, 0.0f), RCTM_Auto);
 
-	LockedInfo.Label = INVTEXT("Locked\n[16pt,&regular]([%key Key])");
+	LockedInfo.Label = FText::FromString(TEXT("Locked") LINE_TERMINATOR TEXT("[16pt,&regular]([%key Key])"));
 	
 #if WITH_EDITORONLY_DATA
 	bRunConstructionScriptOnDrag = true;
@@ -81,7 +80,7 @@ void AFRDoorBase::SetState(const bool bInState)
 	if (bState != bInState)
 	{
 		bState = bInState;
-		PlayLow(CreakSound)
+		AudioLow->Play();
 		PlayHigh(bState ? OpenSound : CloseSound)
 		DoorMesh->SetCollisionEnabled(bState ? ECollisionEnabled::NoCollision : ECollisionEnabled::QueryAndPhysics);
 		if (bState) DoorRotaton = CalcOpenRotation();
@@ -126,7 +125,8 @@ bool AFRDoorBase::CheckKey(const AFRPlayerBase* Player)
 		DoorMesh->SetCanEverAffectNavigation(false);
 		return true;
 	}
-	
+
+	AudioHigh->Stop();
 	PlayHigh(LockedSound)
 	return false;
 }
@@ -185,6 +185,7 @@ void AFRDoorBase::OnBeginPawnInteract_Implementation(APawn* Pawn, const FHitResu
 void AFRDoorBase::BeginPlay()
 {
 	Super::BeginPlay();
+	AudioLow->SetSound(CreakSound);
 	DoorPivot->SetRelativeRotation(FRotator::ZeroRotator);
 }
 
