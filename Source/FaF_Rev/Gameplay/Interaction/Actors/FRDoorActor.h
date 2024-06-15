@@ -9,7 +9,7 @@
 #include "Interaction/InteractionInterface.h"
 #include "FRDoorActor.generated.h"
 
-UCLASS(Abstract, DisplayName = "Door Actor")
+UCLASS(Abstract, DisplayName = "Door Actor Base")
 class FAF_REV_API AFRDoorBase final : public AActor, public IInteractionInterface
 {
 	GENERATED_BODY()
