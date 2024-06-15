@@ -107,10 +107,10 @@ struct FDebugArcData
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "DebugArcData")
         FRotator Rotation;
 
-    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "DebugArcData", meta = (ClampMin = 0.0f, UIMin = 0.0f, ClampMax = 359.0f, UIMax = 359.0f))
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "DebugArcData", meta = (ClampMin = -360.0f, UIMin = -360.0f, ClampMax = 360.0f, UIMax = 360.0f))
         float MinAngle;
 
-    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "DebugArcData", meta = (ClampMin = 1.0f, UIMin = 1.0f, ClampMax = 360.0f, UIMax = 360.0f))
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "DebugArcData", meta = (ClampMin = -360.0f, UIMin = -360.0f, ClampMax = 360.0f, UIMax = 360.0f))
         float MaxAngle;
 
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "DebugArcData", meta = (ClampMin = 1, UIMin = 1))
