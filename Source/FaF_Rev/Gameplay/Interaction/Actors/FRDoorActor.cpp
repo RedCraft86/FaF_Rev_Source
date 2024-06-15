@@ -47,9 +47,6 @@ AFRDoorBase::AFRDoorBase() : bMultidirectional(false), OpenRotation(100.0f), Box
 	AudioHigh->bOverrideAttenuation = true;
 	AudioHigh->AttenuationOverrides.AttenuationShapeExtents.X = 250.0f;
 	AudioHigh->AttenuationOverrides.FalloffDistance = 500.0f;
-	AudioHigh->AttenuationOverrides.bEnableOcclusion = true;
-	AudioHigh->AttenuationOverrides.OcclusionLowPassFilterFrequency = 10000.0f;
-	AudioHigh->AttenuationOverrides.OcclusionVolumeAttenuation = 0.5f;
 
 	AudioLow = CreateDefaultSubobject<UAudioComponent>("AudioLow");
 	AudioLow->SetupAttachment(DoorBox);
@@ -59,15 +56,14 @@ AFRDoorBase::AFRDoorBase() : bMultidirectional(false), OpenRotation(100.0f), Box
 	AudioLow->bOverrideAttenuation = true;
 	AudioLow->AttenuationOverrides.AttenuationShapeExtents.X = 200.0f;
 	AudioLow->AttenuationOverrides.FalloffDistance = 400.0f;
-	AudioLow->AttenuationOverrides.bEnableOcclusion = true;
-	AudioLow->AttenuationOverrides.OcclusionLowPassFilterFrequency = 10000.0f;
-	AudioLow->AttenuationOverrides.OcclusionVolumeAttenuation = 0.25f;
 
 	AnimationCurve.GetRichCurve()->SetKeyTangentMode(AnimationCurve.GetRichCurve()
 		->UpdateOrAddKey(0.0f, 0.0f), RCTM_Auto);
 	
 	AnimationCurve.GetRichCurve()->SetKeyTangentMode(AnimationCurve.GetRichCurve()
 		->UpdateOrAddKey(0.5f, 0.0f), RCTM_Auto);
+
+	LockedInfo.Label = INVTEXT("Locked\n[16pt,&regular]([%key Key])");
 	
 #if WITH_EDITORONLY_DATA
 	bRunConstructionScriptOnDrag = true;
