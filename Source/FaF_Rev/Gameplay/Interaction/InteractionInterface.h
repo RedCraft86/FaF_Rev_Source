@@ -27,7 +27,9 @@ struct FInteractionInfo
 		FVector2D IconSize;
 
 
-	FInteractionInfo() : Label(DEFAULT_INTERACT_LABEL), Icon(nullptr), IconSize(35.0f) {}
+	FInteractionInfo()
+		: Label(DEFAULT_INTERACT_LABEL), LabelOffset(FVector2D::ZeroVector), Icon(nullptr), IconSize(35.0f)
+	{}
 };
 
 UINTERFACE()

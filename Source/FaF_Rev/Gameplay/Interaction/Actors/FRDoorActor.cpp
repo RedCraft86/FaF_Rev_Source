@@ -126,7 +126,7 @@ bool AFRDoorBase::CheckKey(const AFRPlayerBase* Player)
 		return true;
 	}
 
-	AudioHigh->Stop();
+	AudioHigh->FadeOut(0.2f, 0.0f);
 	PlayHigh(LockedSound)
 	return false;
 }
@@ -258,9 +258,10 @@ void AFRDoorBase::OnConstruction(const FTransform& Transform)
 		{
 			ShapeVisualizer->DebugArcs.Remove("P");
 		}
-		
-		DoorPivot->SetRelativeRotation({0.0f, (bMultidirectional ? PreviewAlpha : FMath::Abs(PreviewAlpha))
-			* (bMultidirectional ? FMath::Abs(OpenRotation) : OpenRotation), 0.0f});
+
+		if (!bMultidirectional) PreviewAlpha = FMath::Max(0.0f, PreviewAlpha);
+		DoorPivot->SetRelativeRotation({0.0f, PreviewAlpha * (bMultidirectional
+			? FMath::Abs(OpenRotation) : OpenRotation), 0.0f});
 	}
 #endif
 }
