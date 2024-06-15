@@ -14,7 +14,7 @@ struct FInteractionInfo
 {
 	GENERATED_BODY()
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "InteractionInfo")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "InteractionInfo", meta = (MultiLine = true))
 		FText Label;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "InteractionInfo")
