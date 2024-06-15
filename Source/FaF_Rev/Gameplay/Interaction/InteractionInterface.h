@@ -18,10 +18,14 @@ struct FInteractionInfo
 		FText Label;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "InteractionInfo")
+		FVector2D LabelOffset;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "InteractionInfo")
 		TObjectPtr<UTexture2D> Icon;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "InteractionInfo", meta = (AllowPreserveRatio = true, ClampMin = 0.1f, UIMin = 0.1f))
 		FVector2D IconSize;
+
 
 	FInteractionInfo() : Label(DEFAULT_INTERACT_LABEL), Icon(nullptr), IconSize(35.0f) {}
 };

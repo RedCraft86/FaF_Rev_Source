@@ -41,7 +41,8 @@ void UGameWidgetBase::InteractCheck() const
 		InteractIcon->SetBrush(Brush);
 		
 		InteractLabel->SetText(InteractionData.InteractInfo.Label);
-		OffsetInteractLabel(InteractLabel, Brush.GetImageSize().Size() / DefaultInteractSize.Size());
+		OffsetInteractLabel(InteractLabel, InteractionData.InteractInfo.LabelOffset,
+			Brush.GetImageSize().Size() / DefaultInteractSize.Size());
 		
 		Crosshair->SetVisibility(bHasIcon ? ESlateVisibility::Collapsed : ESlateVisibility::HitTestInvisible);
 		InteractIcon->SetVisibility(ESlateVisibility::HitTestInvisible);

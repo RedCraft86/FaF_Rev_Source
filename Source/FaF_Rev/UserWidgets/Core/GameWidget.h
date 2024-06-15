@@ -41,7 +41,7 @@ public:
 		FVector2D StaminaBarSpeed;
 
 	UFUNCTION(BlueprintImplementableEvent)
-		void OffsetInteractLabel(UExprTextBlock* Label, const float IconSizeRatio) const;
+		void OffsetInteractLabel(UExprTextBlock* Label, const FVector2D& BaseOffset, const float IconSizeRatio) const;
 	
 protected:
 
