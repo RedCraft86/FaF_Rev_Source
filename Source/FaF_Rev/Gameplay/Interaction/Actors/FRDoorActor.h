@@ -51,10 +51,13 @@ public:
 	UPROPERTY(EditAnywhere, Category = "Settings|Key")
 		TObjectPtr<class UInventoryItemDataBase> KeyItem;
 
-	UPROPERTY(EditAnywhere, Category = "Settings|Key")
+	UPROPERTY(EditAnywhere, Category = "Settings|Key", meta = (EditCondition = "KeyItem != nullptr", EditConditionHides))
 		FString KeyID;
 
 #if WITH_EDITORONLY_DATA
+	UPROPERTY(EditAnywhere, Category = "Settings", AdvancedDisplay)
+		bool bDebugView = true;
+	
 	UPROPERTY(EditAnywhere, Category = "Settings", AdvancedDisplay, meta = (ClampMin = -1.0f, UIMin = -1.0f, ClampMax = 1.0f, UIMax = 1.0f))
 		float PreviewAlpha = 0.0f;
 #endif

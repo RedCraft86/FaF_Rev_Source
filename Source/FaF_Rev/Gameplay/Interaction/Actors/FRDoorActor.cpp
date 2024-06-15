@@ -13,7 +13,7 @@
 
 #define PlayHigh(Sound) AudioHigh->SetSound(Sound); AudioHigh->Play();
 
-AFRDoorBase::AFRDoorBase() : bMultidirectional(false), OpenRotation(100.0f), BoxScale(2.0f, 1.25f, 1.0f)
+AFRDoorBase::AFRDoorBase() : bMultidirectional(false), OpenRotation(-100.0f), BoxScale(2.0f, 1.25f, 1.0f)
 {
 	PrimaryActorTick.bCanEverTick = true;
 	PrimaryActorTick.bStartWithTickEnabled = false;
@@ -231,7 +231,7 @@ void AFRDoorBase::OnConstruction(const FTransform& Transform)
 	if (ShapeVisualizer)
 	{
 		const float Radius = 90.0f * DoorMesh->Bounds.BoxExtent.GetMax() / 101.0f;
-		if (bMultidirectional || OpenRotation < 0.0f)
+		if (bDebugView && (bMultidirectional || OpenRotation < 0.0f))
 		{
 			FDebugArcData& N = ShapeVisualizer->DebugArcs.FindOrAdd("N");
 			N.Rotation = {0.0f, 90.0f, 0.0f};
@@ -245,7 +245,7 @@ void AFRDoorBase::OnConstruction(const FTransform& Transform)
 			ShapeVisualizer->DebugArcs.Remove("N");
 		}
 
-		if (bMultidirectional || OpenRotation > 0.0f)
+		if (bDebugView && (bMultidirectional || OpenRotation > 0.0f))
 		{
 			FDebugArcData& P = ShapeVisualizer->DebugArcs.FindOrAdd("P");
 			P.Rotation = {0.0f, 90.0f, 0.0f};
