@@ -2,7 +2,7 @@
 
 #include "GTActor.h"
 
-AGTActor::AGTActor() : bEnabled(true)
+AGTActor::AGTActor() : bEnabled(true), bStartWithCollisionEnabled(true)
 {
 	PrimaryActorTick.bCanEverTick = false;
 	PrimaryActorTick.bStartWithTickEnabled = false;
@@ -29,6 +29,7 @@ void AGTActor::SetEnabled(const bool bInEnabled)
 void AGTActor::BeginPlay()
 {
 	Super::BeginPlay();
+	SetActorEnableCollision(bStartWithCollisionEnabled);
 	if (!bEnabled) ON_ENABLE_STATE_CHANGED
 }
 

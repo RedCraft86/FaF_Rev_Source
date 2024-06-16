@@ -9,7 +9,7 @@ DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FActorEnableChangedSignature, const 
 
 #define ON_ENABLE_STATE_CHANGED { OnEnableStateChange(bEnabled); OnEnableStateChanged.Broadcast(bEnabled); OnEnableStateChangedEvent.Broadcast(bEnabled); }
 
-UCLASS(Abstract, meta = (HiddenCategories = "Collision"))
+UCLASS(Abstract)
 class GTRUNTIME_API AGTActor : public AActor
 {
 	GENERATED_BODY()
@@ -41,6 +41,9 @@ protected:
 	UPROPERTY(EditAnywhere, Category = "Settings", meta = (DisplayPriority = -10))
 		bool bEnabled;
 
+	UPROPERTY(EditAnywhere, Category = "Collision")
+		bool bStartWithCollisionEnabled;
+	
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Actor", NonPIEDuplicateTransient, TextExportTransient, NonTransactional)
 		FGuid RuntimeGuid;
 	
