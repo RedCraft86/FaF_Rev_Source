@@ -55,7 +55,7 @@ void AGTVolume::OnConstruction(const FTransform& Transform)
 	}
 }
 
-void AGTVolume::OnEnableStateChange(const bool bIsEnabled)
+void AGTVolume::OnEnableStateChanged(const bool bIsEnabled)
 {
 	SetActorHiddenInGame(!bIsEnabled);
 	SetActorEnableCollision(bIsEnabled);

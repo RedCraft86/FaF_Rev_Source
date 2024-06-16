@@ -196,10 +196,8 @@ void UGameSectionManager::FinishTransition()
 			{
 				FInventorySlotData* SlotData = Inventory->ItemSlots.Find(Slot);
 				SlotData->Amount = FMath::Min(FMath::Max(SlotData->Amount, Item.Amount), ItemData->GetStackLimit());
-				for (const TPair<FName, FString>& Meta : Item.Metadata)
-				{
-					if (IsValidMetadataPair(Meta)) SlotData->Metadata.Add(Meta);
-				}
+				SlotData->Metadata.Append(Item.Metadata);
+				SlotData->ValidateMetadata();
 			}
 		}
 		

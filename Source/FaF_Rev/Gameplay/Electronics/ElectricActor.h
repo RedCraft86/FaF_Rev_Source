@@ -14,9 +14,6 @@ public:
 
 	AElectricActorBase();
 
-	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, Category = "Subobjects")
-		TObjectPtr<USceneComponent> SceneRoot;
-
 	UPROPERTY(EditAnywhere, Category = "Settings", meta = (DisplayPriority = -1))
 		uint8 MinEnergy;
 

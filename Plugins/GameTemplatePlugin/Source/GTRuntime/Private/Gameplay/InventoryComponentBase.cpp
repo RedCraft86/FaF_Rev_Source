@@ -8,7 +8,7 @@ void FInventorySlotData::ValidateMetadata()
 	Metadata.GenerateKeyArray(Keys);
 	for (const FName& Key : Keys)
 	{
-		if (Metadata.FindRef(Key).IsEmpty())
+		if (Metadata[Key].IsEmpty())
 		{
 			Metadata.Remove(Key);
 		}

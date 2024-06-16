@@ -20,7 +20,7 @@ public:
 		TObjectPtr<UBillboardComponent> IconComponent;
 
 	UPROPERTY(BlueprintAssignable, DisplayName = "On Enable State Changed")
-		FActorEnableChangedSignature OnEnableStateChangedEvent;
+		FActorEnableChangedSignature OnEnableStateChangedBP;
 	
 	UFUNCTION(BlueprintCallable, Category = "Actor")
 		void SetEnabled(const bool bInEnabled);
@@ -32,7 +32,7 @@ public:
 		FGuid GetRuntimeGuid() const { return RuntimeGuid; }
 
 	DECLARE_MULTICAST_DELEGATE_OneParam(FActorEnableChanged, const bool);
-	FActorEnableChanged OnEnableStateChanged;
+	FActorEnableChanged OnEnableStateChangedEvent;
 
 protected:
 
@@ -47,7 +47,7 @@ protected:
 	
 	virtual void BeginPlay() override;
 	virtual void OnConstruction(const FTransform& Transform) override;
-	virtual void OnEnableStateChange(const bool bIsEnabled);
+	virtual void OnEnableStateChanged(const bool bIsEnabled);
 	
 #if WITH_EDITOR
 private:

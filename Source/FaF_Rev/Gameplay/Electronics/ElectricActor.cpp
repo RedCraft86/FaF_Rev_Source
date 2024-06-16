@@ -7,9 +7,6 @@ AElectricActorBase::AElectricActorBase() : MinEnergy(1), bCachedState(false)
 	PrimaryActorTick.bCanEverTick = true;
 	PrimaryActorTick.bStartWithTickEnabled = false;
 	
-	SceneRoot = CreateDefaultSubobject<USceneComponent>("SceneRoot");
-	SetRootComponent(SceneRoot);
-	
 #if WITH_EDITORONLY_DATA
 	SceneRoot->bVisualizeComponent = true;
 #endif
@@ -53,15 +50,15 @@ bool AElectricActorBase::GetState()
 
 void AElectricActorBase::OnEnergyChanged()
 {
-	const uint8 Energy = GetEnergy();
-	const bool bState = IsEnabled() && Energy >= MinEnergy;
+	const uint8 TotalEnergy = GetEnergy();
+	const bool bState = IsEnabled() && TotalEnergy >= MinEnergy;
 	if (bCachedState != bState)
 	{
 		bCachedState = bState;
 		OnStateChanged(bCachedState);
 	}
 	
-	EnergyChangedEvent(Energy);
+	EnergyChangedEvent(TotalEnergy);
 }
 
 void AElectricActorBase::OnStateChanged(const bool bInState)

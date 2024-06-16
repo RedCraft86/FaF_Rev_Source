@@ -50,10 +50,11 @@ struct GTRUNTIME_API FInventorySlotData
 		ValidateMetadata();
 	}
 	
-	explicit FInventorySlotData(const UInventoryItemDataBase* Data, const int32 Amount, const TMap<FName, FString>& InMetadata = {})
-		: ItemData(Data), Amount(Amount), Metadata(InMetadata)
+	explicit FInventorySlotData(const UInventoryItemDataBase* Data, const int32 Amount,
+		const TMap<FName, FString>& InMetadata = {}) : ItemData(Data), Amount(Amount)
 	{
 		if (Data) Metadata.Append(Data->DefaultMetadata);
+		Metadata.Append(InMetadata);
 		ValidateMetadata();
 	}
 	
