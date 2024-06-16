@@ -7,7 +7,7 @@
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FActorEnableChangedSignature, const bool, bEnabled);
 
-#define ON_ENABLE_STATE_CHANGED { OnEnableStateChange(bEnabled); OnEnableStateChanged.Broadcast(bEnabled); OnEnableStateChangedEvent.Broadcast(bEnabled); }
+#define ON_ENABLE_STATE_CHANGED { OnEnableStateChanged(bEnabled); OnEnableStateChangedEvent.Broadcast(bEnabled); OnEnableStateChangedBP.Broadcast(bEnabled); }
 
 UCLASS(Abstract)
 class GTRUNTIME_API AGTActor : public AActor
@@ -22,7 +22,7 @@ public:
 		TObjectPtr<USceneComponent> SceneRoot;
 
 	UPROPERTY(BlueprintAssignable, DisplayName = "On Enable State Changed")
-		FActorEnableChangedSignature EnableStateChangedEvent;
+		FActorEnableChangedSignature OnEnableStateChangedBP;
 	
 	UFUNCTION(BlueprintCallable, Category = "Actor")
 		virtual void SetEnabled(const bool bInEnabled);
@@ -34,7 +34,7 @@ public:
 		FGuid GetRuntimeGuid() const { return RuntimeGuid; }
 
 	DECLARE_MULTICAST_DELEGATE_OneParam(FActorEnableChanged, const bool);
-	FActorEnableChanged EnableStateChanged;
+	FActorEnableChanged OnEnableStateChangedEvent;
 
 protected:
 
