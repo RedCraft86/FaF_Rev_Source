@@ -9,7 +9,7 @@ DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FActorEnableChangedSignature, const 
 
 #define ON_ENABLE_STATE_CHANGED { OnEnableStateChange(bEnabled); OnEnableStateChanged.Broadcast(bEnabled); OnEnableStateChangedEvent.Broadcast(bEnabled); }
 
-UCLASS(Abstract)
+UCLASS(Abstract, meta = (HiddenCategories = "Collision"))
 class GTRUNTIME_API AGTActor : public AActor
 {
 	GENERATED_BODY()
