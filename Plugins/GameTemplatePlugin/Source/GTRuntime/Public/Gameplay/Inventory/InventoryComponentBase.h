@@ -60,10 +60,20 @@ struct GTRUNTIME_API FInventorySlotData
 	}
 	
 	explicit FInventorySlotData(const UInventoryItemDataBase* Data, const int32 Amount, const TMap<FName, FString>& InMetadata = {})
-		: ItemData(Data), Amount(Amount), Metadata(InMetadata)
+		: ItemData(Data), Amount(Amount)
 	{
-		if (!Data) return;
-		for (const TPair<FName, FString>& Meta : Data->DefaultMetadata)
+		if (Data)
+		{
+			for (const TPair<FName, FString>& Meta : Data->DefaultMetadata)
+			{
+				if (IsValidMetadataPair(Meta))
+				{
+					Metadata.Add(Meta);
+				}
+			}
+		}
+
+		for (const TPair<FName, FString>& Meta : InMetadata)
 		{
 			if (IsValidMetadataPair(Meta))
 			{
