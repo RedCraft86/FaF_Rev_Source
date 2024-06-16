@@ -24,13 +24,11 @@ UGuideWidgetBase::UGuideWidgetBase(const FObjectInitializer& ObjectInitializer)
 void UGuideWidgetBase::QueuePage(const FGuideBookPageID& PageID)
 {
 	if (!PageID.IsValid()) return;
-	const bool bWasEmpty = PageQueue.IsEmpty();
 	PageQueue.Enqueue(PageID);
-	if (bWasEmpty)
+	if (!bActive)
 	{
 		bActive = true;
-		bPrePauseState = UGameplayStatics::IsGamePaused(this);
-		ProceedNextGuide();
+		AddWidget(nullptr);
 	}
 }
 
@@ -57,8 +55,11 @@ void UGuideWidgetBase::ProceedNextGuide()
 				LocalPageText->SetText(Data.Description, true);
 				if (!Data.Image.IsNull())
 				{
+					LocalImageContainer->SetVisibility(ESlateVisibility::HitTestInvisible);
 					LocalImageContainer->SetHeightOverride(ImageHeight);
-					LocalPageImage->SetBrushFromTexture(Data.Image.LoadSynchronous());
+					FSlateBrush Brush = LocalPageImage->GetBrush();
+					Brush.SetResourceObject(Data.Image.LoadSynchronous());
+					LocalPageImage->SetBrush(Brush);
 				}
 			}
 			else
@@ -80,24 +81,27 @@ void UGuideWidgetBase::ProceedNextGuide()
 	{
 		RemoveWidget(nullptr);
 		UGameplayStatics::SetGamePaused(this, bPrePauseState);
-		bActive = false;
 	}
 }
 
 void UGuideWidgetBase::ResetBook() const
 {
-	NextButton->SetIsEnabled(false);
+	NextButton->SetVisibility(ESlateVisibility::SelfHitTestInvisible);
 	NextButton->SetRenderOpacity(0.0f);
 	CustomPageContainer->ClearChildren();
 	LocalPageTitle->SetText(FText::GetEmpty());
 	LocalPageText->SetText(FText::GetEmpty(), true);
-	LocalPageImage->SetBrushFromTexture(DefaultImage);
 	LocalImageContainer->ClearHeightOverride();
+	LocalImageContainer->SetVisibility(ESlateVisibility::Collapsed);
+
+	FSlateBrush Brush = LocalPageImage->GetBrush();
+	Brush.SetResourceObject(DefaultImage);
+	LocalPageImage->SetBrush(Brush);
 }
 
 void UGuideWidgetBase::OnNextClicked()
 {
-	NextButton->SetIsEnabled(false);
+	NextButton->SetVisibility(ESlateVisibility::SelfHitTestInvisible);
 	PlayAnimationReverse(NextButtonAnim, 2.0f, true);
 	if (UUMGSequencePlayer* Anim = PlayAnimationReverse(GuideFadeAnim))
 	{
@@ -122,10 +126,22 @@ void UGuideWidgetBase::NativeConstruct()
 	PreInputMode = GetGameMode<AFRGameModeBase>()->GetInputModeData();
 	GetGameMode<AFRGameModeBase>()->SetGameInputMode(EGameInputMode::GameAndUI, true,
 		EMouseLockMode::LockAlways, false, this);
+
+	if (!PageQueue.IsEmpty())
+	{
+		bPrePauseState = UGameplayStatics::IsGamePaused(this);
+		UGameplayStatics::SetGamePaused(this, true);
+		ProceedNextGuide();
+	}
+	else
+	{
+		RemoveWidget(nullptr);
+	}
 }
 
 void UGuideWidgetBase::NativeDestruct()
 {
 	Super::NativeDestruct();
 	GetGameMode<AFRGameModeBase>()->SetInputModeData(PreInputMode);
+	bActive = false;
 }

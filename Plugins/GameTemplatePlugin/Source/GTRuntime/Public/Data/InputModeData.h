@@ -43,7 +43,7 @@ public:
 	
 	FGameInputModeData()
 		: InputMode(EGameInputMode::GameOnly)
-		, bShowMouseCursor(true)
+		, bShowMouseCursor(false)
 		, MouseLock(EMouseLockMode::LockAlways)
 		, bHideCursorOnCapture(true)
 		, FocusWidget(nullptr)
