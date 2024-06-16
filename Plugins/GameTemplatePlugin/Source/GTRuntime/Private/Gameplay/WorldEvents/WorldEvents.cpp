@@ -12,6 +12,14 @@
 #include "GTActor.h"
 #include "GTVolume.h"
 
+void FWorldEventBase::OnBeginPlay(const UObject* WorldContext)
+{
+	if (bRunConstructionBeforeBeginPlay)
+	{
+		OnConstruction(WorldContext, false);
+	}
+}
+
 void FWCDelay::RunEvent(const UObject* WorldContext)
 {
 	if (Delay <= 0 || FMath::IsNearlyZero(Delay)) return;
@@ -34,18 +42,16 @@ void FWCDelay::RunEvent(const UObject* WorldContext)
 	}
 }
 
-#if WITH_EDITOR
-void FWCDelay::OnConstruction(const UObject* WorldContext)
+void FWCDelay::OnConstruction(const UObject* WorldContext, const bool bEditorTime)
 {
 	for (FInstancedStruct& Event : Events)
 	{
 		if (FWorldEventBase* EventPtr = Event.GetMutablePtr<FWorldEventBase>())
 		{
-			EventPtr->OnConstruction(WorldContext);
+			EventPtr->OnConstruction(WorldContext, bEditorTime);
 		}
 	}
 }
-#endif
 
 void FWCFlipFlop::RunEvent(const UObject* WorldContext)
 {
@@ -72,8 +78,7 @@ void FWCFlipFlop::RunEvent(const UObject* WorldContext)
 	}
 }
 
-#if WITH_EDITOR
-void FWCFlipFlop::OnConstruction(const UObject* WorldContext)
+void FWCFlipFlop::OnConstruction(const UObject* WorldContext, const bool bEditorTime)
 {
 	TArray<FInstancedStruct> Events = EventsA;
 	Events.Append(EventsB);
@@ -82,11 +87,10 @@ void FWCFlipFlop::OnConstruction(const UObject* WorldContext)
 	{
 		if (FWorldEventBase* EventPtr = Event.GetMutablePtr<FWorldEventBase>())
 		{
-			EventPtr->OnConstruction(WorldContext);
+			EventPtr->OnConstruction(WorldContext, bEditorTime);
 		}
 	}
 }
-#endif
 
 void FWEEventGlobal::RunEvent(const UObject* WorldContext)
 {

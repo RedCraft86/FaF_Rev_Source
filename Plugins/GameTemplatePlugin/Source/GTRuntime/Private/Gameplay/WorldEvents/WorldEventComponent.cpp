@@ -65,7 +65,7 @@ void UWorldEventComponent::PostEditChangeProperty(FPropertyChangedEvent& Propert
 	{
 		if (FWorldEventBase* EventPtr = Event.GetMutablePtr<FWorldEventBase>())
 		{
-			EventPtr->OnConstruction(this);
+			EventPtr->OnConstruction(this, true);
 		}
 	}
 }

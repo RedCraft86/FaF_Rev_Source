@@ -81,9 +81,9 @@ void AElectricTaskActor::OnStateChanged(const bool bState)
 }
 
 #if WITH_EDITOR
-void AElectricTaskActor::OnConstruction(const FTransform& Transform)
+void AElectricTaskActor::PostEditChangeProperty(FPropertyChangedEvent& PropertyChangedEvent)
 {
-	Super::OnConstruction(Transform);
+	Super::PostEditChangeProperty(PropertyChangedEvent);
 	TArray<FInstancedStruct> Events = ActivateEvents;
 	Events.Append(DeactivateEvents);
 	
@@ -91,7 +91,7 @@ void AElectricTaskActor::OnConstruction(const FTransform& Transform)
 	{
 		if (FWorldEventBase* EventPtr = Event.GetMutablePtr<FWorldEventBase>())
 		{
-			EventPtr->OnConstruction(this);
+			EventPtr->OnConstruction(this, true);
 		}
 	}
 }

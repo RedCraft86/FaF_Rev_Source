@@ -31,16 +31,15 @@ struct GTRUNTIME_API FWorldEventBase
 	GENERATED_BODY()
 	
 	bool bRequiresTick;
+	bool bRunConstructionBeforeBeginPlay;
 
-	FWorldEventBase() : bRequiresTick(false) {}
+	FWorldEventBase() : bRequiresTick(false), bRunConstructionBeforeBeginPlay(false) {}
 	virtual ~FWorldEventBase() = default;
 	
 	virtual void RunEvent(const UObject* WorldContext) {}
-	virtual void OnBeginPlay(const UObject* WorldContext) {}
+	virtual void OnBeginPlay(const UObject* WorldContext);
 	virtual void OnTick(const UObject* WorldContext, const float DeltaTime) {}
-#if WITH_EDITOR
-	virtual void OnConstruction(const UObject* WorldContext) {}
-#endif
+	virtual void OnConstruction(const UObject* WorldContext, const bool bEditorTime) {}
 
 protected:
 
@@ -76,9 +75,7 @@ protected:
 
 	FTimerHandle Handle;
 	virtual void RunEvent(const UObject* WorldContext) override;
-#if WITH_EDITOR
-	virtual void OnConstruction(const UObject* WorldContext) override;
-#endif
+	virtual void OnConstruction(const UObject* WorldContext, const bool bEditorTime) override;
 };
 
 USTRUCT(BlueprintType, DisplayName = "Flip Flop")
@@ -98,9 +95,7 @@ protected:
 
 	bool bIsA;
 	virtual void RunEvent(const UObject* WorldContext) override;
-#if WITH_EDITOR
-	virtual void OnConstruction(const UObject* WorldContext) override;
-#endif
+	virtual void OnConstruction(const UObject* WorldContext, const bool bEditorTime) override;
 };
 
 USTRUCT(BlueprintType, DisplayName = "Global Event")
