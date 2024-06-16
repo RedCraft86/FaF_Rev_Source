@@ -45,47 +45,13 @@ void FWEPlayerLockOn::RunEvent(const UObject* WorldContext)
 		Player = AFRPlayerBase::Get(WorldContext);
 
 	Player->LockOnSpeed = LockOnSpeed;
-	const AActor* Actor = Target.LoadSynchronous();
-	if (!Actor || Component.IsNone())
-	{
-		Player->LockOnTarget = nullptr;
-	}
-	else
-	{
-		TArray<USceneComponent*> Comps;
-		Actor->GetComponents<USceneComponent>(Comps);
-		for (const USceneComponent* Comp : Comps)
-		{
-			if (Comp->GetFName() == Component)
-			{
-				Player->LockOnTarget = Comp;
-			}
-		}
-	}
-}
-
-void FWEPlayerLockOn::OnConstruction(const UObject* WorldContext, const bool bEditorTime)
-{
 	if (const AActor* Actor = Target.LoadSynchronous())
 	{
-#if WITH_EDITORONLY_DATA
-		bValidTarget = true;
-		TArray<USceneComponent*> Comps;
-		Actor->GetComponents<USceneComponent>(Comps);
-		ComponentNames.Empty(Comps.Num());
-		for (const USceneComponent* Comp : Comps)
-		{
-			ComponentNames.Add(Comp->GetFName());
-		}
-#endif
-		if (Component.IsNone()) Component = Actor->GetRootComponent()->GetFName();
+		Player->LockOnTarget = Actor->GetRootComponent();
 	}
 	else
 	{
-		Component = NAME_None;
-#if WITH_EDITORONLY_DATA
-		bValidTarget = false;
-#endif
+		Player->LockOnTarget = nullptr;
 	}
 }
 

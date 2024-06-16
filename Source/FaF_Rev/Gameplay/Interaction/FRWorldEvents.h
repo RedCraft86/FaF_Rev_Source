@@ -83,26 +83,15 @@ struct FAF_REV_API FWEPlayerLockOn final : public FWorldEventBase
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "PlayerLockOn")
 		TSoftObjectPtr<AActor> Target;
-
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "PlayerLockOn", meta = (EditCondition = "bValidTarget", GetOptions = "ComponentNames"))
-		FName Component;
 	
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "PlayerLockOn")
 		TSoftObjectPtr<AFRPlayerBase> Player;
 
-	FWEPlayerLockOn() : LockOnSpeed(5.0f), Component(NAME_None)
-	{
-		bRunConstructionBeforeBeginPlay = true;
-	}
+	FWEPlayerLockOn() : LockOnSpeed(5.0f) {}
 	
 protected:
-#if WITH_EDITORONLY_DATA
-	UPROPERTY(Transient, meta = (TransientToolProperty = true)) bool bValidTarget = false;
-	UPROPERTY(Transient, meta = (TransientToolProperty = true)) TArray<FName> ComponentNames;
-#endif
-	
+
 	virtual void RunEvent(const UObject* WorldContext) override;
-	virtual void OnConstruction(const UObject* WorldContext, const bool bEditorTime) override;
 };
 
 USTRUCT(BlueprintType, DisplayName = "Unlock Transient Key")
