@@ -22,7 +22,7 @@ public:
 	UPROPERTY(VisibleDefaultsOnly, Category = "Subobject")
 		TObjectPtr<UInstancedStaticMeshComponent> InstancedStaticMesh;
 
-	UPROPERTY(EditAnywhere, Category = "Settings", meta = (DisplayThumbnail = false))
+	UPROPERTY(EditAnywhere, Category = "Settings", DisplayName = "Item", meta = (DisplayThumbnail = false))
 		TObjectPtr<class UInventoryItemData> ItemData;
 
 	UPROPERTY(EditAnywhere, Category = "Settings", meta = (ClampMin = 1, UIMin = 1))
