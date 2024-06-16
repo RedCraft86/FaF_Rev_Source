@@ -61,10 +61,13 @@ void AFRPlayerController::OnWindowFocusChanged(bool bFocused)
 		UGameSettings::Get()->GetFrameRateLimit()));
 #endif
 	
-	if (bFocused && UnfocusedWidget->IsInViewport())
+	if (bFocused)
 	{
-		UnfocusedWidget->RemoveFromParent();
-		SetPause(false);
+		if (UnfocusedWidget->IsInViewport())
+		{
+			UnfocusedWidget->RemoveFromParent();
+			SetPause(false);
+		}
 	}
 	else if (!IsPaused())
 	{
