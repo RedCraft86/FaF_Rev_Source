@@ -22,7 +22,6 @@ void FFaF_RevEditorModule::StartupModule()
         REGISTER_CLASS_CUSTOMIZATION(PropertyModule, AFRDoorBase, FGTActorDetails);
         REGISTER_CLASS_CUSTOMIZATION(PropertyModule, AInventoryPreview, FGTActorDetails);
         REGISTER_CLASS_CUSTOMIZATION(PropertyModule, ASmartPostProcess, FGTActorDetails);
-        REGISTER_CLASS_CUSTOMIZATION(PropertyModule, AElectricActorBase, FGTActorDetails);
     }
 
     if (const FAssetToolsModule* AssetToolsModule = FModuleManager::LoadModulePtr<FAssetToolsModule>("AssetTools"))
@@ -43,7 +42,6 @@ void FFaF_RevEditorModule::ShutdownModule()
         UNREGISTER_CLASS_CUSTOMIZATION(PropertyModule, AFRDoorBase);
         UNREGISTER_CLASS_CUSTOMIZATION(PropertyModule, AInventoryPreview);
         UNREGISTER_CLASS_CUSTOMIZATION(PropertyModule, ASmartPostProcess);
-        UNREGISTER_CLASS_CUSTOMIZATION(PropertyModule, AElectricActorBase);
     }
 
     if (const FAssetToolsModule* AssetToolsModule = FModuleManager::GetModulePtr<FAssetToolsModule>("AssetTools"))

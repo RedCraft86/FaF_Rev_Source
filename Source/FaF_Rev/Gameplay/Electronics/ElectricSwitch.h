@@ -46,5 +46,5 @@ protected:
 	virtual void OnBeginInteract_Implementation(AFRPlayerBase* Player, const FHitResult& HitResult) override;
 	
 	virtual void BeginPlay() override;
-	virtual void OnEnableStateChange(const bool bIsEnabled) override;
+	virtual void OnEnableStateChanged(const bool bIsEnabled) override;
 };

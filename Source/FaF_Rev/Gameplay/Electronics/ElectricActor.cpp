@@ -19,14 +19,14 @@ void AElectricActorBase::AddEnergy(const FName Key, const uint8 Value)
 {
 	CachedEnergy.Key = false;
 	Energy.Add(Key, Value);
-	OnEnergyChanged(GetEnergy());
+	OnEnergyChanged();
 }
 
 void AElectricActorBase::RemoveEnergy(const FName Key)
 {
 	CachedEnergy.Key = false;
 	Energy.Remove(Key);
-	OnEnergyChanged(GetEnergy());
+	OnEnergyChanged();
 }
 
 uint8 AElectricActorBase::GetEnergy()
@@ -48,28 +48,34 @@ uint8 AElectricActorBase::GetEnergy()
 
 bool AElectricActorBase::GetState()
 {
-	return GetEnergy() >= MinEnergy;
+	return IsEnabled() && GetEnergy() >= MinEnergy;
 }
 
-void AElectricActorBase::OnEnergyChanged(const uint8 Total)
+void AElectricActorBase::OnEnergyChanged()
 {
-	const bool bState = Total >= MinEnergy;
+	const uint8 Energy = GetEnergy();
+	const bool bState = IsEnabled() && Energy >= MinEnergy;
 	if (bCachedState != bState)
 	{
 		bCachedState = bState;
-		OnStateChanged(bState);
+		OnStateChanged(bCachedState);
 	}
 	
-	EnergyChangedEvent(Total);
+	EnergyChangedEvent(Energy);
 }
 
-void AElectricActorBase::OnStateChanged(const bool bState)
+void AElectricActorBase::OnStateChanged(const bool bInState)
 {
-	StateChangedEvent(bState);
+	StateChangedEvent(bInState);
 }
 
 void AElectricActorBase::BeginPlay()
 {
 	Super::BeginPlay();
+	OnStateChanged(GetState());
+}
+
+void AElectricActorBase::OnEnableStateChanged(const bool bIsEnabled)
+{
 	OnStateChanged(GetState());
 }

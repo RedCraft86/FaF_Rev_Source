@@ -46,7 +46,7 @@ void AGTActor::OnConstruction(const FTransform& Transform)
 	}
 }
 
-void AGTActor::OnEnableStateChange(const bool bIsEnabled)
+void AGTActor::OnEnableStateChanged(const bool bIsEnabled)
 {
 	SetActorHiddenInGame(!bIsEnabled);
 	SetActorEnableCollision(bIsEnabled);

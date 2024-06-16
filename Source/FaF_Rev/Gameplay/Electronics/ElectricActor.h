@@ -2,11 +2,11 @@
 
 #pragma once
 
-#include "GameFramework/Actor.h"
+#include "GTActor.h"
 #include "ElectricActor.generated.h"
 
 UCLASS(Abstract)
-class FAF_REV_API AElectricActorBase : public AActor
+class FAF_REV_API AElectricActorBase : public AGTActor
 {
 	GENERATED_BODY()
 
@@ -44,7 +44,9 @@ protected:
 	TMap<FName, uint8> Energy;
 	TPair<bool, uint8> CachedEnergy;
 	
-	virtual void OnEnergyChanged(const uint8 Total);
-	virtual void OnStateChanged(const bool bState);
+	virtual void OnEnergyChanged();
+	virtual void OnStateChanged(const bool bInState);
+	
 	virtual void BeginPlay() override;
+	virtual void OnEnableStateChanged(const bool bIsEnabled) override;
 };

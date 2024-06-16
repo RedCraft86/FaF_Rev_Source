@@ -22,7 +22,7 @@ public:
 		TObjectPtr<USceneComponent> SceneRoot;
 
 	UPROPERTY(BlueprintAssignable, DisplayName = "On Enable State Changed")
-		FActorEnableChangedSignature OnEnableStateChangedEvent;
+		FActorEnableChangedSignature EnableStateChangedEvent;
 	
 	UFUNCTION(BlueprintCallable, Category = "Actor")
 		virtual void SetEnabled(const bool bInEnabled);
@@ -34,7 +34,7 @@ public:
 		FGuid GetRuntimeGuid() const { return RuntimeGuid; }
 
 	DECLARE_MULTICAST_DELEGATE_OneParam(FActorEnableChanged, const bool);
-	FActorEnableChanged OnEnableStateChanged;
+	FActorEnableChanged EnableStateChanged;
 
 protected:
 
@@ -49,5 +49,5 @@ protected:
 	
 	virtual void BeginPlay() override;
 	virtual void OnConstruction(const FTransform& Transform) override;
-	virtual void OnEnableStateChange(const bool bIsEnabled);
+	virtual void OnEnableStateChanged(const bool bIsEnabled);
 };

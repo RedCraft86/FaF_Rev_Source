@@ -50,7 +50,7 @@ void AElectricSwitchBase::BeginPlay()
 	GetWorldTimerManager().SetTimerForNextTick(this, &AElectricSwitchBase::UpdateStates);
 }
 
-void AElectricSwitchBase::OnEnableStateChange(const bool bIsEnabled)
+void AElectricSwitchBase::OnEnableStateChanged(const bool bIsEnabled)
 {
 	SetActorHiddenInGame(false);
 	SetActorEnableCollision(bIsEnabled);
