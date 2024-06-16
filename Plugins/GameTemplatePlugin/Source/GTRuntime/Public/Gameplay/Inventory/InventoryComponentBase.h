@@ -7,9 +7,6 @@
 #include "Components/ActorComponent.h"
 #include "InventoryComponentBase.generated.h"
 
-#define IsValidMetadata(Key, Value) !Key.IsNone() && !Value.IsEmpty()
-#define IsValidMetadataPair(Pair) IsValidMetadata(Pair.Key, Pair.Value)
-
 UENUM(BlueprintType)
 enum class EInventoryMetaFilter : uint8
 {
@@ -49,37 +46,15 @@ struct GTRUNTIME_API FInventorySlotData
 	FInventorySlotData() : ItemData(nullptr), Amount(0) {}
 	explicit FInventorySlotData(const UInventoryItemDataBase* Data) : ItemData(Data), Amount(1), Metadata({})
 	{
-		if (!Data) return;
-		for (const TPair<FName, FString>& Meta : Data->DefaultMetadata)
-		{
-			if (IsValidMetadataPair(Meta))
-			{
-				Metadata.Add(Meta);
-			}
-		}
+		if (Data) Metadata.Append(Data->DefaultMetadata);
+		ValidateMetadata();
 	}
 	
 	explicit FInventorySlotData(const UInventoryItemDataBase* Data, const int32 Amount, const TMap<FName, FString>& InMetadata = {})
-		: ItemData(Data), Amount(Amount)
+		: ItemData(Data), Amount(Amount), Metadata(InMetadata)
 	{
-		if (Data)
-		{
-			for (const TPair<FName, FString>& Meta : Data->DefaultMetadata)
-			{
-				if (IsValidMetadataPair(Meta))
-				{
-					Metadata.Add(Meta);
-				}
-			}
-		}
-
-		for (const TPair<FName, FString>& Meta : InMetadata)
-		{
-			if (IsValidMetadataPair(Meta))
-			{
-				Metadata.Add(Meta);
-			}
-		}
+		if (Data) Metadata.Append(Data->DefaultMetadata);
+		ValidateMetadata();
 	}
 	
 	friend FArchive& operator<<(FArchive& Ar, FInventorySlotData& SlotData)
@@ -93,6 +68,7 @@ struct GTRUNTIME_API FInventorySlotData
 	template <typename T = UInventoryItemDataBase>
 	T* GetItemData() const { return Cast<T>(ItemData.LoadSynchronous()); }
 
+	void ValidateMetadata();
 	bool IsValidSlot() const { return !ItemData.IsNull() && Amount > 0; }
 	bool MatchesWith(const UInventoryItemDataBase* Item, const FInventoryItemFilter& FilterData) const;
 };
@@ -165,8 +141,8 @@ protected:
 	UPROPERTY(BlueprintAssignable, DisplayName = "On Item Removed")
 		FInventoryIOUpdateSignature OnItemRemovedBP;
 
-	FGameCurrency CurrencyData;
-	TMap<FGuid, FInventorySlotData> ItemSlots;
+	UPROPERTY() FGameCurrency CurrencyData;
+	UPROPERTY() TMap<FGuid, FInventorySlotData> ItemSlots;
 
 	bool CleanInventory();
 	virtual void OnInventoryUpdate() {}

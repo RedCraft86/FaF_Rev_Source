@@ -79,15 +79,15 @@ void AInventoryItemActor::OnConstruction(const FTransform& Transform)
 	
 	InstancedStaticMesh->ClearInstances();
 	if (MeshInstances.IsEmpty()) MeshInstances.Add(FTransform::Identity);
-	if (ItemData && !ItemData->MeshData.IsEmpty() && Amount > 0)
+
+	if (!ItemData) return;
+	if (!ItemData->MeshData.IsEmpty() && Amount > 0)
 	{
 		InstancedStaticMesh->AddInstances(MeshInstances, false);
 		UPrimitiveDataLibrary::SetStaticMeshProperties(InstancedStaticMesh,
 			ItemData->GetMeshData(Metadata));
 	}
 
-	for (const FName Key : NativeItemKeys::All)
-	{
-		if (!Metadata.Contains(Key)) Metadata.Add(Key);
-	}
+	for (const FName Key : NativeItemKeys::All) { if (!Metadata.Contains(Key)) Metadata.Add(Key); }
+	Metadata.Append(ItemData->DefaultMetadata);
 }
