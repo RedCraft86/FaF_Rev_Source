@@ -56,3 +56,17 @@ void UWorldEventComponent::TickComponent(float DeltaTime, ELevelTick TickType, F
 		if (EventPtr && EventPtr->bRequiresTick) EventPtr->OnTick(this, DeltaTime);
 	}
 }
+
+#if WITH_EDITOR
+void UWorldEventComponent::PostEditChangeProperty(FPropertyChangedEvent& PropertyChangedEvent)
+{
+	Super::PostEditChangeProperty(PropertyChangedEvent);
+	for (FInstancedStruct& Event : Events)
+	{
+		if (FWorldEventBase* EventPtr = Event.GetMutablePtr<FWorldEventBase>())
+		{
+			EventPtr->OnConstruction(this);
+		}
+	}
+}
+#endif

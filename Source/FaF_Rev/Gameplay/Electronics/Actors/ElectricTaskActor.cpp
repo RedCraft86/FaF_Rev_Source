@@ -79,3 +79,20 @@ void AElectricTaskActor::OnStateChanged(const bool bState)
 	}
 	Super::OnStateChanged(bState);
 }
+
+#if WITH_EDITOR
+void AElectricTaskActor::OnConstruction(const FTransform& Transform)
+{
+	Super::OnConstruction(Transform);
+	TArray<FInstancedStruct> Events = ActivateEvents;
+	Events.Append(DeactivateEvents);
+	
+	for (FInstancedStruct& Event : Events)
+	{
+		if (FWorldEventBase* EventPtr = Event.GetMutablePtr<FWorldEventBase>())
+		{
+			EventPtr->OnConstruction(this);
+		}
+	}
+}
+#endif

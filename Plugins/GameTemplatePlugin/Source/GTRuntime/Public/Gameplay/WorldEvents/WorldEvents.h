@@ -38,6 +38,9 @@ struct GTRUNTIME_API FWorldEventBase
 	virtual void RunEvent(const UObject* WorldContext) {}
 	virtual void OnBeginPlay(const UObject* WorldContext) {}
 	virtual void OnTick(const UObject* WorldContext, const float DeltaTime) {}
+#if WITH_EDITOR
+	virtual void OnConstruction(const UObject* WorldContext) {}
+#endif
 
 protected:
 
@@ -73,6 +76,9 @@ protected:
 
 	FTimerHandle Handle;
 	virtual void RunEvent(const UObject* WorldContext) override;
+#if WITH_EDITOR
+	virtual void OnConstruction(const UObject* WorldContext) override;
+#endif
 };
 
 USTRUCT(BlueprintType, DisplayName = "Flip Flop")
@@ -92,6 +98,9 @@ protected:
 
 	bool bIsA;
 	virtual void RunEvent(const UObject* WorldContext) override;
+#if WITH_EDITOR
+	virtual void OnConstruction(const UObject* WorldContext) override;
+#endif
 };
 
 USTRUCT(BlueprintType, DisplayName = "Global Event")

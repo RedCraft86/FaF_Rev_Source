@@ -34,6 +34,19 @@ void FWCDelay::RunEvent(const UObject* WorldContext)
 	}
 }
 
+#if WITH_EDITOR
+void FWCDelay::OnConstruction(const UObject* WorldContext)
+{
+	for (FInstancedStruct& Event : Events)
+	{
+		if (FWorldEventBase* EventPtr = Event.GetMutablePtr<FWorldEventBase>())
+		{
+			EventPtr->OnConstruction(WorldContext);
+		}
+	}
+}
+#endif
+
 void FWCFlipFlop::RunEvent(const UObject* WorldContext)
 {
 	bIsA = !bIsA;
@@ -58,6 +71,22 @@ void FWCFlipFlop::RunEvent(const UObject* WorldContext)
 		}
 	}
 }
+
+#if WITH_EDITOR
+void FWCFlipFlop::OnConstruction(const UObject* WorldContext)
+{
+	TArray<FInstancedStruct> Events = EventsA;
+	Events.Append(EventsB);
+	
+	for (FInstancedStruct& Event : Events)
+	{
+		if (FWorldEventBase* EventPtr = Event.GetMutablePtr<FWorldEventBase>())
+		{
+			EventPtr->OnConstruction(WorldContext);
+		}
+	}
+}
+#endif
 
 void FWEEventGlobal::RunEvent(const UObject* WorldContext)
 {
