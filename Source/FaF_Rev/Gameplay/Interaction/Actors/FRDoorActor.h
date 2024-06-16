@@ -48,7 +48,7 @@ public:
 	UPROPERTY(EditAnywhere, Category = "Settings", meta = (ClampMin = 1.0f, UIMin = 1.0f))
 		FVector BoxScale;
 
-	UPROPERTY(EditAnywhere, Category = "Settings|Key")
+	UPROPERTY(EditAnywhere, Category = "Settings|Key", meta = (DisplayThumbnail = false))
 		TObjectPtr<class UInventoryItemDataBase> KeyItem;
 
 	UPROPERTY(EditAnywhere, Category = "Settings|Key", meta = (EditCondition = "KeyItem != nullptr", EditConditionHides))
