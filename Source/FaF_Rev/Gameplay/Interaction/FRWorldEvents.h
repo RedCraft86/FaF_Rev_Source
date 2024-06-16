@@ -19,9 +19,9 @@ struct FAF_REV_API FWEPlayerSettings final : public FWorldEventBase
 		FPlayerSettings Settings;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "PlayerSettings")
-		TSoftObjectPtr<AFRPlayerBase> Target;
+		TSoftObjectPtr<AFRPlayerBase> Player;
 
-	FWEPlayerSettings() : Settings({}), Target(nullptr) {}
+	FWEPlayerSettings() : Settings({}) {}
 	
 protected:
 
@@ -40,7 +40,7 @@ struct FAF_REV_API FWEPlayerLockFlag final : public FWorldEventBase
 		FPlayerLockFlag LockFlag;
 	
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "PlayerLockFlag")
-		TSoftObjectPtr<AFRPlayerBase> Target;
+		TSoftObjectPtr<AFRPlayerBase> Player;
 
 	FWEPlayerLockFlag() : bClearFlag(false), LockFlag(Player::LockFlags::Custom) {}
 	
@@ -64,13 +64,45 @@ struct FAF_REV_API FWEPlayerFade final : public FWorldEventBase
 		float FadeTime;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "PlayerFade")
-		TSoftObjectPtr<AFRPlayerBase> Target;
+		TSoftObjectPtr<AFRPlayerBase> Player;
 
 	FWEPlayerFade() : bFadeOut(false), bFadeAudio(false), FadeTime(1.0f) {}
 	
 protected:
 
 	virtual void RunEvent(const UObject* WorldContext) override;
+};
+
+USTRUCT(BlueprintType, DisplayName = "Player Lock On")
+struct FAF_REV_API FWEPlayerLockOn final : public FWorldEventBase
+{
+	GENERATED_BODY()
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "PlayerLockOn")
+		float LockOnSpeed;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "PlayerLockOn")
+		TSoftObjectPtr<AActor> Target;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "PlayerLockOn", meta = (EditCondition = "bValidTarget", GetOptions = "ComponentNames"))
+		FName Component;
+	
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "PlayerLockOn")
+		TSoftObjectPtr<AFRPlayerBase> Player;
+
+	FWEPlayerLockOn() : LockOnSpeed(5.0f), Component(NAME_None)
+	{
+		bRunConstructionBeforeBeginPlay = true;
+	}
+	
+protected:
+#if WITH_EDITORONLY_DATA
+	UPROPERTY(Transient, meta = (TransientToolProperty = true)) bool bValidTarget = false;
+	UPROPERTY(Transient, meta = (TransientToolProperty = true)) TArray<FName> ComponentNames;
+#endif
+	
+	virtual void RunEvent(const UObject* WorldContext) override;
+	virtual void OnConstruction(const UObject* WorldContext, const bool bEditorTime) override;
 };
 
 USTRUCT(BlueprintType, DisplayName = "Unlock Transient Key")

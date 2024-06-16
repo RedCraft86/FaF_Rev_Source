@@ -8,34 +8,84 @@
 
 void FWEPlayerSettings::RunEvent(const UObject* WorldContext)
 {
-	if (!Target.LoadSynchronous())
-		Target = AFRPlayerBase::Get(WorldContext);
+	if (!Player.LoadSynchronous())
+		Player = AFRPlayerBase::Get(WorldContext);
 
-	if (AFRPlayerBase* Player = Target.LoadSynchronous())
+	if (AFRPlayerBase* PlayerPtr = Player.LoadSynchronous())
 	{
-		Player->SetPlayerSettings(Settings);
+		PlayerPtr->SetPlayerSettings(Settings);
 	}
 }
 
 void FWEPlayerLockFlag::RunEvent(const UObject* WorldContext)
 {
-	if (!Target.LoadSynchronous())
-		Target = AFRPlayerBase::Get(WorldContext);
+	if (!Player.LoadSynchronous())
+		Player = AFRPlayerBase::Get(WorldContext);
 
-	if (AFRPlayerBase* Player = Target.LoadSynchronous())
+	if (AFRPlayerBase* PlayerPtr = Player.LoadSynchronous())
 	{
-		bClearFlag ? Player->ClearLockFlag(LockFlag.SelectedValue) : Player->AddLockFlag(LockFlag.SelectedValue);
+		bClearFlag ? PlayerPtr->ClearLockFlag(LockFlag.SelectedValue) : PlayerPtr->AddLockFlag(LockFlag.SelectedValue);
 	}
 }
 
 void FWEPlayerFade::RunEvent(const UObject* WorldContext)
 {
-	if (!Target.LoadSynchronous())
-		Target = AFRPlayerBase::Get(WorldContext);
+	if (!Player.LoadSynchronous())
+		Player = AFRPlayerBase::Get(WorldContext);
 
-	if (const AFRPlayerBase* Player = Target.LoadSynchronous())
+	if (const AFRPlayerBase* PlayerPtr = Player.LoadSynchronous())
 	{
-		bFadeOut ? Player->FadeToBlack(FadeTime, bFadeAudio) : Player->FadeFromBlack(FadeTime, bFadeAudio);
+		bFadeOut ? PlayerPtr->FadeToBlack(FadeTime, bFadeAudio) : PlayerPtr->FadeFromBlack(FadeTime, bFadeAudio);
+	}
+}
+
+void FWEPlayerLockOn::RunEvent(const UObject* WorldContext)
+{
+	if (!Player.LoadSynchronous())
+		Player = AFRPlayerBase::Get(WorldContext);
+
+	Player->LockOnSpeed = LockOnSpeed;
+	const AActor* Actor = Target.LoadSynchronous();
+	if (!Actor || Component.IsNone())
+	{
+		Player->LockOnTarget = nullptr;
+	}
+	else
+	{
+		TArray<USceneComponent*> Comps;
+		Actor->GetComponents<USceneComponent>(Comps);
+		for (const USceneComponent* Comp : Comps)
+		{
+			if (Comp->GetFName() == Component)
+			{
+				Player->LockOnTarget = Comp;
+			}
+		}
+	}
+}
+
+void FWEPlayerLockOn::OnConstruction(const UObject* WorldContext, const bool bEditorTime)
+{
+	if (const AActor* Actor = Target.LoadSynchronous())
+	{
+#if WITH_EDITORONLY_DATA
+		bValidTarget = true;
+		TArray<USceneComponent*> Comps;
+		Actor->GetComponents<USceneComponent>(Comps);
+		ComponentNames.Empty(Comps.Num());
+		for (const USceneComponent* Comp : Comps)
+		{
+			ComponentNames.Add(Comp->GetFName());
+		}
+#endif
+		if (Component.IsNone()) Component = Actor->GetRootComponent()->GetFName();
+	}
+	else
+	{
+		Component = NAME_None;
+#if WITH_EDITORONLY_DATA
+		bValidTarget = false;
+#endif
 	}
 }
 
