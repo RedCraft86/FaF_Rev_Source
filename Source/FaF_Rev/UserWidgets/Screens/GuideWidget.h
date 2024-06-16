@@ -64,5 +64,4 @@ private:
 	
 	virtual void InitWidget() override;
 	virtual void NativeConstruct() override;
-	virtual void NativeDestruct() override;
 };

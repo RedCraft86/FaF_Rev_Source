@@ -14,8 +14,8 @@
 UGuideWidgetBase::UGuideWidgetBase(const FObjectInitializer& ObjectInitializer)
 	: UGTUserWidget(ObjectInitializer), NextButton(nullptr), TypeSwitch(nullptr)
 	, CustomPageContainer(nullptr), LocalPageTitle(nullptr), LocalPageText(nullptr)
-	, LocalPageImage(nullptr), LocalImageContainer(nullptr), GuideFadeAnim(nullptr)
-	, NextButtonAnim(nullptr), ImageHeight(0), DefaultImage(nullptr), bActive(false), bPrePauseState(false)
+	, LocalPageImage(nullptr), LocalImageContainer(nullptr), GuideFadeAnim(nullptr), NextButtonAnim(nullptr)
+	, ImageHeight(0.0f), DefaultImage(nullptr), bActive(false), bPrePauseState(false)
 {
 	ZOrder = 97;
 	bAutoAdd = false;
@@ -27,7 +27,6 @@ void UGuideWidgetBase::QueuePage(const FGuideBookPageID& PageID)
 	PageQueue.Enqueue(PageID);
 	if (!bActive)
 	{
-		bActive = true;
 		AddWidget(nullptr);
 	}
 }
@@ -80,7 +79,9 @@ void UGuideWidgetBase::ProceedNextGuide()
 	else
 	{
 		RemoveWidget(nullptr);
+		GetGameMode<AFRGameModeBase>()->SetInputModeData(PreInputMode);
 		UGameplayStatics::SetGamePaused(this, bPrePauseState);
+		bActive = false;
 	}
 }
 
@@ -121,12 +122,16 @@ void UGuideWidgetBase::InitWidget()
 void UGuideWidgetBase::NativeConstruct()
 {
 	Super::NativeConstruct();
-	
-	ResetBook();
-	PreInputMode = GetGameMode<AFRGameModeBase>()->GetInputModeData();
-	GetGameMode<AFRGameModeBase>()->SetGameInputMode(EGameInputMode::GameAndUI, true,
-		EMouseLockMode::LockAlways, false, this);
 
+	if (!bActive)
+	{
+		ResetBook();
+		PreInputMode = GetGameMode<AFRGameModeBase>()->GetInputModeData();
+		GetGameMode<AFRGameModeBase>()->SetGameInputMode(EGameInputMode::GameAndUI, true,
+			EMouseLockMode::LockAlways, false, this);
+	}
+
+	bActive = true;
 	if (!PageQueue.IsEmpty())
 	{
 		bPrePauseState = UGameplayStatics::IsGamePaused(this);
@@ -135,13 +140,8 @@ void UGuideWidgetBase::NativeConstruct()
 	}
 	else
 	{
-		RemoveWidget(nullptr);
+		GetGameMode<AFRGameModeBase>()->SetInputModeData(PreInputMode);
+		UGameplayStatics::SetGamePaused(this, bPrePauseState);
+		bActive = false;
 	}
-}
-
-void UGuideWidgetBase::NativeDestruct()
-{
-	Super::NativeDestruct();
-	GetGameMode<AFRGameModeBase>()->SetInputModeData(PreInputMode);
-	bActive = false;
 }
