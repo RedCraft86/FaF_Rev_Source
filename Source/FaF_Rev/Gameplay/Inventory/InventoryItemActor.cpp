@@ -79,7 +79,11 @@ void AInventoryItemActor::OnConstruction(const FTransform& Transform)
 	
 	InstancedStaticMesh->ClearInstances();
 	if (MeshInstances.IsEmpty()) MeshInstances.Add(FTransform::Identity);
-
+	for (const FName Key : NativeItemKeys::All)
+	{
+		if (!Metadata.Contains(Key)) Metadata.Add(Key);
+	}
+	
 	if (!ItemData) return;
 	if (!ItemData->MeshData.IsEmpty() && Amount > 0)
 	{
@@ -88,6 +92,9 @@ void AInventoryItemActor::OnConstruction(const FTransform& Transform)
 			ItemData->GetMeshData(Metadata));
 	}
 
-	for (const FName Key : NativeItemKeys::All) { if (!Metadata.Contains(Key)) Metadata.Add(Key); }
-	Metadata.Append(ItemData->DefaultMetadata);
+	for (const TPair<FName, FString>& Meta : ItemData->DefaultMetadata)
+	{
+		if (Metadata.FindRef(Meta.Key).IsEmpty())
+			Metadata.Add(Meta);
+	}
 }
