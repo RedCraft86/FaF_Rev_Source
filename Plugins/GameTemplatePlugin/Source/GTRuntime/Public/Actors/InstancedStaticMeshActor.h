@@ -17,7 +17,7 @@ public:
 	AInstancedStaticMeshActor(const FObjectInitializer& ObjectInitializer);
 
 #if WITH_EDITORONLY_DATA
-	UPROPERTY(Category = StaticMesh, EditAnywhere, meta = (MakeEditWidget))
+	UPROPERTY(Category = StaticMesh, EditAnywhere, meta = (MakeEditWidget, DisplayPriority = 1))
 		TArray<FTransform> Instances = {FTransform::Identity};;
 #endif
 	
