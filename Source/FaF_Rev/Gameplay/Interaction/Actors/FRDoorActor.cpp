@@ -150,7 +150,10 @@ bool AFRDoorBase::GetInteractionInfo_Implementation(FInteractionInfo& Info)
 	if (IsLocked())
 	{
 		Info = LockedInfo;
-		Info.Label = FText::FromString(LockedInfo.Label.ToString().Replace(TEXT("%key"), *KeyID));
+
+		FFormatNamedArguments Args;
+		Args.Add(TEXT("Key"), FText::FromString(KeyID));
+		Info.Label = FText::Format(LockedInfo.Label, Args);
 	}
 	else
 	{

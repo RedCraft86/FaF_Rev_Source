@@ -27,9 +27,9 @@ AInventoryItemActor::AInventoryItemActor() : ItemData(nullptr), Amount(1), BoxEx
 	BoxCollision.SetObjectType(ECC_WorldDynamic);
 }
 
-void AInventoryItemActor::FillAmount(const int32 InAmount)
+void AInventoryItemActor::FillAmount(const uint8 InAmount)
 {
-	if (InAmount > 0)
+	if (InAmount != 0)
 	{
 		Amount += InAmount;
 		SetEnabled(true);
@@ -47,8 +47,9 @@ bool AInventoryItemActor::GetInteractionInfo_Implementation(FInteractionInfo& In
 		return false;
 	
 	FFormatNamedArguments Args;
+	Args.Append(MetaInteractArgs);
 	Args.Add(TEXT("Amount"), Amount);
-	Args.Add(TEXT("Name"), ItemData->DisplayName);
+	Args.Add(TEXT("Item"), ItemData->DisplayName);
 	Info.Label = FText::Format(InteractionInfo.Label, Args);
 	Info.Icon = InteractionInfo.Icon;
 	return true;
@@ -96,5 +97,15 @@ void AInventoryItemActor::OnConstruction(const FTransform& Transform)
 	{
 		if (Metadata.FindRef(Meta.Key).IsEmpty())
 			Metadata.Add(Meta);
+	}
+}
+
+void AInventoryItemActor::BeginPlay()
+{
+	Super::BeginPlay();
+	for (const TPair<FName, FString>& Meta : Metadata)
+	{
+		if (!Meta.Key.IsNone() && !Meta.Value.IsEmpty())
+			MetaInteractArgs.Add(TEXT("m") + Meta.Key.ToString(), FText::FromString(Meta.Value));
 	}
 }

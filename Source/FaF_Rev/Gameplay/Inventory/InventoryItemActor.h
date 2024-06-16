@@ -26,14 +26,15 @@ public:
 		TObjectPtr<class UInventoryItemData> ItemData;
 
 	UPROPERTY(EditAnywhere, Category = "Settings", meta = (ClampMin = 1, UIMin = 1))
-		uint8 Amount;
+		int32 Amount;
 
 	UPROPERTY(EditAnywhere, Category = "Settings")
 		TMap<FName, FString> Metadata;
 
 	UPROPERTY(EditAnywhere, Category = "Settings", meta = (MakeEditWidget = true))
 		TArray<FTransform> MeshInstances;
-	
+
+	// Inject Variables: {Item}, {Amount}, {m + Meta Key} 
 	UPROPERTY(EditAnywhere, AdvancedDisplay, Category = "Settings")
 		FInteractionInfo InteractionInfo;
 
@@ -44,12 +45,15 @@ public:
 		FPrimitiveCollision BoxCollision;
 
 	UFUNCTION(BlueprintCallable, Category = "Inventory")
-		void FillAmount(const int32 InAmount);
+		void FillAmount(const uint8 InAmount);
 
 protected:
+
+	FFormatNamedArguments MetaInteractArgs;
 
 	virtual void SetEnabled(const bool bInEnabled) override;
 	virtual bool GetInteractionInfo_Implementation(FInteractionInfo& Info) override;
 	virtual void OnBeginInteract_Implementation(AFRPlayerBase* Player, const FHitResult& HitResult) override;
 	virtual void OnConstruction(const FTransform& Transform) override;
+	virtual void BeginPlay() override;
 };

@@ -54,6 +54,10 @@ public:
 	UPROPERTY(EditAnywhere, Category = "Settings|Key", meta = (EditCondition = "KeyItem != nullptr", EditConditionHides))
 		FString KeyID;
 
+	// Inject Variables: {Key}
+	UPROPERTY(EditAnywhere, Category = "Settings")
+		FInteractionInfo LockedInfo;
+
 #if WITH_EDITORONLY_DATA
 	UPROPERTY(EditAnywhere, Category = "Settings", AdvancedDisplay)
 		bool bDebugView = true;
@@ -76,9 +80,6 @@ public:
 	
 	UPROPERTY(EditAnywhere, Category = "Settings", AdvancedDisplay)
 		TObjectPtr<USoundBase> CreakSound;
-
-	UPROPERTY(EditAnywhere, Category = "Settings", AdvancedDisplay)
-		FInteractionInfo LockedInfo;
 	
 	UFUNCTION(BlueprintCallable, Category = "DoorActor")
 		void SetState(const bool bInState);
