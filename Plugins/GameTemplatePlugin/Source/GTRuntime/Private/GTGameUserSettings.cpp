@@ -73,10 +73,11 @@ void UGTGameUserSettings::ApplyColorBlindSettings()
 void UGTGameUserSettings::SetToDefaults()
 {
 	Super::SetToDefaults();
-	SetScreenResolution(GetDesktopResolution());
 #if WITH_EDITOR
-	SetFullscreenMode(EWindowMode::WindowedFullscreen);
+	SetScreenResolution({1920, 1080});
+	SetFullscreenMode(EWindowMode::Windowed);
 #else
+	SetScreenResolution(GetDesktopResolution());
 	SetFullscreenMode(EWindowMode::Fullscreen);
 #endif
 	SetResolutionScaleNormalized(1.0f);

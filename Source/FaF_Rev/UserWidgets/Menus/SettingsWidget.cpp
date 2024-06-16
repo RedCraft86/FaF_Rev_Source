@@ -156,19 +156,13 @@ void USettingsWidgetBase::OnResolutionChanged(FString SelectedItem, ESelectInfo:
 	}
 	
 #if WITH_EDITOR
-	if (Idx == 0)
-	{
-		SettingsObj->SetFullscreenMode(EWindowMode::WindowedFullscreen);
-	}
-	else
-	{
-		SettingsObj->SetFullscreenMode(EWindowMode::Windowed);
-	}
+	SettingsObj->SetScreenResolution({1920, 1080}); 
+	SettingsObj->SetFullscreenMode(EWindowMode::Windowed);
 #else
+	SettingsObj->SetScreenResolution(Resolutions[Idx]); 
 	SettingsObj->SetFullscreenMode(Idx == 0 ? EWindowMode::Fullscreen : EWindowMode::Windowed);
 #endif
-
-	SettingsObj->SetScreenResolution(Resolutions[Idx]); 
+	
 	SettingsObj->ApplyResolutionSettings(false);
 
 	ResolutionBox->RemoveOption("Unknown");
