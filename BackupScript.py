@@ -4,7 +4,7 @@ import pathlib
 import time
 import os
 
-OUT_PATH = "F:/Backups/FaF_Rev_Content/"
+OUT_PATH = "D:/UnrealEngine/SymLinks/FaF_Rev/Archives/"
 CONTENT_PATH = "D:/UnrealEngine/SymLinks/FaF_Rev/Content/"
 DateTime = ""
 
