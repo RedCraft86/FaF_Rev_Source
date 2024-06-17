@@ -50,3 +50,5 @@ Plugins/GameTemplatePlugin/Source/GamejoltAPI/Private/GamejoltKeys.h
 
 !/Config/DefaultEngine.default
 !/Config/DefaultGame.default
+
+Backup.Lock
