@@ -4,6 +4,7 @@
 #include "GTEditorStyle.h"
 #include "DetailsCustomization/GTActorDetails.h"
 #include "DetailsCustomization/InlineCurveDetails.h"
+#include "DetailsCustomization/PulldownTypeDetails.h"
 #include "DetailsCustomization/PrimitiveCollisionDetails.h"
 #include "DetailsCustomization/PropertyMetadataDetails.h"
 #include "ComponentVisualizers/DebugShapesVisualizer.h"
@@ -14,6 +15,7 @@
 
 #include "GTActor.h"
 #include "GTVolume.h"
+#include "Data/PulldownTypes.h"
 #include "MeshGen/GTMeshGenBase.h"
 #include "Optimization/SmartCullingVolume.h"
 
@@ -39,6 +41,8 @@ void FGTEditorModule::StartupModule()
 		REGISTER_STRUCT_CUSTOMIZATION(PropertyModule, FInlineVectorCurve, FInlineCurveDetails);
 		REGISTER_STRUCT_CUSTOMIZATION(PropertyModule, FInlineColorCurve, FInlineCurveDetails);
 		REGISTER_STRUCT_CUSTOMIZATION(PropertyModule, FPrimitiveCollision, FPrimitiveCollisionDetails);
+		REGISTER_STRUCT_CUSTOMIZATION(PropertyModule, FStringPulldown, FStringPulldownDetails);
+		REGISTER_STRUCT_CUSTOMIZATION(PropertyModule, FNamePulldown, FNamePulldownDetails);
 	}
 
 	if (GUnrealEd)
@@ -76,6 +80,8 @@ void FGTEditorModule::ShutdownModule()
 		UNREGISTER_STRUCT_CUSTOMIZATION(PropertyModule, FInlineVectorCurve);
 		UNREGISTER_STRUCT_CUSTOMIZATION(PropertyModule, FInlineColorCurve);
 		UNREGISTER_STRUCT_CUSTOMIZATION(PropertyModule, FPrimitiveCollision);
+		UNREGISTER_STRUCT_CUSTOMIZATION(PropertyModule, FStringPulldown);
+		UNREGISTER_STRUCT_CUSTOMIZATION(PropertyModule, FNamePulldown);
 	}
 
 	if (GUnrealEd)
