@@ -39,41 +39,17 @@ struct GTCORE_API FStringPulldown
 
 	FStringPulldown() : Value(TEXT("")) {}
 	virtual ~FStringPulldown() = default;
+	FORCEINLINE FString operator*() const { return Value; }
+	bool IsEmpty() const { return Value.IsEmpty(); }
 
 #if WITH_EDITORONLY_DATA
+	UPROPERTY(Transient, meta = (TransientToolProperty)) bool bAllowCustomInput = true;
 	virtual TArray<FPulldownOption> GetPulldownOptions() { return {}; }
 #endif
 };
 
 USTRUCT(BlueprintInternalUseOnly)
 struct GTCORE_API FStringListPulldown : public FStringPulldown
-{
-	GENERATED_BODY()
-	
-#if WITH_EDITORONLY_DATA
-	UPROPERTY(Transient, meta = (TransientToolProperty)) TArray<FPulldownOption> Options = {};
-	virtual TArray<FPulldownOption> GetPulldownOptions() override { return Options; }
-#endif
-};
-
-USTRUCT(BlueprintInternalUseOnly)
-struct GTCORE_API FNamePulldown
-{
-	GENERATED_BODY()
-	
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Pulldown")
-		FName Value;
-
-	FNamePulldown() : Value(NAME_None) {}
-	virtual ~FNamePulldown() = default;
-
-#if WITH_EDITORONLY_DATA
-	virtual TArray<FPulldownOption> GetPulldownOptions() { return {}; }
-#endif
-};
-
-USTRUCT(BlueprintInternalUseOnly)
-struct GTCORE_API FNameListPulldown : public FNamePulldown
 {
 	GENERATED_BODY()
 	

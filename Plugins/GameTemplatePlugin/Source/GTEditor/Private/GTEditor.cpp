@@ -4,7 +4,7 @@
 #include "GTEditorStyle.h"
 #include "DetailsCustomization/GTActorDetails.h"
 #include "DetailsCustomization/InlineCurveDetails.h"
-#include "DetailsCustomization/PulldownTypeDetails.h"
+#include "DetailsCustomization/StringPulldownDetails.h"
 #include "DetailsCustomization/PrimitiveCollisionDetails.h"
 #include "DetailsCustomization/PropertyMetadataDetails.h"
 #include "ComponentVisualizers/DebugShapesVisualizer.h"
@@ -46,7 +46,6 @@ void FGTEditorModule::StartupModule()
 		{
 			const UScriptStruct* ScriptStruct = *It; if (!ScriptStruct) continue;
 			REGISTER_STRUCT_CUSTOMIZATION_INHERITED(FStringPulldown, FStringPulldownDetails);
-			REGISTER_STRUCT_CUSTOMIZATION_INHERITED(FNamePulldown, FNamePulldownDetails);
 		}
 	}
 
@@ -90,7 +89,6 @@ void FGTEditorModule::ShutdownModule()
 		{
 			const UScriptStruct* ScriptStruct = *It; if (!ScriptStruct) continue;
 			UNREGISTER_STRUCT_CUSTOMIZATION_INHERITED(FStringPulldown);
-			UNREGISTER_STRUCT_CUSTOMIZATION_INHERITED(FNamePulldown);
 		}
 	}
 
