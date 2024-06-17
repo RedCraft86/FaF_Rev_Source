@@ -32,6 +32,8 @@ ContentFiles = [f.name for f in os.scandir(ThisDir + "Content/") if f.is_dir()]
 NonPacks = []
 Marketplace = ""
 for Content in ContentFiles:
+    if "Collections" in Content or "Developer" in Content:
+        continue
     Path = CONTENT_PATH + Content + "/"
     if os.path.isdir(Path):
         if "Marketplace" in Content:
