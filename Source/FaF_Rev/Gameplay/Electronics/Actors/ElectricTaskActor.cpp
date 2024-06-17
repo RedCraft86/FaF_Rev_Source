@@ -81,6 +81,22 @@ void AElectricTaskActor::OnStateChanged(const bool bState)
 }
 
 #if WITH_EDITOR
+void AElectricTaskActor::PostInitProperties()
+{
+	Super::PostInitProperties();
+	if (FApp::IsGame()) return;
+	TArray<FInstancedStruct> Events = ActivateEvents;
+	Events.Append(DeactivateEvents);
+	
+	for (FInstancedStruct& Event : Events)
+	{
+		if (FWorldEventBase* EventPtr = Event.GetMutablePtr<FWorldEventBase>())
+		{
+			EventPtr->OnConstruction(this, true);
+		}
+	}
+}
+
 void AElectricTaskActor::PostEditChangeProperty(FPropertyChangedEvent& PropertyChangedEvent)
 {
 	Super::PostEditChangeProperty(PropertyChangedEvent);

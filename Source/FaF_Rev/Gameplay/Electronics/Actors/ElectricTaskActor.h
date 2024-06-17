@@ -31,6 +31,7 @@ protected:
 	virtual void Tick(float DeltaSeconds) override;
 	virtual void OnStateChanged(const bool bState) override;
 #if WITH_EDITOR
+	virtual void PostInitProperties() override;
 	virtual void PostEditChangeProperty(FPropertyChangedEvent& PropertyChangedEvent) override;
 #endif
 	
