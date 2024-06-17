@@ -10,9 +10,9 @@ DateTime = ""
 
 def Archive(Output, Inputs):
     cmd = "nanazipc a -tzip -mx=0 " + OUT_PATH + Output + "_" + DateTime + ".zip"
-    for Input in Inputs: 
+    for Input in Inputs:
         cmd += " " + Input
-    
+
     cmd = cmd.replace("\\", "/").replace("//", "/")
     p = Popen(cmd.split(), shell=True, text=True)
     while p.poll() != 0:
@@ -25,6 +25,7 @@ LockFile = open(ThisDir + "Backup.Lock", 'w')
 LockFile.write("Backing up content...")
 LockFile.flush()
 
+# noinspection PyRedeclaration
 DateTime = datetime.now().strftime("%Y-%m-%d_%H.%M.%S")
 ContentFiles = [f.name for f in os.scandir(ThisDir + "Content/") if f.is_dir()]
 
@@ -35,7 +36,8 @@ for Content in ContentFiles:
     if os.path.isdir(Path):
         if "Marketplace" in Content:
             Marketplace = Path
-        else: NonPacks.append(Path)
+        else:
+            NonPacks.append(Path)
 
 Archive("NonPacks", NonPacks)
 Archive("Marketplace", [Marketplace])
