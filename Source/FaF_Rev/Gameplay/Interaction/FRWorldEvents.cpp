@@ -76,6 +76,7 @@ void FWEPlayerLockOn::OnConstruction(const UObject* WorldContext, const bool bEd
 		Component.Options.Reserve(Comps.Num());
 		for (const USceneComponent* Comp : Comps)
 		{
+			if (Comp->bIsEditorOnly) continue;
 			Component.Options.AddUnique({Comp->GetName(), Comp->GetClass()->GetName()});
 		}
 
