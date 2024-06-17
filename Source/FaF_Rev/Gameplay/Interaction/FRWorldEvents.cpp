@@ -78,6 +78,8 @@ void FWEPlayerLockOn::OnConstruction(const UObject* WorldContext, const bool bEd
 		{
 			Component.Options.AddUnique({Comp->GetName(), Comp->GetClass()->GetName()});
 		}
+
+		if (Component.IsEmpty()) Component = Actor->GetRootComponent()->GetName();
 	}
 }
 #endif
