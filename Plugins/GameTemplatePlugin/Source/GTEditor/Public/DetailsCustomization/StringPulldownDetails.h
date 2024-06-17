@@ -42,7 +42,7 @@ private:
 			Options.Reserve(Pairs.Num() + 1);
 			for (int i = 0; i < Pairs.Num(); i++)
 			{
-				if (Pairs[i].Option == StructPtr->Value) SelectedIdx = i;
+				if (Pairs[i].Option == StructPtr->Get()) SelectedIdx = i;
 				TSharedPtr<FString> Option(MakeShared<FString>(Pairs[i].Option));
 				Tooltips.Add(Option, Pairs[i].Tooltip);
 				Options.Add(Option);
@@ -82,7 +82,7 @@ private:
 	
 	virtual void CustomizeChildren(TSharedRef<IPropertyHandle> StructHandle, IDetailChildrenBuilder& StructBuilder, IPropertyTypeCustomizationUtils& StructCustomizationUtils) override
 	{
-		const TSharedPtr<IPropertyHandle> ValueHandle = StructHandle->GetChildHandle(GET_MEMBER_NAME_CHECKED(FStringPulldown, Value));
+		const TSharedPtr<IPropertyHandle> ValueHandle = StructHandle->GetChildHandle("Value");
 		ValueHandle->MarkHiddenByCustomization();
 		if (StructPtr && SelectedIdx == CustomIndex)
 		{
@@ -104,7 +104,7 @@ private:
 		SelectedIdx = Options.Find(NewSelection);
 		
 		StructHandle->NotifyPreChange();
-		StructPtr->Value = SelectedIdx == CustomIndex ? TEXT("") : *NewSelection;
+		StructPtr->Set(SelectedIdx == CustomIndex ? TEXT("") : *NewSelection);
 		StructHandle->NotifyPostChange(EPropertyChangeType::ValueSet);
 		StructHandle->NotifyFinishedChangingProperties();
 		StructHandle->RequestRebuildChildren();
@@ -114,7 +114,7 @@ private:
 	{
 		if (!StructPtr) return INVTEXT("Unknown");
 		if (SelectedIdx == CustomIndex) return INVTEXT("Custom...");
-		return FText::FromString(StructPtr->Value);
+		return FText::FromString(*Options[SelectedIdx]);
 	}
 	
 	FText GetOptionTooltip() const
