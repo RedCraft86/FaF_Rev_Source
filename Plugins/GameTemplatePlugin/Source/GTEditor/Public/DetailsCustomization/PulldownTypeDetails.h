@@ -102,7 +102,7 @@ private:
 		SelectedIdx = Options.Find(NewSelection);
 		
 		StructHandle->NotifyPreChange();
-		StructPtr->Value = SelectedIdx > 0 ? *NewSelection : TEXT("");
+		StructPtr->Value = SelectedIdx < Options.Num() - 1 ? *NewSelection : TEXT("");
 		StructHandle->NotifyPostChange(EPropertyChangeType::ValueSet);
 		StructHandle->NotifyFinishedChangingProperties();
 		StructHandle->RequestRebuildChildren();
@@ -215,7 +215,7 @@ private:
 		SelectedIdx = Options.Find(NewSelection);
 		
 		StructHandle->NotifyPreChange();
-		StructPtr->Value = SelectedIdx > 0 ? *NewSelection : NAME_None;
+		StructPtr->Value = SelectedIdx < Options.Num() - 1 ? *NewSelection : NAME_None;
 		StructHandle->NotifyPostChange(EPropertyChangeType::ValueSet);
 		StructHandle->NotifyFinishedChangingProperties();
 		StructHandle->RequestRebuildChildren();

@@ -14,6 +14,16 @@ struct GTCORE_API FPulldownOption final
 	FPulldownOption() : Option(TEXT("")), Tooltip(TEXT("")) {}
 	FPulldownOption(const FString& InOption, const FString& InTooltip)
 		: Option(InOption), Tooltip(InTooltip) {}
+
+	FORCEINLINE bool operator==(const FPulldownOption& Other) const
+	{
+		return Option.Equals(Other.Option);
+	}
+
+	FORCEINLINE bool operator!=(const FPulldownOption& Other) const
+	{
+		return !(*this == Other);
+	}
 #else
 	FPulldownOption() {}
 #endif
@@ -41,8 +51,7 @@ struct GTCORE_API FStringListPulldown : public FStringPulldown
 	GENERATED_BODY()
 	
 #if WITH_EDITORONLY_DATA
-protected:
-	UPROPERTY(meta = (TransientToolProperty)) TArray<FPulldownOption> Options = {};
+	UPROPERTY(Transient, meta = (TransientToolProperty)) TArray<FPulldownOption> Options = {};
 	virtual TArray<FPulldownOption> GetPulldownOptions() override { return Options; }
 #endif
 };
@@ -69,8 +78,7 @@ struct GTCORE_API FNameListPulldown : public FNamePulldown
 	GENERATED_BODY()
 	
 #if WITH_EDITORONLY_DATA
-protected:
-	UPROPERTY(meta = (TransientToolProperty)) TArray<FPulldownOption> Options = {};
+	UPROPERTY(Transient, meta = (TransientToolProperty)) TArray<FPulldownOption> Options = {};
 	virtual TArray<FPulldownOption> GetPulldownOptions() override { return Options; }
 #endif
 };

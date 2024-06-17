@@ -33,16 +33,21 @@ void FGTEditorModule::StartupModule()
 	
 	if (FPropertyEditorModule* PropertyModule = FModuleManager::LoadModulePtr<FPropertyEditorModule>("PropertyEditor"))
 	{
-		REGISTER_CLASS_CUSTOMIZATION(PropertyModule, AGTActor, FGTActorDetails);
-		REGISTER_CLASS_CUSTOMIZATION(PropertyModule, AGTVolume, FGTActorDetails);
-		REGISTER_CLASS_CUSTOMIZATION(PropertyModule, AGTMeshGenBase, FGTActorDetails);
-		REGISTER_CLASS_CUSTOMIZATION(PropertyModule, ASmartCullingVolume, FGTActorDetails);
-		REGISTER_STRUCT_CUSTOMIZATION(PropertyModule, FInlineFloatCurve, FInlineCurveDetails);
-		REGISTER_STRUCT_CUSTOMIZATION(PropertyModule, FInlineVectorCurve, FInlineCurveDetails);
-		REGISTER_STRUCT_CUSTOMIZATION(PropertyModule, FInlineColorCurve, FInlineCurveDetails);
-		REGISTER_STRUCT_CUSTOMIZATION(PropertyModule, FPrimitiveCollision, FPrimitiveCollisionDetails);
-		REGISTER_STRUCT_CUSTOMIZATION(PropertyModule, FStringPulldown, FStringPulldownDetails);
-		REGISTER_STRUCT_CUSTOMIZATION(PropertyModule, FNamePulldown, FNamePulldownDetails);
+		REGISTER_CLASS_CUSTOMIZATION(AGTActor, FGTActorDetails);
+		REGISTER_CLASS_CUSTOMIZATION(AGTVolume, FGTActorDetails);
+		REGISTER_CLASS_CUSTOMIZATION(AGTMeshGenBase, FGTActorDetails);
+		REGISTER_CLASS_CUSTOMIZATION(ASmartCullingVolume, FGTActorDetails);
+		REGISTER_STRUCT_CUSTOMIZATION(FInlineFloatCurve, FInlineCurveDetails);
+		REGISTER_STRUCT_CUSTOMIZATION(FInlineVectorCurve, FInlineCurveDetails);
+		REGISTER_STRUCT_CUSTOMIZATION(FInlineColorCurve, FInlineCurveDetails);
+		REGISTER_STRUCT_CUSTOMIZATION(FPrimitiveCollision, FPrimitiveCollisionDetails);
+
+		for (TObjectIterator<UScriptStruct> It; It; ++It)
+		{
+			const UScriptStruct* ScriptStruct = *It; if (!ScriptStruct) continue;
+			REGISTER_STRUCT_CUSTOMIZATION_INHERITED(FStringPulldown, FStringPulldownDetails);
+			REGISTER_STRUCT_CUSTOMIZATION_INHERITED(FNamePulldown, FNamePulldownDetails);
+		}
 	}
 
 	if (GUnrealEd)
@@ -72,16 +77,21 @@ void FGTEditorModule::ShutdownModule()
 	
 	if (FPropertyEditorModule* PropertyModule = FModuleManager::GetModulePtr<FPropertyEditorModule>("PropertyEditor"))
 	{
-		UNREGISTER_CLASS_CUSTOMIZATION(PropertyModule, AGTActor);
-		UNREGISTER_CLASS_CUSTOMIZATION(PropertyModule, AGTVolume);
-		UNREGISTER_CLASS_CUSTOMIZATION(PropertyModule, AGTMeshGenBase);
-		UNREGISTER_CLASS_CUSTOMIZATION(PropertyModule, ASmartCullingVolume);
-		UNREGISTER_STRUCT_CUSTOMIZATION(PropertyModule, FInlineFloatCurve);
-		UNREGISTER_STRUCT_CUSTOMIZATION(PropertyModule, FInlineVectorCurve);
-		UNREGISTER_STRUCT_CUSTOMIZATION(PropertyModule, FInlineColorCurve);
-		UNREGISTER_STRUCT_CUSTOMIZATION(PropertyModule, FPrimitiveCollision);
-		UNREGISTER_STRUCT_CUSTOMIZATION(PropertyModule, FStringPulldown);
-		UNREGISTER_STRUCT_CUSTOMIZATION(PropertyModule, FNamePulldown);
+		UNREGISTER_CLASS_CUSTOMIZATION(AGTActor);
+		UNREGISTER_CLASS_CUSTOMIZATION(AGTVolume);
+		UNREGISTER_CLASS_CUSTOMIZATION(AGTMeshGenBase);
+		UNREGISTER_CLASS_CUSTOMIZATION(ASmartCullingVolume);
+		UNREGISTER_STRUCT_CUSTOMIZATION(FInlineFloatCurve);
+		UNREGISTER_STRUCT_CUSTOMIZATION(FInlineVectorCurve);
+		UNREGISTER_STRUCT_CUSTOMIZATION(FInlineColorCurve);
+		UNREGISTER_STRUCT_CUSTOMIZATION(FPrimitiveCollision);
+		
+		for (TObjectIterator<UScriptStruct> It; It; ++It)
+		{
+			const UScriptStruct* ScriptStruct = *It; if (!ScriptStruct) continue;
+			UNREGISTER_STRUCT_CUSTOMIZATION_INHERITED(FStringPulldown);
+			UNREGISTER_STRUCT_CUSTOMIZATION_INHERITED(FNamePulldown);
+		}
 	}
 
 	if (GUnrealEd)
