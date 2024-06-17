@@ -9,8 +9,6 @@
 #include "Interaction/Actors/FRDoorActor.h"
 #include "Inventory/InventoryPreview.h"
 #include "PostProcess/SmartPostProcess.h"
-#include "Electronics/ElectricActor.h"
-
 
 #define LOCTEXT_NAMESPACE "FFaF_RevEditorModule"
 
