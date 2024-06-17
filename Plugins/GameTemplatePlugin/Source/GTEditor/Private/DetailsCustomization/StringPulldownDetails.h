@@ -69,7 +69,7 @@ private:
 			.InitiallySelectedItem(Options[SelectedIdx])
 			.OnGenerateWidget(this, &FStringPulldownDetails::OnGenerateWidget)
 			.OnSelectionChanged(this, &FStringPulldownDetails::OnSelectionChanged, StructHandle)
-			.IsEnabled(TAttribute<bool>::CreateLambda([this]() -> bool {return StructPtr != nullptr;}))
+			.IsEnabled(StructPtr != nullptr)
 			.Content()
 			[
 				SNew(STextBlock)
@@ -104,7 +104,7 @@ private:
 		SelectedIdx = Options.Find(NewSelection);
 		
 		StructHandle->NotifyPreChange();
-		StructPtr->Set(SelectedIdx == CustomIndex ? TEXT("") : *NewSelection);
+		StructPtr->Set(SelectedIdx == CustomIndex ? TEXT("None") : *NewSelection);
 		StructHandle->NotifyPostChange(EPropertyChangeType::ValueSet);
 		StructHandle->NotifyFinishedChangingProperties();
 		StructHandle->RequestRebuildChildren();
