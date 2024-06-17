@@ -13,6 +13,9 @@ public class FaF_RevEditor : ModuleRules
             {
                 "Core",
                 "CoreUObject",
+                "Slate",
+                "SlateCore",
+                "InputCore",
                 "UnrealEd", 
                 "Engine",
                 "AssetTools",
