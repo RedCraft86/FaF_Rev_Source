@@ -48,15 +48,11 @@ private:
 				Options.Add(Option);
 			}
 
-			if (StructPtr->bAllowCustomInput)
-			{
-				Options.Add(MakeShared<FString>(TEXT("Custom...")));
-				CustomIndex = Options.Num() - 1;
-			}
-			
+			Options.Add(MakeShared<FString>(TEXT("Custom...")));
+			CustomIndex = Options.Num() - 1;
 			if (SelectedIdx == INDEX_NONE)
 			{
-				SelectedIdx = CustomIndex == INDEX_NONE ? 0 : CustomIndex;
+				SelectedIdx = CustomIndex;
 			}
 		}
 		else

@@ -43,7 +43,6 @@ struct GTCORE_API FStringPulldown
 	bool IsEmpty() const { return Value.IsEmpty(); }
 
 #if WITH_EDITORONLY_DATA
-	UPROPERTY(Transient, meta = (TransientToolProperty)) bool bAllowCustomInput = true;
 	virtual TArray<FPulldownOption> GetPulldownOptions() { return {}; }
 #endif
 };
