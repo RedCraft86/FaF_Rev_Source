@@ -7,6 +7,7 @@
 #include "FRPlayer.h"
 #include "MessagingData.h"
 #include "NarrativeDataTask.h"
+#include "Data/PulldownTypes.h"
 #include "WorldEvents/WorldEvents.h"
 #include "FRWorldEvents.generated.h"
 
@@ -83,6 +84,9 @@ struct FAF_REV_API FWEPlayerLockOn final : public FWorldEventBase
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "PlayerLockOn")
 		TSoftObjectPtr<AActor> Target;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "PlayerLockOn")
+		FStringListPulldown Component;
 	
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "PlayerLockOn")
 		TSoftObjectPtr<AFRPlayerBase> Player;
@@ -92,6 +96,9 @@ struct FAF_REV_API FWEPlayerLockOn final : public FWorldEventBase
 protected:
 
 	virtual void RunEvent(const UObject* WorldContext) override;
+#if WITH_EDITORONLY_DATA
+	virtual void OnConstruction(const UObject* WorldContext, const bool bEditorTime) override;
+#endif
 };
 
 USTRUCT(BlueprintType, DisplayName = "Unlock Transient Key")

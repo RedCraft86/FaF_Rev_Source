@@ -47,13 +47,40 @@ void FWEPlayerLockOn::RunEvent(const UObject* WorldContext)
 	Player->LockOnSpeed = LockOnSpeed;
 	if (const AActor* Actor = Target.LoadSynchronous())
 	{
-		Player->LockOnTarget = Actor->GetRootComponent();
+		TArray<USceneComponent*> Comps;
+		Actor->GetComponents<USceneComponent>(Comps);
+		for (const USceneComponent* Comp : Comps)
+		{
+			if (Comp->GetName() == *Component)
+			{
+				Player->LockOnTarget = Comp;
+				return;
+			}
+		}
 	}
 	else
 	{
 		Player->LockOnTarget = nullptr;
 	}
 }
+
+#if WITH_EDITORONLY_DATA
+void FWEPlayerLockOn::OnConstruction(const UObject* WorldContext, const bool bEditorTime)
+{
+	if (!bEditorTime) return;
+	Component.Options.Empty();
+	if (const AActor* Actor = Target.LoadSynchronous())
+	{
+		TArray<USceneComponent*> Comps;
+		Actor->GetComponents<USceneComponent>(Comps);
+		Component.Options.Reserve(Comps.Num());
+		for (const USceneComponent* Comp : Comps)
+		{
+			Component.Options.AddUnique({Comp->GetName(), Comp->GetClass()->GetName()});
+		}
+	}
+}
+#endif
 
 void FWEUnlockTransientKey::RunEvent(const UObject* WorldContext)
 {
