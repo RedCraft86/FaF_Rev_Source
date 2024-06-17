@@ -14,6 +14,17 @@
 
 void FFaF_RevEditorModule::StartupModule()
 {
+    // Backup check
+    {
+        const FString LockPath = FPaths::ProjectDir() / TEXT("Backup.Lock");
+        if (FPaths::FileExists(LockPath))
+        {
+            FArchive* LockFile = IFileManager::Get().CreateFileWriter(*LockPath);
+            checkf(LockFile, TEXT("Please wait while the project is being backed up."))
+            if (LockFile) LockFile->Close();
+        }
+    }
+    
     if (FPropertyEditorModule* PropertyModule = FModuleManager::LoadModulePtr<FPropertyEditorModule>("PropertyEditor"))
     {
         REGISTER_CLASS_CUSTOMIZATION(AFRPlayerBase, FGTActorDetails);
