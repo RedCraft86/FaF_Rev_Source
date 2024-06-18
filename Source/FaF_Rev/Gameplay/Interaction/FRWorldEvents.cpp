@@ -45,10 +45,10 @@ void FWEPlayerLockOn::RunEvent(const UObject* WorldContext)
 		Player = AFRPlayerBase::Get(WorldContext);
 
 	Player->LockOnSpeed = LockOnSpeed;
-	if (const AActor* Actor = Target.LoadSynchronous())
+	if (Target)
 	{
 		TArray<USceneComponent*> Comps;
-		Actor->GetComponents<USceneComponent>(Comps);
+		Target->GetComponents<USceneComponent>(Comps);
 		for (const USceneComponent* Comp : Comps)
 		{
 			if (Comp->GetName() == *Component)
@@ -68,19 +68,34 @@ void FWEPlayerLockOn::RunEvent(const UObject* WorldContext)
 void FWEPlayerLockOn::OnConstruction(const UObject* WorldContext, const bool bEditorTime)
 {
 	if (!bEditorTime) return;
-	Component.Options.Empty();
-	if (const AActor* Actor = Target.LoadSynchronous())
+	if (Target)
 	{
-		TArray<USceneComponent*> Comps;
-		Actor->GetComponents<USceneComponent>(Comps);
-		Component.Options.Reserve(Comps.Num());
-		for (const USceneComponent* Comp : Comps)
+		if (CachedTarget != Target->GetFName())
 		{
-			if (Comp->bIsEditorOnly) continue;
-			Component.Options.AddUnique({Comp->GetName(), Comp->GetClass()->GetName()});
-		}
+			Component = TEXT("");
+			Component.EdData.ClearOptions();
+			CachedTarget = Target->GetFName();
+			
+			TArray<USceneComponent*> Comps;
+			Target->GetComponents<USceneComponent>(Comps);
+			Component.EdData.ReserveOptions(Comps.Num());
+			for (const USceneComponent* Comp : Comps)
+			{
+				if (Comp->bIsEditorOnly) continue;
+				Component.EdData.AddOption(Comp->GetName(), Comp->GetClass()->GetName());
+			}
 
-		if (Component.IsEmpty()) Component = Actor->GetRootComponent()->GetName();
+			Component.EdData.MarkOptionsChanged();
+		}
+		
+		if (Component.IsEmpty()) Component = Target->GetRootComponent()->GetName();
+	}
+	else
+	{
+		Component = TEXT("Unknown");
+		Component.EdData.ClearOptions();
+		Component.EdData.MarkOptionsChanged();
+		CachedTarget = NAME_None;
 	}
 }
 #endif

@@ -24,12 +24,13 @@ private:
 	int32 CustomIndex = INDEX_NONE;
 	TArray<TSharedPtr<FString>> Options;
 	TMap<TSharedPtr<FString>, FString> Tooltips;
+	TSharedPtr<IPropertyHandle> StructHandle;
 	FStringPulldown* StructPtr = nullptr;
 	
-	virtual void CustomizeHeader(TSharedRef<IPropertyHandle> StructHandle, FDetailWidgetRow& HeaderRow, IPropertyTypeCustomizationUtils& StructCustomizationUtils) override
+	virtual void CustomizeHeader(TSharedRef<IPropertyHandle> InStructHandle, FDetailWidgetRow& HeaderRow, IPropertyTypeCustomizationUtils& StructCustomizationUtils) override
 	{
 		TArray<const void*> StructPtrs;
-		StructHandle->AccessRawData(StructPtrs);
+		InStructHandle->AccessRawData(StructPtrs);
 		if (StructPtrs.IsEmpty()) return;
 
 		StructPtr = StructPtrs.Num() == 1 ? (FStringPulldown*)StructPtrs[0] : nullptr;
@@ -37,14 +38,20 @@ private:
 		Options.Empty();
 		if (StructPtr)
 		{
-			const TArray<FPulldownOption> Pairs = StructPtr->GetPulldownOptions();
-			Tooltips.Reserve(Pairs.Num());
-			Options.Reserve(Pairs.Num() + 1);
-			for (int i = 0; i < Pairs.Num(); i++)
+			StructHandle = InStructHandle.ToSharedPtr();
+			StructPtr->EdData.OnListChanged.BindRaw(this, &FStringPulldownDetails::OnPulldownListChanged);
+			const TSortedMap<FString, FString> Pairs = StructPtr->GetPulldownOptions();
+			
+			TArray<FString> Keys;
+			Pairs.GenerateKeyArray(Keys);
+			Tooltips.Reserve(Keys.Num());
+			Options.Reserve(Keys.Num() + 1);
+			
+			for (int i = 0; i < Keys.Num(); i++)
 			{
-				if (Pairs[i].Option == StructPtr->Get()) SelectedIdx = i;
-				TSharedPtr<FString> Option(MakeShared<FString>(Pairs[i].Option));
-				Tooltips.Add(Option, Pairs[i].Tooltip);
+				if (Keys[i] == StructPtr->Get()) SelectedIdx = i;
+				TSharedPtr<FString> Option(MakeShared<FString>(Keys[i]));
+				Tooltips.Add(Option, Pairs.FindRef(Keys[i]));
 				Options.Add(Option);
 			}
 
@@ -59,16 +66,17 @@ private:
 		{
 			SelectedIdx = 0;
 			Options.Add(MakeShared<FString>(TEXT("Unknown")));
+			StructHandle.Reset();
 		}
 
-		HeaderRow.NameContent()[StructHandle->CreatePropertyNameWidget()]
+		HeaderRow.NameContent()[InStructHandle->CreatePropertyNameWidget()]
 		.ValueContent()
 		[
 			SNew(SComboBox<TSharedPtr<FString>>)
 			.OptionsSource(&Options)
 			.InitiallySelectedItem(Options[SelectedIdx])
 			.OnGenerateWidget(this, &FStringPulldownDetails::OnGenerateWidget)
-			.OnSelectionChanged(this, &FStringPulldownDetails::OnSelectionChanged, StructHandle)
+			.OnSelectionChanged(this, &FStringPulldownDetails::OnSelectionChanged)
 			.IsEnabled(StructPtr != nullptr)
 			.Content()
 			[
@@ -80,14 +88,20 @@ private:
 		];
 	}
 	
-	virtual void CustomizeChildren(TSharedRef<IPropertyHandle> StructHandle, IDetailChildrenBuilder& StructBuilder, IPropertyTypeCustomizationUtils& StructCustomizationUtils) override
+	virtual void CustomizeChildren(TSharedRef<IPropertyHandle> InStructHandle, IDetailChildrenBuilder& StructBuilder, IPropertyTypeCustomizationUtils& StructCustomizationUtils) override
 	{
-		const TSharedPtr<IPropertyHandle> ValueHandle = StructHandle->GetChildHandle("Value");
+		const TSharedPtr<IPropertyHandle> ValueHandle = InStructHandle->GetChildHandle("Value");
 		ValueHandle->MarkHiddenByCustomization();
 		if (StructPtr && SelectedIdx == CustomIndex)
 		{
 			StructBuilder.AddProperty(ValueHandle.ToSharedRef());
 		}
+	}
+
+	void OnPulldownListChanged(FPulldownEdData* EdData) const
+	{
+		if (!StructPtr || &StructPtr->EdData != EdData) EdData->OnListChanged.Unbind();
+		else if (StructHandle.IsValid()) StructHandle->RequestRebuildChildren();
 	}
 
 	TSharedRef<SWidget> OnGenerateWidget(TSharedPtr<FString> InOption) const
@@ -98,9 +112,9 @@ private:
 			.Font(IDetailLayoutBuilder::GetDetailFont());
 	}
 
-	void OnSelectionChanged(TSharedPtr<FString> NewSelection, ESelectInfo::Type SelectInfo, const TSharedRef<IPropertyHandle> StructHandle)
+	void OnSelectionChanged(TSharedPtr<FString> NewSelection, ESelectInfo::Type SelectInfo)
 	{
-		if (!StructPtr) return;
+		if (!StructPtr || !StructHandle.IsValid()) return;
 		SelectedIdx = Options.Find(NewSelection);
 		
 		StructHandle->NotifyPreChange();

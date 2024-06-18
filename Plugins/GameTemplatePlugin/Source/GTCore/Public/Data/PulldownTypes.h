@@ -5,29 +5,34 @@
 #include "PulldownTypes.generated.h"
 
 USTRUCT()
-struct GTCORE_API FPulldownOption final
+struct GTCORE_API FPulldownEdData final
 {
 	GENERATED_BODY()
 #if WITH_EDITORONLY_DATA
-	UPROPERTY() FString Option;
-	UPROPERTY() FString Tooltip;
-	FPulldownOption() : Option(TEXT("")), Tooltip(TEXT("")) {}
-	FPulldownOption(const FString& InOption, const FString& InTooltip)
-		: Option(InOption), Tooltip(InTooltip) {}
+	friend struct FStringPulldown;
+	friend class FStringPulldownDetails;
+	FPulldownEdData() : Options({}) {}
 
-	FORCEINLINE bool operator==(const FPulldownOption& Other) const
-	{
-		return Option.Equals(Other.Option);
-	}
-
-	FORCEINLINE bool operator!=(const FPulldownOption& Other) const
-	{
-		return !(*this == Other);
-	}
+	void ClearOptions() { Options.Empty(); }
+	void ReserveOptions(const int32 Number) { Options.Reserve(Number); }
+	void RemoveOption(const FString& InOption) { Options.Remove(InOption); }
+	void AddOption(const TPair<FString, FString>& InPair) { AddOption(InPair.Key, InPair.Value); }
+	void AddOption(const FString& InOption, const FString& InTooltip) { Options.Add(InOption, InTooltip); }
+	FString FindTooltip(const FString& InOption) const { return Options.FindRef(InOption); }
+	
+	void MarkOptionsChanged() { OnListChanged.Execute(this); }
+private:
+	TSortedMap<FString, FString> Options;
+	TDelegate<void(FPulldownEdData*)> OnListChanged;
 #else
-	FPulldownOption() {}
+	FPulldownEdData() {}
 #endif
 };
+
+#define STRING_PULLDOWN_OVERRIDES(Type) \
+	FORCEINLINE virtual Type& operator=(const FString& String) { Value = String; return *this; } \
+	FORCEINLINE bool operator==(const Type& Other) const { return Value.Equals(Other.Value); } \
+	FORCEINLINE bool operator!=(const Type& Other) const { return !(*this == Other); }
 
 USTRUCT(BlueprintInternalUseOnly)
 struct GTCORE_API FStringPulldown
@@ -36,38 +41,18 @@ struct GTCORE_API FStringPulldown
 
 	FStringPulldown() : Value(TEXT("")) {}
 	virtual ~FStringPulldown() = default;
+	STRING_PULLDOWN_OVERRIDES(FStringPulldown)
 	FORCEINLINE FString operator*() const { return Value; }
-	FORCEINLINE virtual FStringPulldown& operator=(const FString& String)
-	{
-		Value = String;
-		return *this;
-	}
 	
 	FORCEINLINE FString Get() const { return Value; }
 	FORCEINLINE bool IsEmpty() const { return Value.IsEmpty(); }
 	FORCEINLINE virtual void Set(const FString& InString) { Value = InString; }
 
 #if WITH_EDITORONLY_DATA
-	virtual TArray<FPulldownOption> GetPulldownOptions() { return {}; }
+	FPulldownEdData EdData;
+	virtual TSortedMap<FString, FString> GetPulldownOptions() { return EdData.Options; }
 #endif
 protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Pulldown", meta = (AllowPrivateAccess = true))
 		FString Value;
-};
-
-USTRUCT(BlueprintInternalUseOnly)
-struct GTCORE_API FStringListPulldown : public FStringPulldown
-{
-	GENERATED_BODY()
-
-	FORCEINLINE virtual FStringListPulldown& operator=(const FString& String)
-	{
-		Value = String;
-		return *this;
-	}
-	
-#if WITH_EDITORONLY_DATA
-	UPROPERTY(Transient, meta = (TransientToolProperty)) TArray<FPulldownOption> Options = {};
-	virtual TArray<FPulldownOption> GetPulldownOptions() override { return Options; }
-#endif
 };

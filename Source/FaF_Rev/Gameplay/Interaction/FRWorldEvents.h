@@ -19,7 +19,7 @@ struct FAF_REV_API FWEPlayerSettings final : public FWorldEventBase
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "PlayerSettings")
 		FPlayerSettings Settings;
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "PlayerSettings")
+	UPROPERTY()
 		TSoftObjectPtr<AFRPlayerBase> Player;
 
 	FWEPlayerSettings() : Settings({}) {}
@@ -40,7 +40,7 @@ struct FAF_REV_API FWEPlayerLockFlag final : public FWorldEventBase
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "PlayerLockFlag")
 		FPlayerLockFlag LockFlag;
 	
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "PlayerLockFlag")
+	UPROPERTY()
 		TSoftObjectPtr<AFRPlayerBase> Player;
 
 	FWEPlayerLockFlag() : bClearFlag(false), LockFlag(Player::LockFlags::Custom) {}
@@ -64,7 +64,7 @@ struct FAF_REV_API FWEPlayerFade final : public FWorldEventBase
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "PlayerFade", meta = (ClampMin = 0.0f, UIMin = 0.0f))
 		float FadeTime;
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "PlayerFade")
+	UPROPERTY()
 		TSoftObjectPtr<AFRPlayerBase> Player;
 
 	FWEPlayerFade() : bFadeOut(false), bFadeAudio(false), FadeTime(1.0f) {}
@@ -83,12 +83,12 @@ struct FAF_REV_API FWEPlayerLockOn final : public FWorldEventBase
 		float LockOnSpeed;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "PlayerLockOn")
-		TSoftObjectPtr<AActor> Target;
+		TObjectPtr<AActor> Target;
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "PlayerLockOn")
-		FStringListPulldown Component;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "PlayerLockOn", meta = (EditCondition = "Target", EditConditionHides))
+		FStringPulldown Component;
 	
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "PlayerLockOn")
+	UPROPERTY()
 		TSoftObjectPtr<AFRPlayerBase> Player;
 
 	FWEPlayerLockOn() : LockOnSpeed(5.0f) {}
@@ -97,6 +97,7 @@ protected:
 
 	virtual void RunEvent(const UObject* WorldContext) override;
 #if WITH_EDITORONLY_DATA
+	UPROPERTY(Transient) FName CachedTarget = NAME_None;
 	virtual void OnConstruction(const UObject* WorldContext, const bool bEditorTime) override;
 #endif
 };
