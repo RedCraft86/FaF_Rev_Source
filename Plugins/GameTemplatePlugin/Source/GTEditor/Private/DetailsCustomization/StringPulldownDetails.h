@@ -104,10 +104,10 @@ private:
 		}
 	}
 
-	void OnPropertyValueChanged() const
+	void OnPropertyValueChanged()
 	{
-		if (!StructPtr || !StructHandle.IsValid()) return;
-		StructHandle->RequestRebuildChildren();
+		if (!StructPtr || !StructHandle.IsValid()) OnValueChanged.Unbind();
+		else StructHandle->RequestRebuildChildren();
 	}
 
 	void OnPulldownListChanged(FPulldownEdData* EdData) const
