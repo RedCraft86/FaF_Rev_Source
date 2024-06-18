@@ -58,9 +58,9 @@ void UWorldEventComponent::TickComponent(float DeltaTime, ELevelTick TickType, F
 }
 
 #if WITH_EDITOR
-void UWorldEventComponent::PostInitProperties()
+void UWorldEventComponent::PostLoad()
 {
-	Super::PostInitProperties();
+	Super::PostLoad();
 	if (FApp::IsGame()) return;
 	for (FInstancedStruct& Event : Events)
 	{
@@ -74,6 +74,8 @@ void UWorldEventComponent::PostInitProperties()
 void UWorldEventComponent::PostEditChangeProperty(FPropertyChangedEvent& PropertyChangedEvent)
 {
 	Super::PostEditChangeProperty(PropertyChangedEvent);
+	
+	if (FApp::IsGame()) return;
 	for (FInstancedStruct& Event : Events)
 	{
 		if (FWorldEventBase* EventPtr = Event.GetMutablePtr<FWorldEventBase>())

@@ -81,9 +81,9 @@ void AElectricTaskActor::OnStateChanged(const bool bState)
 }
 
 #if WITH_EDITOR
-void AElectricTaskActor::PostInitProperties()
+void AElectricTaskActor::PostLoad()
 {
-	Super::PostInitProperties();
+	Super::PostLoad();
 	if (FApp::IsGame()) return;
 	TArray<FInstancedStruct> Events = ActivateEvents;
 	Events.Append(DeactivateEvents);
@@ -100,6 +100,8 @@ void AElectricTaskActor::PostInitProperties()
 void AElectricTaskActor::PostEditChangeProperty(FPropertyChangedEvent& PropertyChangedEvent)
 {
 	Super::PostEditChangeProperty(PropertyChangedEvent);
+	
+	if (FApp::IsGame()) return;
 	TArray<FInstancedStruct> Events = ActivateEvents;
 	Events.Append(DeactivateEvents);
 	
