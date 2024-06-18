@@ -83,9 +83,9 @@ struct FAF_REV_API FWEPlayerLockOn final : public FWorldEventBase
 		float LockOnSpeed;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "PlayerLockOn")
-		TObjectPtr<AActor> Target;
+		TSoftObjectPtr<AActor> Target;
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "PlayerLockOn", meta = (EditCondition = "Target", EditConditionHides))
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "PlayerLockOn")
 		FStringPulldown Component;
 	
 	UPROPERTY()

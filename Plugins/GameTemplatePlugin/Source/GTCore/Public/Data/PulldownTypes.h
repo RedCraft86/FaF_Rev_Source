@@ -19,8 +19,10 @@ struct GTCORE_API FPulldownEdData final
 	void AddOption(const TPair<FString, FString>& InPair) { AddOption(InPair.Key, InPair.Value); }
 	void AddOption(const FString& InOption, const FString& InTooltip) { Options.Add(InOption, InTooltip); }
 	FString FindTooltip(const FString& InOption) const { return Options.FindRef(InOption); }
+	bool HasOption(const FString& InOption) const { return Options.Contains(InOption); }
 	
 	void MarkOptionsChanged() { OnListChanged.ExecuteIfBound(this); }
+
 private:
 	TSortedMap<FString, FString> Options;
 	TDelegate<void(FPulldownEdData*)> OnListChanged;
