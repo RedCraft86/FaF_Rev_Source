@@ -72,7 +72,6 @@ void FWEPlayerLockOn::OnConstruction(const UObject* WorldContext, const bool bEd
 	{
 		if (CachedTarget != Actor->GetFName())
 		{
-			const bool bWasNone = CachedTarget.IsNone();
 			Component.EdData.ClearOptions();
 			CachedTarget = Actor->GetFName();
 			
@@ -86,10 +85,11 @@ void FWEPlayerLockOn::OnConstruction(const UObject* WorldContext, const bool bEd
 			}
 
 			Component.EdData.MarkOptionsChanged();
-			if (!bWasNone && !Component.EdData.HasOption(*Component)) Component = TEXT("");
+			if (!Component.EdData.HasOption(*Component)) Component = TEXT("");
 		}
 		
-		if (Component.IsEmpty()) Component = Actor->GetRootComponent()->GetName();
+		if (Component.IsEmpty() || *Component == TEXT("None"))
+			Component = Actor->GetRootComponent()->GetName();
 	}
 	else
 	{
