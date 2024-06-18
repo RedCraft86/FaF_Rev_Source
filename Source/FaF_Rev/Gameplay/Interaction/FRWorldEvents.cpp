@@ -91,7 +91,7 @@ void FWEPlayerLockOn::OnConstruction(const UObject* WorldContext, const bool bEd
 	}
 	else
 	{
-		Component = TEXT("Unknown");
+		Component = TEXT("");
 		Component.EdData.ClearOptions();
 		Component.EdData.MarkOptionsChanged();
 		CachedTarget = NAME_None;
