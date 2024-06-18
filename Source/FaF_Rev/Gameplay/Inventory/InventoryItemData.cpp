@@ -26,8 +26,20 @@ void UInventoryItemData::PostEditChangeProperty(FPropertyChangedEvent& PropertyC
 {
 	Super::PostEditChangeProperty(PropertyChangedEvent);
 #if WITH_EDITORONLY_DATA
+	if (Priority == 0 && PropertyChangedEvent.GetPropertyName() == GET_MEMBER_NAME_CHECKED(UInventoryItemData, ItemType))
+	{
+		switch (ItemType)
+		{
+		case EInventoryItemType::Objective: Priority = 2;
+		case EInventoryItemType::Consumable: Priority = 3;
+		case EInventoryItemType::Equipment: Priority = 1;
+		case EInventoryItemType::Viewable: Priority = 4;
+		default: Priority = 5;
+		}
+	}
 	if (bUpdate || PropertyChangedEvent.GetPropertyName() == GET_MEMBER_NAME_CHECKED(UInventoryItemData, PreviewMesh))
 	{
+		bUpdate = false;
 		PreviewMesh.FillMaterials();
 	}
 	if (bUpdate || PropertyChangedEvent.GetPropertyName() == GET_MEMBER_NAME_CHECKED(UInventoryItemData, AltMeshes))
