@@ -85,11 +85,10 @@ void FWEPlayerLockOn::OnConstruction(const UObject* WorldContext, const bool bEd
 			}
 
 			Component.EdData.MarkOptionsChanged();
-			if (!Component.EdData.HasOption(*Component)) Component = TEXT("");
 		}
-		
-		if (Component.IsEmpty() || *Component == TEXT("None"))
-			Component = Actor->GetRootComponent()->GetName();
+
+		if (!Component.EdData.HasOption(*Component)) Component = TEXT("");
+		if (Component.IsEmpty()) Component = Actor->GetRootComponent()->GetName();
 	}
 	else
 	{
