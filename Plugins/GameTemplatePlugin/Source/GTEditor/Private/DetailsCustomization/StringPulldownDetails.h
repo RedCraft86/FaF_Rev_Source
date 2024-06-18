@@ -26,6 +26,7 @@ private:
 	TMap<TSharedPtr<FString>, FString> Tooltips;
 	TSharedPtr<IPropertyHandle> StructHandle;
 	FStringPulldown* StructPtr = nullptr;
+	FSimpleDelegate OnValueChanged;
 	
 	virtual void CustomizeHeader(TSharedRef<IPropertyHandle> InStructHandle, FDetailWidgetRow& HeaderRow, IPropertyTypeCustomizationUtils& StructCustomizationUtils) override
 	{
@@ -39,6 +40,11 @@ private:
 		if (StructPtr)
 		{
 			StructHandle = InStructHandle.ToSharedPtr();
+
+			OnValueChanged.Unbind();
+			OnValueChanged.BindRaw(this, &FStringPulldownDetails::OnPropertyValueChanged);
+			InStructHandle->SetOnPropertyValueChanged(OnValueChanged);
+			
 			StructPtr->EdData.OnListChanged.BindRaw(this, &FStringPulldownDetails::OnPulldownListChanged);
 			const TSortedMap<FString, FString> Pairs = StructPtr->GetPulldownOptions();
 			
@@ -96,6 +102,12 @@ private:
 		{
 			StructBuilder.AddProperty(ValueHandle.ToSharedRef());
 		}
+	}
+
+	void OnPropertyValueChanged() const
+	{
+		if (!StructPtr || !StructHandle.IsValid()) return;
+		StructHandle->RequestRebuildChildren();
 	}
 
 	void OnPulldownListChanged(FPulldownEdData* EdData) const
