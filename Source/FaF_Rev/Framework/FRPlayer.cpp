@@ -58,7 +58,7 @@ AFRPlayerBase::AFRPlayerBase()
 	FootstepAudio->SetupAttachment(GetCapsuleComponent());
 
 	PlayerLight = CreateDefaultSubobject<UPointLightComponent>("PlayerLight");
-	PlayerLight->SetupAttachment(GetCapsuleComponent());
+	PlayerLight->SetupAttachment(PlayerCamera);
 
 	SlowTickInterval = 0.1f;
 	
