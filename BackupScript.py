@@ -1,49 +1,76 @@
-﻿from datetime import datetime
+﻿#--------------------------------------------------------------------#
+#============================ PARAMETERS ============================#
+#--------------------------------------------------------------------#
+
+BASE_PATH = "D:/UnrealEngine/SymLinks/FaF_Rev/"
+BACKUP_PATH = "F:/Backups/FaF_Rev_Content"
+
+ARCHIVE_LEVEL = 0
+UNIQUE_FILES = ["Marketplace"]
+
+#--------------------------------------------------------------------#
+#====================================================================#
+#--------------------------------------------------------------------#
+
+from datetime import datetime
 from subprocess import Popen
-import pathlib
+import shutil
 import time
 import os
 
-OUT_PATH = "D:/UnrealEngine/SymLinks/FaF_Rev/Archives/"
-CONTENT_PATH = "D:/UnrealEngine/SymLinks/FaF_Rev/Content/"
-DateTime = ""
-
 def Archive(Output, Inputs):
-    cmd = "nanazipc a -tzip -mx=0 " + OUT_PATH + Output + "_" + DateTime + ".zip"
-    for Input in Inputs:
-        cmd += " " + Input
-
-    cmd = cmd.replace("\\", "/").replace("//", "/")
-    p = Popen(cmd.split(), shell=True, text=True)
+    cmd = ["nanazipc", "a", "-tzip", "-mx=" + str(ARCHIVE_LEVEL), Output] + Inputs
+    p = Popen(cmd, shell=True, text=True)
     while p.poll() != 0:
         time.sleep(1)
 
-    return
+assert os.path.isdir(BASE_PATH), "BASE_PATH does not exist."
+assert os.path.isdir(BACKUP_PATH), "BACKUP_PATH does not exist."
 
-ThisDir = str(pathlib.Path(__file__).parent.resolve()).replace("\\", "/") + "/"
-LockFile = open(ThisDir + "Backup.Lock", 'w')
+CONTENT_PATH = os.path.join(BASE_PATH, "Content/").replace("\\", "/")
+ARCHIVE_PATH = os.path.join(BASE_PATH, "Archives/").replace("\\", "/")
+
+if ARCHIVE_LEVEL < 0:
+    ARCHIVE_LEVEL = 0
+# No higher than 2
+elif ARCHIVE_LEVEL > 2:
+    ARCHIVE_LEVEL = 2
+
+LockFile = open(CONTENT_PATH + "Backup.Lock", 'w')
 LockFile.write("Backing up content...")
 LockFile.flush()
 
-# noinspection PyRedeclaration
 DateTime = datetime.now().strftime("%Y-%m-%d_%H.%M.%S")
-ContentFiles = [f.name for f in os.scandir(ThisDir + "Content/") if f.is_dir()]
+Content = [f for f in os.scandir(CONTENT_PATH) if f.is_dir()]
 
-NonPacks = []
-Marketplace = ""
-for Content in ContentFiles:
-    if "Collections" in Content or "Developer" in Content:
-        continue
-    Path = CONTENT_PATH + Content + "/"
-    if os.path.isdir(Path):
-        if "Marketplace" in Content:
-            Marketplace = Path
-        else:
-            NonPacks.append(Path)
+ContentPaths = []
+AlternateFiles = []
+for file in Content:
+    if file.name not in UNIQUE_FILES:
+        ContentPaths.append(file.path.replace("\\", "/") + "/")
+    else:
+        AlternateFiles.append(file)
 
-Archive("NonPacks", NonPacks)
-Archive("Marketplace", [Marketplace])
+DirPairs = {"Content" + "_" + str(DateTime) + ".zip": ContentPaths}
+for AltFile in AlternateFiles:
+    DirPairs[AltFile.name + "_" + str(DateTime) + ".zip"] = [AltFile.path.replace("\\", "/") + "/"]
 
-time.sleep(1)
+for output, inputs in DirPairs.items():
+    Archive(ARCHIVE_PATH + output, inputs)
+
+time.sleep(5)
 LockFile.close()
-os.remove(ThisDir + "Backup.Lock")
+os.remove(CONTENT_PATH + "Backup.Lock")
+LockFile = open(ARCHIVE_PATH + "Backup.Lock", 'w')
+LockFile.write("Copying content...")
+LockFile.flush()
+
+for file in DirPairs.keys():
+    try:
+        shutil.move(ARCHIVE_PATH + file, BACKUP_PATH + file)
+    finally:
+        continue
+
+time.sleep(5)
+LockFile.close()
+os.remove(ARCHIVE_PATH + "Backup.Lock")

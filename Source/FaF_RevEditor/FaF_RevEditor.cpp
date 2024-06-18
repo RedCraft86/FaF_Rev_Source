@@ -16,7 +16,7 @@ void FFaF_RevEditorModule::StartupModule()
 {
     // Backup check
     {
-        const FString LockPath = FPaths::ProjectDir() / TEXT("Backup.Lock");
+        const FString LockPath = FPaths::ProjectContentDir() / TEXT("Backup.Lock");
         if (FPaths::FileExists(LockPath))
         {
             FArchive* LockFile = IFileManager::Get().CreateFileWriter(*LockPath);
