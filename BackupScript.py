@@ -3,7 +3,7 @@
 #--------------------------------------------------------------------#
 
 BASE_PATH = "D:/UnrealEngine/SymLinks/FaF_Rev/"
-BACKUP_PATH = "F:/Backups/FaF_Rev_Content"
+BACKUP_PATH = "F:/Backups/FaF_Rev_Content/"
 
 ARCHIVE_LEVEL = 0
 UNIQUE_FILES = ["Marketplace"]
