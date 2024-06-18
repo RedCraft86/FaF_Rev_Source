@@ -7,11 +7,19 @@
 #define REGISTER_CLASS_CUSTOMIZATION(Class, Customization) PropertyModule->RegisterCustomClassLayout(Class::StaticClass()->GetFName(), FOnGetDetailCustomizationInstance::CreateStatic(&Customization::MakeInstance));
 #define UNREGISTER_CLASS_CUSTOMIZATION(Class) PropertyModule->UnregisterCustomClassLayout(Class::StaticClass()->GetFName());
 
-#define REGISTER_STRUCT_CUSTOMIZATION(Property, Customization) PropertyModule->RegisterCustomPropertyTypeLayout(Property::StaticStruct()->GetFName(), FOnGetPropertyTypeCustomizationInstance::CreateStatic(&Customization::MakeInstance));
-#define UNREGISTER_STRUCT_CUSTOMIZATION(Property) PropertyModule->UnregisterCustomPropertyTypeLayout(Property::StaticStruct()->GetFName());
+#define REGISTER_STRUCT_CUSTOMIZATION_DIRECT(Property, Customization) PropertyModule->RegisterCustomPropertyTypeLayout(Property->GetFName(), FOnGetPropertyTypeCustomizationInstance::CreateStatic(&Customization::MakeInstance));
+#define UNREGISTER_STRUCT_CUSTOMIZATION_DIRECT(Property) PropertyModule->UnregisterCustomPropertyTypeLayout(Property->GetFName());
 
-#define REGISTER_STRUCT_CUSTOMIZATION_INHERITED(BaseStruct, Customization) if (ScriptStruct->IsChildOf(BaseStruct::StaticStruct())) PropertyModule->RegisterCustomPropertyTypeLayout(ScriptStruct->GetFName(), FOnGetPropertyTypeCustomizationInstance::CreateStatic(&Customization::MakeInstance));
-#define UNREGISTER_STRUCT_CUSTOMIZATION_INHERITED(BaseStruct) if (ScriptStruct->IsChildOf(BaseStruct::StaticStruct())) PropertyModule->UnregisterCustomPropertyTypeLayout(ScriptStruct->GetFName());
+#define REGISTER_STRUCT_CUSTOMIZATION(Property, Customization) REGISTER_STRUCT_CUSTOMIZATION_DIRECT(Property::StaticStruct(), Customization)
+#define UNREGISTER_STRUCT_CUSTOMIZATION(Property) UNREGISTER_STRUCT_CUSTOMIZATION_DIRECT(Property::StaticStruct())
+
+#define REGISTER_STRUCT_CUSTOMIZATION_INHERITED(Type, Customization) \
+	if (ScriptStruct == Type::StaticStruct() || (ScriptStruct->IsChildOf(Type::StaticStruct()) && ScriptStruct->HasMetaData(TEXT("ApplyBaseStructCustomization")))) \
+	{ REGISTER_STRUCT_CUSTOMIZATION_DIRECT(ScriptStruct, Customization) }
+
+#define UNREGISTER_STRUCT_CUSTOMIZATION_INHERITED(Type) \
+	if (ScriptStruct == Type::StaticStruct() || (ScriptStruct->IsChildOf(Type::StaticStruct()) && ScriptStruct->HasMetaData(TEXT("ApplyBaseStructCustomization")))) \
+	{ UNREGISTER_STRUCT_CUSTOMIZATION_DIRECT(ScriptStruct) }
 
 #define REGISTER_VISUALIZER(Component, Visualizer) \
 	{ \

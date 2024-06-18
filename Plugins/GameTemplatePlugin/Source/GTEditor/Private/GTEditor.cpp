@@ -33,19 +33,19 @@ void FGTEditorModule::StartupModule()
 	
 	if (FPropertyEditorModule* PropertyModule = FModuleManager::LoadModulePtr<FPropertyEditorModule>("PropertyEditor"))
 	{
-		REGISTER_CLASS_CUSTOMIZATION(AGTActor, FGTActorDetails);
-		REGISTER_CLASS_CUSTOMIZATION(AGTVolume, FGTActorDetails);
-		REGISTER_CLASS_CUSTOMIZATION(AGTMeshGenBase, FGTActorDetails);
-		REGISTER_CLASS_CUSTOMIZATION(ASmartCullingVolume, FGTActorDetails);
-		REGISTER_STRUCT_CUSTOMIZATION(FInlineFloatCurve, FInlineCurveDetails);
-		REGISTER_STRUCT_CUSTOMIZATION(FInlineVectorCurve, FInlineCurveDetails);
-		REGISTER_STRUCT_CUSTOMIZATION(FInlineColorCurve, FInlineCurveDetails);
-		REGISTER_STRUCT_CUSTOMIZATION(FPrimitiveCollision, FPrimitiveCollisionDetails);
+		REGISTER_CLASS_CUSTOMIZATION(AGTActor, FGTActorDetails)
+		REGISTER_CLASS_CUSTOMIZATION(AGTVolume, FGTActorDetails)
+		REGISTER_CLASS_CUSTOMIZATION(AGTMeshGenBase, FGTActorDetails)
+		REGISTER_CLASS_CUSTOMIZATION(ASmartCullingVolume, FGTActorDetails)
+		REGISTER_STRUCT_CUSTOMIZATION(FInlineFloatCurve, FInlineCurveDetails)
+		REGISTER_STRUCT_CUSTOMIZATION(FInlineVectorCurve, FInlineCurveDetails)
+		REGISTER_STRUCT_CUSTOMIZATION(FInlineColorCurve, FInlineCurveDetails)
+		REGISTER_STRUCT_CUSTOMIZATION(FPrimitiveCollision, FPrimitiveCollisionDetails)
 
 		for (TObjectIterator<UScriptStruct> It; It; ++It)
 		{
 			const UScriptStruct* ScriptStruct = *It; if (!ScriptStruct) continue;
-			REGISTER_STRUCT_CUSTOMIZATION_INHERITED(FStringPulldown, FStringPulldownDetails);
+			REGISTER_STRUCT_CUSTOMIZATION_INHERITED(FStringPulldown, FStringPulldownDetails)
 		}
 	}
 
@@ -76,19 +76,19 @@ void FGTEditorModule::ShutdownModule()
 	
 	if (FPropertyEditorModule* PropertyModule = FModuleManager::GetModulePtr<FPropertyEditorModule>("PropertyEditor"))
 	{
-		UNREGISTER_CLASS_CUSTOMIZATION(AGTActor);
-		UNREGISTER_CLASS_CUSTOMIZATION(AGTVolume);
-		UNREGISTER_CLASS_CUSTOMIZATION(AGTMeshGenBase);
-		UNREGISTER_CLASS_CUSTOMIZATION(ASmartCullingVolume);
-		UNREGISTER_STRUCT_CUSTOMIZATION(FInlineFloatCurve);
-		UNREGISTER_STRUCT_CUSTOMIZATION(FInlineVectorCurve);
-		UNREGISTER_STRUCT_CUSTOMIZATION(FInlineColorCurve);
-		UNREGISTER_STRUCT_CUSTOMIZATION(FPrimitiveCollision);
+		UNREGISTER_CLASS_CUSTOMIZATION(AGTActor)
+		UNREGISTER_CLASS_CUSTOMIZATION(AGTVolume)
+		UNREGISTER_CLASS_CUSTOMIZATION(AGTMeshGenBase)
+		UNREGISTER_CLASS_CUSTOMIZATION(ASmartCullingVolume)
+		UNREGISTER_STRUCT_CUSTOMIZATION(FInlineFloatCurve)
+		UNREGISTER_STRUCT_CUSTOMIZATION(FInlineVectorCurve)
+		UNREGISTER_STRUCT_CUSTOMIZATION(FInlineColorCurve)
+		UNREGISTER_STRUCT_CUSTOMIZATION(FPrimitiveCollision)
 		
 		for (TObjectIterator<UScriptStruct> It; It; ++It)
 		{
 			const UScriptStruct* ScriptStruct = *It; if (!ScriptStruct) continue;
-			UNREGISTER_STRUCT_CUSTOMIZATION_INHERITED(FStringPulldown);
+			UNREGISTER_STRUCT_CUSTOMIZATION_INHERITED(FStringPulldown)
 		}
 	}
 
