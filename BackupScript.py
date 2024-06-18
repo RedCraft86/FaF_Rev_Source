@@ -41,7 +41,7 @@ LockFile.write("Backing up content...")
 LockFile.flush()
 
 DateTime = datetime.now().strftime("%Y-%m-%d_%H.%M.%S")
-Content = [f for f in os.scandir(CONTENT_PATH) if f.is_dir() and f.name != "Collections" and f.name != "Developer"]
+Content = [f for f in os.scandir(CONTENT_PATH) if f.is_dir() and f.name != "Collections" and f.name != "Developers"]
 
 ContentPaths = []
 AlternateFiles = []
