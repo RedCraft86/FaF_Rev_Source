@@ -101,7 +101,7 @@ bool UInventoryComponent::UseKeyItem(const UInventoryItemDataBase* InItem, const
 	const FGuid Slot = FindSlot(InItem, Filter);
 	if (!Slot.IsValid()) return false;
 	
-	if (SlotHasMetadata(Slot, NativeItemKeys::SingleUseKey))
+	if (SlotHasMetadata(Slot, NativeItemKeys::SingleKey))
 		RemoveItemFromSlot(Slot, 1);
 	
 	return true;

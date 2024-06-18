@@ -11,10 +11,10 @@
 namespace NativeItemKeys
 {
 	inline static FName KeyID			= TEXT("KeyID"); // ID used for Keys
-	inline static FName SingleUseKey	= TEXT("SingleUseKey"); // If true, Keys will be removed from the inventory after use
-	inline static FName MeshIdx			= TEXT("MeshIdx");	// Alt index of the mesh to use in the preview
-
-	inline static TSet<FName> All = {KeyID, SingleUseKey, MeshIdx};
+	inline static FName AltMeshID		= TEXT("AltMeshID"); // Alt index of the mesh to use in the preview
+	inline static FName SingleKey		= TEXT("SingleKey"); // Implies that a Key is only for one lock and should be consumed after use
+	
+	inline static TSet All = {KeyID, AltMeshID, SingleKey};
 }
 
 UENUM(BlueprintType)
@@ -38,7 +38,7 @@ public:
 		: Priority(1), DisplayName(INVTEXT("Unknown Item")), Description(INVTEXT("Unknown Item"))
 		, ItemType(EInventoryItemType::Basic), ViewImage(nullptr), ViewText(FText::GetEmpty())
 		, EquipmentClass(nullptr), bExpectSaveData(true), ConsumableClass(nullptr)
-		, ConsumeDisplayText(INVTEXT("Use")), PreviewZoomRange(0.1f, 1.5f), MeshData({})
+		, ConsumeDisplayText(INVTEXT("Use")), PreviewZoomRange(0.1f, 1.5f)
 	{}
 
 	UPROPERTY(EditAnywhere, Category = "ItemData", meta = (DisplayPriority = -9))
@@ -78,9 +78,12 @@ public:
 	
 	UPROPERTY(EditAnywhere, Category = "DisplayMesh")
 		FVector2D PreviewZoomRange;
+
+	UPROPERTY(EditAnywhere, Category = "DisplayMesh")
+		FTransformMeshData PreviewMesh;
 	
 	UPROPERTY(EditAnywhere, Category = "DisplayMesh")
-		TArray<FTransformMeshData> MeshData;
+		TMap<FString, FTransformMeshData> AltMeshes;
 
 	FString GetTypeString() const;
 	FTransformMeshData GetMeshData(const TMap<FName, FString>& InMetadata) const;

@@ -86,11 +86,11 @@ void AInventoryItemActor::OnConstruction(const FTransform& Transform)
 	}
 	
 	if (!ItemData) return;
-	if (!ItemData->MeshData.IsEmpty() && Amount > 0)
+	const FTransformMeshData MeshData = ItemData->GetMeshData(Metadata);
+	if (MeshData.IsValidData() && Amount > 0)
 	{
 		InstancedStaticMesh->AddInstances(MeshInstances, false);
-		UPrimitiveDataLibrary::SetStaticMeshProperties(InstancedStaticMesh,
-			ItemData->GetMeshData(Metadata));
+		UPrimitiveDataLibrary::SetStaticMeshProperties(InstancedStaticMesh, MeshData);
 	}
 
 	for (const TPair<FName, FString>& Meta : ItemData->DefaultMetadata)

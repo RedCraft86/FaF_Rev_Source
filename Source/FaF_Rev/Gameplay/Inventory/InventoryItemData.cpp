@@ -16,14 +16,9 @@ FString UInventoryItemData::GetTypeString() const
 
 FTransformMeshData UInventoryItemData::GetMeshData(const TMap<FName, FString>& InMetadata) const
 {
-	FTransformMeshData Data = MeshData.IsEmpty() ? FTransformMeshData() : MeshData[0];
-	if (const FString& IndexValue = InMetadata.FindRef(NativeItemKeys::MeshIdx); !IndexValue.IsEmpty())
-	{
-		const int32 Idx = FCString::Atoi(*IndexValue);
-		if (MeshData.IsValidIndex(Idx)) Data = MeshData[Idx];
-	}
-
-	return Data;
+	const FTransformMeshData AltData = AltMeshes.FindRef(InMetadata.FindRef(NativeItemKeys::AltMeshID));
+	if (AltData.IsValidData()) return AltData;
+	return PreviewMesh;
 }
 
 #if WITH_EDITOR
@@ -31,12 +26,16 @@ void UInventoryItemData::PostEditChangeProperty(FPropertyChangedEvent& PropertyC
 {
 	Super::PostEditChangeProperty(PropertyChangedEvent);
 #if WITH_EDITORONLY_DATA
-	if (bUpdate || PropertyChangedEvent.GetPropertyName() == GET_MEMBER_NAME_CHECKED(UInventoryItemData, MeshData))
+	if (bUpdate || PropertyChangedEvent.GetPropertyName() == GET_MEMBER_NAME_CHECKED(UInventoryItemData, PreviewMesh))
+	{
+		PreviewMesh.FillMaterials();
+	}
+	if (bUpdate || PropertyChangedEvent.GetPropertyName() == GET_MEMBER_NAME_CHECKED(UInventoryItemData, AltMeshes))
 	{
 		bUpdate = false;
-		for (FTransformMeshData& Data : MeshData)
+		for (TPair<FString, FTransformMeshData>& Data : AltMeshes)
 		{
-			Data.FillMaterials();
+			Data.Value.FillMaterials();
 		}
 
 		return;
