@@ -14,6 +14,7 @@ AElectricActorBase::AElectricActorBase() : MinEnergy(1), bCachedState(false)
 
 void AElectricActorBase::AddEnergy(const FName Key, const uint8 Value)
 {
+	if (Value == 0) RemoveEnergy(Key);
 	CachedEnergy.Key = false;
 	Energy.Add(Key, Value);
 	OnEnergyChanged();
@@ -21,6 +22,7 @@ void AElectricActorBase::AddEnergy(const FName Key, const uint8 Value)
 
 void AElectricActorBase::RemoveEnergy(const FName Key)
 {
+	if (!Energy.Contains(Key)) return;
 	CachedEnergy.Key = false;
 	Energy.Remove(Key);
 	OnEnergyChanged();
