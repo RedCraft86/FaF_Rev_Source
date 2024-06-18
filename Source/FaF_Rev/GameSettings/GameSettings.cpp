@@ -42,10 +42,6 @@ void UGameSettings::InitializeSettings()
 	{
 		LoadSettings(true);
 	}
-
-#if WITH_EDITOR
-	SetScreenResolution({1920, 1080});
-#endif
 	
 	ApplySettings(false);
 	bInitializing = false;
