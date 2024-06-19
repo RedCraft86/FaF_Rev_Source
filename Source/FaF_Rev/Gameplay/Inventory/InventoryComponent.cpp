@@ -27,8 +27,11 @@ void UInventoryComponent::OpenUI()
 		InventoryPreview->Initialize();
 		InventoryPreview->SetItem({});
 	}
-	
-	PlayerChar->GetPlayerController()->SetPause(true);
+
+	GetWorld()->GetTimerManager().SetTimerForNextTick([this]()
+	{
+		PlayerChar->GetPlayerController()->SetPause(true);
+	});
 	bIsInInventory = true;
 }
 

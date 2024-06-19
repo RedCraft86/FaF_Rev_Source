@@ -253,8 +253,12 @@ void UInventoryWidgetBase::InitWidget()
 void UInventoryWidgetBase::NativeConstruct()
 {
 	Super::NativeConstruct();
-	RefreshSlots();
-	RefreshInfo();
+	GetWorld()->GetTimerManager().SetTimerForNextTick([this]()
+	{
+		if (!Inventory) Inventory = GetGameMode<AFRGameModeBase>()->Inventory;
+		RefreshSlots();
+		RefreshInfo();	
+	});
 }
 
 void UInventoryWidgetBase::NativeDestruct()
