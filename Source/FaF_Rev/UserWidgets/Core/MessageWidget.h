@@ -43,8 +43,8 @@ public:
 	
 	void QueueSmallNotice(const FSimpleNoticeData& NoticeData, const bool bResetQueue = false);
 	void QueueLargeNotice(const FSimpleNoticeData& NoticeData, const bool bResetQueue = false);
-	void QueueSubtitles(const TArray<FSimpleSubtitleData>& Subtitles);
-	void QueueSubtitle(const FSimpleSubtitleData& SubtitleData);
+	void QueueSubtitles(const TArray<FSimpleSubtitleData>& Subtitles, const bool bOverride = false);
+	void QueueSubtitle(const FSimpleSubtitleData& SubtitleData, const bool bOverride = false);
 
 protected:
 

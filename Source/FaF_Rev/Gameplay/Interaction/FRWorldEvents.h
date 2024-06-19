@@ -174,9 +174,12 @@ struct FAF_REV_API FWESimpleSubtitle final : public FWorldEventBase
 	GENERATED_BODY()
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Subtitle")
+		bool bOverride;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Subtitle")
 		TArray<FSimpleSubtitleData> Subtitles;
 
-	FWESimpleSubtitle() : Subtitles({}) {}
+	FWESimpleSubtitle() : bOverride(false), Subtitles({}) {}
 	
 protected:
 

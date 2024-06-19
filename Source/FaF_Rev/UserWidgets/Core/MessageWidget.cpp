@@ -49,17 +49,25 @@ void UMessageWidgetBase::QueueLargeNotice(const FSimpleNoticeData& NoticeData, c
 	}
 }
 
-void UMessageWidgetBase::QueueSubtitles(const TArray<FSimpleSubtitleData>& Subtitles)
+void UMessageWidgetBase::QueueSubtitles(const TArray<FSimpleSubtitleData>& Subtitles, const bool bOverride)
 {
+	int i = 0;
 	for (const FSimpleSubtitleData& Subtitle : Subtitles)
 	{
-		QueueSubtitle(Subtitle);
+		QueueSubtitle(Subtitle, i == 0 && bOverride);
+		i++;
 	}
 }
 
-void UMessageWidgetBase::QueueSubtitle(const FSimpleSubtitleData& SubtitleData)
+void UMessageWidgetBase::QueueSubtitle(const FSimpleSubtitleData& SubtitleData, const bool bOverride)
 {
 	if (!SubtitleData.IsValidData()) return;
+
+	if (bOverride)
+	{
+		SubtitleQueue.Empty();
+		GetWorld()->GetTimerManager().ClearTimer(SubtitleTimer);
+	}
 	
 	SubtitleQueue.Enqueue(SubtitleData);
 	if (!SubtitleTimer.IsValid() || !GetWorld()->GetTimerManager().IsTimerActive(SubtitleTimer))

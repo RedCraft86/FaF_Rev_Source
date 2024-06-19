@@ -55,7 +55,9 @@ public:
 	UInventoryComponent();
 
 	void OpenUI();
-	void CloseUI() const;
+	void CloseUI();
+	bool IsInInventory() const { return bIsInInventory; }
+	
 	void EquipmentUse() const;
 	void EquipmentUseAlt(bool bPressed) const;
 	void SetInventoryPreview(AInventoryPreview* InActor);
@@ -73,7 +75,8 @@ public:
 	FInventorySaveData ExportSaveData();
 
 protected:
-	
+
+	UPROPERTY() bool bIsInInventory = false;
 	UPROPERTY(Transient) TObjectPtr<AFRPlayerBase> PlayerChar;
 	UPROPERTY(Transient) TObjectPtr<AInventoryPreview> InventoryPreview;
 	UPROPERTY(Transient) TObjectPtr<class UInventoryWidgetBase> InventoryWidget;

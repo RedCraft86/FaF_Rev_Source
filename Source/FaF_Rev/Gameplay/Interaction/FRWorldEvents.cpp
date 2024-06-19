@@ -138,7 +138,7 @@ void FWESimpleSubtitle::RunEvent(const UObject* WorldContext)
 {
 	if (AFRGameModeBase* GM = FRGameMode(WorldContext))
 	{
-		GM->QueueSubtitles(Subtitles);
+		GM->QueueSubtitles(Subtitles, bOverride);
 	}
 }
 

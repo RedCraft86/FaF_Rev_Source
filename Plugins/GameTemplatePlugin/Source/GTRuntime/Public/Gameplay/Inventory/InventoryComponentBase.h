@@ -92,6 +92,10 @@ public:
 
 	UFUNCTION(BlueprintPure, Category = "InventoryManager")
 		virtual const TMap<FGuid, FInventorySlotData>& GetInventory() const { return ItemSlots; }
+	virtual TMap<FGuid, FInventorySlotData>& GetInventoryRef() { return ItemSlots; }
+
+	UFUNCTION(BlueprintPure, Category = "InventoryManager")
+		virtual bool IsValidSlot(const FGuid& InSlot) const { return InSlot.IsValid() && ItemSlots.Contains(InSlot); }
 	
 	UFUNCTION(BlueprintPure, Category = "InventoryManager", meta = (AdvancedDisplay = "Filter"))
 		virtual FGuid FindSlot(const UInventoryItemDataBase* Item, const FInventoryItemFilter& Filter = FInventoryItemFilter());

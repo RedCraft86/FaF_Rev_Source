@@ -66,6 +66,7 @@ class FAF_REV_API UInventoryWidgetBase final : public UGTUserWidget
 	GENERATED_BODY()
 
 	friend class UInventoryComponent;
+	friend class UInventorySlotWidgetBase;
 
 public:
 
@@ -131,27 +132,18 @@ public:
 	UPROPERTY(EditAnywhere, Category = "InventoryWidget")
 		float ImageDescHeight;
 	
-	UPROPERTY(EditAnywhere, Category = "InventoryWidget")
-		FText EquipItemLabel;
-
-	UPROPERTY(EditAnywhere, Category = "InventoryWidget")
-		FText UnequipItemLabel;
-
-	UPROPERTY(EditAnywhere, Category = "InventoryWidget")
-		FText ViewItemLabel;
-	
 	void SelectSlot(const FGuid& InKey);
 	
 protected:
 
-	bool bInitialized;
 	FGuid SelectedKey;
 	FGuid EquipmentKey;
 	TArray<FGuid> SlotKeys;
 	UPROPERTY(Transient) TMap<FGuid, TObjectPtr<UInventorySlotWidgetBase>> SlotWidgets;
+	UPROPERTY(Transient) TObjectPtr<UInventoryComponent> Inventory;
 	
-	void RefreshUI();
-	void UpdateItemInfo();
+	void RefreshSlots();
+	void RefreshInfo();
 
 	UFUNCTION() void OnUsageClicked();
 	UFUNCTION() void OnReadFinishClicked();

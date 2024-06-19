@@ -43,19 +43,19 @@ void AFRGameModeBase::QueueLargeNotice(const FSimpleNoticeData& NoticeData, cons
 	}
 }
 
-void AFRGameModeBase::QueueSubtitle(const FSimpleSubtitleData& SubtitleData)
+void AFRGameModeBase::QueueSubtitle(const FSimpleSubtitleData& SubtitleData, const bool bOverride)
 {
 	if (UMessageWidgetBase* Widget = GetWidget<UMessageWidgetBase>())
 	{
-		Widget->QueueSubtitle(SubtitleData);
+		Widget->QueueSubtitle(SubtitleData, bOverride);
 	}
 }
 
-void AFRGameModeBase::QueueSubtitles(const TArray<FSimpleSubtitleData>& Subtitles)
+void AFRGameModeBase::QueueSubtitles(const TArray<FSimpleSubtitleData>& Subtitles, const bool bOverride)
 {
 	if (UMessageWidgetBase* Widget = GetWidget<UMessageWidgetBase>())
 	{
-		Widget->QueueSubtitles(Subtitles);
+		Widget->QueueSubtitles(Subtitles, bOverride);
 	}
 }
 

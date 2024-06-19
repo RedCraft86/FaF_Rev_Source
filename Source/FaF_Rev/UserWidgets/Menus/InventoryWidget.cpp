@@ -7,19 +7,15 @@
 #include "Components/Button.h"
 #include "Components/SizeBox.h"
 #include "Components/TextBlock.h"
-#include "Components/SceneCaptureComponent2D.h"
-#include "Engine/TextureRenderTarget2D.h"
+#include "Components/ComboBoxString.h"
 #include "Inventory/InventoryComponent.h"
 #include "Inventory/InventoryItemData.h"
 #include "FRGameMode.h"
-#include "Components/ComboBoxString.h"
-
-#define GET_INVENTORY GetGameMode<AFRGameModeBase>()->Inventory
-#define LOCTEXT_NAMESPACE "Inventory"
 
 void UInventorySlotWidgetBase::InitData(const FGuid& InSlotKey, const bool bEquipped)
 {
-	const FInventorySlotData& SlotData = ParentUI->GET_INVENTORY->ItemSlots[InSlotKey];
+	SlotKey = InSlotKey;
+	const FInventorySlotData& SlotData = ParentUI->Inventory->ItemSlots[InSlotKey];
 	const UInventoryItemData* ItemData = SlotData.GetItemData<UInventoryItemData>();
 	
 	IconImage->SetBrushFromTexture(ItemData->DisplayIcon.LoadSynchronous(), false);
@@ -46,8 +42,6 @@ UInventoryWidgetBase::UInventoryWidgetBase(const FObjectInitializer& ObjectIniti
 	, UsageText(nullptr), ViewingTitle(nullptr), ViewContentBox(nullptr), ViewContentImage(nullptr)
 	, ReadContentBox(nullptr), ReadContentText(nullptr), FinishViewingButton(nullptr), SlotsFadeAnim(nullptr)
 	, DescFadeAnim(nullptr), ViewingFadeAnim(nullptr), SlotWidgetClass(nullptr), ImageDescHeight(200.0f)
-	, EquipItemLabel(LOCTEXT("EquipLabel", "Equip")), UnequipItemLabel(LOCTEXT("UnequipLabel", "Unequip"))
-	, ViewItemLabel(LOCTEXT("ViewLabel", "Read/View")), bInitialized(false)
 {
 	ZOrder = 94;
 	bAutoAdd = false;
@@ -55,8 +49,17 @@ UInventoryWidgetBase::UInventoryWidgetBase(const FObjectInitializer& ObjectIniti
 
 void UInventoryWidgetBase::SelectSlot(const FGuid& InKey)
 {
-	if (SelectedKey == InKey) return;
+	if (SelectedKey == InKey)
+	{
+		if (const TObjectPtr<UInventorySlotWidgetBase> SlotObj = SlotWidgets.FindRef(SelectedKey))
+		{
+			SlotObj->MarkSelected(true);
+		}
 
+		return;
+	}
+	if (!Inventory || !Inventory->IsInInventory()) return;
+	
 	SelectedKey = {};
 	if (SlotWidgets.Contains(InKey))
 	{
@@ -64,81 +67,60 @@ void UInventoryWidgetBase::SelectSlot(const FGuid& InKey)
 		for (const TPair<FGuid, TObjectPtr<UInventorySlotWidgetBase>>& SlotWidget : SlotWidgets)
 		{
 			if (!SlotWidget.Value) continue;
-			if (SlotWidget.Key == SelectedKey)
-			{
-				SlotWidget.Value->MarkSelected(true);
-			}
-			else
-			{
-				SlotWidget.Value->MarkSelected(false);
-			}
+			SlotWidget.Value->MarkSelected(SlotWidget.Key == SelectedKey);
 		}
 	}
-
-	UpdateItemInfo();
-}
-
-void UInventoryWidgetBase::RefreshUI()
-{
-	if (IsInViewport())
-	{
-		UInventoryComponent* Inventory = GET_INVENTORY;
-		EquipmentKey = Inventory->GetEquipmentData().ItemID;
-		SlotKeys = Inventory->GetSortedSlots((EInventoryItemType)SlotFilter->GetSelectedIndex());
-		if (SlotWidgets.IsEmpty() && SlotKeys.IsEmpty())
-		{
-			return;
-		}
-		
-		SlotWidgets.Empty();
-		SlotsBox->ClearChildren();
-		for (const FGuid& Key : SlotKeys)
-		{
-			UInventorySlotWidgetBase* NewSlot = CreateWidget<UInventorySlotWidgetBase>(this, SlotWidgetClass);
-			NewSlot->ParentUI = this;
-			NewSlot->InitData(Key, Key == EquipmentKey);
-			SlotWidgets.Add(Key, NewSlot);
-			SlotsBox->AddChild(NewSlot);
-		}
-
-		GetWorld()->GetTimerManager().SetTimerForNextTick([this](){
-			if (SlotKeys.IsEmpty())
-			{
-				SelectSlot({});
-			}
-			else if (!SlotKeys.Contains(SelectedKey))
-			{
-				SelectSlot(SlotKeys[0]);
-			}
-			else if (TObjectPtr<UInventorySlotWidgetBase> const* SlotObj = SlotWidgets.Find(SelectedKey); SlotObj && *SlotObj)
-			{
-				UpdateItemInfo();
-				(*SlotObj)->MarkSelected(true);
-			}
-		});
-		
-		PlayAnimation(SlotsFadeAnim);
-	}
-}
-
-void UInventoryWidgetBase::UpdateItemInfo()
-{
-	ItemPreviewImage->SetVisibility(ESlateVisibility::Collapsed);
-	ItemTitleText->SetText(FText::FromString(TEXT("None Selected")));
-	if (ItemDescText)
-	{
-		ItemDescText->SetText(FText::GetEmpty());
-	}
-
-	ItemTypeText->SetText(FText::GetEmpty());
-	EquipStateBox->SetVisibility(ESlateVisibility::Collapsed);
-	UsageButton->SetVisibility(ESlateVisibility::Collapsed);
-	UsageText->SetText(FText::GetEmpty());
 	
-	if (SelectedKey.IsValid() && SlotWidgets.Contains(SelectedKey))
+	RefreshInfo();
+}
+
+void UInventoryWidgetBase::RefreshSlots()
+{
+	if (!Inventory || !Inventory->IsInInventory()) return;
+	EquipmentKey = Inventory->GetEquipmentData().ItemID;
+	SlotKeys = Inventory->GetSortedSlots((EInventoryItemType)SlotFilter->GetSelectedIndex());
+
+	SlotsBox->ClearChildren();
+	SlotWidgets.Empty(SlotKeys.Num());
+	if (SlotWidgets.IsEmpty() && SlotKeys.IsEmpty())
 	{
-		const UInventoryComponent* Inventory = GET_INVENTORY;
-		const FInventorySlotData SlotData = Inventory->GetInventory()[SelectedKey];
+		SelectedKey = {};
+		RefreshInfo();
+		return;
+	}
+
+	for (const FGuid& Key : SlotKeys)
+	{
+		UInventorySlotWidgetBase* NewSlot = CreateWidget<UInventorySlotWidgetBase>(this, SlotWidgetClass);
+		NewSlot->ParentUI = this;
+		NewSlot->InitData(Key, Key == EquipmentKey);
+		SlotWidgets.Add(Key, NewSlot);
+		SlotsBox->AddChild(NewSlot);
+	}
+	
+	if (SlotKeys.IsEmpty())
+	{
+		SelectSlot({});
+	}
+	else if (!SlotKeys.Contains(SelectedKey))
+	{
+		SelectSlot(SlotKeys[0]);
+	}
+	else if (const TObjectPtr<UInventorySlotWidgetBase> SlotObj = SlotWidgets.FindRef(SelectedKey))
+	{
+		RefreshInfo();
+		SlotObj->MarkSelected(true);
+	}
+
+	PlayAnimation(SlotsFadeAnim);
+}
+
+void UInventoryWidgetBase::RefreshInfo()
+{
+	if (!Inventory || !Inventory->IsInInventory()) return;
+	if (SelectedKey.IsValid() && SlotWidgets.Contains(SelectedKey) && Inventory->IsValidSlot(SelectedKey))
+	{
+		const FInventorySlotData SlotData = Inventory->GetInventoryRef()[SelectedKey];
 		const UInventoryItemData* ItemData = SlotData.GetItemData<UInventoryItemData>();
 		const bool bEquipped = Inventory->GetEquipmentData().ItemID == SelectedKey;
 
@@ -147,19 +129,11 @@ void UInventoryWidgetBase::UpdateItemInfo()
 			ItemTitleText->SetText(FText::Format(INVTEXT("{1} {0}"),
 				ItemData->DisplayName, FText::FromString(KeyID)));
 		}
-		else
-		{
-			ItemTitleText->SetText(ItemData->DisplayName);
-		}
-		
+		else ItemTitleText->SetText(ItemData->DisplayName);
+
 		ItemDescText->SetText(ItemData->Description);
-		ItemTypeText->SetText(FText::Format(INVTEXT("Type: {0} Item"),
-			FText::FromString(LexToString(ItemData->ItemType))));
-		
-		if (bEquipped)
-		{
-			EquipStateBox->SetVisibility(ESlateVisibility::HitTestInvisible);
-		}
+		ItemTypeText->SetText(FText::Format(INVTEXT("Type: {0}"), FText::FromString(LexToString(ItemData->ItemType))));
+		if (bEquipped) EquipStateBox->SetVisibility(ESlateVisibility::HitTestInvisible);
 		
 		switch (ItemData->ItemType)
 		{
@@ -167,10 +141,9 @@ void UInventoryWidgetBase::UpdateItemInfo()
 			if (ItemData->ViewImage || !ItemData->ViewText.IsEmptyOrWhitespace())
 			{
 				UsageButton->SetVisibility(ESlateVisibility::Visible);
-				UsageText->SetText(ViewItemLabel);
+				UsageText->SetText(INVTEXT("Read/View"));
 			}
 			break;
-			
 		case EInventoryItemType::Consumable:
 			if (ItemData->ConsumableClass)
 			{
@@ -178,15 +151,13 @@ void UInventoryWidgetBase::UpdateItemInfo()
 				UsageText->SetText(ItemData->ConsumeDisplayText);
 			}
 			break;
-			
 		case EInventoryItemType::Equipment:
 			if (ItemData->EquipmentClass)
 			{
 				UsageButton->SetVisibility(ESlateVisibility::Visible);
-				UsageText->SetText(bEquipped ? UnequipItemLabel : EquipItemLabel);
+				UsageText->SetText(bEquipped ? INVTEXT("Unequip") : INVTEXT("Equip"));
 			}
 			break;
-
 		default: break;
 		}
 
@@ -196,59 +167,58 @@ void UInventoryWidgetBase::UpdateItemInfo()
 			Inventory->GetInventoryPreview()->SetItem(SelectedKey);
 		}
 	}
-	
+	else
+	{
+		ItemPreviewImage->SetVisibility(ESlateVisibility::Collapsed);
+		ItemTypeText->SetText(FText::GetEmpty());
+		ItemDescText->SetText(INVTEXT("None Selected"));
+		ItemTitleText->SetText(INVTEXT("None"));
+		
+		EquipStateBox->SetVisibility(ESlateVisibility::Collapsed);
+		UsageButton->SetVisibility(ESlateVisibility::Collapsed);
+		UsageText->SetText(FText::GetEmpty());
+	}
+
 	PlayAnimation(DescFadeAnim);
 }
 
 void UInventoryWidgetBase::OnUsageClicked()
 {
-	if (SelectedKey.IsValid() && SlotWidgets.Contains(SelectedKey))
+	if (!Inventory || !Inventory->IsInInventory() || !SelectedKey.IsValid()
+		|| !Inventory->IsValidSlot(SelectedKey)) return;
+
+	const FInventorySlotData SlotData = Inventory->GetInventoryRef()[SelectedKey];
+	const UInventoryItemData* ItemData = SlotData.GetItemData<UInventoryItemData>();
+	switch (ItemData->ItemType)
 	{
-		UInventoryComponent* Inventory = GET_INVENTORY;
-		const FInventorySlotData SlotData = Inventory->GetInventory()[SelectedKey];
-		const UInventoryItemData* ItemData = SlotData.GetItemData<UInventoryItemData>();
+	case EInventoryItemType::Consumable:
+		Inventory->ConsumeItem(SelectedKey);
+		break;
+
+	case EInventoryItemType::Equipment:
+		if (Inventory->GetEquipmentData().ItemID == SelectedKey) Inventory->UnequipItem();
+		else Inventory->EquipItem(SelectedKey);
+		break;
+
+	case EInventoryItemType::Viewable:
+		ViewingTitle->SetText(ItemTitleText->GetText());
+		ReadContentText->SetText(ItemData->ViewText);
+		ReadContentBox->SetVisibility(ItemData->ViewText.IsEmptyOrWhitespace() ?
+			ESlateVisibility::Collapsed : ESlateVisibility::Visible);
 		
-		switch (ItemData->ItemType)
+		ViewContentImage->SetBrushFromTexture(ItemData->ViewImage);
+		ViewContentBox->SetVisibility(IsValid(ViewContentImage->GetBrush().GetResourceObject()) ?
+			ESlateVisibility::HitTestInvisible : ESlateVisibility::Collapsed);
+
+		if (ItemData->ViewImage && !ItemData->ViewText.IsEmptyOrWhitespace())
 		{
-		case EInventoryItemType::Consumable:
-			Inventory->ConsumeItem(SelectedKey);
-			break;
-			
-		case EInventoryItemType::Equipment:
-			if (Inventory->GetEquipmentData().ItemID == SelectedKey)
-			{
-				Inventory->UnequipItem();
-			}
-			else
-			{
-				Inventory->EquipItem(SelectedKey);
-			}
-			break;
-
-		case EInventoryItemType::Viewable:
-			ViewingTitle->SetText(ItemData->DisplayName);
-			ReadContentText->SetText(ItemData->ViewText);
-			ViewContentImage->SetBrushFromTexture(ItemData->ViewImage);
-			ViewContentBox->SetVisibility(IsValid(ViewContentImage->GetBrush().GetResourceObject()) ?
-				ESlateVisibility::HitTestInvisible : ESlateVisibility::Collapsed);
-
-			ReadContentBox->SetVisibility(ItemData->ViewText.IsEmptyOrWhitespace() ?
-				ESlateVisibility::Collapsed : ESlateVisibility::Visible);
-			
-			if (ItemData->ViewImage && !ItemData->ViewText.IsEmptyOrWhitespace())
-			{
-				ReadContentBox->SetHeightOverride(ImageDescHeight);
-			}
-			else
-			{
-				ReadContentBox->ClearHeightOverride();
-			}
-			
-			PlayAnimation(ViewingFadeAnim);
-			break;
-
-		default: break;
+			ReadContentBox->SetHeightOverride(ImageDescHeight);
 		}
+		else ReadContentBox->ClearHeightOverride();
+		PlayAnimation(ViewingFadeAnim);
+		break;
+
+	default: break;
 	}
 }
 
@@ -259,10 +229,7 @@ void UInventoryWidgetBase::OnReadFinishClicked()
 
 void UInventoryWidgetBase::OnTypeSelected(FString SelectedItem, ESelectInfo::Type SelectionType)
 {
-	if (bInitialized)
-	{
-		RefreshUI();
-	}
+	RefreshSlots();
 }
 
 void UInventoryWidgetBase::InitWidget()
@@ -270,45 +237,28 @@ void UInventoryWidgetBase::InitWidget()
 	Super::InitWidget();
 	UsageButton->OnClicked.AddDynamic(this, &UInventoryWidgetBase::OnUsageClicked);
 	FinishViewingButton->OnClicked.AddDynamic(this, &UInventoryWidgetBase::OnReadFinishClicked);
-	SlotFilter->OnSelectionChanged.AddDynamic(this, &UInventoryWidgetBase::OnTypeSelected);
-	GET_INVENTORY->OnUpdate.AddUObject(this, &UInventoryWidgetBase::RefreshUI);
-}
-
-void UInventoryWidgetBase::NativeConstruct()
-{
-	Super::NativeConstruct();
-	bInitialized = false;
 
 	SlotFilter->ClearOptions();
 	for (const EInventoryItemType Type : TEnumRange<EInventoryItemType>())
 	{
 		SlotFilter->AddOption(LexToString(Type));
 	}
-
 	SlotFilter->SetSelectedIndex(0);
+	SlotFilter->OnSelectionChanged.AddDynamic(this, &UInventoryWidgetBase::OnTypeSelected);
 
-	RefreshUI();
-	GetGameMode<AFRGameModeBase>()->SetGameInputMode(EGameInputMode::GameAndUI, true,
-		EMouseLockMode::LockAlways, false, this);
+	Inventory = GetGameMode<AFRGameModeBase>()->Inventory;
+	Inventory->OnUpdate.AddUObject(this, &UInventoryWidgetBase::RefreshSlots);
+}
 
-	SlotsBox->ClearChildren();
-	UpdateItemInfo();
-
-	if (const AInventoryPreview* Actor = GET_INVENTORY->GetInventoryPreview())
-	{
-		FSlateBrush Brush = ItemPreviewImage->GetBrush();
-		Brush.SetResourceObject(Actor->PreviewCapture->TextureTarget);
-		ItemPreviewImage->SetBrush(Brush);
-	}
-
-	bInitialized = true;
+void UInventoryWidgetBase::NativeConstruct()
+{
+	Super::NativeConstruct();
+	RefreshSlots();
+	RefreshInfo();
 }
 
 void UInventoryWidgetBase::NativeDestruct()
 {
 	Super::NativeDestruct();
 	SetAnimationCurrentTime(ViewingFadeAnim, 0.0f);
-	GetGameMode<AFRGameModeBase>()->SetGameInputMode(EGameInputMode::GameOnly);
 }
-
-#undef LOCTEXT_NAMESPACE

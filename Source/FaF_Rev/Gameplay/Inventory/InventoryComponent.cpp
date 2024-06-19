@@ -15,9 +15,7 @@ UInventoryComponent::UInventoryComponent() : PlayerChar(nullptr), InventoryPrevi
 
 void UInventoryComponent::OpenUI()
 {
-	if (!InventoryWidget) return;
-	if (InventoryWidget->IsInViewport()) return;
-	PlayerChar->GetPlayerController()->SetPause(true);
+	if (!InventoryWidget || bIsInInventory) return;
 	PlayerChar->AddLockFlag(Player::LockFlags::Inventory);
 	PlayerChar->GetGameMode()->SetGameInputMode(EGameInputMode::GameAndUI, true,
 		EMouseLockMode::LockAlways, false, InventoryWidget);
@@ -29,21 +27,25 @@ void UInventoryComponent::OpenUI()
 		InventoryPreview->Initialize();
 		InventoryPreview->SetItem({});
 	}
+	
+	PlayerChar->GetPlayerController()->SetPause(true);
+	bIsInInventory = true;
 }
 
-void UInventoryComponent::CloseUI() const
+void UInventoryComponent::CloseUI()
 {
-	if (!InventoryWidget) return;
-	if (!InventoryWidget->IsInViewport()) return;
-	PlayerChar->GetPlayerController()->SetPause(false);
+	if (!InventoryWidget || !bIsInInventory) return;
 	PlayerChar->ClearLockFlag(Player::LockFlags::Inventory);
 	PlayerChar->GetGameMode()->SetGameInputMode(EGameInputMode::GameOnly);
+	PlayerChar->GetPlayerController()->SetPause(false);
 	
 	InventoryWidget->RemoveWidget();
 	if (InventoryPreview)
 	{
 		InventoryPreview->Deinitialize();
 	}
+
+	bIsInInventory = false;
 }
 
 void UInventoryComponent::EquipmentUse() const
@@ -89,7 +91,7 @@ TArray<FGuid> UInventoryComponent::GetSortedSlots(const EInventoryItemType TypeF
 	{
 		Result.RemoveAll([this, TypeFilter](const FGuid& Elem)
 		{
-			return ItemSlots[Elem].GetItemData<UInventoryItemData>()->ItemType == TypeFilter;
+			return ItemSlots[Elem].GetItemData<UInventoryItemData>()->ItemType != TypeFilter;
 		});
 	}
 

@@ -42,10 +42,10 @@ public: // Shortcuts
 		void QueueLargeNotice(const FSimpleNoticeData& NoticeData, const bool bResetQueue = false);
 
 	UFUNCTION(BlueprintCallable, Category = "DisplayMessages")
-		void QueueSubtitle(const FSimpleSubtitleData& SubtitleData);
+		void QueueSubtitle(const FSimpleSubtitleData& SubtitleData, const bool bOverride = false);
 	
 	UFUNCTION(BlueprintCallable, Category = "DisplayMessages")
-		void QueueSubtitles(const TArray<FSimpleSubtitleData>& Subtitles);
+		void QueueSubtitles(const TArray<FSimpleSubtitleData>& Subtitles, const bool bOverride = false);
 
 	UFUNCTION(BlueprintCallable, Category = "DisplayMessages")
 		void QueueGuidePage(const FGuideBookPageID PageID);
