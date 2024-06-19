@@ -4,6 +4,7 @@
 
 #include "EquipmentActor.h"
 #include "InventoryPreview.h"
+#include "InventoryItemData.h"
 #include "Inventory/InventoryComponentBase.h"
 #include "InventoryComponent.generated.h"
 
@@ -59,7 +60,7 @@ public:
 	void EquipmentUseAlt(bool bPressed) const;
 	void SetInventoryPreview(AInventoryPreview* InActor);
 	AInventoryPreview* GetInventoryPreview() const { return InventoryPreview; }
-	TArray<FGuid> GetSortedSlots();
+	TArray<FGuid> GetSortedSlots(const EInventoryItemType TypeFilter = EInventoryItemType::Any);
 
 	bool UseKeyItem(const UInventoryItemDataBase* InItem, const FString& KeyID);
 	

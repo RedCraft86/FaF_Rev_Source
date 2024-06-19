@@ -1,11 +1,9 @@
 ﻿// Copyright (C) RedCraft86. All Rights Reserved.
 
 #include "InventoryComponent.h"
-
-#include "ConsumableActor.h"
-#include "InventoryItemData.h"
 #include "Menus/InventoryWidget.h"
 #include "FRPlayerController.h"
+#include "ConsumableActor.h"
 #include "FRGameMode.h"
 #include "FRPlayer.h"
 
@@ -19,8 +17,8 @@ void UInventoryComponent::OpenUI()
 {
 	if (!InventoryWidget) return;
 	if (InventoryWidget->IsInViewport()) return;
-	PlayerChar->AddLockFlag(Player::LockFlags::Inventory);
 	PlayerChar->GetPlayerController()->SetPause(true);
+	PlayerChar->AddLockFlag(Player::LockFlags::Inventory);
 	PlayerChar->GetGameMode()->SetGameInputMode(EGameInputMode::GameAndUI, true,
 		EMouseLockMode::LockAlways, false, InventoryWidget);
 
@@ -37,9 +35,9 @@ void UInventoryComponent::CloseUI() const
 {
 	if (!InventoryWidget) return;
 	if (!InventoryWidget->IsInViewport()) return;
-	PlayerChar->AddLockFlag(Player::LockFlags::Inventory);
-	PlayerChar->GetGameMode()->SetGameInputMode(EGameInputMode::GameOnly);
 	PlayerChar->GetPlayerController()->SetPause(false);
+	PlayerChar->ClearLockFlag(Player::LockFlags::Inventory);
+	PlayerChar->GetGameMode()->SetGameInputMode(EGameInputMode::GameOnly);
 	
 	InventoryWidget->RemoveWidget();
 	if (InventoryPreview)
@@ -75,7 +73,7 @@ void UInventoryComponent::SetInventoryPreview(AInventoryPreview* InActor)
 	if(InventoryPreview) InventoryPreview->Inventory = this;
 }
 
-TArray<FGuid> UInventoryComponent::GetSortedSlots()
+TArray<FGuid> UInventoryComponent::GetSortedSlots(const EInventoryItemType TypeFilter)
 {
 	CleanInventory();
 	TArray<FGuid> Result;
@@ -86,6 +84,14 @@ TArray<FGuid> UInventoryComponent::GetSortedSlots()
 		const UInventoryItemData* ItemB = ItemSlots[B].GetItemData<UInventoryItemData>();
 		return ItemA->DisplayName.ToString() < ItemB->DisplayName.ToString() && ItemA->Priority <= ItemB->Priority;
 	});
+
+	if (TypeFilter != EInventoryItemType::Any)
+	{
+		Result.RemoveAll([this, TypeFilter](const FGuid& Elem)
+		{
+			return ItemSlots[Elem].GetItemData<UInventoryItemData>()->ItemType == TypeFilter;
+		});
+	}
 
 	return Result;
 }

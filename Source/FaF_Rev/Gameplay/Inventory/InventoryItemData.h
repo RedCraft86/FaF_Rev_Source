@@ -20,12 +20,28 @@ namespace NativeItemKeys
 UENUM(BlueprintType)
 enum class EInventoryItemType : uint8
 {
+	Any UMETA(Hidden),
 	Basic,
 	Objective,
 	Viewable,
 	Consumable,
 	Equipment
 };
+ENUM_RANGE_BY_FIRST_AND_LAST(EInventoryItemType, EInventoryItemType::Any, EInventoryItemType::Equipment);
+[[nodiscard]] FAF_REV_API inline FString LexToString(const EInventoryItemType Type)
+{
+	switch(Type)
+	{
+	case EInventoryItemType::Any: return TEXT("Any");
+	case EInventoryItemType::Basic: return TEXT("Basic");
+	case EInventoryItemType::Objective: return TEXT("Objective");
+	case EInventoryItemType::Consumable: return TEXT("Consumable");
+	case EInventoryItemType::Equipment: return TEXT("Equipment");
+	case EInventoryItemType::Viewable: return TEXT("Viewable");
+	}
+	
+	return TEXT("Unknown");
+}
 
 UCLASS()
 class FAF_REV_API UInventoryItemData final : public UInventoryItemDataBase
@@ -84,8 +100,7 @@ public:
 	
 	UPROPERTY(EditAnywhere, Category = "DisplayMesh")
 		TMap<FString, FTransformMeshData> AltMeshes;
-
-	FString GetTypeString() const;
+	
 	FTransformMeshData GetMeshData(const TMap<FName, FString>& InMetadata) const;
 
 #if WITH_EDITOR

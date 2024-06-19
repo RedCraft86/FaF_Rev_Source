@@ -2,18 +2,6 @@
 
 #include "InventoryItemData.h"
 
-FString UInventoryItemData::GetTypeString() const
-{
-	switch (ItemType)
-	{
-	case EInventoryItemType::Objective: return TEXT("Objective");
-	case EInventoryItemType::Consumable: return TEXT("Consumable");
-	case EInventoryItemType::Equipment: return TEXT("Equipment");
-	case EInventoryItemType::Viewable: return TEXT("Viewable");
-	default: return TEXT("Basic");
-	}
-}
-
 FTransformMeshData UInventoryItemData::GetMeshData(const TMap<FName, FString>& InMetadata) const
 {
 	const FTransformMeshData AltData = AltMeshes.FindRef(InMetadata.FindRef(NativeItemKeys::AltMeshID));
@@ -26,15 +14,17 @@ void UInventoryItemData::PostEditChangeProperty(FPropertyChangedEvent& PropertyC
 {
 	Super::PostEditChangeProperty(PropertyChangedEvent);
 #if WITH_EDITORONLY_DATA
-	if (Priority == 0 && PropertyChangedEvent.GetPropertyName() == GET_MEMBER_NAME_CHECKED(UInventoryItemData, ItemType))
+	if (Priority == 0 && (PropertyChangedEvent.GetPropertyName() == GET_MEMBER_NAME_CHECKED(UInventoryItemData, ItemType)
+		|| PropertyChangedEvent.GetPropertyName() == GET_MEMBER_NAME_CHECKED(UInventoryItemData, Priority)))
 	{
 		switch (ItemType)
 		{
-		case EInventoryItemType::Objective: Priority = 2;
-		case EInventoryItemType::Consumable: Priority = 3;
-		case EInventoryItemType::Equipment: Priority = 1;
-		case EInventoryItemType::Viewable: Priority = 4;
-		default: Priority = 5;
+		case EInventoryItemType::Basic: Priority = 5; break;
+		case EInventoryItemType::Objective: Priority = 2; break;
+		case EInventoryItemType::Consumable: Priority = 3; break;
+		case EInventoryItemType::Equipment: Priority = 1; break;
+		case EInventoryItemType::Viewable: Priority = 4; break;
+		default: Priority = 6; break;
 		}
 	}
 	if (bUpdate || PropertyChangedEvent.GetPropertyName() == GET_MEMBER_NAME_CHECKED(UInventoryItemData, PreviewMesh))
@@ -53,6 +43,11 @@ void UInventoryItemData::PostEditChangeProperty(FPropertyChangedEvent& PropertyC
 		return;
 	}
 #endif
+
+	if (ItemType == EInventoryItemType::Any)
+	{
+		ItemType = EInventoryItemType::Basic;
+	}
 
 	for (const FName Key : NativeItemKeys::All)
 	{

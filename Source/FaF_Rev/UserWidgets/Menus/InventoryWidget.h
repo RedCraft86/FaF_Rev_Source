@@ -70,6 +70,9 @@ class FAF_REV_API UInventoryWidgetBase final : public UGTUserWidget
 public:
 
 	UInventoryWidgetBase(const FObjectInitializer& ObjectInitializer);
+
+	UPROPERTY(Transient, meta = (BindWidget))
+		TObjectPtr<class UComboBoxString> SlotFilter;
 	
 	UPROPERTY(Transient, meta = (BindWidget))
 		TObjectPtr<UPanelWidget> SlotsBox;
@@ -141,6 +144,7 @@ public:
 	
 protected:
 
+	bool bInitialized;
 	FGuid SelectedKey;
 	FGuid EquipmentKey;
 	TArray<FGuid> SlotKeys;
@@ -151,6 +155,7 @@ protected:
 
 	UFUNCTION() void OnUsageClicked();
 	UFUNCTION() void OnReadFinishClicked();
+	UFUNCTION() void OnTypeSelected(FString SelectedItem, ESelectInfo::Type SelectionType);
 	
 	virtual void InitWidget() override;
 	virtual void NativeConstruct() override;

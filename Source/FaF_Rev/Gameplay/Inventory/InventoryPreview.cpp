@@ -33,7 +33,6 @@ AInventoryPreview::AInventoryPreview()
 	PreviewMesh = CreateDefaultSubobject<UStaticMeshComponent>("PreviewMesh");
 	PreviewMesh->SetupAttachment(PreviewRoot, USpringArmComponent::SocketName);
 	PreviewMesh->SetLightingChannels(false, true, false);
-	PreviewMesh->SetVisibleInSceneCaptureOnly(true);
 
 	PreviewLight = CreateDefaultSubobject<USpotLightComponent>("PreviewLight");
 	PreviewLight->SetRelativeLocation(FVector(-150.0f, 100.0f, 80.0f));
@@ -157,6 +156,8 @@ void AInventoryPreview::InputBinding_Zoom(const FInputActionValue& InValue)
 void AInventoryPreview::BeginPlay()
 {
 	Super::BeginPlay();
+	PreviewMesh->SetOnlyOwnerSee(true);
+	PreviewMesh->SetVisibleInSceneCaptureOnly(true);
 	SetActorEnableCollision(false);
 	Deinitialize();
 
