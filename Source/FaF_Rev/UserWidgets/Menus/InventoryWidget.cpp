@@ -118,20 +118,18 @@ void UInventoryWidgetBase::RefreshSlots()
 void UInventoryWidgetBase::RefreshInfo()
 {
 	if (!Inventory || !Inventory->IsInInventory()) return;
+	
+	UsageText->SetText(FText::GetEmpty());
+	UsageButton->SetVisibility(ESlateVisibility::Collapsed);
+	EquipStateBox->SetVisibility(ESlateVisibility::Collapsed);
 	if (SelectedKey.IsValid() && SlotWidgets.Contains(SelectedKey) && Inventory->IsValidSlot(SelectedKey))
 	{
 		const FInventorySlotData SlotData = Inventory->GetInventoryRef()[SelectedKey];
 		const UInventoryItemData* ItemData = SlotData.GetItemData<UInventoryItemData>();
 		const bool bEquipped = Inventory->GetEquipmentData().ItemID == SelectedKey;
 
-		if (const FString KeyID = SlotData.Metadata.FindRef(NativeItemKeys::KeyID); !KeyID.IsEmpty())
-		{
-			ItemTitleText->SetText(FText::Format(INVTEXT("{1} {0}"),
-				ItemData->DisplayName, FText::FromString(KeyID)));
-		}
-		else ItemTitleText->SetText(ItemData->DisplayName);
-
-		ItemDescText->SetText(ItemData->Description);
+		ItemDescText->SetText(ItemData->GetDescription(SlotData.Metadata));
+		ItemTitleText->SetText(ItemData->GetDisplayName(SlotData.Metadata));
 		ItemTypeText->SetText(FText::Format(INVTEXT("Type: {0}"), FText::FromString(LexToString(ItemData->ItemType))));
 		if (bEquipped) EquipStateBox->SetVisibility(ESlateVisibility::HitTestInvisible);
 		
@@ -176,10 +174,6 @@ void UInventoryWidgetBase::RefreshInfo()
 		ItemTypeText->SetText(FText::GetEmpty());
 		ItemDescText->SetText(INVTEXT("None Selected"));
 		ItemTitleText->SetText(INVTEXT("None"));
-		
-		EquipStateBox->SetVisibility(ESlateVisibility::Collapsed);
-		UsageButton->SetVisibility(ESlateVisibility::Collapsed);
-		UsageText->SetText(FText::GetEmpty());
 	}
 
 	PlayAnimation(DescFadeAnim);

@@ -24,7 +24,7 @@ public:
 		TObjectPtr<USceneComponent> SceneRoot;
 
 	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, Category = "Subobjects")
-		TObjectPtr<USceneComponent> PreviewRoot;
+		TObjectPtr<class USpringArmComponent> PreviewRoot;
 
 	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, Category = "Subobjects")
 		TObjectPtr<UStaticMeshComponent> PreviewMesh;
@@ -54,6 +54,7 @@ protected:
 	FGuid ItemKey;
 	FVector2D ZoomRange;
 	FRotator RotationValue;
+	float MeshScaleMultiplier;
 	FGTInterpScalar ZoomValue;
 	UPROPERTY(Transient) TObjectPtr<UInventoryComponent> Inventory;
 

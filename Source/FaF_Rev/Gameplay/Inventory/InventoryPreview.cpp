@@ -6,11 +6,12 @@
 #include "Components/SpotLightComponent.h"
 #include "Components/SceneCaptureComponent2D.h"
 #include "GameFramework/InputSettings.h"
+#include "GameFramework/SpringArmComponent.h"
 #include "Kismet/KismetMathLibrary.h"
 
 AInventoryPreview::AInventoryPreview()
 	: TurnSpeedRate(5.0f, 2.0f), ZoomSpeedRate(5.0f, 0.1f), TurnInput(nullptr), ZoomInput(nullptr)
-	, ItemKey({}), ZoomRange(FVector2D::UnitVector), ZoomValue({1.0f}), Inventory(nullptr)
+	, ItemKey({}), ZoomRange(FVector2D::UnitVector), MeshScaleMultiplier(1.0f), ZoomValue({1.0f}), Inventory(nullptr)
 {
 	PrimaryActorTick.bCanEverTick = true;
 	PrimaryActorTick.bTickEvenWhenPaused = true;
@@ -21,12 +22,15 @@ AInventoryPreview::AInventoryPreview()
 	SceneRoot->bVisualizeComponent = true;
 #endif
 
-	PreviewRoot = CreateDefaultSubobject<USceneComponent>("PreviewRoot");
+	PreviewRoot = CreateDefaultSubobject<USpringArmComponent>("PreviewRoot");
 	PreviewRoot->SetupAttachment(SceneRoot);
+	PreviewRoot->bEnableCameraRotationLag = true;
+	PreviewRoot->bDoCollisionTest = false;
+	PreviewRoot->TargetArmLength = 0.0f;
 
 	PreviewMesh = CreateDefaultSubobject<UStaticMeshComponent>("PreviewMesh");
+	PreviewMesh->SetupAttachment(PreviewRoot, USpringArmComponent::SocketName);
 	PreviewMesh->SetLightingChannels(false, true, false);
-	PreviewMesh->SetupAttachment(PreviewRoot);
 	
 	PreviewLight = CreateDefaultSubobject<USpotLightComponent>("PreviewLight");
 	PreviewLight->SetRelativeLocation(FVector(-150.0f, 100.0f, 80.0f));
@@ -96,11 +100,12 @@ bool AInventoryPreview::SetItem(const FGuid& InItemKey)
 		PreviewMesh->SetHiddenInGame(false);
 		
 		ZoomRange = ItemData->PreviewZoomRange;
+		MeshScaleMultiplier = ItemData->PreviewScaleMultiplier;
 		ZoomValue.TargetValue = (ZoomRange.X + ZoomRange.Y) * 0.5f;
 		ZoomValue.SnapToTarget();
 
 		PreviewRoot->SetRelativeRotation(FRotator::ZeroRotator);
-		PreviewRoot->SetRelativeScale3D(FVector(ZoomValue.TargetValue));
+		PreviewRoot->SetRelativeScale3D(FVector(ZoomValue.TargetValue) * MeshScaleMultiplier);
 	
 		return true;
 	}
@@ -134,7 +139,7 @@ void AInventoryPreview::InputBinding_Turn(const FInputActionValue& InValue)
 	const FVector2D Value = InValue.Get<FVector2D>();
 	if (PreviewCapture->bCaptureEveryFrame && !FMath::IsNearlyZero(Value.Size()))
 	{
-		RotationValue = (RotationValue + FRotator(Value.Y, Value.X, 0.0f) * TurnSpeedRate.Y).Clamp();
+		PreviewRoot->AddWorldRotation(FRotator(Value.Y, Value.X, 0.0f) * TurnSpeedRate.Y);
 	}
 }
 
@@ -150,9 +155,9 @@ void AInventoryPreview::InputBinding_Zoom(const FInputActionValue& InValue)
 void AInventoryPreview::BeginPlay()
 {
 	Super::BeginPlay();
-	PreviewMesh->SetVisibleInSceneCaptureOnly(true);
-	PreviewCapture->ShowOnlyComponents.AddUnique(PreviewMesh);
-	PreviewCapture->ShowOnlyActors.AddUnique(this);
+	PreviewRoot->SetTickableWhenPaused(true);
+	PreviewRoot->CameraRotationLagSpeed = TurnSpeedRate.X;
+	//PreviewMesh->SetVisibleInSceneCaptureOnly(true);
 	PreviewCapture->SetTickableWhenPaused(true);
 	SetActorEnableCollision(false);
 	Deinitialize();
@@ -168,24 +173,18 @@ void AInventoryPreview::BeginPlay()
 void AInventoryPreview::Tick(float DeltaSeconds)
 {
 	Super::Tick(DeltaSeconds);
-	if (ItemKey.IsValid())
+	if (ItemKey.IsValid() && !ZoomValue.IsComplete())
 	{
-		if (!ZoomValue.IsComplete())
-		{
-			ZoomValue.Tick(DeltaSeconds);
-			PreviewRoot->SetRelativeScale3D(FVector(ZoomValue.CurrentValue));
-		}
-		
-		if (const FRotator CRot = PreviewRoot->GetComponentRotation(); RotationValue != CRot)
-		{
-			PreviewRoot->SetWorldRotation(FMath::RInterpTo(CRot, RotationValue, DeltaSeconds, TurnSpeedRate.X));
-		}
+		ZoomValue.Tick(DeltaSeconds);
+		PreviewRoot->SetRelativeScale3D(FVector(ZoomValue.CurrentValue) * MeshScaleMultiplier);
 	}
 }
 
 void AInventoryPreview::OnConstruction(const FTransform& Transform)
 {
 	Super::OnConstruction(Transform);
+	PreviewCapture->ShowOnlyActors.AddUnique(this);
+	PreviewCapture->ShowOnlyComponents.AddUnique(PreviewMesh);
 	PreviewLight->SetWorldRotation(UKismetMathLibrary::FindLookAtRotation(
 		PreviewLight->GetComponentLocation(), PreviewRoot->GetComponentLocation()));
 }

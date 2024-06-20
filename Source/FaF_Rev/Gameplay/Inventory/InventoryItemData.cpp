@@ -2,11 +2,51 @@
 
 #include "InventoryItemData.h"
 
+FText UInventoryItemData::GetDisplayName(const TMap<FName, FString>& InMetadata) const
+{
+	FText NameFmt = DisplayName;
+	if (const FString NameStr = InMetadata.FindRef(NativeItemKeys::DisplayName); !NameStr.IsEmpty())
+	{
+		NameFmt = FText::FromString(NameStr);
+	}
+
+	FFormatNamedArguments MetaArgs;
+	for (const TPair<FName, FString>& Meta : InMetadata)
+	{
+		if (!Meta.Key.IsNone() && !Meta.Value.IsEmpty())
+		{
+			MetaArgs.Add(TEXT("m") + Meta.Key.ToString(), FText::FromString(Meta.Value));
+		}
+	}
+
+	return FText::Format(NameFmt, MetaArgs);
+}
+
+FText UInventoryItemData::GetDescription(const TMap<FName, FString>& InMetadata) const
+{
+	FText DescFmt = Description;
+	if (const FString DescStr = InMetadata.FindRef(NativeItemKeys::Description); !DescStr.IsEmpty())
+	{
+		DescFmt = FText::FromString(DescStr);
+	}
+
+	FFormatNamedArguments MetaArgs;
+	for (const TPair<FName, FString>& Meta : InMetadata)
+	{
+		if (!Meta.Key.IsNone() && !Meta.Value.IsEmpty())
+		{
+			MetaArgs.Add(TEXT("m") + Meta.Key.ToString(), FText::FromString(Meta.Value));
+		}
+	}
+	
+	return FText::Format(DescFmt, MetaArgs);
+}
+
 FTransformMeshData UInventoryItemData::GetMeshData(const TMap<FName, FString>& InMetadata) const
 {
 	const FTransformMeshData AltData = AltMeshes.FindRef(InMetadata.FindRef(NativeItemKeys::AltMeshID));
 	if (AltData.IsValidData()) return AltData;
-	return PreviewMesh;
+	return BaseMesh;
 }
 
 #if WITH_EDITOR
@@ -27,10 +67,10 @@ void UInventoryItemData::PostEditChangeProperty(FPropertyChangedEvent& PropertyC
 		default: Priority = 6; break;
 		}
 	}
-	if (bUpdate || PropertyChangedEvent.GetPropertyName() == GET_MEMBER_NAME_CHECKED(UInventoryItemData, PreviewMesh))
+	if (bUpdate || PropertyChangedEvent.GetPropertyName() == GET_MEMBER_NAME_CHECKED(UInventoryItemData, BaseMesh))
 	{
 		bUpdate = false;
-		PreviewMesh.FillMaterials();
+		BaseMesh.FillMaterials();
 	}
 	if (bUpdate || PropertyChangedEvent.GetPropertyName() == GET_MEMBER_NAME_CHECKED(UInventoryItemData, AltMeshes))
 	{
@@ -53,11 +93,10 @@ void UInventoryItemData::PostEditChangeProperty(FPropertyChangedEvent& PropertyC
 	{
 		if (!DefaultMetadata.Contains(Key)) DefaultMetadata.Add(Key);
 	}
-	
-	if (PreviewZoomRange.X < 0.1f) PreviewZoomRange.X = 0.1f;
+
 	if (PreviewZoomRange.X > PreviewZoomRange.Y)
 	{
-		PreviewZoomRange.Y = PreviewZoomRange.X + 0.1f;
+		PreviewZoomRange.Y = PreviewZoomRange.X;
 	}
 }
 #endif

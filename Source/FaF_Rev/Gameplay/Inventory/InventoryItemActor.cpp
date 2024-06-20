@@ -106,6 +106,8 @@ void AInventoryItemActor::BeginPlay()
 	for (const TPair<FName, FString>& Meta : Metadata)
 	{
 		if (!Meta.Key.IsNone() && !Meta.Value.IsEmpty())
+		{
 			MetaInteractArgs.Add(TEXT("m") + Meta.Key.ToString(), FText::FromString(Meta.Value));
+		}
 	}
 }
