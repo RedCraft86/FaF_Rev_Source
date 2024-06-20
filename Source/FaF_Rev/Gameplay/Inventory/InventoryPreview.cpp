@@ -41,6 +41,7 @@ AInventoryPreview::AInventoryPreview()
 	PreviewCapture->FOVAngle = 60.0f;
 	PreviewCapture->bCaptureEveryFrame = false;
 	PreviewCapture->bAlwaysPersistRenderingState = true;
+	PreviewCapture->PrimitiveRenderMode = ESceneCapturePrimitiveRenderMode::PRM_UseShowOnlyList;
 	PreviewCapture->ShowFlags.SetAntiAliasing(true);
 	PreviewCapture->ShowFlags.SetAtmosphere(false);
 	PreviewCapture->ShowFlags.SetBSP(false);
