@@ -101,10 +101,8 @@ bool AInventoryPreview::SetItem(const FGuid& InItemKey)
 		
 		ZoomRange = ItemData->PreviewZoomRange;
 		ZoomValue.TargetValue = (ZoomRange.X + ZoomRange.Y) * 0.5f;
-		ZoomValue.SnapToTarget();
-
-		PreviewRoot->SetRelativeRotation(FRotator::ZeroRotator);
 		PreviewRoot->SetRelativeScale3D(FVector(ZoomValue.TargetValue));
+		PreviewRoot->SetRelativeRotation(FRotator::ZeroRotator);
 	
 		return true;
 	}
