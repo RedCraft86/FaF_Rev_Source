@@ -91,6 +91,9 @@ public:
 		TObjectPtr<UTextBlock> ItemTypeText;
 
 	UPROPERTY(Transient, meta = (BindWidget))
+		TObjectPtr<UTextBlock> MultiUseKeyText;
+
+	UPROPERTY(Transient, meta = (BindWidget))
 		TObjectPtr<UPanelWidget> EquipStateBox;
 
 	UPROPERTY(Transient, meta = (BindWidget))

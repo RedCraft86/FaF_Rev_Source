@@ -38,8 +38,8 @@ void UInventorySlotWidgetBase::MarkSelected(const bool bSelected) const
 
 UInventoryWidgetBase::UInventoryWidgetBase(const FObjectInitializer& ObjectInitializer)
 	: UGTUserWidget(ObjectInitializer), SlotsBox(nullptr), ItemPreviewImage(nullptr), ItemTitleText(nullptr)
-	, ItemDescText(nullptr), ItemTypeText(nullptr), EquipStateBox(nullptr), UsageButton(nullptr)
-	, UsageText(nullptr), ViewingTitle(nullptr), ViewContentBox(nullptr), ViewContentImage(nullptr)
+	, ItemDescText(nullptr), ItemTypeText(nullptr), MultiUseKeyText(nullptr), EquipStateBox(nullptr)
+	, UsageButton(nullptr), UsageText(nullptr), ViewingTitle(nullptr), ViewContentBox(nullptr), ViewContentImage(nullptr)
 	, ReadContentBox(nullptr), ReadContentText(nullptr), FinishViewingButton(nullptr), SlotsFadeAnim(nullptr)
 	, DescFadeAnim(nullptr), ViewingFadeAnim(nullptr), SlotWidgetClass(nullptr), ImageDescHeight(200.0f)
 {
@@ -131,6 +131,9 @@ void UInventoryWidgetBase::RefreshInfo()
 		ItemDescText->SetText(ItemData->GetDescription(SlotData.Metadata));
 		ItemTitleText->SetText(ItemData->GetDisplayName(SlotData.Metadata));
 		ItemTypeText->SetText(FText::Format(INVTEXT("Type: {0}"), FText::FromString(LexToString(ItemData->ItemType))));
+		if (SlotData.Metadata.FindRef(NativeItemKeys::SingleKey).IsEmpty())
+			MultiUseKeyText->SetVisibility(ESlateVisibility::HitTestInvisible);
+
 		if (bEquipped) EquipStateBox->SetVisibility(ESlateVisibility::HitTestInvisible);
 		
 		switch (ItemData->ItemType)
@@ -171,8 +174,9 @@ void UInventoryWidgetBase::RefreshInfo()
 	else
 	{
 		ItemPreviewImage->SetVisibility(ESlateVisibility::Collapsed);
-		ItemTypeText->SetText(FText::GetEmpty());
-		ItemDescText->SetText(INVTEXT("None Selected"));
+		MultiUseKeyText->SetVisibility(ESlateVisibility::Collapsed);
+		ItemDescText->SetText(INVTEXT("No item selected"));
+		ItemTypeText->SetText(INVTEXT("Type: None"));
 		ItemTitleText->SetText(INVTEXT("None"));
 	}
 

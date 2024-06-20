@@ -34,12 +34,12 @@ ENUM_RANGE_BY_FIRST_AND_LAST(EInventoryItemType, EInventoryItemType::Any, EInven
 {
 	switch(Type)
 	{
-	case EInventoryItemType::Any: return TEXT("Any");
-	case EInventoryItemType::Basic: return TEXT("Basic");
-	case EInventoryItemType::Objective: return TEXT("Objective");
+	case EInventoryItemType::Any: return TEXT("Any/All");
+	case EInventoryItemType::Basic: return TEXT("Basic/Generic");
+	case EInventoryItemType::Objective: return TEXT("Objective/Keys");
 	case EInventoryItemType::Consumable: return TEXT("Consumable");
 	case EInventoryItemType::Equipment: return TEXT("Equipment");
-	case EInventoryItemType::Viewable: return TEXT("Viewable");
+	case EInventoryItemType::Viewable: return TEXT("Pictures/Notes");
 	}
 	
 	return TEXT("Unknown");

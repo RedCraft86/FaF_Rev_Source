@@ -79,11 +79,17 @@ void AInventoryItemActor::OnConstruction(const FTransform& Transform)
 	});
 	
 	InstancedStaticMesh->ClearInstances();
+#if WITH_EDITOR
 	if (MeshInstances.IsEmpty()) MeshInstances.Add(FTransform::Identity);
+	for (const TPair<FName, FString>& Meta : ItemData->DefaultMetadata)
+	{
+		if (!Metadata.Contains(Meta.Key)) Metadata.Add(Meta);
+	}
 	for (const FName Key : NativeItemKeys::All)
 	{
 		if (!Metadata.Contains(Key)) Metadata.Add(Key);
 	}
+#endif
 	
 	if (!ItemData) return;
 	const FTransformMeshData MeshData = ItemData->GetMeshData(Metadata);
@@ -91,12 +97,6 @@ void AInventoryItemActor::OnConstruction(const FTransform& Transform)
 	{
 		InstancedStaticMesh->AddInstances(MeshInstances, false);
 		UPrimitiveDataLibrary::SetStaticMeshProperties(InstancedStaticMesh, MeshData);
-	}
-
-	for (const TPair<FName, FString>& Meta : ItemData->DefaultMetadata)
-	{
-		if (Metadata.FindRef(Meta.Key).IsEmpty())
-			Metadata.Add(Meta);
 	}
 }
 
