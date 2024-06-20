@@ -155,11 +155,13 @@ void UInventoryComponentBase::AddItemToInventory(int32& Overflow, TSet<FGuid>& S
 	{
 	case EInventoryItemStackType::Unique:
 		{
-			Raw = FindSlots(Item).Num() + Amount;
+			int32 Existing = FindSlots(Item).Num();
+			
+			Raw = Existing + Amount;
 			Final = FMath::Min((int32)Item->MaxNumOfSlots, Raw);
 			Overflow = FMath::Max(Raw - Final, 0);
 
-			for (int i = 0; i < Final; i++)
+			for (int i = 0; i < Final - Existing; i++)
 			{
 				const FGuid ItemGuid(FGuid::NewGuid());
 				FInventorySlotData NewSlot(Item, 1, Metadata);
