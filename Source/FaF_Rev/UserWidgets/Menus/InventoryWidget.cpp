@@ -161,10 +161,13 @@ void UInventoryWidgetBase::RefreshInfo()
 		default: break;
 		}
 
-		if (Inventory->GetInventoryPreview())
+		if (Inventory->GetInventoryPreview() && Inventory->GetInventoryPreview()->SetItem(SelectedKey))
 		{
 			ItemPreviewImage->SetVisibility(ESlateVisibility::HitTestInvisible);
-			Inventory->GetInventoryPreview()->SetItem(SelectedKey);
+		}
+		else
+		{
+			ItemPreviewImage->SetVisibility(ESlateVisibility::Collapsed);
 		}
 	}
 	else

@@ -24,7 +24,7 @@ public:
 		TObjectPtr<USceneComponent> SceneRoot;
 
 	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, Category = "Subobjects")
-		TObjectPtr<class USpringArmComponent> PreviewRoot;
+		TObjectPtr<USceneComponent> PreviewRoot;
 
 	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, Category = "Subobjects")
 		TObjectPtr<UStaticMeshComponent> PreviewMesh;
@@ -36,10 +36,10 @@ public:
 		TObjectPtr<USceneCaptureComponent2D> PreviewCapture;
 
 	UPROPERTY(EditAnywhere, Category = "Settings")
-		float TurnSpeed;
+		FVector2D TurnSpeedRate;
 
 	UPROPERTY(EditAnywhere, Category = "Settings")
-		float ZoomSpeed;
+		FVector2D ZoomSpeedRate;
 	
 	UPROPERTY(EditAnywhere, Category = "Settings", meta = (DisplayThumbnail = false))
 		TObjectPtr<UInputAction> TurnInput;
@@ -47,12 +47,13 @@ public:
 	UPROPERTY(EditAnywhere, Category = "Settings", meta = (DisplayThumbnail = false))
 		TObjectPtr<UInputAction> ZoomInput;
 
-	void SetItem(const FGuid& InItemKey);
+	bool SetItem(const FGuid& InItemKey);
 
 protected:
 
 	FGuid ItemKey;
 	FVector2D ZoomRange;
+	FRotator RotationValue;
 	FGTInterpScalar ZoomValue;
 	UPROPERTY(Transient) TObjectPtr<UInventoryComponent> Inventory;
 

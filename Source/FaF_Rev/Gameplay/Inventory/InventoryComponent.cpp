@@ -42,13 +42,14 @@ void UInventoryComponent::CloseUI()
 	PlayerChar->GetGameMode()->SetGameInputMode(EGameInputMode::GameOnly);
 	PlayerChar->GetPlayerController()->SetPause(false);
 	
-	InventoryWidget->RemoveWidget();
 	if (InventoryPreview)
 	{
 		InventoryPreview->Deinitialize();
 	}
-
-	bIsInInventory = false;
+	InventoryWidget->RemoveWidget([this]()
+	{
+		bIsInInventory = false;
+	});
 }
 
 void UInventoryComponent::EquipmentUse() const

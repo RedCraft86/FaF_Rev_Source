@@ -1,22 +1,19 @@
 ﻿// Copyright (C) RedCraft86. All Rights Reserved.
 
-// ReSharper disable CppMemberFunctionMayBeConst
 #include "InventoryPreview.h"
+#include "InventoryComponent.h"
 #include "EnhancedInputComponent.h"
-#include "Kismet/KismetMathLibrary.h"
-#include "GameFramework/InputSettings.h"
 #include "Components/SpotLightComponent.h"
-#include "GameFramework/SpringArmComponent.h"
 #include "Components/SceneCaptureComponent2D.h"
-#include "Inventory/InventoryComponent.h"
-#include "Inventory/InventoryItemData.h"
-#include "Data/PrimitiveData.h"
+#include "GameFramework/InputSettings.h"
+#include "Kismet/KismetMathLibrary.h"
 
 AInventoryPreview::AInventoryPreview()
-	: TurnSpeed(5.0f), ZoomSpeed(5.0f), TurnInput(nullptr), ZoomInput(nullptr)
+	: TurnSpeedRate(5.0f, 2.0f), ZoomSpeedRate(5.0f, 0.1f), TurnInput(nullptr), ZoomInput(nullptr)
 	, ItemKey({}), ZoomRange(FVector2D::UnitVector), ZoomValue({1.0f}), Inventory(nullptr)
 {
 	PrimaryActorTick.bCanEverTick = true;
+	PrimaryActorTick.bTickEvenWhenPaused = true;
 
 	SceneRoot = CreateDefaultSubobject<USceneComponent>("SceneRoot");
 	SetRootComponent(SceneRoot);
@@ -24,16 +21,13 @@ AInventoryPreview::AInventoryPreview()
 	SceneRoot->bVisualizeComponent = true;
 #endif
 
-	PreviewRoot = CreateDefaultSubobject<USpringArmComponent>("PreviewRoot");
+	PreviewRoot = CreateDefaultSubobject<USceneComponent>("PreviewRoot");
 	PreviewRoot->SetupAttachment(SceneRoot);
-	PreviewRoot->bEnableCameraRotationLag = true;
-	PreviewRoot->bDoCollisionTest = false;
-	PreviewRoot->TargetArmLength = 0.0f;
 
 	PreviewMesh = CreateDefaultSubobject<UStaticMeshComponent>("PreviewMesh");
-	PreviewMesh->SetupAttachment(PreviewRoot, USpringArmComponent::SocketName);
 	PreviewMesh->SetLightingChannels(false, true, false);
-
+	PreviewMesh->SetupAttachment(PreviewRoot);
+	
 	PreviewLight = CreateDefaultSubobject<USpotLightComponent>("PreviewLight");
 	PreviewLight->SetRelativeLocation(FVector(-150.0f, 100.0f, 80.0f));
 	PreviewLight->SetRelativeRotation(FRotator(-35.0f, 30.0f, 0.0f));
@@ -88,7 +82,7 @@ AInventoryPreview::AInventoryPreview()
 	PreviewCapture->ShowFlags.SetPostProcessing(true);
 }
 
-void AInventoryPreview::SetItem(const FGuid& InItemKey)
+bool AInventoryPreview::SetItem(const FGuid& InItemKey)
 {
 	if (InItemKey.IsValid() && Inventory->ItemSlots.Contains(InItemKey))
 	{
@@ -103,61 +97,62 @@ void AInventoryPreview::SetItem(const FGuid& InItemKey)
 		ZoomRange = ItemData->PreviewZoomRange;
 		ZoomValue.TargetValue = (ZoomRange.X + ZoomRange.Y) * 0.5f;
 		ZoomValue.SnapToTarget();
-		
-		PreviewRoot->bEnableCameraRotationLag = false;
-		PreviewRoot->SetRelativeScale3D(FVector::OneVector);
+
 		PreviewRoot->SetRelativeRotation(FRotator::ZeroRotator);
-		PreviewRoot->bEnableCameraRotationLag = true;
+		PreviewRoot->SetRelativeScale3D(FVector(ZoomValue.TargetValue));
+	
+		return true;
 	}
-	else
-	{
-		PreviewMesh->SetHiddenInGame(true);
-	}
+	
+	PreviewMesh->SetHiddenInGame(true);
+	return false;
 }
 
 void AInventoryPreview::Initialize()
 {
-	ZoomValue.InterpSpeed = ZoomSpeed;
+	ZoomValue.InterpSpeed = ZoomSpeedRate.X;
+	PreviewCapture->bCaptureEveryFrame = true;
 	EnableInput(GetWorld()->GetFirstPlayerController());
-	PreviewRoot->CameraRotationLagSpeed = TurnSpeed;
-	PreviewRoot->bEnableCameraRotationLag = true;
 	SetActorTickEnabled(true);
 }
 
 void AInventoryPreview::Deinitialize()
 {
-	ItemKey = {};
+	PreviewCapture->bCaptureEveryFrame = false;
 	ZoomRange = FVector2D::UnitVector;
-	DisableInput(GetWorld()->GetFirstPlayerController());
-	PreviewRoot->bEnableCameraRotationLag = false;
+	RotationValue = FRotator::ZeroRotator;
 	PreviewRoot->SetRelativeRotation(FRotator::ZeroRotator);
 	PreviewMesh->SetRelativeTransform(FTransform::Identity);
+	DisableInput(GetWorld()->GetFirstPlayerController());
 	SetActorTickEnabled(false);
 }
 
+// ReSharper disable once CppMemberFunctionMayBeConst
 void AInventoryPreview::InputBinding_Turn(const FInputActionValue& InValue)
 {
 	const FVector2D Value = InValue.Get<FVector2D>();
-	if (PreviewCapture->IsComponentTickEnabled() && !FMath::IsNearlyZero(Value.Size()))
+	if (PreviewCapture->bCaptureEveryFrame && !FMath::IsNearlyZero(Value.Size()))
 	{
-		PreviewRoot->AddWorldRotation(FRotator(Value.Y, Value.X, 0.0f));
+		RotationValue = (RotationValue + FRotator(Value.Y, Value.X, 0.0f) * TurnSpeedRate.Y).Clamp();
 	}
 }
 
 void AInventoryPreview::InputBinding_Zoom(const FInputActionValue& InValue)
 {
 	const float Value = InValue.Get<float>();
-	if (PreviewCapture->IsComponentTickEnabled() && !FMath::IsNearlyZero(Value))
+	if (PreviewCapture->bCaptureEveryFrame && !FMath::IsNearlyZero(Value))
 	{
-		ZoomValue.TargetValue = FMath::Clamp(ZoomValue.TargetValue + Value * 0.1f, ZoomRange.X, ZoomRange.Y);
+		ZoomValue.TargetValue = FMath::Clamp(ZoomValue.TargetValue + Value * ZoomSpeedRate.Y, ZoomRange.X, ZoomRange.Y);
 	}
 }
 
 void AInventoryPreview::BeginPlay()
 {
 	Super::BeginPlay();
-	PreviewMesh->SetOnlyOwnerSee(true);
 	PreviewMesh->SetVisibleInSceneCaptureOnly(true);
+	PreviewCapture->ShowOnlyComponents.AddUnique(PreviewMesh);
+	PreviewCapture->ShowOnlyActors.AddUnique(this);
+	PreviewCapture->SetTickableWhenPaused(true);
 	SetActorEnableCollision(false);
 	Deinitialize();
 
@@ -179,7 +174,11 @@ void AInventoryPreview::Tick(float DeltaSeconds)
 			ZoomValue.Tick(DeltaSeconds);
 			PreviewRoot->SetRelativeScale3D(FVector(ZoomValue.CurrentValue));
 		}
-		PreviewCapture->CaptureScene();
+		
+		if (const FRotator CRot = PreviewRoot->GetComponentRotation(); RotationValue != CRot)
+		{
+			PreviewRoot->SetWorldRotation(FMath::RInterpTo(CRot, RotationValue, DeltaSeconds, TurnSpeedRate.X));
+		}
 	}
 }
 
@@ -188,7 +187,4 @@ void AInventoryPreview::OnConstruction(const FTransform& Transform)
 	Super::OnConstruction(Transform);
 	PreviewLight->SetWorldRotation(UKismetMathLibrary::FindLookAtRotation(
 		PreviewLight->GetComponentLocation(), PreviewRoot->GetComponentLocation()));
-	
-	PreviewCapture->ShowOnlyComponent(PreviewMesh);
-	PreviewCapture->ShowOnlyActors.AddUnique(this);
 }
