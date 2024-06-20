@@ -122,6 +122,7 @@ void UInventoryWidgetBase::RefreshInfo()
 	UsageText->SetText(FText::GetEmpty());
 	UsageButton->SetVisibility(ESlateVisibility::Collapsed);
 	EquipStateBox->SetVisibility(ESlateVisibility::Collapsed);
+	MultiUseKeyText->SetVisibility(ESlateVisibility::Collapsed);
 	if (SelectedKey.IsValid() && SlotWidgets.Contains(SelectedKey) && Inventory->IsValidSlot(SelectedKey))
 	{
 		const FInventorySlotData SlotData = Inventory->GetInventoryRef()[SelectedKey];
@@ -174,7 +175,6 @@ void UInventoryWidgetBase::RefreshInfo()
 	else
 	{
 		ItemPreviewImage->SetVisibility(ESlateVisibility::Collapsed);
-		MultiUseKeyText->SetVisibility(ESlateVisibility::Collapsed);
 		ItemDescText->SetText(INVTEXT("No item selected"));
 		ItemTypeText->SetText(INVTEXT("Type: None"));
 		ItemTitleText->SetText(INVTEXT("None"));
