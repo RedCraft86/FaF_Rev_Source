@@ -28,7 +28,7 @@ public:
 	UPROPERTY(EditAnywhere, Category = "Settings", meta = (ClampMin = 1, UIMin = 1))
 		int32 Amount;
 
-	UPROPERTY(EditAnywhere, Category = "Settings")
+	UPROPERTY(EditAnywhere, Category = "Settings", meta = (MultiLine = true))
 		TMap<FName, FString> Metadata;
 
 	UPROPERTY(EditAnywhere, Category = "Settings", meta = (MakeEditWidget = true))
