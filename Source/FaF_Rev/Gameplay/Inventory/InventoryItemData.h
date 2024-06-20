@@ -56,7 +56,7 @@ public:
 		: Priority(0), DisplayName(INVTEXT("Unknown Item")), Description(INVTEXT("Unknown Item"))
 		, ItemType(EInventoryItemType::Basic), ViewImage(nullptr), ViewText(FText::GetEmpty())
 		, EquipmentClass(nullptr), bExpectSaveData(true), ConsumableClass(nullptr)
-		, ConsumeDisplayText(INVTEXT("Use")), PreviewZoomRange(0.1f, 1.5f), PreviewScaleMultiplier(1.0f)
+		, ConsumeDisplayText(INVTEXT("Use")), PreviewZoomRange(0.1f, 1.5f)
 	{}
 
 	UPROPERTY(EditAnywhere, Category = "ItemData", meta = (DisplayPriority = -9))
@@ -96,9 +96,6 @@ public:
 	
 	UPROPERTY(EditAnywhere, Category = "DisplayMesh", meta = (ClampMin = 0.1f, UIMin = 0.1f))
 		FVector2D PreviewZoomRange;
-
-	UPROPERTY(EditAnywhere, Category = "DisplayMesh", meta = (UIMin = 0.1f, UIMax = 5.0f))
-		float PreviewScaleMultiplier;
 
 	UPROPERTY(EditAnywhere, Category = "DisplayMesh")
 		FTransformMeshData BaseMesh;

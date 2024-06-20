@@ -11,7 +11,7 @@
 
 AInventoryPreview::AInventoryPreview()
 	: TurnSpeedRate(5.0f, 2.0f), ZoomSpeedRate(5.0f, 0.1f), TurnInput(nullptr), ZoomInput(nullptr)
-	, ItemKey({}), ZoomRange(FVector2D::UnitVector), MeshScaleMultiplier(1.0f), ZoomValue({1.0f}), Inventory(nullptr)
+	, ItemKey({}), ZoomRange(FVector2D::UnitVector), ZoomValue({1.0f}), Inventory(nullptr)
 {
 	PrimaryActorTick.bCanEverTick = true;
 	PrimaryActorTick.bTickEvenWhenPaused = true;
@@ -100,12 +100,11 @@ bool AInventoryPreview::SetItem(const FGuid& InItemKey)
 		PreviewMesh->SetHiddenInGame(false);
 		
 		ZoomRange = ItemData->PreviewZoomRange;
-		MeshScaleMultiplier = ItemData->PreviewScaleMultiplier;
 		ZoomValue.TargetValue = (ZoomRange.X + ZoomRange.Y) * 0.5f;
 		ZoomValue.SnapToTarget();
 
 		PreviewRoot->SetRelativeRotation(FRotator::ZeroRotator);
-		PreviewRoot->SetRelativeScale3D(FVector(ZoomValue.TargetValue) * MeshScaleMultiplier);
+		PreviewRoot->SetRelativeScale3D(FVector(ZoomValue.TargetValue));
 	
 		return true;
 	}
@@ -176,7 +175,7 @@ void AInventoryPreview::Tick(float DeltaSeconds)
 	if (ItemKey.IsValid() && !ZoomValue.IsComplete())
 	{
 		ZoomValue.Tick(DeltaSeconds);
-		PreviewRoot->SetRelativeScale3D(FVector(ZoomValue.CurrentValue) * MeshScaleMultiplier);
+		PreviewRoot->SetRelativeScale3D(FVector(ZoomValue.CurrentValue));
 	}
 }
 

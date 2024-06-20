@@ -54,7 +54,6 @@ protected:
 	FGuid ItemKey;
 	FVector2D ZoomRange;
 	FRotator RotationValue;
-	float MeshScaleMultiplier;
 	FGTInterpScalar ZoomValue;
 	UPROPERTY(Transient) TObjectPtr<UInventoryComponent> Inventory;
 
