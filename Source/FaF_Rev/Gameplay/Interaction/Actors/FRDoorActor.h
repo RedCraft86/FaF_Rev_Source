@@ -36,7 +36,7 @@ public:
 	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, Category = "Subobjects")
 		TObjectPtr<UAudioComponent> AudioLow;
 
-	UPROPERTY(EditAnywhere, Category = "Settings")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Settings")
 		bool bEnabled;
 
 	UPROPERTY(EditAnywhere, Category = "Settings")
