@@ -13,7 +13,7 @@
 
 #define PlayHigh(Sound) AudioHigh->SetSound(Sound); AudioHigh->Play();
 
-AFRDoorBase::AFRDoorBase() : bMultidirectional(false), OpenRotation(-100.0f), BoxScale(2.0f, 1.25f, 1.0f)
+AFRDoorBase::AFRDoorBase() : bEnabled(true), bMultidirectional(false), OpenRotation(-100.0f), BoxScale(2.0f, 1.25f, 1.0f)
 {
 	PrimaryActorTick.bCanEverTick = true;
 	PrimaryActorTick.bStartWithTickEnabled = false;
@@ -147,6 +147,9 @@ void AFRDoorBase::OnAnimTick(const float Alpha) const
 
 bool AFRDoorBase::GetInteractionInfo_Implementation(FInteractionInfo& Info)
 {
+	if (!bEnabled)
+		return false;
+	
 	if (IsLocked())
 	{
 		Info = LockedInfo;
