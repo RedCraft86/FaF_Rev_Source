@@ -16,7 +16,7 @@ public:
 
 	UWorldEventComponent();
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Settings", meta = (BaseStruct = "/Script/GTRuntime.WorldEventBase", ExcludeBaseStruct))
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Settings", meta = (BaseStruct = "/Script/GTRuntime.WorldEventBase", ExcludeBaseStruct, ShowTreeView))
 		TArray<FInstancedStruct> Events;
 
 	UFUNCTION(BlueprintCallable, Category = "WorldEvents")

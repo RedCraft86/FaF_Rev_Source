@@ -55,8 +55,16 @@ protected:
 	}
 };
 
+USTRUCT(BlueprintInternalUseOnly, DisplayName = "Misc", meta = (Hidden))
+struct GTRUNTIME_API FWEMiscBase : public FWorldEventBase
+{ GENERATED_BODY() };
+
+USTRUCT(BlueprintInternalUseOnly, DisplayName = "Control", meta = (Hidden))
+struct GTRUNTIME_API FWCBase : public FWorldEventBase
+{ GENERATED_BODY() };
+
 USTRUCT(BlueprintType, DisplayName = "Wait, Then Do")
-struct GTRUNTIME_API FWCDelay final : public FWorldEventBase
+struct GTRUNTIME_API FWCDelay final : public FWCBase
 {
 	GENERATED_BODY()
 	
@@ -66,7 +74,7 @@ struct GTRUNTIME_API FWCDelay final : public FWorldEventBase
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Delay")
 		bool bRetriggerable;
 	
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Delay", meta = (BaseStruct = "/Script/GTRuntime.WorldEventBase", ExcludeBaseStruct))
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Delay", meta = (BaseStruct = "/Script/GTRuntime.WorldEventBase", ExcludeBaseStruct, ShowTreeView))
 		TArray<FInstancedStruct> Events;
 
 	FWCDelay() : Delay(0.25f), bRetriggerable(false) {}
@@ -79,14 +87,14 @@ protected:
 };
 
 USTRUCT(BlueprintType, DisplayName = "Flip Flop")
-struct GTRUNTIME_API FWCFlipFlop final : public FWorldEventBase
+struct GTRUNTIME_API FWCFlipFlop final : public FWCBase
 {
 	GENERATED_BODY()
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "FlipFlop", DisplayName = "Flip", meta = (BaseStruct = "/Script/GTRuntime.WorldEventBase", ExcludeBaseStruct))
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "FlipFlop", DisplayName = "Flip", meta = (BaseStruct = "/Script/GTRuntime.WorldEventBase", ExcludeBaseStruct, ShowTreeView))
 		TArray<FInstancedStruct> EventsA;
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "FlipFlop", DisplayName = "Flop", meta = (BaseStruct = "/Script/GTRuntime.WorldEventBase", ExcludeBaseStruct))
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "FlipFlop", DisplayName = "Flop", meta = (BaseStruct = "/Script/GTRuntime.WorldEventBase", ExcludeBaseStruct, ShowTreeView))
 		TArray<FInstancedStruct> EventsB;
 
 	FWCFlipFlop() : bIsA(false) {}
@@ -98,8 +106,12 @@ protected:
 	virtual void OnConstruction(const UObject* WorldContext, const bool bEditorTime) override;
 };
 
+USTRUCT(BlueprintInternalUseOnly, DisplayName = "Events", meta = (Hidden))
+struct GTRUNTIME_API FWEEventsBase : public FWorldEventBase
+{ GENERATED_BODY() };
+
 USTRUCT(BlueprintType, DisplayName = "Global Event")
-struct GTRUNTIME_API FWEEventGlobal final : public FWorldEventBase
+struct GTRUNTIME_API FWEEventGlobal final : public FWEEventsBase
 {
 	GENERATED_BODY()
 
@@ -117,7 +129,7 @@ protected:
 };
 
 USTRUCT(BlueprintType, DisplayName = "Remote Event")
-struct GTRUNTIME_API FWEEventRemote final : public FWorldEventBase
+struct GTRUNTIME_API FWEEventRemote final : public FWEEventsBase
 {
 	GENERATED_BODY()
 
@@ -132,7 +144,7 @@ protected:
 };
 
 USTRUCT(BlueprintType, DisplayName = "Actor Event")
-struct GTRUNTIME_API FWEEventActor final : public FWorldEventBase
+struct GTRUNTIME_API FWEEventActor final : public FWEEventsBase
 {
 	GENERATED_BODY()
 
@@ -149,8 +161,12 @@ protected:
 	virtual void RunEvent(const UObject* WorldContext) override;
 };
 
+USTRUCT(BlueprintInternalUseOnly, DisplayName = "Actors", meta = (Hidden))
+struct GTRUNTIME_API FWEActorsBase : public FWorldEventBase
+{ GENERATED_BODY() };
+
 USTRUCT(BlueprintType, DisplayName = "Actor Visibility")
-struct GTRUNTIME_API FWEActorVisibility final : public FWorldEventBase
+struct GTRUNTIME_API FWEActorVisibility final : public FWEActorsBase
 {
 	GENERATED_BODY()
 
@@ -171,7 +187,7 @@ protected:
 };
 
 USTRUCT(BlueprintType, DisplayName = "Actor Collision")
-struct GTRUNTIME_API FWEActorCollision final : public FWorldEventBase
+struct GTRUNTIME_API FWEActorCollision final : public FWEActorsBase
 {
 	GENERATED_BODY()
 
@@ -192,7 +208,7 @@ protected:
 };
 
 USTRUCT(BlueprintType, DisplayName = "Actor Tags")
-struct GTRUNTIME_API FWEActorTags final : public FWorldEventBase
+struct GTRUNTIME_API FWEActorTags final : public FWEActorsBase
 {
 	GENERATED_BODY()
 
@@ -213,7 +229,7 @@ protected:
 };
 
 USTRUCT(BlueprintType, DisplayName = "Actor Enabled")
-struct GTRUNTIME_API FWEActorEnabled final : public FWorldEventBase
+struct GTRUNTIME_API FWEActorEnabled final : public FWEActorsBase
 {
 	GENERATED_BODY()
 
@@ -233,8 +249,12 @@ protected:
 	virtual void RunEvent(const UObject* WorldContext) override;
 };
 
+USTRUCT(BlueprintInternalUseOnly, DisplayName = "Static Mesh", meta = (Hidden))
+struct GTRUNTIME_API FWEStaticMeshBase : public FWorldEventBase
+{ GENERATED_BODY() };
+
 USTRUCT(BlueprintType, DisplayName = "Static Mesh Material")
-struct GTRUNTIME_API FWEStaticMeshMaterial final : public FWorldEventBase
+struct GTRUNTIME_API FWEStaticMeshMaterial final : public FWEStaticMeshBase
 {
 	GENERATED_BODY()
 
@@ -252,7 +272,7 @@ protected:
 };
 
 USTRUCT(BlueprintType, DisplayName = "Static Mesh Primitive Data")
-struct GTRUNTIME_API FWEStaticMeshPrimitiveData final : public FWorldEventBase
+struct GTRUNTIME_API FWEStaticMeshPrimitiveData final : public FWEStaticMeshBase
 {
 	GENERATED_BODY()
 
@@ -269,8 +289,12 @@ protected:
 	virtual void RunEvent(const UObject* WorldContext) override;
 };
 
+USTRUCT(BlueprintInternalUseOnly, DisplayName = "Sound", meta = (Hidden))
+struct GTRUNTIME_API FWESoundBase : public FWorldEventBase
+{ GENERATED_BODY() };
+
 USTRUCT(BlueprintType, DisplayName = "World Sound")
-struct GTRUNTIME_API FWESoundWorld final : public FWorldEventBase
+struct GTRUNTIME_API FWESoundWorld final : public FWESoundBase
 {
 	GENERATED_BODY()
 	
@@ -303,7 +327,7 @@ protected:
 };
 
 USTRUCT(BlueprintType, DisplayName = "Play Sound 2D")
-struct GTRUNTIME_API FWESoundPlay2D final : public FWorldEventBase
+struct GTRUNTIME_API FWESoundPlay2D final : public FWESoundBase
 {
 	GENERATED_BODY()
 	
@@ -323,29 +347,12 @@ protected:
 	virtual void RunEvent(const UObject* WorldContext) override;
 };
 
-USTRUCT(BlueprintType, DisplayName = "Sequencer")
-struct GTRUNTIME_API FWESequencer final : public FWorldEventBase
-{
-	GENERATED_BODY()
-
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Sequencer")
-		float PlayRate;
-
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Sequencer")
-		TSet<TSoftObjectPtr<ALevelSequenceActor>> PlayTargets;
-
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Sequencer")
-		TSet<TSoftObjectPtr<ALevelSequenceActor>> StopTargets;
-
-	FWESequencer() : PlayRate(1.0f) {}
-
-protected:
-	
-	virtual void RunEvent(const UObject* WorldContext) override;
-};
+USTRUCT(BlueprintInternalUseOnly, DisplayName = "Level Stream", meta = (Hidden))
+struct GTRUNTIME_API FWELevelStreamBase : public FWorldEventBase
+{ GENERATED_BODY() };
 
 USTRUCT(BlueprintType, DisplayName = "Load Stream Level")
-struct GTRUNTIME_API FWELevelStreamLoad final : public FWorldEventBase
+struct GTRUNTIME_API FWELevelStreamLoad final : public FWELevelStreamBase
 {
 	GENERATED_BODY()
 
@@ -363,7 +370,7 @@ protected:
 };
 
 USTRUCT(BlueprintType, DisplayName = "Unload Stream Level")
-struct GTRUNTIME_API FWELevelStreamUnload final : public FWorldEventBase
+struct GTRUNTIME_API FWELevelStreamUnload final : public FWELevelStreamBase
 {
 	GENERATED_BODY()
 
@@ -371,6 +378,27 @@ struct GTRUNTIME_API FWELevelStreamUnload final : public FWorldEventBase
 		TSoftObjectPtr<UWorld> World;
 
 	FWELevelStreamUnload() : World(nullptr) {}
+
+protected:
+	
+	virtual void RunEvent(const UObject* WorldContext) override;
+};
+
+USTRUCT(BlueprintType, DisplayName = "Sequencer")
+struct GTRUNTIME_API FWESequencer final : public FWEMiscBase
+{
+	GENERATED_BODY()
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Sequencer")
+		float PlayRate;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Sequencer")
+		TSet<TSoftObjectPtr<ALevelSequenceActor>> PlayTargets;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Sequencer")
+		TSet<TSoftObjectPtr<ALevelSequenceActor>> StopTargets;
+
+	FWESequencer() : PlayRate(1.0f) {}
 
 protected:
 	

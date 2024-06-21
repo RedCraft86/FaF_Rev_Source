@@ -11,8 +11,12 @@
 #include "WorldEvents/WorldEvents.h"
 #include "FRWorldEvents.generated.h"
 
+USTRUCT(BlueprintInternalUseOnly, DisplayName = "Player", meta = (Hidden))
+struct FAF_REV_API FWEPlayerBase : public FWorldEventBase
+{ GENERATED_BODY() };
+
 USTRUCT(BlueprintType, DisplayName = "Change Player Settings")
-struct FAF_REV_API FWEPlayerSettings final : public FWorldEventBase
+struct FAF_REV_API FWEPlayerSettings final : public FWEPlayerBase
 {
 	GENERATED_BODY()
 
@@ -30,7 +34,7 @@ protected:
 };
 
 USTRUCT(BlueprintType, DisplayName = "Player Lock Flag")
-struct FAF_REV_API FWEPlayerLockFlag final : public FWorldEventBase
+struct FAF_REV_API FWEPlayerLockFlag final : public FWEPlayerBase
 {
 	GENERATED_BODY()
 
@@ -51,7 +55,7 @@ protected:
 };
 
 USTRUCT(BlueprintType, DisplayName = "Player Fade")
-struct FAF_REV_API FWEPlayerFade final : public FWorldEventBase
+struct FAF_REV_API FWEPlayerFade final : public FWEPlayerBase
 {
 	GENERATED_BODY()
 
@@ -75,7 +79,7 @@ protected:
 };
 
 USTRUCT(BlueprintType, DisplayName = "Player Lock On")
-struct FAF_REV_API FWEPlayerLockOn final : public FWorldEventBase
+struct FAF_REV_API FWEPlayerLockOn final : public FWEPlayerBase
 {
 	GENERATED_BODY()
 
@@ -102,8 +106,12 @@ protected:
 #endif
 };
 
+USTRUCT(BlueprintInternalUseOnly, DisplayName = "Content", meta = (Hidden))
+struct FAF_REV_API FWEContentBase : public FWorldEventBase
+{ GENERATED_BODY() };
+
 USTRUCT(BlueprintType, DisplayName = "Unlock Transient Key")
-struct FAF_REV_API FWEUnlockTransientKey final : public FWorldEventBase
+struct FAF_REV_API FWEUnlockTransientKey final : public FWEContentBase
 {
 	GENERATED_BODY()
 
@@ -118,7 +126,7 @@ protected:
 };
 
 USTRUCT(BlueprintType, DisplayName = "Unlock Content Key")
-struct FAF_REV_API FWEUnlockContentKey final : public FWorldEventBase
+struct FAF_REV_API FWEUnlockContentKey final : public FWEContentBase
 {
 	GENERATED_BODY()
 
@@ -132,8 +140,12 @@ protected:
 	virtual void RunEvent(const UObject* WorldContext) override;
 };
 
+USTRUCT(BlueprintInternalUseOnly, DisplayName = "Messaging", meta = (Hidden))
+struct FAF_REV_API FWEMessagingBase : public FWorldEventBase
+{ GENERATED_BODY() };
+
 USTRUCT(BlueprintType, DisplayName = "Simple Notice (Small)")
-struct FAF_REV_API FWESimpleNoticeSmall final : public FWorldEventBase
+struct FAF_REV_API FWESimpleNoticeSmall final : public FWEMessagingBase
 {
 	GENERATED_BODY()
 
@@ -151,7 +163,7 @@ protected:
 };
 
 USTRUCT(BlueprintType, DisplayName = "Simple Notice (Large)")
-struct FAF_REV_API FWESimpleNoticeLarge final : public FWorldEventBase
+struct FAF_REV_API FWESimpleNoticeLarge final : public FWEMessagingBase
 {
 	GENERATED_BODY()
 
@@ -169,7 +181,7 @@ protected:
 };
 
 USTRUCT(BlueprintType, DisplayName = "Simple Subtitle")
-struct FAF_REV_API FWESimpleSubtitle final : public FWorldEventBase
+struct FAF_REV_API FWESimpleSubtitle final : public FWEMessagingBase
 {
 	GENERATED_BODY()
 
@@ -187,7 +199,7 @@ protected:
 };
 
 USTRUCT(BlueprintType, DisplayName = "Guide Pages")
-struct FAF_REV_API FWESimpleGuide final : public FWorldEventBase
+struct FAF_REV_API FWESimpleGuide final : public FWEMessagingBase
 {
 	GENERATED_BODY()
 
@@ -201,8 +213,12 @@ protected:
 	virtual void RunEvent(const UObject* WorldContext) override;
 };
 
+USTRUCT(BlueprintInternalUseOnly, DisplayName = "Narrative", meta = (Hidden))
+struct FAF_REV_API FWENarrativeBase : public FWorldEventBase
+{ GENERATED_BODY() };
+
 USTRUCT(BlueprintType, DisplayName = "Narrative Dialogue")
-struct FAF_REV_API FWENarrativeDialogue final : public FWorldEventBase
+struct FAF_REV_API FWENarrativeDialogue final : public FWENarrativeBase
 {
 	GENERATED_BODY()
 
@@ -217,7 +233,7 @@ protected:
 };
 
 USTRUCT(BlueprintType, DisplayName = "Narrative Quest")
-struct FAF_REV_API FWENarrativeQuest final : public FWorldEventBase
+struct FAF_REV_API FWENarrativeQuest final : public FWENarrativeBase
 {
 	GENERATED_BODY()
 
@@ -232,7 +248,7 @@ protected:
 };
 
 USTRUCT(BlueprintType, DisplayName = "Narrative Task")
-struct FAF_REV_API FWENarrativeTask final : public FWorldEventBase
+struct FAF_REV_API FWENarrativeTask final : public FWENarrativeBase
 {
 	GENERATED_BODY()
 
@@ -256,7 +272,7 @@ protected:
 };
 
 USTRUCT(BlueprintType, DisplayName = "Step into Sequence")
-struct FAF_REV_API FWEStepSequence final : public FWorldEventBase
+struct FAF_REV_API FWEStepSequence final : public FWEMiscBase
 {
 	GENERATED_BODY()
 

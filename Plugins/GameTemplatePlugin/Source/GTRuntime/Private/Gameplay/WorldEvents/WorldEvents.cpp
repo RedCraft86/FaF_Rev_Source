@@ -297,6 +297,18 @@ void FWESoundPlay2D::RunEvent(const UObject* WorldContext)
 	UGameplayStatics::PlaySound2D(WorldContext, Sound, FMath::Max(0.0f, Volume), FMath::Max(0.0f, Pitch));	
 }
 
+void FWELevelStreamLoad::RunEvent(const UObject* WorldContext)
+{
+	UGameplayStatics::LoadStreamLevelBySoftObjectPtr(WorldContext, World,
+		bMakeVisibleAfterLoad, false, GetLatentInfo());
+}
+
+void FWELevelStreamUnload::RunEvent(const UObject* WorldContext)
+{
+	UGameplayStatics::UnloadStreamLevelBySoftObjectPtr(WorldContext, World,
+		GetLatentInfo(), false);
+}
+
 void FWESequencer::RunEvent(const UObject* WorldContext)
 {
 	for (TSoftObjectPtr<ALevelSequenceActor> StopActor : StopTargets)
@@ -324,16 +336,4 @@ void FWESequencer::RunEvent(const UObject* WorldContext)
 			}
 		}
 	}
-}
-
-void FWELevelStreamLoad::RunEvent(const UObject* WorldContext)
-{
-	UGameplayStatics::LoadStreamLevelBySoftObjectPtr(WorldContext, World,
-		bMakeVisibleAfterLoad, false, GetLatentInfo());
-}
-
-void FWELevelStreamUnload::RunEvent(const UObject* WorldContext)
-{
-	UGameplayStatics::UnloadStreamLevelBySoftObjectPtr(WorldContext, World,
-		GetLatentInfo(), false);
 }

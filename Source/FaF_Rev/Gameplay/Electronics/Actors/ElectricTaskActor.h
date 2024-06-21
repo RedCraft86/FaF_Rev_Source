@@ -16,10 +16,10 @@ public:
 
 	AElectricTaskActor() {}
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Settings", meta = (BaseStruct = "/Script/GTRuntime.WorldEventBase", ExcludeBaseStruct))
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Settings", meta = (BaseStruct = "/Script/GTRuntime.WorldEventBase", ExcludeBaseStruct, ShowTreeView))
 		TArray<FInstancedStruct> ActivateEvents;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Settings", meta = (BaseStruct = "/Script/GTRuntime.WorldEventBase", ExcludeBaseStruct))
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Settings", meta = (BaseStruct = "/Script/GTRuntime.WorldEventBase", ExcludeBaseStruct, ShowTreeView))
 		TArray<FInstancedStruct> DeactivateEvents;
 
 	UFUNCTION(BlueprintCallable, Category = "ElectricActor|Task")
