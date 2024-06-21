@@ -245,7 +245,10 @@ struct FAF_REV_API FWENarrativeTask final : public FWorldEventBase
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Task")
 		uint8 Quantity;
 	
-	FWENarrativeTask() : Task(nullptr), Argument(TEXT("")), Quantity(1) {}
+	FWENarrativeTask() : Argument(TEXT("")), Quantity(1)
+	{
+		Task = LoadObject<UDataAsset>(nullptr, TEXT("/Narrative/DefaultTasks/LooseTask.LooseTask"));
+	}
 	
 protected:
 
