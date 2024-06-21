@@ -8,7 +8,7 @@ UENUM(BlueprintType, DisplayName = "Enemy AI Mode")
 enum class EEnemyAIMode : uint8
 {
 	None,
-	Suspicion,
+	Alerted,
 	Chase,
 	Search
 };
