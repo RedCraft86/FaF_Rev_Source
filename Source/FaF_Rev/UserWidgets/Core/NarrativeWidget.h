@@ -42,7 +42,7 @@ class FAF_REV_API UQuestBranchWidgetBase final : public UUserWidget
 public:
 
 	UQuestBranchWidgetBase(const FObjectInitializer& ObjectInitializer)
-		: UUserWidget(ObjectInitializer), DisplayText(nullptr), TaskList(nullptr), BranchObject(nullptr)
+		: UUserWidget(ObjectInitializer), DisplayText(nullptr), TaskList(nullptr), bUseTitle(false), BranchObject(nullptr)
 	{}
 
 	UPROPERTY(Transient, meta = (BindWidget))
@@ -53,6 +53,9 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "QuestBranchWidget")
 		TSubclassOf<UQuestTaskWidgetBase> TaskWidgetClass;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "QuestBranchWidget")
+		bool bUseTitle;
 	
 protected:
 
@@ -154,6 +157,9 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "NarrativeWidget")
 		FMargin DialogueReplyPadding;
 
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "NarrativeWidget")
+		float DialogueReplyAngle;
+
 	UPROPERTY(Transient, BlueprintReadOnly, Category = "NarrativeWidget")
 		TObjectPtr<UNarrativeComponent> NarrativeComponent;
 
@@ -168,8 +174,8 @@ protected:
 	bool bHideQuests;
 	bool bAutoHidden;
 	float HideCheckTime;
+	UPROPERTY(Transient) TObjectPtr<AFRPlayerBase> PlayerChar;
 	UPROPERTY(Transient) TObjectPtr<const AWorldSettings> WorldSettings;
-	UPROPERTY(Transient) TObjectPtr<class AFRPlayerBase> PlayerChar;
 	UPROPERTY(Transient) TMap<FName, TObjectPtr<UDialogueOptionWidgetBase>> DialogueReplies;
 
 	void QuestUpdatedNotify();

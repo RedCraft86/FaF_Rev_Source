@@ -41,11 +41,8 @@ void UQuestBranchWidgetBase::InitWidget(const UQuestBranch* Branch)
 	if (BranchObject)
 	{
 		DisplayText->SetText(BranchObject->OwningQuest->GetQuestName());
-		DisplayText->SetVisibility(BranchObject->OwningQuest->GetQuestName().IsEmptyOrWhitespace() ?
+		DisplayText->SetVisibility(BranchObject->OwningQuest->GetQuestName().IsEmptyOrWhitespace() || bUseTitle ?
 			ESlateVisibility::Collapsed : ESlateVisibility::HitTestInvisible);
-
-		// Turn these texts off
-		DisplayText->SetVisibility(ESlateVisibility::Collapsed);
 
 		bool bShouldBeHidden = true;
 		for (const UNarrativeTask* Task : BranchObject->QuestTasks)
@@ -124,8 +121,9 @@ void UDialogueOptionWidgetBase::InitWidget(UNarrativeWidgetBase* NarrativeWidget
 UNarrativeWidgetBase::UNarrativeWidgetBase(const FObjectInitializer& ObjectInitializer)
 	: UGTUserWidget(ObjectInitializer), QuestBranchBox(nullptr), DialogueNameText(nullptr), DialogueTitleText(nullptr)
 	, DialogueLineText(nullptr), SkipLineButton(nullptr), DialogueReplyBox(nullptr), QuestFadeAnim(nullptr)
-	, DialogueFadeAnim(nullptr), RepliesFadeAnim(nullptr), HideFadeAnim(nullptr), NarrativeComponent(nullptr)
-	, bHideQuests(false), bAutoHidden(false), HideCheckTime(0.0f), WorldSettings(nullptr), PlayerChar(nullptr)
+	, DialogueFadeAnim(nullptr), RepliesFadeAnim(nullptr), HideFadeAnim(nullptr), DialogueReplyAngle(0.0f)
+	, NarrativeComponent(nullptr), bHideQuests(false), bAutoHidden(false), HideCheckTime(0.0f), PlayerChar(nullptr)
+	, WorldSettings(nullptr)
 {
 	ZOrder = 93;
 	bAutoAdd = true;
@@ -137,7 +135,7 @@ UNarrativeWidgetBase::UNarrativeWidgetBase(const FObjectInitializer& ObjectIniti
 
 void UNarrativeWidgetBase::SetQuestsHidden(const bool bInHidden)
 {
-	if (bHideQuests != bInHidden && IsAnimationPlaying(QuestFadeAnim))
+	if (bHideQuests != bInHidden && !IsAnimationPlaying(QuestFadeAnim))
 	{
 		bHideQuests = bInHidden;
 		bHideQuests ? PlayAnimationForward(QuestFadeAnim) : PlayAnimationReverse(QuestFadeAnim);
@@ -265,6 +263,7 @@ void UNarrativeWidgetBase::OnDialogueRepliesAvailable(UDialogue* Dialogue, const
 	for (UDialogueNode_Player* Reply : TempReplies)
 	{
 		UDialogueOptionWidgetBase* Widget = CreateWidget<UDialogueOptionWidgetBase>(this, ReplyWidgetClass);
+		Widget->SetRenderTransformAngle(DialogueReplyAngle);
 		Widget->SetPadding(DialogueReplyPadding);
 		Widget->InitWidget(this, Dialogue, Reply);
 
