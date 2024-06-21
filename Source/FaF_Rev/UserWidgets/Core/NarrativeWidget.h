@@ -174,14 +174,13 @@ protected:
 	bool bHideQuests;
 	bool bAutoHidden;
 	float HideCheckTime;
-	UPROPERTY(Transient) TObjectPtr<AFRPlayerBase> PlayerChar;
+	UPROPERTY(Transient) TObjectPtr<class AFRPlayerBase> PlayerChar;
 	UPROPERTY(Transient) TObjectPtr<const AWorldSettings> WorldSettings;
 	UPROPERTY(Transient) TMap<FName, TObjectPtr<UDialogueOptionWidgetBase>> DialogueReplies;
 
 	void QuestUpdatedNotify();
 	void RefreshQuestList(const UQuest* Quest, const UQuestBranch* Branch);
 	UFUNCTION() void OnQuestNewState(UQuest* Quest, const UQuestState* NewState);
-	UFUNCTION() void OnQuestBranchCompleted(const UQuest* Quest, const UQuestBranch* Branch);
 	UFUNCTION() void OnQuestTaskCompleted(const UQuest* Quest, const UNarrativeTask* CompletedTask, const UQuestBranch* Branch);
 	UFUNCTION() void OnQuestTaskProgressChanged(const UQuest* Quest, const UNarrativeTask* ProgressedTask, const UQuestBranch* Branch, int32 OldProgress, int32 NewProgress);
 

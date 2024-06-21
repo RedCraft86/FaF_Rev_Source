@@ -194,13 +194,8 @@ void UNarrativeWidgetBase::OnQuestNewState(UQuest* Quest, const UQuestState* New
 		FTimerHandle Handle;
 		GetWorld()->GetTimerManager().SetTimer(Handle, [this](){
 			SetQuestsHidden(true);
-		}, 1.0f, false);
+		}, 0.25f, false);
 	}
-}
-
-void UNarrativeWidgetBase::OnQuestBranchCompleted(const UQuest* Quest, const UQuestBranch* Branch)
-{
-	RefreshQuestList(Quest, Branch);
 }
 
 void UNarrativeWidgetBase::OnQuestTaskCompleted(const UQuest* Quest, const UNarrativeTask* CompletedTask, const UQuestBranch* Branch)
@@ -213,13 +208,10 @@ void UNarrativeWidgetBase::OnQuestTaskCompleted(const UQuest* Quest, const UNarr
 
 void UNarrativeWidgetBase::OnQuestTaskProgressChanged(const UQuest* Quest, const UNarrativeTask* ProgressedTask, const UQuestBranch* Branch, int32 OldProgress, int32 NewProgress)
 {
-	if (Branch && ProgressedTask)
+	if (Branch && ProgressedTask && !ProgressedTask->IsComplete() &&
+		(!Branch->DestinationState || Branch->DestinationState->StateNodeType != EStateNodeType::Failure))
 	{
-		if ((!Branch->DestinationState || Branch->DestinationState->StateNodeType != EStateNodeType::Failure)
-			&& !ProgressedTask->IsComplete())
-		{
-			RefreshQuestList(Quest, Branch);
-		}
+		RefreshQuestList(Quest, Branch);
 	}
 }
 
@@ -330,7 +322,6 @@ void UNarrativeWidgetBase::InitWidget()
 	PlayerChar = FRPlayer(this);
 
 	NarrativeComponent->OnQuestNewState.AddDynamic(this, &UNarrativeWidgetBase::OnQuestNewState);
-	NarrativeComponent->OnQuestBranchCompleted.AddDynamic(this, &UNarrativeWidgetBase::OnQuestBranchCompleted);
 	NarrativeComponent->OnQuestTaskCompleted.AddDynamic(this, &UNarrativeWidgetBase::OnQuestTaskCompleted);
 	NarrativeComponent->OnQuestTaskProgressChanged.AddDynamic(this, &UNarrativeWidgetBase::OnQuestTaskProgressChanged);
 
