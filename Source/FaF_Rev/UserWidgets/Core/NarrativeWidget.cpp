@@ -41,7 +41,7 @@ void UQuestBranchWidgetBase::InitWidget(const UQuestBranch* Branch)
 	if (BranchObject)
 	{
 		DisplayText->SetText(BranchObject->OwningQuest->GetQuestName());
-		DisplayText->SetVisibility(BranchObject->OwningQuest->GetQuestName().IsEmptyOrWhitespace() || bUseTitle ?
+		DisplayText->SetVisibility(BranchObject->OwningQuest->GetQuestName().IsEmptyOrWhitespace() || !bUseTitle ?
 			ESlateVisibility::Collapsed : ESlateVisibility::HitTestInvisible);
 
 		bool bShouldBeHidden = true;
