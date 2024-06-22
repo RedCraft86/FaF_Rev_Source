@@ -8,6 +8,7 @@
 #include "DetailsCustomization/PrimitiveCollisionDetails.h"
 #include "DetailsCustomization/PropertyMetadataDetails.h"
 #include "ComponentVisualizers/DebugShapesVisualizer.h"
+#include "CustomAssets/GameMusic/MusicDataAssetActions.h"
 #include "CustomAssets/Inventory/ItemDataAssetActions.h"
 #include "BlueprintEditorModule.h"
 #include "AssetToolsModule.h"
@@ -56,6 +57,7 @@ void FGTEditorModule::StartupModule()
 
 	if (const FAssetToolsModule* AssetToolsModule = FModuleManager::LoadModulePtr<FAssetToolsModule>("AssetTools"))
 	{
+		AssetTypeActions.Add(MakeShareable(new FMusicDataAssetTypeActions()));
 		AssetTypeActions.Add(MakeShareable(new FItemDataAssetTypeActions()));
 		for (const TSharedPtr<IAssetTypeActions>& Action : AssetTypeActions)
 		{

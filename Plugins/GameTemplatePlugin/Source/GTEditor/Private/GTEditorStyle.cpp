@@ -54,5 +54,6 @@ TSharedRef<FSlateStyleSet> FGTEditorStyle::Create()
 
 	Style->Set("SmallIcon.InventoryGrid", new IMAGE_BRUSH_SVG(TEXT("InventoryGridSmall"), Icon20x20));
 	Style->Set("ClassThumbnail.InventoryItemDataBase", new IMAGE_BRUSH_SVG(TEXT("InventoryGrid"), Icon64x64));
+	Style->Set("ClassThumbnail.MusicDataBase", new IMAGE_BRUSH_SVG(TEXT("MusicData"), Icon64x64));
 	return Style;
 }
