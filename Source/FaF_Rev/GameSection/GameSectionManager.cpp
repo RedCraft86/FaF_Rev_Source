@@ -98,9 +98,13 @@ void UGameSectionManager::BeginTransition()
 	}
 }
 
-// TODO sound
 void UGameSectionManager::UnloadLastData()
 {
+	if (AMusicManagerBase* MusicManager = AMusicManagerBase::Get(this))
+	{
+		MusicManager->MuteAllChannels(true);
+	}
+	
 	PlayerChar->ResetStates();
 	PlayerChar->TeleportPlayer(FVector::ZeroVector, FRotator::ZeroRotator);
 	PlayerChar->GetGameMode()->Narrative->ForgetQuest(LastData->Quest.LoadSynchronous());
@@ -175,11 +179,15 @@ void UGameSectionManager::FinishLoading()
 		&UGameSectionManager::FinishTransition, 1.0f, false);
 }
 
-// TODO sound
 void UGameSectionManager::FinishTransition()
 {
 	HideLoadingWidget([this]()
 	{
+		if (AMusicManagerBase* MusicManager = AMusicManagerBase::Get(this))
+		{
+			MusicManager->SetBaseMusicData(ThisData->MusicData.LoadSynchronous());
+		}
+		
 		UInventoryComponent* Inventory = PlayerChar->GetGameMode()->Inventory;
 		for (const FInventorySlotData& Item : ThisData->Inventory)
 		{

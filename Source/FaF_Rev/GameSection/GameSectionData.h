@@ -59,7 +59,7 @@ public:
 		TSoftClassPtr<UQuest> Quest;
 
 	UPROPERTY(EditAnywhere, Category = "WorldData")
-		TSoftObjectPtr<UMusicDataBase> MusicID;
+		TSoftObjectPtr<UMusicDataBase> MusicData;
 
 	UPROPERTY(EditAnywhere, Category = "WorldData")
 		FUDSSettings SkyWeatherSettings;
