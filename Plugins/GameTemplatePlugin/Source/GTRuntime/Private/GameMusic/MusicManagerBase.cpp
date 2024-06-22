@@ -138,6 +138,8 @@ void AMusicManagerBase::AddExternalAudio(const EWorldMusicChannel InChannel, USo
 
 void AMusicManagerBase::MuteChannel(const EWorldMusicChannel InChannel, const bool bImmediately)
 {
+	if (!ChannelStates.FindRef(InChannel)) return;
+	
 	ChannelStates.Add(InChannel, false);
 	if (UAudioComponent* BaseComp = BaseAudioComponent.FindRef(InChannel))
 	{
@@ -194,6 +196,8 @@ void AMusicManagerBase::MuteChannel(const EWorldMusicChannel InChannel, const bo
 
 void AMusicManagerBase::UnmuteChannel(const EWorldMusicChannel InChannel, const bool bImmediately)
 {
+	if (ChannelStates.FindRef(InChannel)) return;
+	
 	ChannelStates.Add(InChannel, true);
 	if (UAudioComponent* BaseComp = BaseAudioComponent.FindRef(InChannel))
 	{
