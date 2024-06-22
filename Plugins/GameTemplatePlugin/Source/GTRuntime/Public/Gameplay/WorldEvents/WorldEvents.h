@@ -335,10 +335,10 @@ struct GTRUNTIME_API FWESoundPlay2D final : public FWESoundBase
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "PlaySound2D")
 		TObjectPtr<USoundBase> Sound;
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "PlaySound2D", meta = (ClampMin = 0.1f, UIMin = 0.1f, EditCondition = "Sound"))
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "PlaySound2D", meta = (ClampMin = 0.1f, UIMin = 0.1f))
 		float Volume;
 	
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "PlaySound2D", meta = (ClampMin = 0.1f, UIMin = 0.1f, EditCondition = "Sound"))
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "PlaySound2D", meta = (ClampMin = 0.1f, UIMin = 0.1f))
 		float Pitch;
 
 	FWESoundPlay2D() : Volume(1.0f), Pitch(1.0f) {}
@@ -359,13 +359,13 @@ struct GTRUNTIME_API FWEWorldMusic final : public FWESoundBase
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "WorldMusic")
 		TObjectPtr<USoundBase> Sound;
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "WorldMusic", meta = (ClampMin = 0.1f, UIMin = 0.1f, EditCondition = "Sound"))
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "WorldMusic", meta = (ClampMin = 0.1f, UIMin = 0.1f))
 		float Volume;
 	
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "WorldMusic", meta = (ClampMin = 0.1f, UIMin = 0.1f, EditCondition = "Sound"))
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "WorldMusic", meta = (ClampMin = 0.1f, UIMin = 0.1f))
 		float Pitch;
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "WorldMusic", meta = (ClampMin = 0.0f, UIMin = 0.0f, EditCondition = "Sound"))
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "WorldMusic", meta = (ClampMin = 0.0f, UIMin = 0.0f))
 		float StartTime;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "WorldMusic")
