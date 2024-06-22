@@ -160,6 +160,9 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "NarrativeWidget")
 		float DialogueReplyAngle;
 
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "NarrativeWidget")
+		bool bNotifyObjectiveUpdates;
+
 	UPROPERTY(Transient, BlueprintReadOnly, Category = "NarrativeWidget")
 		TObjectPtr<UNarrativeComponent> NarrativeComponent;
 

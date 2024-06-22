@@ -122,8 +122,8 @@ UNarrativeWidgetBase::UNarrativeWidgetBase(const FObjectInitializer& ObjectIniti
 	: UGTUserWidget(ObjectInitializer), QuestBranchBox(nullptr), DialogueNameText(nullptr), DialogueTitleText(nullptr)
 	, DialogueLineText(nullptr), SkipLineButton(nullptr), DialogueReplyBox(nullptr), QuestFadeAnim(nullptr)
 	, DialogueFadeAnim(nullptr), RepliesFadeAnim(nullptr), HideFadeAnim(nullptr), DialogueReplyAngle(0.0f)
-	, NarrativeComponent(nullptr), bHideQuests(false), bAutoHidden(false), HideCheckTime(0.0f), PlayerChar(nullptr)
-	, WorldSettings(nullptr)
+	, bNotifyObjectiveUpdates(false), NarrativeComponent(nullptr), bHideQuests(false), bAutoHidden(false)
+	, HideCheckTime(0.0f), PlayerChar(nullptr), WorldSettings(nullptr)
 {
 	ZOrder = 93;
 	bAutoAdd = true;
@@ -144,6 +144,7 @@ void UNarrativeWidgetBase::SetQuestsHidden(const bool bInHidden)
 
 void UNarrativeWidgetBase::QuestUpdatedNotify()
 {
+	if (!bNotifyObjectiveUpdates) return;
 	if (UMessageWidgetBase* MsgWidget = GetGameMode<AFRGameModeBase>()->GetWidget<UMessageWidgetBase>())
 	{
 		MsgWidget->QueueSmallNotice({INVTEXT("Objective Updated"), 1.0f});
