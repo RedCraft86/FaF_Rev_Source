@@ -11,5 +11,11 @@ void UMusicDataBase::PostEditChangeProperty(FPropertyChangedEvent& PropertyChang
 	{
 		BaseChannels.Add({});
 	}
+
+	while (BaseChannels.Num() > AMusicManagerBase::MaxChannels)
+	{
+		if (BaseChannels.IsEmpty()) break;
+		BaseChannels.RemoveAt(BaseChannels.Num() - 1);
+	}
 }
 #endif

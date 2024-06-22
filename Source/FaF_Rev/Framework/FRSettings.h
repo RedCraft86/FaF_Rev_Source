@@ -26,37 +26,34 @@ public:
 		WordsPerSecond = 2;
 	}
 
-	UPROPERTY(Config, EditAnywhere, Category = "Default")
+	UPROPERTY(Config, EditAnywhere, Category = "Settings")
 		uint8 DemoVersion;
 	
-	UPROPERTY(Config, EditAnywhere, Category = "Text", meta = (ClampMin = 1, UIMin = 1))
+	UPROPERTY(Config, EditAnywhere, Category = "Settings", meta = (ClampMin = 1, UIMin = 1))
 		uint8 WordsPerSecond;
 
-	UPROPERTY(Config, EditAnywhere, Category = "Text", meta = (RequiredAssetDataTags = "RowStructure=/Script/FaF_Rev.GuideBookPageData"))
+	UPROPERTY(Config, EditAnywhere, Category = "Settings", meta = (RequiredAssetDataTags = "RowStructure=/Script/FaF_Rev.GuideBookPageData"))
 		TSoftObjectPtr<UDataTable> GuideTable;
 	
-	UPROPERTY(Config, EditAnywhere, Category = "GameSection")
+	UPROPERTY(Config, EditAnywhere, Category = "Settings")
 		TSoftObjectPtr<UWorld> GameplayMap;
 
-	UPROPERTY(Config, EditAnywhere, Category = "GameSection")
+	UPROPERTY(Config, EditAnywhere, Category = "Settings")
 		TSoftObjectPtr<class UGameSectionGraph> GameSectionGraph;
 	
-	UPROPERTY(Config, EditAnywhere, Category = "GameMusic", meta = (RequiredAssetDataTags = "RowStructure=/Script/FaF_Rev.GameMusicData"))
-		TSoftObjectPtr<UDataTable> MusicTable;
-
-	UPROPERTY(Config, EditAnywhere, Category = "GameMusic", meta = (GetOptions = "GetMusicTableKeys"))
-		FName DefaultMusicID;
+	UPROPERTY(Config, EditAnywhere, Category = "Settings")
+		TSoftObjectPtr<class UMusicDataBase> WorldMusic;
 	
-	UPROPERTY(Config, EditAnywhere, Category = "GameSettings")
+	UPROPERTY(Config, EditAnywhere, Category = "Settings")
 		TSoftObjectPtr<USoundMix> SoundMixClass;
 
-	UPROPERTY(Config, EditAnywhere, Category = "GameSettings", meta = (ReadOnlyKeys))
+	UPROPERTY(Config, EditAnywhere, Category = "Settings", meta = (ReadOnlyKeys))
 		TMap<EFRSoundType, TSoftObjectPtr<USoundClass>> SoundClasses;
 
-	UPROPERTY(Config, EditAnywhere, Category = "GameSettings|PostProcessing")
+	UPROPERTY(Config, EditAnywhere, Category = "Settings")
 		TSoftObjectPtr<UMaterialParameterCollection> MainRenderingMPC;
 
-	UPROPERTY(Config, EditAnywhere, Category = "GameSettings|PostProcessing", meta = (GetOptions = "GetMainRenderingMPCNames"))
+	UPROPERTY(Config, EditAnywhere, Category = "Settings", meta = (GetOptions = "GetMainRenderingMPCNames"))
 		FName BrightnessParamName;
 	
 	float CalcReadingTime(const FString& InStr) const
@@ -72,19 +69,6 @@ public:
 
 #if WITH_EDITOR && WITH_EDITORONLY_DATA
 private:
-	UFUNCTION() TArray<FName> GetMusicTableKeys()
-	{
-		TArray<FName> Names = {};
-		if (MusicTable.LoadSynchronous())
-		{
-			Names = MusicTable.LoadSynchronous()->GetRowNames();
-			if (DefaultMusicID.IsNone() && Names.Num() > 0)
-				DefaultMusicID = Names[0];
-		}
-		
-		return Names;
-	}
-
 	UFUNCTION() TArray<FName> GetMainRenderingMPCNames() const
 	{
 		TArray<FName> Names = {};
@@ -100,7 +84,6 @@ private:
 	virtual void PostEditChangeProperty(FPropertyChangedEvent& PropertyChangedEvent) override
 	{
 		Super::PostEditChangeProperty(PropertyChangedEvent);
-		if (MusicTable.IsNull()) DefaultMusicID = NAME_None;
 		if (SoundClasses.Num() < 5)
 		{
 			for (const EFRSoundType Type : TEnumRange<EFRSoundType>())
