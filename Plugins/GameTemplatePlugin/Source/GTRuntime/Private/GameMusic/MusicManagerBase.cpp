@@ -77,6 +77,7 @@ void AMusicManagerBase::SetBaseMusicData(const UMusicDataBase* InData)
 
 		for (const EWorldMusicChannel Channel : TEnumRange<EWorldMusicChannel>())
 		{
+			ChannelStates.Add(Channel, false);
 			if (UAudioComponent* BaseComp = BaseAudioComponent.FindRef(Channel))
 			{
 				BaseComp->bAutoDestroy = false;
@@ -104,6 +105,7 @@ UAudioComponent* AMusicManagerBase::FindExternalAudio(const EWorldMusicChannel I
 
 void AMusicManagerBase::AddExternalAudio(const EWorldMusicChannel InChannel, USoundBase* InSound, const float InVolume, const float InPitch, const float InStartTime, const bool bFade)
 {
+	if (!ChannelStates.FindRef(InChannel)) return;
 	if (!InSound || FMath::IsNearlyZero(InVolume)|| FMath::IsNearlyZero(InPitch)) return;
 	UAudioComponent* OldComponent = FindExternalAudio(InChannel, InSound);
 	if (!OldComponent)
@@ -118,6 +120,7 @@ void AMusicManagerBase::AddExternalAudio(const EWorldMusicChannel InChannel, USo
 
 void AMusicManagerBase::MuteChannel(const EWorldMusicChannel InChannel, const bool bImmediately)
 {
+	ChannelStates.Add(InChannel, false);
 	if (UAudioComponent* BaseComp = BaseAudioComponent.FindRef(InChannel))
 	{
 		if (bImmediately)
@@ -166,6 +169,7 @@ void AMusicManagerBase::MuteChannel(const EWorldMusicChannel InChannel, const bo
 
 void AMusicManagerBase::UnmuteChannel(const EWorldMusicChannel InChannel, const bool bImmediately)
 {
+	ChannelStates.Add(InChannel, true);
 	if (UAudioComponent* BaseComp = BaseAudioComponent.FindRef(InChannel))
 	{
 		BaseComp->SetPaused(false);
@@ -210,6 +214,10 @@ void AMusicManagerBase::MuteAllChannels(const bool bImmediately)
 void AMusicManagerBase::BeginPlay()
 {
 	Super::BeginPlay();
+	for (const EWorldMusicChannel Channel : TEnumRange<EWorldMusicChannel>())
+	{
+		ChannelStates.Add(Channel, false);
+	}
 	GetWorldTimerManager().SetTimerForNextTick([this]()
 	{
 		SetBaseMusicData(UGTSettings::GetConst()->WorldMusic.LoadSynchronous());

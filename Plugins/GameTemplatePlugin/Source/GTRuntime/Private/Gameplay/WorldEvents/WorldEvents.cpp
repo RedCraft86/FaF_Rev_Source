@@ -8,9 +8,10 @@
 #include "LevelSequencePlayer.h"
 #include "LevelSequenceActor.h"
 #include "Sound/AmbientSound.h"
+#include "GameMusic/MusicManagerBase.h"
 #include "GTGlobalSubsystem.h"
-#include "GTActor.h"
 #include "GTVolume.h"
+#include "GTActor.h"
 
 void FWorldEventBase::OnBeginPlay(const UObject* WorldContext)
 {
@@ -295,6 +296,14 @@ void FWESoundWorld::RunEvent(const UObject* WorldContext)
 void FWESoundPlay2D::RunEvent(const UObject* WorldContext)
 {
 	UGameplayStatics::PlaySound2D(WorldContext, Sound, FMath::Max(0.0f, Volume), FMath::Max(0.0f, Pitch));	
+}
+
+void FWEWorldMusic::RunEvent(const UObject* WorldContext)
+{
+	if (AMusicManagerBase* MusicManager = AMusicManagerBase::Get(WorldContext))
+	{
+		MusicManager->AddExternalAudio(Channel, Sound, Volume, Pitch, StartTime, bFade);
+	}
 }
 
 void FWELevelStreamLoad::RunEvent(const UObject* WorldContext)

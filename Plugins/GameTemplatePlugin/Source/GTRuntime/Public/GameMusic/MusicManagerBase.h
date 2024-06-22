@@ -58,6 +58,7 @@ protected:
 	UPROPERTY(Transient) TObjectPtr<const UMusicDataBase> BaseMusicData;
 	UPROPERTY(Transient) TMap<EWorldMusicChannel, FMusicChannelComponents> ExternalAudioComponents;
 	TMap<EWorldMusicChannel, TPair<FTimerHandle, FTimerHandle>> ChannelTimers;
+	TMap<EWorldMusicChannel, bool> ChannelStates;
 
 	virtual void BeginPlay() override;
 

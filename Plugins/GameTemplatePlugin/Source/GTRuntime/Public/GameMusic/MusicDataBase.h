@@ -49,7 +49,7 @@ public:
 	
 	static inline TSubclassOf<UMusicDataBase> DefaultSpawnClass = StaticClass();
 
-	UPROPERTY(EditAnywhere, Category = "WorldMusicData", meta = (TitleProperty = "Sound"))
+	UPROPERTY(EditAnywhere, Category = "WorldMusicData", meta = (TitleProperty = "Sound", ReadOnlyKeys))
 		TMap<EWorldMusicChannel, FMusicChannelData> Channels;
 
 #if WITH_EDITOR

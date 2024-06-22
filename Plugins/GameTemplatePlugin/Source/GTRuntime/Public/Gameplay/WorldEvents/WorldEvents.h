@@ -6,6 +6,7 @@
 #include "GameplayTagContainer.h"
 #include "UObject/SoftObjectPtr.h"
 #include "Components/AudioComponent.h"
+#include "GameMusic/MusicDataBase.h"
 #include "WorldEvents.generated.h"
 
 class AGTActor;
@@ -341,6 +342,36 @@ struct GTRUNTIME_API FWESoundPlay2D final : public FWESoundBase
 		float Pitch;
 
 	FWESoundPlay2D() : Volume(1.0f), Pitch(1.0f) {}
+
+protected:
+	
+	virtual void RunEvent(const UObject* WorldContext) override;
+};
+
+USTRUCT(BlueprintType, DisplayName = "World Music")
+struct GTRUNTIME_API FWEWorldMusic final : public FWESoundBase
+{
+	GENERATED_BODY()
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "WorldMusic")
+		EWorldMusicChannel Channel;
+	
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "WorldMusic")
+		TObjectPtr<USoundBase> Sound;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "WorldMusic", meta = (ClampMin = 0.1f, UIMin = 0.1f, EditCondition = "Sound"))
+		float Volume;
+	
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "WorldMusic", meta = (ClampMin = 0.1f, UIMin = 0.1f, EditCondition = "Sound"))
+		float Pitch;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "WorldMusic", meta = (ClampMin = 0.0f, UIMin = 0.0f, EditCondition = "Sound"))
+		float StartTime;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "WorldMusic")
+		bool bFade;
+
+	FWEWorldMusic() : Channel(EWorldMusicChannel::Channel1), Volume(1.0f), Pitch(1.0f), StartTime(0.0f), bFade(false) {}
 
 protected:
 	
