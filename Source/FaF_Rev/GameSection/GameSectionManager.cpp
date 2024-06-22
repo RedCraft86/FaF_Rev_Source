@@ -11,7 +11,6 @@
 #include "Screens/LoadingWidget.h"
 #include "NarrativeComponent.h"
 #include "PlayerTeleporter.h"
-#include "FRGameState.h"
 #include "FRGameMode.h"
 #include "FRSettings.h"
 #include "FaF_Rev.h"
@@ -99,12 +98,12 @@ void UGameSectionManager::BeginTransition()
 	}
 }
 
+// TODO sound
 void UGameSectionManager::UnloadLastData()
 {
 	PlayerChar->ResetStates();
 	PlayerChar->TeleportPlayer(FVector::ZeroVector, FRotator::ZeroRotator);
 	PlayerChar->GetGameMode()->Narrative->ForgetQuest(LastData->Quest.LoadSynchronous());
-	PlayerChar->GetGameState()->StopGameMusic();
 	
 	LoadedObjs.Empty(ThisData ? ThisData->PreloadObjects.Num() : 0);
 	UnloadingLevels = 0;
@@ -176,6 +175,7 @@ void UGameSectionManager::FinishLoading()
 		&UGameSectionManager::FinishTransition, 1.0f, false);
 }
 
+// TODO sound
 void UGameSectionManager::FinishTransition()
 {
 	HideLoadingWidget([this]()
@@ -205,7 +205,6 @@ void UGameSectionManager::FinishTransition()
 
 		PlayerChar->FadeFromBlack(1.0f);
 		PlayerChar->ClearLockFlag(Player::LockFlags::Loading);
-		PlayerChar->GetGameState()->SetGameMusic(ThisData->MusicID);
 		PlayerChar->GetGameMode()->Narrative->BeginQuest(ThisData->Quest.LoadSynchronous());
 
 		GetWorld()->GetLevelScriptActor()->RemoteEvent(TEXT("OnSectionLoaded"));

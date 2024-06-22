@@ -155,7 +155,6 @@ public:
 protected:
 
 	UPROPERTY(Transient) TObjectPtr<class AFRGameModeBase> GameMode;
-	UPROPERTY(Transient) TObjectPtr<class AFRGameStateBase> GameState;
 	UPROPERTY(Transient) TObjectPtr<class AFRPlayerController> PlayerController;
 
 	UPROPERTY(Transient) TObjectPtr<UObject> HidingSpot;
@@ -346,9 +345,6 @@ public:
 	
 	UFUNCTION(BlueprintPure, Category = "Player")
 		AFRGameModeBase* GetGameMode() const { return GameMode; }
-
-	UFUNCTION(BlueprintPure, Category = "Player")
-		AFRGameStateBase* GetGameState() const { return GameState; }
 	
 	UFUNCTION(BlueprintPure, Category = "Player")
 		AFRPlayerController* GetPlayerController() const { return PlayerController; }

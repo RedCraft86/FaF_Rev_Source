@@ -4,9 +4,9 @@
 
 #include "Quest.h"
 #include "PlayerData.h"
-#include "GameMusicData.h"
 #include "UltraDynamicSky.h"
 #include "PlayerTeleporter.h"
+#include "GameMusic/MusicDataBase.h"
 #include "GameSection/GameSectionNode.h"
 #include "Inventory/InventoryComponentBase.h"
 #include "AssetRegistry/IAssetRegistry.h"
@@ -59,7 +59,7 @@ public:
 		TSoftClassPtr<UQuest> Quest;
 
 	UPROPERTY(EditAnywhere, Category = "WorldData")
-		FGameMusicID MusicID;
+		TSoftObjectPtr<UMusicDataBase> MusicID;
 
 	UPROPERTY(EditAnywhere, Category = "WorldData")
 		FUDSSettings SkyWeatherSettings;

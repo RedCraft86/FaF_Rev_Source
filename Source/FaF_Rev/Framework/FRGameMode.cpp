@@ -7,7 +7,6 @@
 #include "Screens/GuideWidget.h"
 #include "Core/MessageWidget.h"
 #include "FRPlayerController.h"
-#include "FRGameState.h"
 #include "FRPlayer.h"
 
 AFRGameModeBase::AFRGameModeBase()
@@ -15,7 +14,6 @@ AFRGameModeBase::AFRGameModeBase()
 {
 	PlayerControllerClass = AFRPlayerController::StaticClass();
 	DefaultPawnClass = AFRPlayerBase::StaticClass();
-	GameStateClass = AFRGameStateBase::StaticClass();
 	
 	Narrative = CreateDefaultSubobject<UNarrativeComponent>("Narrative");
 	Inventory = CreateDefaultSubobject<UInventoryComponent>("Inventory");

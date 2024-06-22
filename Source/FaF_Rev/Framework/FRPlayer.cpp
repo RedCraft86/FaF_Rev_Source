@@ -4,7 +4,6 @@
 
 #include "FRPlayer.h"
 #include "FRGameMode.h"
-#include "FRGameState.h"
 #include "ExitInterface.h"
 #include "UltraDynamicSky.h"
 #include "FRPlayerController.h"
@@ -537,9 +536,9 @@ EEnemyAIMode AFRPlayerBase::GetPriorityEnemyMode() const
 	{
 		return EEnemyAIMode::Search;
 	}
-	if (States.Contains(EEnemyAIMode::Suspicion))
+	if (States.Contains(EEnemyAIMode::Alerted))
 	{
-		return EEnemyAIMode::Suspicion;
+		return EEnemyAIMode::Alerted;
 	}
 
 	return EEnemyAIMode::None;
@@ -598,13 +597,13 @@ void AFRPlayerBase::CutsceneEnd()
 	LockFlags.Remove(Player::LockFlags::Cutscene);
 	ActiveCutscene = nullptr;
 }
-
+// TODO sound
 void AFRPlayerBase::EnemyStackChanged()
 {
 	if (EnemyStack.IsEmpty())
 	{
 		RemoveStaminaDrainModifier(Player::InternalKeys::ChaseStamina);
-		GameState->SetMusicMode(EEnemyAIMode::None);
+		//GameState->SetMusicMode(EEnemyAIMode::None);
 		EnemyStackChangedEvent(EEnemyAIMode::None);
 		return;
 	}
@@ -614,25 +613,25 @@ void AFRPlayerBase::EnemyStackChanged()
 	if (States.Contains(EEnemyAIMode::Chase))
 	{
 		AddStaminaDrainModifier(Player::InternalKeys::ChaseStamina, AdrenalineReductionMulti);
-		GameState->SetMusicMode(EEnemyAIMode::Chase);
+		//GameState->SetMusicMode(EEnemyAIMode::Chase);
 		EnemyStackChangedEvent(EEnemyAIMode::Chase);
 	}
 	else if (States.Contains(EEnemyAIMode::Search))
 	{
-		GameState->SetMusicMode(EEnemyAIMode::Search);
+		//GameState->SetMusicMode(EEnemyAIMode::Search);
 		EnemyStackChangedEvent(EEnemyAIMode::Search);
 	}
-	else if (States.Contains(EEnemyAIMode::Suspicion))
+	else if (States.Contains(EEnemyAIMode::Alerted))
 	{
 		RemoveStaminaDrainModifier(Player::InternalKeys::ChaseStamina);
-		GameState->SetMusicMode(EEnemyAIMode::Suspicion);
-		EnemyStackChangedEvent(EEnemyAIMode::Suspicion);
+		//GameState->SetMusicMode(EEnemyAIMode::Alerted);
+		EnemyStackChangedEvent(EEnemyAIMode::Alerted);
 	}
 	else
 	{
 		// Uh-oh! Something broke though. We shouldn't have an Enemy in the stack with their AI Mode saved as NONE
 		RemoveStaminaDrainModifier(Player::InternalKeys::ChaseStamina);
-		GameState->SetMusicMode(EEnemyAIMode::None);
+		//GameState->SetMusicMode(EEnemyAIMode::None);
 		EnemyStackChangedEvent(EEnemyAIMode::None);
 	}
 }
@@ -1022,7 +1021,6 @@ void AFRPlayerBase::BeginPlay()
 	GameMode = FRGameMode(this);
 	GameMode->PlayerCharacter = this;
 	GameMode->PlayerController = PlayerController;
-	GameState = GameMode->GetGameState<AFRGameStateBase>();
 
 	GameMode->Inventory->PlayerChar = this;
 	GameMode->Inventory->SetInventoryPreview(InventoryPreview);
