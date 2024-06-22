@@ -171,31 +171,34 @@ void UNarrativeWidgetBase::RefreshQuestList(const UQuest* Quest, const UQuestBra
 
 void UNarrativeWidgetBase::OnQuestNewState(UQuest* Quest, const UQuestState* NewState)
 {
-	if (NewState && !NewState->Branches.IsEmpty())
+	GetWorld()->GetTimerManager().SetTimerForNextTick([this, NewState]()
 	{
-		QuestBranchBox->ClearChildren();
-		for (const UQuestBranch* Branch : NewState->Branches)
+		if (NewState && !NewState->Branches.IsEmpty())
 		{
-			if (Branch && !Branch->bHidden)
+			QuestBranchBox->ClearChildren();
+			for (const UQuestBranch* Branch : NewState->Branches)
 			{
-				UQuestBranchWidgetBase* BranchWidget = CreateWidget<UQuestBranchWidgetBase>(this, BranchWidgetClass);
-				BranchWidget->InitWidget(Branch);
+				if (Branch && !Branch->bHidden)
+				{
+					UQuestBranchWidgetBase* BranchWidget = CreateWidget<UQuestBranchWidgetBase>(this, BranchWidgetClass);
+					BranchWidget->InitWidget(Branch);
 
-				QuestBranchBox->AddChild(BranchWidget);
+					QuestBranchBox->AddChild(BranchWidget);
+				}
 			}
-		}
 
-		QuestUpdatedNotify();
-		bHideQuests = false;
-		PlayAnimation(QuestFadeAnim, 0.0f, 1, EUMGSequencePlayMode::Reverse);
-	}
-	else
-	{
-		FTimerHandle Handle;
-		GetWorld()->GetTimerManager().SetTimer(Handle, [this](){
-			SetQuestsHidden(true);
-		}, 0.25f, false);
-	}
+			QuestUpdatedNotify();
+			bHideQuests = false;
+			PlayAnimation(QuestFadeAnim, 0.0f, 1, EUMGSequencePlayMode::Reverse);
+		}
+		else
+		{
+			FTimerHandle Handle;
+			GetWorld()->GetTimerManager().SetTimer(Handle, [this](){
+				SetQuestsHidden(true);
+			}, 0.25f, false);
+		}
+	});
 }
 
 void UNarrativeWidgetBase::OnQuestTaskCompleted(const UQuest* Quest, const UNarrativeTask* CompletedTask, const UQuestBranch* Branch)

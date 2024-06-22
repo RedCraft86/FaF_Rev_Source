@@ -17,6 +17,7 @@ struct GTRUNTIME_API FMusicChannelComponents
 
 	FMusicChannelComponents() : Components({}) {}
 
+	void NullCheck();
 	void ClearComponents();
 	TArray<TObjectPtr<UAudioComponent>> GetComponents() const;
 	UAudioComponent* FindComponent(const USoundBase* InSound);
@@ -51,15 +52,20 @@ public:
 		void UnmuteChannel(const EWorldMusicChannel InChannel, const bool bImmediately = false);
 
 	UFUNCTION(BlueprintCallable, Category = "WorldMusicManager")
+		void MuteChannels(const TSet<EWorldMusicChannel> InChannels, const bool bImmediately = false);
+	
+	UFUNCTION(BlueprintCallable, Category = "WorldMusicManager")
 		void MuteAllChannels(const bool bImmediately = true);
 
 protected:
-	
+
+	FTimerHandle NullCheckTimer;
 	UPROPERTY(Transient) TObjectPtr<const UMusicDataBase> BaseMusicData;
 	UPROPERTY(Transient) TMap<EWorldMusicChannel, FMusicChannelComponents> ExternalAudioComponents;
 	TMap<EWorldMusicChannel, TPair<FTimerHandle, FTimerHandle>> ChannelTimers;
 	TMap<EWorldMusicChannel, bool> ChannelStates;
 
+	void NullCheck();
 	virtual void BeginPlay() override;
 
 public: // Statics

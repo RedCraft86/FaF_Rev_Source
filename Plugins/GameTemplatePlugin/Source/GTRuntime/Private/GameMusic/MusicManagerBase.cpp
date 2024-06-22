@@ -6,6 +6,20 @@
 #include "GTSettings.h"
 #include "GTGameMode.h"
 
+void FMusicChannelComponents::NullCheck()
+{
+	TSet<const USoundBase*> NullComps;
+	for (const TPair<TObjectPtr<const USoundBase>, TObjectPtr<UAudioComponent>>& Component : Components)
+	{
+		if (!Component.Value) NullComps.Add(Component.Key);
+	}
+
+	for (const USoundBase* Sound : NullComps)
+	{
+		Components.Remove(Sound);
+	}
+}
+
 void FMusicChannelComponents::ClearComponents()
 {
 	for (const TPair<TObjectPtr<const USoundBase>, TObjectPtr<UAudioComponent>>& Component : Components)
@@ -118,7 +132,7 @@ void AMusicManagerBase::AddExternalAudio(const EWorldMusicChannel InChannel, USo
 	Component->SetPitchMultiplier(InPitch);
 
 	ExternalAudioComponents.FindOrAdd(InChannel).AddComponent(Component);
-	if (bFade) Component->FadeIn(1.0f, InStartTime);
+	if (bFade) Component->FadeIn(1.0f, 1.0f, InStartTime);
 	else Component->Play(InStartTime);
 }
 
@@ -133,14 +147,18 @@ void AMusicManagerBase::MuteChannel(const EWorldMusicChannel InChannel, const bo
 		}
 		else
 		{
-			float FadeTime = 0.5f;
+			float FadeTime = 1.0f;
 			if (const FMusicChannelData* Data = BaseMusicData ? BaseMusicData->Channels.Find(InChannel) : nullptr)
 			{
 				FadeTime = Data->FadeTime;
 			}
 			
 			BaseComp->AdjustVolume(FadeTime, 0.05f);
-			GetWorldTimerManager().ClearTimer(ChannelTimers.FindOrAdd(InChannel).Key);
+
+			if (GetWorldTimerManager().TimerExists(ChannelTimers.FindOrAdd(InChannel).Key))
+			{
+				GetWorldTimerManager().ClearTimer(ChannelTimers.FindOrAdd(InChannel).Key);
+			}
 			GetWorldTimerManager().SetTimer(ChannelTimers.FindOrAdd(InChannel).Key, [BaseComp]()
 			{
 				BaseComp->SetPaused(true);
@@ -159,8 +177,11 @@ void AMusicManagerBase::MuteChannel(const EWorldMusicChannel InChannel, const bo
 
 		if (!bImmediately)
 		{
-			GetWorldTimerManager().ClearTimer(ChannelTimers.FindOrAdd(InChannel).Value);
-			GetWorldTimerManager().SetTimer(ChannelTimers.FindOrAdd(InChannel).Value, [&Components]()
+			if (GetWorldTimerManager().TimerExists(ChannelTimers.FindOrAdd(InChannel).Value))
+			{
+				GetWorldTimerManager().ClearTimer(ChannelTimers.FindOrAdd(InChannel).Value);
+			}
+			GetWorldTimerManager().SetTimer(ChannelTimers.FindOrAdd(InChannel).Value, [Components]()
 			{
 				for (const TObjectPtr<UAudioComponent>& Component : Components)
 				{
@@ -178,7 +199,7 @@ void AMusicManagerBase::UnmuteChannel(const EWorldMusicChannel InChannel, const 
 	{
 		BaseComp->SetPaused(false);
 
-		float FadeTime = 0.0f;
+		float FadeTime = 1.0f;
 		bool bRestart = !BaseComp->IsPlaying();
 		if (const FMusicChannelData* Data = BaseMusicData ? BaseMusicData->Channels.Find(InChannel) : nullptr)
 		{
@@ -207,11 +228,27 @@ void AMusicManagerBase::UnmuteChannel(const EWorldMusicChannel InChannel, const 
 	}
 }
 
+void AMusicManagerBase::MuteChannels(const TSet<EWorldMusicChannel> InChannels, const bool bImmediately)
+{
+	for (const EWorldMusicChannel Channel : InChannels)
+	{
+		MuteChannel(Channel, bImmediately);
+	}
+}
+
 void AMusicManagerBase::MuteAllChannels(const bool bImmediately)
 {
 	for (const EWorldMusicChannel Channel : TEnumRange<EWorldMusicChannel>())
 	{
 		MuteChannel(Channel, bImmediately);
+	}
+}
+
+void AMusicManagerBase::NullCheck()
+{
+	for (TPair<EWorldMusicChannel, FMusicChannelComponents>& ExternalAudio : ExternalAudioComponents)
+	{
+		ExternalAudio.Value.NullCheck();
 	}
 }
 
@@ -226,6 +263,9 @@ void AMusicManagerBase::BeginPlay()
 	{
 		SetBaseMusicData(UGTSettings::GetConst()->WorldMusic.LoadSynchronous());
 	});
+
+	GetWorldTimerManager().SetTimer(NullCheckTimer, this,
+		&AMusicManagerBase::NullCheck, 1.0f, true);
 }
 
 AMusicManagerBase* AMusicManagerBase::GetMusicManager(const UObject* WorldContextObject)
