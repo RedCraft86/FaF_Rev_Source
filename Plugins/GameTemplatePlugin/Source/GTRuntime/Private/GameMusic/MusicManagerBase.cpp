@@ -107,15 +107,19 @@ void AMusicManagerBase::AddExternalAudio(const EWorldMusicChannel InChannel, USo
 {
 	if (!ChannelStates.FindRef(InChannel)) return;
 	if (!InSound || FMath::IsNearlyZero(InVolume)|| FMath::IsNearlyZero(InPitch)) return;
-	UAudioComponent* OldComponent = FindExternalAudio(InChannel, InSound);
-	if (!OldComponent)
+	UAudioComponent* Component = FindExternalAudio(InChannel, InSound);
+	if (!Component)
 	{
-		OldComponent = UGameplayStatics::CreateSound2D(this, InSound, InVolume, InPitch, InStartTime);
+		Component = UGameplayStatics::CreateSound2D(this, InSound, InVolume, InPitch, InStartTime);
 	}
 
-	ExternalAudioComponents.FindOrAdd(InChannel).AddComponent(OldComponent);
-	if (bFade) OldComponent->FadeIn(1.0f, InStartTime);
-	else OldComponent->Play(InStartTime);
+	Component->SetSound(InSound);
+	Component->SetVolumeMultiplier(InVolume);
+	Component->SetPitchMultiplier(InPitch);
+
+	ExternalAudioComponents.FindOrAdd(InChannel).AddComponent(Component);
+	if (bFade) Component->FadeIn(1.0f, InStartTime);
+	else Component->Play(InStartTime);
 }
 
 void AMusicManagerBase::MuteChannel(const EWorldMusicChannel InChannel, const bool bImmediately)
