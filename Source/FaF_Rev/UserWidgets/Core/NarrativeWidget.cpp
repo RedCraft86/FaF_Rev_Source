@@ -167,6 +167,13 @@ void UNarrativeWidgetBase::RefreshQuestList(const UQuest* Quest, const UQuestBra
 		bHideQuests = false;
 		PlayAnimation(QuestFadeAnim, 0.0f, 1, EUMGSequencePlayMode::Reverse);
 	}
+	else
+	{
+		FTimerHandle Handle;
+		GetWorld()->GetTimerManager().SetTimer(Handle, [this](){
+			SetQuestsHidden(true);
+		}, 0.25f, false);
+	}
 }
 
 void UNarrativeWidgetBase::OnQuestNewState(UQuest* Quest, const UQuestState* NewState)
