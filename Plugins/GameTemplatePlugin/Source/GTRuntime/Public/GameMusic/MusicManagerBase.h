@@ -23,7 +23,7 @@ struct GTRUNTIME_API FMusicChannelComponents
 	void AddComponent(UAudioComponent* InComponent);
 };
 
-UCLASS(Abstract)
+UCLASS()
 class GTRUNTIME_API AMusicManagerBase : public AActor
 {
 	GENERATED_BODY()
@@ -58,4 +58,17 @@ protected:
 	UPROPERTY(Transient) TObjectPtr<const UMusicDataBase> BaseMusicData;
 	UPROPERTY(Transient) TMap<EWorldMusicChannel, FMusicChannelComponents> ExternalAudioComponents;
 	TMap<EWorldMusicChannel, TPair<FTimerHandle, FTimerHandle>> ChannelTimers;
+
+	virtual void BeginPlay() override;
+
+public: // Statics
+	
+	UFUNCTION(BlueprintPure, Category = "Game", DisplayName = "Get Music Manager", meta = (WorldContext = "WorldContextObject", AdvancedDisplay = "Class"))
+		static AMusicManagerBase* GetMusicManager(const UObject* WorldContextObject);
+
+	template <typename T = AMusicManagerBase>
+	static T* Get(const UObject* WorldContextObject)
+	{
+		return Cast<T>(GetMusicManager(WorldContextObject));
+	}
 };

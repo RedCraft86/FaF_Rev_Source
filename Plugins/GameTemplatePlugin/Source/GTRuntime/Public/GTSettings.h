@@ -21,10 +21,13 @@ public:
 		SectionName = TEXT("RuntimeSettings");
 	}
 
-	UPROPERTY(Config, EditAnywhere, Category = "Default")
+	UPROPERTY(Config, EditAnywhere, Category = "Settings")
+		TSoftObjectPtr<class UMusicDataBase> WorldMusic;
+	
+	UPROPERTY(Config, EditAnywhere, Category = "Settings")
 		TSoftObjectPtr<UExpressiveTextStyleBase> DefaultTextStyle;
 
-	UPROPERTY(Config, EditAnywhere, Category = "Default")
+	UPROPERTY(Config, EditAnywhere, Category = "Settings")
 		TMap<FGameplayTag, FInstancedStruct> GlobalVariables;
 	
 public: // Statics

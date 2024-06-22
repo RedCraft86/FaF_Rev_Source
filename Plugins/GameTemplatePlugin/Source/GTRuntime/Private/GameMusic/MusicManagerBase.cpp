@@ -3,6 +3,8 @@
 #include "GameMusic/MusicManagerBase.h"
 #include "Components/AudioComponent.h"
 #include "Kismet/GameplayStatics.h"
+#include "GTSettings.h"
+#include "GTGameMode.h"
 
 void FMusicChannelComponents::ClearComponents()
 {
@@ -203,4 +205,23 @@ void AMusicManagerBase::MuteAllChannels(const bool bImmediately)
 	{
 		MuteChannel(Channel, bImmediately);
 	}
+}
+
+void AMusicManagerBase::BeginPlay()
+{
+	Super::BeginPlay();
+	GetWorldTimerManager().SetTimerForNextTick([this]()
+	{
+		SetBaseMusicData(UGTSettings::GetConst()->WorldMusic.LoadSynchronous());
+	});
+}
+
+AMusicManagerBase* AMusicManagerBase::GetMusicManager(const UObject* WorldContextObject)
+{
+	if (AGTGameModeBase* GameMode = AGTGameModeBase::Get(WorldContextObject))
+	{
+		return GameMode->GetMusicManager();
+	}
+
+	return nullptr;
 }

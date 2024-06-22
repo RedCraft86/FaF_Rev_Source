@@ -6,6 +6,7 @@
 #include "InputModeData.h"
 #include "GameplayTagContainer.h"
 #include "GameFramework/GameModeBase.h"
+#include "GameMusic/MusicManagerBase.h"
 #include "GTGameMode.generated.h"
 
 class UGTUserWidget;
@@ -22,11 +23,14 @@ public:
 	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, Category = "Subobjects")
 		TObjectPtr<USceneComponent> SceneRoot;
 
-	UPROPERTY(Transient)
-		TObjectPtr<class UGTGameInstance> GameInstance;
+	UPROPERTY(EditAnywhere, NoClear, BlueprintReadOnly, Category = "Classes")
+		TSubclassOf<AMusicManagerBase> MusicManagerClass;
 
 	UPROPERTY(EditAnywhere, Category = "Settings")
 		TArray<TSubclassOf<UGTUserWidget>> DefaultWidgets;
+
+	UPROPERTY(Transient)
+		TObjectPtr<class UGTGameInstance> GameInstance;
 
 	UFUNCTION(BlueprintCallable, Category = "Input", meta = (AdvancedDisplay = "MouseLock, bHideCursorOnCapture, FocusWidget"))
 		void SetGameInputMode(const EGameInputMode InputMode, const bool bShowMouseCursor = false, const EMouseLockMode MouseLock = EMouseLockMode::LockAlways, const bool bHideCursorOnCapture = true, UUserWidget* FocusWidget = nullptr);
@@ -48,15 +52,24 @@ public:
 	{
 		return Cast<T>(GetWidget(T::StaticClass(), FilterTag));
 	}
+	
+	template<typename T = AMusicManagerBase>
+	T* GetMusicManager()
+	{
+		static_assert(TIsDerivedFrom<T, AMusicManagerBase>::IsDerived, "Type is not an AMusicManager class");
+		return Cast<T>(MusicManager);
+	}
 
 protected:
 
+	UPROPERTY(Transient) TObjectPtr<AMusicManagerBase> MusicManager;
 	UPROPERTY(Transient) TSet<TObjectPtr<UGTUserWidget>> WidgetObjs;
 	
 	FGameInputModeData InputModeData;
 	
 	virtual void BeginPlay() override;
 	virtual void EndPlay(const EEndPlayReason::Type EndPlayReason) override;
+	virtual void PreInitializeComponents() override;
 	void Tick(float DeltaSeconds) override;
 
 public: // Statics

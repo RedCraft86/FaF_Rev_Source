@@ -11,6 +11,7 @@ AGTGameModeBase::AGTGameModeBase() : GameInstance(nullptr)
 	SceneRoot = CreateDefaultSubobject<USceneComponent>("SceneRoot");
 	SetRootComponent(SceneRoot);
 	
+	MusicManagerClass = AMusicManagerBase::StaticClass();
 	PlayerControllerClass = AGTPlayerController::StaticClass();
 }
 
@@ -77,6 +78,21 @@ void AGTGameModeBase::EndPlay(const EEndPlayReason::Type EndPlayReason)
 {
 	InputModeData.ClearReferences();
 	Super::EndPlay(EndPlayReason);
+}
+
+void AGTGameModeBase::PreInitializeComponents()
+{
+	Super::PreInitializeComponents();
+
+	if (!MusicManagerClass)
+	{
+		MusicManagerClass = AMusicManagerBase::StaticClass();
+	}
+	
+	FActorSpawnParameters SpawnInfo;
+	SpawnInfo.Instigator = GetInstigator();
+	SpawnInfo.ObjectFlags |= RF_Transient;
+	MusicManager = GetWorld()->SpawnActor<AMusicManagerBase>(MusicManagerClass, SpawnInfo);
 }
 
 void AGTGameModeBase::Tick(float DeltaSeconds)

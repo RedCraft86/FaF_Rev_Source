@@ -42,9 +42,6 @@ public:
 		TSoftObjectPtr<class UGameSectionGraph> GameSectionGraph;
 	
 	UPROPERTY(Config, EditAnywhere, Category = "Settings")
-		TSoftObjectPtr<class UMusicDataBase> WorldMusic;
-	
-	UPROPERTY(Config, EditAnywhere, Category = "Settings")
 		TSoftObjectPtr<USoundMix> SoundMixClass;
 
 	UPROPERTY(Config, EditAnywhere, Category = "Settings", meta = (ReadOnlyKeys))
