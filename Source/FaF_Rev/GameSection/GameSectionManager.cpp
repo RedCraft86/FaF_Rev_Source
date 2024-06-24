@@ -181,13 +181,13 @@ void UGameSectionManager::FinishLoading()
 
 void UGameSectionManager::FinishTransition()
 {
+	if (AMusicManagerBase* MusicManager = AMusicManagerBase::Get(this))
+	{
+		MusicManager->SetBaseMusicData(ThisData->MusicData.LoadSynchronous());
+	}
+	
 	HideLoadingWidget([this]()
 	{
-		if (AMusicManagerBase* MusicManager = AMusicManagerBase::Get(this))
-		{
-			MusicManager->SetBaseMusicData(ThisData->MusicData.LoadSynchronous());
-		}
-		
 		UInventoryComponent* Inventory = PlayerChar->GetGameMode()->Inventory;
 		for (const FInventorySlotData& Item : ThisData->Inventory)
 		{
