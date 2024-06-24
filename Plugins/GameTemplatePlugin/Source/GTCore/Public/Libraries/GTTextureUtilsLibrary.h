@@ -41,7 +41,7 @@ public:
 		static void DrawWidgetToRenderTarget(UTextureRenderTarget2D* InRenderTarget, UUserWidget* InUserWidget);
 	
 	UFUNCTION(BlueprintCallable, Category = "TextureUtils")
-		static FGTTextureData GetDataFromRenderTarget(UTextureRenderTarget2D* InRenderTarget);
+		static FGTTextureData GetDataFromRenderTarget(UTextureRenderTarget2D* InRenderTarget, const bool bInvertAlpha);
 
 	UFUNCTION(BlueprintCallable, Category = "TextureUtils")
 		static FGTTextureData GetDataFromTexture(const UTexture2D* InTexture);
@@ -50,7 +50,7 @@ public:
 		static UTexture2D* CreateTextureFromData(const FGTTextureData& InData);
 	
 	UFUNCTION(BlueprintCallable, Category = "TextureUtils")
-		static UTexture2D* ConvertRenderTargetToTexture(UTextureRenderTarget2D* InRenderTarget);
+		static UTexture2D* ConvertRenderTargetToTexture(UTextureRenderTarget2D* InRenderTarget, const bool bHasAlpha);
 
 	UFUNCTION(BlueprintCallable, Category = "TextureUtils")
 		static void SaveTextureDataToFile(const FGTTextureData& InData, const FString InPath, const bool bAsync = true);
@@ -59,5 +59,5 @@ public:
 		static void SaveTextureToFile(const UTexture2D* InTexture, const FString InPath, const bool bAsync = true);
 
 	UFUNCTION(BlueprintCallable, Category = "TextureUtils")
-		static void SaveRenderTargetToFile(UTextureRenderTarget2D* InRenderTarget, const FString InPath, const bool bAsync = true);
+		static void SaveRenderTargetToFile(UTextureRenderTarget2D* InRenderTarget, const FString InPath, const bool bHasAlpha, const bool bAsync = true);
 };

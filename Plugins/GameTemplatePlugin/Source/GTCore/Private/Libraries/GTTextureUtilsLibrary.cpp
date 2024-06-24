@@ -16,13 +16,20 @@ void UGTTextureUtilsLibrary::DrawWidgetToRenderTarget(UTextureRenderTarget2D* In
 		FVector2D(InRenderTarget->SizeX, InRenderTarget->SizeY), 0.0f);
 }
 
-FGTTextureData UGTTextureUtilsLibrary::GetDataFromRenderTarget(UTextureRenderTarget2D* InRenderTarget)
+FGTTextureData UGTTextureUtilsLibrary::GetDataFromRenderTarget(UTextureRenderTarget2D* InRenderTarget, const bool bInvertAlpha)
 {
 	if (!InRenderTarget) return {};
 	
 	FGTTextureData Result;
 	InRenderTarget->GameThread_GetRenderTargetResource()->ReadPixels(Result.Pixels);
 	Result.Size = {InRenderTarget->SizeX, InRenderTarget->SizeY};
+	if (bInvertAlpha)
+	{
+		for (FColor& Pixel : Result.Pixels)
+		{
+			Pixel.A = (uint8)((int32)Pixel.A * -1 + 255);
+		}
+	}
 	return Result;
 }
 
@@ -55,9 +62,9 @@ UTexture2D* UGTTextureUtilsLibrary::CreateTextureFromData(const FGTTextureData& 
 	return Image;
 }
 
-UTexture2D* UGTTextureUtilsLibrary::ConvertRenderTargetToTexture(UTextureRenderTarget2D* InRenderTarget)
+UTexture2D* UGTTextureUtilsLibrary::ConvertRenderTargetToTexture(UTextureRenderTarget2D* InRenderTarget, const bool bHasAlpha)
 {
-	return CreateTextureFromData(GetDataFromRenderTarget(InRenderTarget));
+	return CreateTextureFromData(GetDataFromRenderTarget(InRenderTarget, bHasAlpha));
 }
 
 void UGTTextureUtilsLibrary::SaveTextureDataToFile(const FGTTextureData& InData, const FString InPath, const bool bAsync)
@@ -75,8 +82,8 @@ void UGTTextureUtilsLibrary::SaveTextureToFile(const UTexture2D* InTexture, cons
 	SaveTextureDataToFile(Data, InPath, bAsync);
 }
 
-void UGTTextureUtilsLibrary::SaveRenderTargetToFile(UTextureRenderTarget2D* InRenderTarget, const FString InPath, const bool bAsync)
+void UGTTextureUtilsLibrary::SaveRenderTargetToFile(UTextureRenderTarget2D* InRenderTarget, const FString InPath, const bool bHasAlpha, const bool bAsync)
 {
-	const FGTTextureData Data = GetDataFromRenderTarget(InRenderTarget);
+	const FGTTextureData Data = GetDataFromRenderTarget(InRenderTarget, bHasAlpha);
 	SaveTextureDataToFile(Data, InPath, bAsync);
 }
