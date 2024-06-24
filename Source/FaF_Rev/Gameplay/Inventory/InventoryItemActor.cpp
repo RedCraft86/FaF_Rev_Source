@@ -81,9 +81,12 @@ void AInventoryItemActor::OnConstruction(const FTransform& Transform)
 	InstancedStaticMesh->ClearInstances();
 #if WITH_EDITOR
 	if (MeshInstances.IsEmpty()) MeshInstances.Add(FTransform::Identity);
-	for (const TPair<FName, FString>& Meta : ItemData->DefaultMetadata)
+	if (ItemData)
 	{
-		if (!Metadata.Contains(Meta.Key)) Metadata.Add(Meta);
+		for (const TPair<FName, FString>& Meta : ItemData->DefaultMetadata)
+		{
+			if (!Metadata.Contains(Meta.Key)) Metadata.Add(Meta);
+		}
 	}
 	for (const FName Key : NativeItemKeys::All)
 	{
