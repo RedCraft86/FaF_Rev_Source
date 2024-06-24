@@ -54,7 +54,7 @@ void UInventoryItemData::PostEditChangeProperty(FPropertyChangedEvent& PropertyC
 {
 	Super::PostEditChangeProperty(PropertyChangedEvent);
 #if WITH_EDITORONLY_DATA
-	if (Priority == 0 && (PropertyChangedEvent.GetPropertyName() == GET_MEMBER_NAME_CHECKED(UInventoryItemData, ItemType)
+	if (Priority == 255 && (PropertyChangedEvent.GetPropertyName() == GET_MEMBER_NAME_CHECKED(UInventoryItemData, ItemType)
 		|| PropertyChangedEvent.GetPropertyName() == GET_MEMBER_NAME_CHECKED(UInventoryItemData, Priority)))
 	{
 		switch (ItemType)

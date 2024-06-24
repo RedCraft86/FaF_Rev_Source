@@ -53,7 +53,7 @@ class FAF_REV_API UInventoryItemData final : public UInventoryItemDataBase
 public:
 
 	UInventoryItemData()
-		: Priority(0), DisplayName(INVTEXT("Unknown Item")), Description(INVTEXT("Unknown Item"))
+		: Priority(255), DisplayName(INVTEXT("Unknown Item")), Description(INVTEXT("Unknown Item"))
 		, ItemType(EInventoryItemType::Basic), ViewImage(nullptr), ViewText(FText::GetEmpty())
 		, EquipmentClass(nullptr), bExpectSaveData(true), ConsumableClass(nullptr)
 		, ConsumeDisplayText(INVTEXT("Use")), PreviewZoomRange(0.1f, 1.5f)
