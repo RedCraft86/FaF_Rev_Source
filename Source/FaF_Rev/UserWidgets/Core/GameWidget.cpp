@@ -3,7 +3,9 @@
 #include "GameWidget.h"
 #include "Components/Image.h"
 #include "Components/ProgressBar.h"
+#include "NarrativeComponent.h"
 #include "ExprTextBlock.h"
+#include "FRGameMode.h"
 #include "FRSettings.h"
 #include "FRPlayer.h"
 
@@ -20,7 +22,8 @@ void UGameWidgetBase::HideCheck()
 {
 	HideCheckTime = 0.0f;
 	if (!PlayerChar || !WorldSettings || IsAnimationPlaying(HideFadeAnim)) return;
-	const bool bNewAutoHidden = PlayerChar->GetActiveCutscene() || WorldSettings->GetPauserPlayerState();
+	const bool bNewAutoHidden = PlayerChar->GetActiveCutscene() || WorldSettings->GetPauserPlayerState()
+		|| GetGameMode<AFRGameModeBase>()->Narrative->IsInDialogue();
 	if (bAutoHidden != bNewAutoHidden)
 	{
 		bAutoHidden = bNewAutoHidden;
