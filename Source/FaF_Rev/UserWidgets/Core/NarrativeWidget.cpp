@@ -121,9 +121,9 @@ void UDialogueOptionWidgetBase::InitWidget(UNarrativeWidgetBase* NarrativeWidget
 UNarrativeWidgetBase::UNarrativeWidgetBase(const FObjectInitializer& ObjectInitializer)
 	: UGTUserWidget(ObjectInitializer), QuestBranchBox(nullptr), DialogueNameText(nullptr), DialogueTitleText(nullptr)
 	, DialogueLineText(nullptr), SkipLineButton(nullptr), DialogueReplyBox(nullptr), QuestFadeAnim(nullptr)
-	, DialogueFadeAnim(nullptr), RepliesFadeAnim(nullptr), HideFadeAnim(nullptr), DialogueReplyAngle(0.0f)
-	, bNotifyObjectiveUpdates(false), NarrativeComponent(nullptr), bHideQuests(false), bAutoHidden(false)
-	, HideCheckTime(0.0f), PlayerChar(nullptr), WorldSettings(nullptr)
+	, DialogueFadeAnim(nullptr), RepliesFadeAnim(nullptr), HideFadeAnim(nullptr), bNotifyObjectiveUpdates(false)
+	, NarrativeComponent(nullptr), bHideQuests(false), bAutoHidden(false), HideCheckTime(0.0f), PlayerChar(nullptr)
+	, WorldSettings(nullptr)
 {
 	ZOrder = 93;
 	bAutoAdd = true;
@@ -274,7 +274,6 @@ void UNarrativeWidgetBase::OnDialogueRepliesAvailable(UDialogue* Dialogue, const
 	for (UDialogueNode_Player* Reply : PlayerReplies)
 	{
 		UDialogueOptionWidgetBase* Widget = CreateWidget<UDialogueOptionWidgetBase>(this, ReplyWidgetClass);
-		Widget->SetRenderTransformAngle(DialogueReplyAngle);
 		Widget->SetPadding(DialogueReplyPadding);
 		Widget->InitWidget(this, Dialogue, Reply);
 
