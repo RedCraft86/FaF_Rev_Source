@@ -246,8 +246,19 @@ void UNarrativeWidgetBase::SelectDialogueReply(UDialogueNode_Player* Reply)
 	PlayAnimation(RepliesFadeAnim);
 }
 
-void UNarrativeWidgetBase::OnDialogueFinished(UDialogue* Dialogue, const bool BStartingNewDialogue)
+void UNarrativeWidgetBase::OnDialogueBegan(UDialogue* Dialogue)
 {
+	PlayerChar->AddLockFlag(Player::LockFlags::Dialogue);
+	CachedInputMode = GetGameMode<AFRGameModeBase>()->GetInputModeData();
+	GetGameMode<AFRGameModeBase>()->SetGameInputMode(EGameInputMode::GameAndUI, true,
+		EMouseLockMode::LockAlways, false, this);
+}
+
+void UNarrativeWidgetBase::OnDialogueFinished(UDialogue* Dialogue, const bool bStartingNewDialogue)
+{
+	PlayerChar->ClearLockFlag(Player::LockFlags::Dialogue);
+	GetGameMode<AFRGameModeBase>()->SetInputModeData(CachedInputMode);
+	
 	PlayAnimationReverse(DialogueFadeAnim);
 	if (GetAnimationCurrentTime(RepliesFadeAnim) > 0.0f)
 	{
@@ -331,6 +342,7 @@ void UNarrativeWidgetBase::InitWidget()
 	NarrativeComponent->OnQuestTaskCompleted.AddDynamic(this, &UNarrativeWidgetBase::OnQuestTaskCompleted);
 	NarrativeComponent->OnQuestTaskProgressChanged.AddDynamic(this, &UNarrativeWidgetBase::OnQuestTaskProgressChanged);
 
+	NarrativeComponent->OnDialogueBegan.AddDynamic(this, &UNarrativeWidgetBase::OnDialogueBegan);
 	NarrativeComponent->OnDialogueFinished.AddDynamic(this, &UNarrativeWidgetBase::OnDialogueFinished);
 	NarrativeComponent->OnDialogueRepliesAvailable.AddDynamic(this, &UNarrativeWidgetBase::OnDialogueRepliesAvailable);
 	NarrativeComponent->OnPlayerDialogueLineStarted.AddDynamic(this, &UNarrativeWidgetBase::OnDialoguePlayerLineStarted);
