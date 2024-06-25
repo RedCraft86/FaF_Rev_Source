@@ -24,7 +24,16 @@ void FWEPlayerLockFlag::RunEvent(const UObject* WorldContext)
 
 	if (AFRPlayerBase* PlayerPtr = Player.LoadSynchronous())
 	{
-		bClearFlag ? PlayerPtr->ClearLockFlag(LockFlag.SelectedValue) : PlayerPtr->AddLockFlag(LockFlag.SelectedValue);
+		bClearFlag ? PlayerPtr->ClearLockFlag(**LockFlag) : PlayerPtr->AddLockFlag(**LockFlag);
+	}
+}
+
+void FWEPlayerLockFlag::OnConstruction(const UObject* WorldContext, const bool bEditorTime)
+{
+	for (const FName& Flag : Player::LockFlags::All)
+	{
+		if (!LockFlag.EdData.HasOption(Flag.ToString()))
+			LockFlag.EdData.AddOption({Flag.ToString(), Flag.ToString()});
 	}
 }
 

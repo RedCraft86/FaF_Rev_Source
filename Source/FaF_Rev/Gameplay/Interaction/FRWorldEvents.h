@@ -42,16 +42,19 @@ struct FAF_REV_API FWEPlayerLockFlag final : public FWEPlayerBase
 		bool bClearFlag;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "PlayerLockFlag")
-		FPlayerLockFlag LockFlag;
+		FStringPulldown LockFlag;
 	
 	UPROPERTY()
 		TSoftObjectPtr<AFRPlayerBase> Player;
 
-	FWEPlayerLockFlag() : bClearFlag(false), LockFlag(Player::LockFlags::Custom) {}
+	FWEPlayerLockFlag() : bClearFlag(false), LockFlag(TEXT("Custom")) {}
 	
 protected:
 
 	virtual void RunEvent(const UObject* WorldContext) override;
+#if WITH_EDITORONLY_DATA
+	virtual void OnConstruction(const UObject* WorldContext, const bool bEditorTime) override;
+#endif
 };
 
 USTRUCT(BlueprintType, DisplayName = "Player Fade")
