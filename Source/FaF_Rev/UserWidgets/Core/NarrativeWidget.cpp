@@ -293,17 +293,12 @@ void UNarrativeWidgetBase::OnDialoguePlayerLineFinished(UDialogue* Dialogue, UDi
 
 void UNarrativeWidgetBase::OnDialogueNPCLineStarted(UDialogue* Dialogue, UDialogueNode_NPC* Node, const FDialogueLine& DialogueLine, const FSpeakerInfo& Speaker)
 {
-	TArray<FString> Args;
-	if (Speaker.SpeakerID.ToString().ParseIntoArray(Args, TEXT("|"), true) <= 0)
-	{
-		Args = { Speaker.SpeakerID.ToString() };
-	}
-	
-	DialogueNameText->SetText(FText::FromString(Args[0]));
+	DialogueNameText->SetText(FText::FromName(Speaker.SpeakerID));
 	DialogueNameText->SetColorAndOpacity(DialogueNPCColor);
 
-	DialogueTitleText->SetText(Args.IsValidIndex(1) ? FText::FromString(Args[1]) : FText::GetEmpty());
-	DialogueTitleText->SetVisibility(Args.IsValidIndex(1) ? ESlateVisibility::HitTestInvisible : ESlateVisibility::Collapsed);
+	DialogueTitleText->SetText(Speaker.SpeakerName);
+	DialogueTitleText->SetVisibility(Speaker.SpeakerName.IsEmptyOrWhitespace()
+		? ESlateVisibility::Collapsed : ESlateVisibility::HitTestInvisible);
 
 	DialogueLineText->SetText(DialogueLine.Text);
 	PlayAnimation(DialogueFadeAnim);
