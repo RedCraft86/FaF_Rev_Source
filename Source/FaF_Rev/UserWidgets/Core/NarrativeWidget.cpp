@@ -305,7 +305,7 @@ void UNarrativeWidgetBase::OnDialoguePlayerLineFinished(UDialogue* Dialogue, UDi
 void UNarrativeWidgetBase::OnDialogueNPCLineStarted(UDialogue* Dialogue, UDialogueNode_NPC* Node, const FDialogueLine& DialogueLine, const FSpeakerInfo& Speaker)
 {
 	DialogueNameText->SetText(FText::FromName(Speaker.SpeakerID));
-	DialogueNameText->SetColorAndOpacity(DialogueNPCColor);
+	DialogueNameText->SetColorAndOpacity(Speaker.SpeakerID == TEXT("You") ? DialoguePlayerColor : DialogueNPCColor);
 
 	DialogueTitleText->SetText(Speaker.SpeakerName);
 	DialogueTitleText->SetVisibility(Speaker.SpeakerName.IsEmptyOrWhitespace()
