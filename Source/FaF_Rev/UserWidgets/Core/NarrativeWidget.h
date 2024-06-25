@@ -3,6 +3,7 @@
 #pragma once
 
 #include "GTUserWidget.h"
+#include "InputModeData.h"
 #include "NarrativeComponent.h"
 #include "NarrativeWidget.generated.h"
 
@@ -177,6 +178,7 @@ protected:
 	bool bHideQuests;
 	bool bAutoHidden;
 	float HideCheckTime;
+	FGameInputModeData CachedInputMode;
 	UPROPERTY(Transient) TObjectPtr<class AFRPlayerBase> PlayerChar;
 	UPROPERTY(Transient) TObjectPtr<const AWorldSettings> WorldSettings;
 	UPROPERTY(Transient) TMap<FName, TObjectPtr<UDialogueOptionWidgetBase>> DialogueReplies;
@@ -188,7 +190,8 @@ protected:
 	UFUNCTION() void OnQuestTaskProgressChanged(const UQuest* Quest, const UNarrativeTask* ProgressedTask, const UQuestBranch* Branch, int32 OldProgress, int32 NewProgress);
 
 	void SelectDialogueReply(UDialogueNode_Player* Reply);
-	UFUNCTION() void OnDialogueFinished(UDialogue* Dialogue, const bool BStartingNewDialogue);
+	UFUNCTION() void OnDialogueBegan(UDialogue* Dialogue);
+	UFUNCTION() void OnDialogueFinished(UDialogue* Dialogue, const bool bStartingNewDialogue);
 	UFUNCTION() void OnDialogueRepliesAvailable(UDialogue* Dialogue, const TArray<UDialogueNode_Player*>& PlayerReplies);
 	UFUNCTION() void OnDialoguePlayerLineStarted(UDialogue* Dialogue, UDialogueNode_Player* Node, const FDialogueLine& DialogueLine);
 	UFUNCTION() void OnDialoguePlayerLineFinished(UDialogue* Dialogue, UDialogueNode_Player* Node, const FDialogueLine& DialogueLine);
