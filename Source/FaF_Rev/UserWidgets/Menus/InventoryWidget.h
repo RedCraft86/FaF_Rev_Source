@@ -82,6 +82,9 @@ public:
 		TObjectPtr<UImage> ItemPreviewImage;
 
 	UPROPERTY(Transient, meta = (BindWidget))
+		TObjectPtr<UPanelWidget> PreviewControlBox;
+
+	UPROPERTY(Transient, meta = (BindWidget))
 		TObjectPtr<UTextBlock> ItemTitleText;
 
 	UPROPERTY(Transient, meta = (BindWidgetOptional))

@@ -22,7 +22,7 @@ void UInventorySlotWidgetBase::InitData(const FGuid& InSlotKey, const bool bEqui
 	IconEquip->SetVisibility(bEquipped ? ESlateVisibility::HitTestInvisible : ESlateVisibility::Collapsed);
 	AmountText->SetText(FText::FromString(FString::Printf(TEXT("%d/%d"), SlotData.Amount, ItemData->GetStackLimit())));
 
-	SlotButton->SetToolTipText(ItemData->DisplayName);
+	SlotButton->SetToolTipText(ItemData->GetDisplayName(SlotData.Metadata));
 	SlotButton->OnClicked.AddDynamic(this, &UInventorySlotWidgetBase::OnClicked);
 }
 
@@ -165,15 +165,18 @@ void UInventoryWidgetBase::RefreshInfo()
 
 		if (Inventory->GetInventoryPreview() && Inventory->GetInventoryPreview()->SetItem(SelectedKey))
 		{
+			PreviewControlBox->SetVisibility(ESlateVisibility::HitTestInvisible);
 			ItemPreviewImage->SetVisibility(ESlateVisibility::HitTestInvisible);
 		}
 		else
 		{
+			PreviewControlBox->SetVisibility(ESlateVisibility::Collapsed);
 			ItemPreviewImage->SetVisibility(ESlateVisibility::Collapsed);
 		}
 	}
 	else
 	{
+		PreviewControlBox->SetVisibility(ESlateVisibility::Collapsed);
 		ItemPreviewImage->SetVisibility(ESlateVisibility::Collapsed);
 		ItemDescText->SetText(INVTEXT("No item selected"));
 		ItemTypeText->SetText(INVTEXT("Type: None"));
