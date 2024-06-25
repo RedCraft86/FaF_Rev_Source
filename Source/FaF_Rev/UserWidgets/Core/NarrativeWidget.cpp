@@ -270,11 +270,8 @@ void UNarrativeWidgetBase::OnDialogueRepliesAvailable(UDialogue* Dialogue, const
 {
 	SkipLineButton->SetIsEnabled(false);
 	SkipLineButton->SetRenderOpacity(0.5f);
-	TArray<UDialogueNode_Player*> TempReplies = PlayerReplies;
-	Algo::Reverse(TempReplies);
-
 	DialogueReplyBox->ClearChildren();
-	for (UDialogueNode_Player* Reply : TempReplies)
+	for (UDialogueNode_Player* Reply : PlayerReplies)
 	{
 		UDialogueOptionWidgetBase* Widget = CreateWidget<UDialogueOptionWidgetBase>(this, ReplyWidgetClass);
 		Widget->SetRenderTransformAngle(DialogueReplyAngle);
