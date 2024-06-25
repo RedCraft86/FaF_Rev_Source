@@ -143,11 +143,19 @@ void AFRPlayerBase::ResetStates()
 	GameMode->Inventory->CloseUI();
 	
 	LockFlags.Remove(NAME_None);
-	for (const FName& Flag : Player::LockFlags::CanReset)
+	TSet<FName> RemovingLocks;
+	for (const FName& Flag : LockFlags)
+	{
+		if (!Player::LockFlags::All.Contains(Flag)
+			|| Player::LockFlags::CanReset.Contains(Flag))
+			RemovingLocks.Add(Flag);
+	}
+
+	for (const FName& Flag : RemovingLocks)
 	{
 		LockFlags.Remove(Flag);
 	}
-
+	
 	ControlFlags = DEFAULT_PLAYER_CONTROL_FLAGS;
 	MoveSpeedMultiplier.Modifiers.Empty();
 	FieldOfView.Modifiers.Empty();
