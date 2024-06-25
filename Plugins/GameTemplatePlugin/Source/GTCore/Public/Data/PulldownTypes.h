@@ -41,13 +41,16 @@ struct GTCORE_API FStringPulldown
 {
 	GENERATED_BODY()
 
-	FStringPulldown() : Value(TEXT("")) {}
+	FStringPulldown() : Value(TEXT("None")) {}
+	FStringPulldown(const FString& InValue) : Value(InValue) {}
 	virtual ~FStringPulldown() = default;
 	STRING_PULLDOWN_OVERRIDES(FStringPulldown)
 	FORCEINLINE FString operator*() const { return Value; }
 	
 	FORCEINLINE FString Get() const { return Value; }
 	FORCEINLINE bool IsEmpty() const { return Value.IsEmpty(); }
+	FORCEINLINE bool IsNone() const { return Value == TEXT("None"); }
+	FORCEINLINE bool IsValid() const { return !IsEmpty() && !IsNone(); }
 	FORCEINLINE virtual void Set(const FString& InString) { Value = InString; }
 
 #if WITH_EDITORONLY_DATA
