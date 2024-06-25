@@ -268,16 +268,15 @@ void UNarrativeWidgetBase::OnDialogueFinished(UDialogue* Dialogue, const bool bS
 
 void UNarrativeWidgetBase::OnDialogueRepliesAvailable(UDialogue* Dialogue, const TArray<UDialogueNode_Player*>& PlayerReplies)
 {
-	SkipLineButton->SetIsEnabled(false);
-	SkipLineButton->SetRenderOpacity(0.5f);
 	DialogueReplyBox->ClearChildren();
-
 	if (PlayerReplies.Num() == 1)
 	{
 		NarrativeComponent->SelectDialogueOption(PlayerReplies[0]);
 		return;
 	}
-	
+
+	SkipLineButton->SetIsEnabled(false);
+	SkipLineButton->SetRenderOpacity(0.5f);
 	for (UDialogueNode_Player* Reply : PlayerReplies)
 	{
 		if (!Reply) continue;
