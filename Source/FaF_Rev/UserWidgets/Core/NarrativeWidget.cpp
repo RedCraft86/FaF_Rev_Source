@@ -271,8 +271,16 @@ void UNarrativeWidgetBase::OnDialogueRepliesAvailable(UDialogue* Dialogue, const
 	SkipLineButton->SetIsEnabled(false);
 	SkipLineButton->SetRenderOpacity(0.5f);
 	DialogueReplyBox->ClearChildren();
+
+	if (PlayerReplies.Num() == 1)
+	{
+		NarrativeComponent->SelectDialogueOption(PlayerReplies[0]);
+		return;
+	}
+	
 	for (UDialogueNode_Player* Reply : PlayerReplies)
 	{
+		if (!Reply) continue;
 		UDialogueOptionWidgetBase* Widget = CreateWidget<UDialogueOptionWidgetBase>(this, ReplyWidgetClass);
 		Widget->SetPadding(DialogueReplyPadding);
 		Widget->InitWidget(this, Dialogue, Reply);
