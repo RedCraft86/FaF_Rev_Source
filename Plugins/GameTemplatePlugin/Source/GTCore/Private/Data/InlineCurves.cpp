@@ -32,9 +32,23 @@ void FInlineFloatCurve::GetTimeRange(float& Min, float& Max) const
 	GetRichCurveConst()->GetTimeRange(Min, Max);
 }
 
+void FInlineFloatCurve::GetTimeRange(double& Min, double& Max) const
+{
+	float X, Y = 0.0f;
+	GetTimeRange(X, Y);
+	Min = X; Max = Y;
+}
+
 void FInlineFloatCurve::GetValueRange(float& Min, float& Max) const
 {
 	GetRichCurveConst()->GetValueRange(Min, Max);
+}
+
+void FInlineFloatCurve::GetValueRange(double& Min, double& Max) const
+{
+	float X, Y = 0.0f;
+	GetValueRange(X, Y);
+	Min = X; Max = Y;
 }
 
 FRichCurve* FInlineVectorCurve::GetRichCurve(int32 Index)
@@ -79,6 +93,13 @@ void FInlineVectorCurve::GetTimeRange(float& Min, float& Max) const
 
 	Min = FMath::Min3(Min1, Min2, Min3);
 	Max = FMath::Max3(Max1, Max2, Max3);
+}
+
+void FInlineVectorCurve::GetTimeRange(double& Min, double& Max) const
+{
+	float X, Y = 0.0f;
+	GetTimeRange(X, Y);
+	Min = X; Max = Y;
 }
 
 void FInlineVectorCurve::GetValueRange(FVector& Min, FVector& Max) const
@@ -163,6 +184,13 @@ void FInlineColorCurve::GetTimeRange(float& Min, float& Max) const
 
 	Min = FMath::Min3(Min1, Min2, FMath::Min(Min3, Min4));
 	Max = FMath::Max3(Max1, Max2, FMath::Min(Max3, Max4));
+}
+
+void FInlineColorCurve::GetTimeRange(double& Min, double& Max) const
+{
+	float X, Y = 0.0f;
+	GetTimeRange(X, Y);
+	Min = X; Max = Y;
 }
 
 void FInlineColorCurve::GetValueRange(FLinearColor& Min, FLinearColor& Max) const

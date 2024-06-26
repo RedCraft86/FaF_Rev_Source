@@ -22,7 +22,9 @@ struct GTCORE_API FInlineFloatCurve
 	UCurveFloat* GetCurveAsset() const;
 	float GetValue(float InTime) const;
 	void GetTimeRange(float& Min, float& Max) const;
+	void GetTimeRange(double& Min, double& Max) const;
 	void GetValueRange(float& Min, float& Max) const;
+	void GetValueRange(double& Min, double& Max) const;
 };
 
 USTRUCT(BlueprintType)
@@ -39,6 +41,7 @@ struct GTCORE_API FInlineVectorCurve
 	UCurveVector* GetCurveAsset() const;
 	FVector GetValue(float InTime) const;
 	void GetTimeRange(float& Min, float& Max) const;
+	void GetTimeRange(double& Min, double& Max) const;
 	void GetValueRange(FVector& Min, FVector& Max) const;
 };
 
@@ -56,6 +59,7 @@ struct GTCORE_API FInlineColorCurve
 	UCurveLinearColor* GetCurveAsset() const;
 	FLinearColor GetValue(float InTime) const;
 	void GetTimeRange(float& Min, float& Max) const;
+	void GetTimeRange(double& Min, double& Max) const;
 	void GetValueRange(FLinearColor& Min, FLinearColor& Max) const;
 };
 
