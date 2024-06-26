@@ -3,7 +3,8 @@
 #include "ElectricLight.h"
 #include "Components/LightComponent.h"
 
-AElectricLightBase::AElectricLightBase() : bFlicker(false)
+AElectricLightBase::AElectricLightBase() : bFlicker(false), FlickerTime(0.0f)
+	, FlickerTimeRange(FVector2D::UnitY()), FlickerRange(FVector2D::UnitY())
 {
 	MinEnergy = 0;
 	SmartCulling = CreateDefaultSubobject<USmartCullingComponent>("SmartCulling");
@@ -14,41 +15,40 @@ void AElectricLightBase::SetFlickerState(const bool bNewFlicker)
 	if (bFlicker != bNewFlicker)
 	{
 		bFlicker = bNewFlicker;
-		OnFlickerUpdate();
+		FlickerCurve.GetValueRange(FlickerRange.X, FlickerRange.Y);
+		FlickerCurve.GetTimeRange(FlickerTimeRange.X, FlickerTimeRange.Y);
+		FlickerTime = FlickerTimeRange.X;
+		
+		SetActorTickEnabled(PrimaryActorTick.bStartWithTickEnabled || bFlicker);
 	}
 }
 
-void AElectricLightBase::OnFlickerUpdate() const
+void AElectricLightBase::OnFlickerUpdate(const float DeltaTime)
 {
-	TSet<ULightComponent*> Lights;
-	TMap<UStaticMeshComponent*, bool> Meshes;
-	GetLightInfo(Lights, Meshes);
-
-	for (ULightComponent* Light : Lights)
+	const float Value = FMath::Max(0.0f, FlickerCurve.GetValue(FlickerTime));
+	for (ULightComponent* Light : CachedLights)
 	{
-		if (Light) Light->SetLightFunctionMaterial(bFlicker ? FlickerFunction : nullptr);
+		if (Light) Light->SetIntensity(CachedIntensity.FindRef(Light) * Value);
+	}
+	for (const TPair<UStaticMeshComponent*, bool>& Mesh : CachedMeshes)
+	{
+		if (Mesh.Key) Mesh.Key->SetCustomPrimitiveDataFloat(6, Value);
 	}
 	
-	for (const TPair<UStaticMeshComponent*, bool>& Mesh : Meshes)
+	FlickerTime += DeltaTime;
+	if (FlickerTime > FlickerTimeRange.Y)
 	{
-		if (Mesh.Key) Mesh.Key->SetDefaultCustomPrimitiveDataFloat(6, bFlicker ? MeshProperties.Flicker : 0.0f);
+		FlickerTime = FlickerTimeRange.X;
 	}
 }
 
 void AElectricLightBase::OnStateChanged(const bool bState)
 {
-	OnFlickerUpdate();
-	
-	TSet<ULightComponent*> Lights;
-	TMap<UStaticMeshComponent*, bool> Meshes;
-	GetLightInfo(Lights, Meshes);
-	
-	for (ULightComponent* Light : Lights)
+	for (ULightComponent* Light : CachedLights)
 	{
 		if (Light) Light->SetVisibility(bState);
 	}
-	
-	for (const TPair<UStaticMeshComponent*, bool>& Mesh : Meshes)
+	for (const TPair<UStaticMeshComponent*, bool>& Mesh : CachedMeshes)
 	{
 		if (!Mesh.Key) continue;
 		if (Mesh.Value)
@@ -63,6 +63,23 @@ void AElectricLightBase::OnStateChanged(const bool bState)
 	}
 	
 	Super::OnStateChanged(bState);
+}
+
+void AElectricLightBase::Tick(float DeltaSeconds)
+{
+	Super::Tick(DeltaSeconds);
+	if (bFlicker && bCachedState)
+		OnFlickerUpdate(DeltaSeconds);
+}
+
+void AElectricLightBase::BeginPlay()
+{
+	Super::BeginPlay();
+	GetLightInfo(CachedLights, CachedMeshes);
+	for (ULightComponent* Light : CachedLights)
+	{
+		if (Light) CachedIntensity.Add(Light, Light->Intensity);
+	}
 }
 
 #if WITH_EDITORONLY_DATA

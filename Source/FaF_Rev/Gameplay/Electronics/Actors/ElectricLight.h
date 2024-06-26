@@ -2,6 +2,7 @@
 
 #pragma once
 
+#include "Data/InlineCurves.h"
 #include "Optimization/SmartCulling.h"
 #include "Electronics/ElectricActor.h"
 #include "ElectricLight.generated.h"
@@ -53,7 +54,7 @@ public:
 		FLightMeshProperties MeshProperties;
 
 	UPROPERTY(EditAnywhere, Category = "Settings", AdvancedDisplay)
-		TObjectPtr<UMaterialInterface> FlickerFunction;
+		FInlineFloatCurve FlickerCurve;
 
 	UFUNCTION(BlueprintCallable, Category = "ElectricActor|Light")
 		void SetFlickerState(const bool bNewFlicker);
@@ -62,10 +63,18 @@ public:
 		void GetLightInfo(TSet<ULightComponent*>& Lights, TMap<UStaticMeshComponent*, bool>& Meshes) const;
 
 protected:
-	
-	void OnFlickerUpdate() const;
-	void OnStateChanged(const bool bState) override;
 
+	UPROPERTY() float FlickerTime;
+	UPROPERTY() FVector2D FlickerRange;
+	UPROPERTY() FVector2D FlickerTimeRange;
+	UPROPERTY() TSet<ULightComponent*> CachedLights;
+	UPROPERTY() TMap<ULightComponent*, float> CachedIntensity;
+	UPROPERTY() TMap<UStaticMeshComponent*, bool> CachedMeshes;
+
+	void OnFlickerUpdate(const float DeltaTime);
+	void OnStateChanged(const bool bState) override;
+	virtual void Tick(float DeltaSeconds) override;
+	virtual void BeginPlay() override;
 #if WITH_EDITORONLY_DATA
 	virtual void OnConstruction(const FTransform& Transform) override;
 #endif
