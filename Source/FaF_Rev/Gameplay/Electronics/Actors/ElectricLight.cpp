@@ -3,8 +3,9 @@
 #include "ElectricLight.h"
 #include "Components/LightComponent.h"
 
-AElectricLightBase::AElectricLightBase() : bFlicker(false), FlickerRate(1.0f), FlickerTime(0.0f)
-	, FlickerRange(FVector2D::UnitY()), FlickerTimeRange(FVector2D::UnitY())
+AElectricLightBase::AElectricLightBase()
+	: bFlicker(false), FlickerRate(0.4f), LightFlickerRange({0.1f, 1.5f}), MeshFlickerRange({-0.1f, 1.0f})
+	, FlickerTime(0.0f), FlickerRange(FVector2D::UnitY()), FlickerTimeRange(FVector2D::UnitY())
 {
 	SmartCulling = CreateDefaultSubobject<USmartCullingComponent>("SmartCulling");
 	MinEnergy = 0;
@@ -34,11 +35,7 @@ void AElectricLightBase::SetFlickerState(const bool bNewFlicker)
 	if (bFlicker != bNewFlicker)
 	{
 		bFlicker = bNewFlicker;
-		FlickerCurve.GetValueRange(FlickerRange.X, FlickerRange.Y);
-		FlickerCurve.GetTimeRange(FlickerTimeRange.X, FlickerTimeRange.Y);
-		FlickerTime = FlickerTimeRange.X;
-		
-		SetActorTickEnabled(PrimaryActorTick.bStartWithTickEnabled || bFlicker);
+		OnFlickerChanged(bFlicker);
 	}
 }
 
@@ -47,11 +44,14 @@ void AElectricLightBase::OnFlickerUpdate(const float DeltaTime)
 	const float Value = FMath::Max(0.0f, FlickerCurve.GetValue(FlickerTime));
 	for (ULightComponent* Light : CachedLights)
 	{
-		if (Light) Light->SetIntensity(CachedIntensity.FindRef(Light) * Value);
+		if (Light) Light->SetIntensity(FMath::Max(0.0f,FMath::GetMappedRangeValueClamped(
+			FlickerRange, LightFlickerRange, Value) * CachedIntensity.FindRef(Light)));
 	}
 	for (const TPair<UStaticMeshComponent*, bool>& Mesh : CachedMeshes)
 	{
-		if (Mesh.Key) Mesh.Key->SetCustomPrimitiveDataFloat(6, Value);
+		if (Mesh.Key)
+			Mesh.Key->SetCustomPrimitiveDataFloat(6, FMath::Max(0.0f, FMath::GetMappedRangeValueClamped(
+				FlickerRange, MeshFlickerRange, Value)));
 	}
 	
 	FlickerTime += DeltaTime * FlickerRate;
@@ -59,6 +59,15 @@ void AElectricLightBase::OnFlickerUpdate(const float DeltaTime)
 	{
 		FlickerTime = FlickerTimeRange.X;
 	}
+}
+
+void AElectricLightBase::OnFlickerChanged(const bool bState)
+{
+	FlickerCurve.GetValueRange(FlickerRange.X, FlickerRange.Y);
+	FlickerCurve.GetTimeRange(FlickerTimeRange.X, FlickerTimeRange.Y);
+	FlickerTime = FlickerTimeRange.X;
+		
+	SetActorTickEnabled(PrimaryActorTick.bStartWithTickEnabled || bFlicker);
 }
 
 void AElectricLightBase::OnStateChanged(const bool bState)
@@ -95,11 +104,17 @@ void AElectricLightBase::Tick(float DeltaSeconds)
 void AElectricLightBase::BeginPlay()
 {
 	Super::BeginPlay();
+	CachedLights.Empty();
+	CachedMeshes.Empty();
+	CachedIntensity.Empty();
 	GetLightInfo(CachedLights, CachedMeshes);
+	CachedIntensity.Reserve(CachedLights.Num());
 	for (ULightComponent* Light : CachedLights)
 	{
 		if (Light) CachedIntensity.Add(Light, Light->Intensity);
 	}
+
+	OnFlickerChanged(bFlicker);
 }
 
 #if WITH_EDITORONLY_DATA
@@ -108,8 +123,19 @@ void AElectricLightBase::OnConstruction(const FTransform& Transform)
 	Super::OnConstruction(Transform);
 	if (!FApp::IsGame())
 	{
+		CachedLights.Empty();
+		CachedMeshes.Empty();
+		CachedIntensity.Empty();
+		GetLightInfo(CachedLights, CachedMeshes);
+		CachedIntensity.Reserve(CachedLights.Num());
+		for (ULightComponent* Light : CachedLights)
+		{
+			if (Light) CachedIntensity.Add(Light, Light->Intensity);
+		}
+		
 		bCachedState = bPreviewState;
 		OnStateChanged(bPreviewState);
+		OnFlickerChanged(bFlicker);
 	}
 }
 #endif

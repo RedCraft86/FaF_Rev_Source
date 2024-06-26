@@ -53,10 +53,16 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Settings")
 		FLightMeshProperties MeshProperties;
 
-	UPROPERTY(EditAnywhere, Category = "Settings", AdvancedDisplay, meta = (ClampMin = 0.01f, UIMin = 0.01f))
+	UPROPERTY(EditAnywhere, Category = "Settings|Flicker", meta = (ClampMin = 0.01f, UIMin = 0.01f))
 		float FlickerRate;
 	
-	UPROPERTY(EditAnywhere, Category = "Settings", AdvancedDisplay)
+	UPROPERTY(EditAnywhere, Category = "Settings|Flicker")
+		FVector2D LightFlickerRange;
+
+	UPROPERTY(EditAnywhere, Category = "Settings|Flicker")
+		FVector2D MeshFlickerRange;
+	
+	UPROPERTY(EditAnywhere, Category = "Settings|Flicker")
 		FInlineFloatCurve FlickerCurve;
 
 	UFUNCTION(BlueprintCallable, Category = "ElectricActor|Light")
@@ -73,15 +79,18 @@ protected:
 	UPROPERTY() TSet<ULightComponent*> CachedLights;
 	UPROPERTY() TMap<ULightComponent*, float> CachedIntensity;
 	UPROPERTY() TMap<UStaticMeshComponent*, bool> CachedMeshes;
-
-	void OnFlickerUpdate(const float DeltaTime);
+	
+	void OnFlickerChanged(const bool bState);
 	void OnStateChanged(const bool bState) override;
+	void OnFlickerUpdate(const float DeltaTime);
 	virtual void Tick(float DeltaSeconds) override;
 	virtual void BeginPlay() override;
 #if WITH_EDITORONLY_DATA
 	virtual void OnConstruction(const FTransform& Transform) override;
 #endif
-
+#if WITH_EDITOR
+	virtual bool ShouldTickIfViewportsOnly() const override { return true; }
+#endif
 public: // Statics
 
 	UFUNCTION(BlueprintCallable, Category = "ElectronicActor|Light", meta = (DefaultToSelf = "Target"))
