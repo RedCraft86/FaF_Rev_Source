@@ -4,7 +4,7 @@
 #include "Components/LightComponent.h"
 
 AElectricLightBase::AElectricLightBase() : bFlicker(false), FlickerTime(0.0f)
-	, FlickerTimeRange(FVector2D::UnitY()), FlickerRange(FVector2D::UnitY())
+	, FlickerRange(FVector2D::UnitY()), FlickerTimeRange(FVector2D::UnitY())
 {
 	MinEnergy = 0;
 	SmartCulling = CreateDefaultSubobject<USmartCullingComponent>("SmartCulling");
