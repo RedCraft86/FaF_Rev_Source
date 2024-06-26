@@ -28,6 +28,7 @@ void FWEPlayerLockFlag::RunEvent(const UObject* WorldContext)
 	}
 }
 
+#if WITH_EDITORONLY_DATA
 void FWEPlayerLockFlag::OnConstruction(const UObject* WorldContext, const bool bEditorTime)
 {
 	for (const FName& Flag : Player::LockFlags::All)
@@ -36,6 +37,7 @@ void FWEPlayerLockFlag::OnConstruction(const UObject* WorldContext, const bool b
 			LockFlag.EdData.AddOption({Flag.ToString(), Flag.ToString()});
 	}
 }
+#endif
 
 void FWEPlayerFade::RunEvent(const UObject* WorldContext)
 {
