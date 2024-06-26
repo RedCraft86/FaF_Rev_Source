@@ -53,6 +53,9 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Settings")
 		FLightMeshProperties MeshProperties;
 
+	UPROPERTY(EditAnywhere, Category = "Settings", AdvancedDisplay, meta = (ClampMin = 0.01f, UIMin = 0.01f))
+		float FlickerRate;
+	
 	UPROPERTY(EditAnywhere, Category = "Settings", AdvancedDisplay)
 		FInlineFloatCurve FlickerCurve;
 

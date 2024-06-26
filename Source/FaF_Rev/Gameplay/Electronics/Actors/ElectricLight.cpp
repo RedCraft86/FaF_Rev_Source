@@ -3,11 +3,30 @@
 #include "ElectricLight.h"
 #include "Components/LightComponent.h"
 
-AElectricLightBase::AElectricLightBase() : bFlicker(false), FlickerTime(0.0f)
+AElectricLightBase::AElectricLightBase() : bFlicker(false), FlickerRate(1.0f), FlickerTime(0.0f)
 	, FlickerRange(FVector2D::UnitY()), FlickerTimeRange(FVector2D::UnitY())
 {
-	MinEnergy = 0;
 	SmartCulling = CreateDefaultSubobject<USmartCullingComponent>("SmartCulling");
+	MinEnergy = 0;
+
+	FlickerCurve.GetRichCurve()->UpdateOrAddKey(0.0f, 1.0f);
+	FlickerCurve.GetRichCurve()->UpdateOrAddKey(0.0f, 1.0f);
+	FlickerCurve.GetRichCurve()->UpdateOrAddKey(0.06f, 0.28f);
+	FlickerCurve.GetRichCurve()->UpdateOrAddKey(0.1f, 0.95f);
+	FlickerCurve.GetRichCurve()->UpdateOrAddKey(0.13f, 0.15f);
+	FlickerCurve.GetRichCurve()->UpdateOrAddKey(0.17f, 0.69f);
+	FlickerCurve.GetRichCurve()->UpdateOrAddKey(0.2f, 0.37f);
+	FlickerCurve.GetRichCurve()->UpdateOrAddKey(0.23f, 1.24f);
+	FlickerCurve.GetRichCurve()->UpdateOrAddKey(0.26f, 0.69f);
+	FlickerCurve.GetRichCurve()->UpdateOrAddKey(0.3f, 1.33f);
+	FlickerCurve.GetRichCurve()->UpdateOrAddKey(0.33f, 0.32f);
+	FlickerCurve.GetRichCurve()->UpdateOrAddKey(0.36f, 0.88f);
+	FlickerCurve.GetRichCurve()->UpdateOrAddKey(0.4f, 0.65f);
+	FlickerCurve.GetRichCurve()->UpdateOrAddKey(0.42f, 0.97f);
+	FlickerCurve.GetRichCurve()->UpdateOrAddKey(0.44f, 0.43f);
+	FlickerCurve.GetRichCurve()->UpdateOrAddKey(0.46f, 0.69f);
+	FlickerCurve.GetRichCurve()->UpdateOrAddKey(0.48f, 0.58f);
+	FlickerCurve.GetRichCurve()->UpdateOrAddKey(0.5f, 1.0f);
 }
 
 void AElectricLightBase::SetFlickerState(const bool bNewFlicker)
@@ -35,7 +54,7 @@ void AElectricLightBase::OnFlickerUpdate(const float DeltaTime)
 		if (Mesh.Key) Mesh.Key->SetCustomPrimitiveDataFloat(6, Value);
 	}
 	
-	FlickerTime += DeltaTime;
+	FlickerTime += DeltaTime * FlickerRate;
 	if (FlickerTime > FlickerTimeRange.Y)
 	{
 		FlickerTime = FlickerTimeRange.X;
@@ -51,6 +70,7 @@ void AElectricLightBase::OnStateChanged(const bool bState)
 	for (const TPair<UStaticMeshComponent*, bool>& Mesh : CachedMeshes)
 	{
 		if (!Mesh.Key) continue;
+		Mesh.Key->SetDefaultCustomPrimitiveDataFloat(6, 1.0f);
 		if (Mesh.Value)
 		{
 			Mesh.Key->SetVisibility(bState);
