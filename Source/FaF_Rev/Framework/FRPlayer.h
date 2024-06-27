@@ -7,13 +7,14 @@
 #include "Data/MathTypes.h"
 #include "Data/LightingData.h"
 #include "InputActionValue.h"
-#include "EnemyAI/FREnemyBase.h"
 #include "GameFramework/Character.h"
 #include "FRPlayer.generated.h"
 
+class AFREnemyBase;
+
 #define FRPlayer(Context) AFRPlayerBase::Get<AFRPlayerBase>(Context)
 
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FEnemyStackChangedSignature, const TArray<AFREnemyBase*>&, Enemies)
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FEnemyStackChangedSignature, const TArray<AFREnemyBase*>&, Enemies);
 
 UCLASS(Abstract)
 class FAF_REV_API AFRPlayerBase final : public ACharacter

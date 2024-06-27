@@ -15,7 +15,7 @@ public:
 	UVisionConeComponent();
 
 	UPROPERTY(EditAnywhere, Category = "Settings|VisionCone")
-		ECollisionChannel TraceChannel;
+		TEnumAsByte<ECollisionChannel> TraceChannel;
 
 	UPROPERTY(EditAnywhere, Category = "Settings|VisionCone", meta = (ClampMin = 10.0f, UIMin = 10.0f))
 		float MaxDistance;

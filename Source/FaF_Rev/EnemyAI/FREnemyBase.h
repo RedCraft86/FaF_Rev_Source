@@ -2,7 +2,6 @@
 
 #pragma once
 
-#include "FRPlayer.h"
 #include "GameFramework/Character.h"
 #include "FREnemyBase.generated.h"
 
@@ -30,7 +29,7 @@ public:
 		bool bStartRoaming;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Settings", AdvancedDisplay)
-		TSoftObjectPtr<AFRPlayerBase> PlayerChar;
+		TSoftObjectPtr<class AFRPlayerBase> PlayerChar;
 
 	UFUNCTION(BlueprintCallable, Category = "EnemyAI")
 		void SetEnemyState(const EEnemyState InNewState);
