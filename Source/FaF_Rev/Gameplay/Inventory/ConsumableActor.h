@@ -20,15 +20,18 @@ public:
 		SceneRoot = CreateDefaultSubobject<USceneComponent>("SceneRoot");
 		SetRootComponent(SceneRoot);
 
-		InitialLifeSpan = 0.25f;
+		LifeSpan = 0.25f;
 	}
 
 	UPROPERTY(VisibleAnywhere, Category = "Subobject")
 		TObjectPtr<USceneComponent> SceneRoot;
 
+	UPROPERTY(EditAnywhere, Category = "Settings", meta = (ClampMin = 0.0f, UIMin = 0.0f))
+		float LifeSpan;
+
 	bool UseItem()
 	{
-		SetLifeSpan(InitialLifeSpan);
+		SetLifeSpan(LifeSpan);
 		return OnItemUse();
 	}
 
