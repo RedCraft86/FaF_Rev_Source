@@ -2,7 +2,7 @@
 
 #include "FREnemyBase.h"
 
-AFREnemyBase::AFREnemyBase() : EnemyState(EEnemyState::None)
+AFREnemyBase::AFREnemyBase() : bStartRoaming(true), EnemyState(EEnemyState::None)
 {
 	PrimaryActorTick.bCanEverTick = true;
 }
@@ -24,6 +24,12 @@ void AFREnemyBase::SetEnemyState(const EEnemyState InNewState)
 			}
 		}
 	}
+}
+
+void AFREnemyBase::BeginPlay()
+{
+	Super::BeginPlay();
+	SetEnemyState(bStartRoaming ? EEnemyState::Roam : EEnemyState::None);
 }
 
 void AFREnemyBase::OnConstruction(const FTransform& Transform)

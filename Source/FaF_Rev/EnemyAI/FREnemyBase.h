@@ -26,6 +26,9 @@ public:
 
 	AFREnemyBase();
 
+	UPROPERTY(EditAnywhere, Category = "Settings")
+		bool bStartRoaming;
+
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Settings", AdvancedDisplay)
 		TSoftObjectPtr<AFRPlayerBase> PlayerChar;
 
@@ -38,5 +41,7 @@ public:
 protected:
 
 	UPROPERTY() EEnemyState EnemyState;
+	
+	virtual void BeginPlay() override;
 	virtual void OnConstruction(const FTransform& Transform) override;
 };
