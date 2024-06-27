@@ -344,7 +344,6 @@ namespace Player
 	{
 		inline static FString RunFOV			= TEXT("Internal_RunFOV");
 		inline static FString CrouchFOV			= TEXT("Internal_CrouchFOV");
-		inline static FString ChaseStamina		= TEXT("Internal_ChaseStamina");
 		inline static FString DifficultyStamina	= TEXT("Internal_DifficultyStamina");
 	}
 

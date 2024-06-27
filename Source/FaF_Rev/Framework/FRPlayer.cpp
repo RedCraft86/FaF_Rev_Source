@@ -79,7 +79,6 @@ AFRPlayerBase::AFRPlayerBase()
 	MaxStamina = 100.0f;
 	StaminaDrainRate = {2.5f};
 	StaminaGainRate = {1.75f};
-	AdrenalineReductionMulti = 0.5f;
 	CrouchSpeed = 10.0f;
 	CeilingTraceChannel = ECC_Visibility;
 	HalfHeights = {88.0f, 45.0f};
@@ -503,53 +502,24 @@ UObject* AFRPlayerBase::GetWorldDevice() const
 	return WorldDevice;
 }
 
-void AFRPlayerBase::AddEnemy(UObject* InObject, const EEnemyAIMode InMode)
+void AFRPlayerBase::AddEnemy(const UObject* InObject)
 {
-	if (InMode == EEnemyAIMode::None)
-	{
-		RemoveEnemy(InObject);
-	}
-	else
-	{
-		EnemyStack.Remove(nullptr);
-		EnemyStack.Add(InObject, InMode);
-		EnemyStackChanged();
-	}
+	EnemyStack.AddUnique(InObject);
+	EnemyStack.RemoveAll([](const TSoftObjectPtr<UObject>& Element) -> bool { return Element.IsNull(); });
+	EnemyStackChanged.Broadcast(EnemyStack);
 }
 
 void AFRPlayerBase::RemoveEnemy(const UObject* InObject)
 {
-	EnemyStack.Remove(nullptr);
 	EnemyStack.Remove(InObject);
-	EnemyStackChanged();
+	EnemyStack.RemoveAll([](const TSoftObjectPtr<UObject>& Element) -> bool { return Element.IsNull(); });
+	EnemyStackChanged.Broadcast(EnemyStack);
 }
 
 void AFRPlayerBase::ClearEnemyStack()
 {
 	EnemyStack.Empty();
-	EnemyStackChanged();
-}
-
-EEnemyAIMode AFRPlayerBase::GetPriorityEnemyMode() const
-{
-	if (EnemyStack.IsEmpty()) return EEnemyAIMode::None;
-	
-	TArray<EEnemyAIMode> States;
-	EnemyStack.GenerateValueArray(States);
-	if (States.Contains(EEnemyAIMode::Chase))
-	{
-		return EEnemyAIMode::Chase;
-	}
-	if (States.Contains(EEnemyAIMode::Search))
-	{
-		return EEnemyAIMode::Search;
-	}
-	if (States.Contains(EEnemyAIMode::Alerted))
-	{
-		return EEnemyAIMode::Alerted;
-	}
-
-	return EEnemyAIMode::None;
+	EnemyStackChanged.Broadcast(EnemyStack);
 }
 
 void AFRPlayerBase::FadeToBlack(const float InTime, const bool bAudio) const
@@ -595,6 +565,7 @@ void AFRPlayerBase::ClearFade() const
 void AFRPlayerBase::CutsceneStart(ULevelSequencePlayer* InSequence)
 {
 	if (!InSequence) return;
+	SetActorHiddenInGame(true);
 	LockFlags.Add(Player::LockFlags::Cutscene);
 	ActiveCutscene = InSequence;
 }
@@ -602,46 +573,9 @@ void AFRPlayerBase::CutsceneStart(ULevelSequencePlayer* InSequence)
 void AFRPlayerBase::CutsceneEnd()
 {
 	if (!ActiveCutscene) return;
+	SetActorHiddenInGame(false);
 	LockFlags.Remove(Player::LockFlags::Cutscene);
 	ActiveCutscene = nullptr;
-}
-// TODO sound
-void AFRPlayerBase::EnemyStackChanged()
-{
-	if (EnemyStack.IsEmpty())
-	{
-		RemoveStaminaDrainModifier(Player::InternalKeys::ChaseStamina);
-		//GameState->SetMusicMode(EEnemyAIMode::None);
-		EnemyStackChangedEvent(EEnemyAIMode::None);
-		return;
-	}
-
-	TArray<EEnemyAIMode> States;
-	EnemyStack.GenerateValueArray(States);
-	if (States.Contains(EEnemyAIMode::Chase))
-	{
-		AddStaminaDrainModifier(Player::InternalKeys::ChaseStamina, AdrenalineReductionMulti);
-		//GameState->SetMusicMode(EEnemyAIMode::Chase);
-		EnemyStackChangedEvent(EEnemyAIMode::Chase);
-	}
-	else if (States.Contains(EEnemyAIMode::Search))
-	{
-		//GameState->SetMusicMode(EEnemyAIMode::Search);
-		EnemyStackChangedEvent(EEnemyAIMode::Search);
-	}
-	else if (States.Contains(EEnemyAIMode::Alerted))
-	{
-		RemoveStaminaDrainModifier(Player::InternalKeys::ChaseStamina);
-		//GameState->SetMusicMode(EEnemyAIMode::Alerted);
-		EnemyStackChangedEvent(EEnemyAIMode::Alerted);
-	}
-	else
-	{
-		// Uh-oh! Something broke though. We shouldn't have an Enemy in the stack with their AI Mode saved as NONE
-		RemoveStaminaDrainModifier(Player::InternalKeys::ChaseStamina);
-		//GameState->SetMusicMode(EEnemyAIMode::None);
-		EnemyStackChangedEvent(EEnemyAIMode::None);
-	}
 }
 
 void AFRPlayerBase::TeleportPlayer(const FVector& InLocation, const FRotator& InRotation)

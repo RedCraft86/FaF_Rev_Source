@@ -13,6 +13,8 @@
 
 #define FRPlayer(Context) AFRPlayerBase::Get<AFRPlayerBase>(Context)
 
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FEnemyStackChangedSignature, const TArray<TSoftObjectPtr<UObject>>&, Enemies)
+
 UCLASS(Abstract)
 class FAF_REV_API AFRPlayerBase final : public ACharacter
 {
@@ -102,10 +104,6 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Settings|Running|Stamina")
 		FPlayerStaminaDifficulty StaminaDifficulty;
 
-	// Percent of stamina drain for when the player is in a chase: 0.1 -> 1.0
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Settings|Running|Stamina", meta = (ClampMin = 0.1f, UIMin = 0.1f))
-		float AdrenalineReductionMulti;
-
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Settings|Crouching", meta = (ClampMin = 0.1f, UIMin = 0.1f))
 		float CrouchSpeed;
 	
@@ -151,6 +149,9 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Settings", AdvancedDisplay)
 		FPlayerFootsteps FootstepSounds;
+
+	UPROPERTY(BlueprintAssignable)
+		FEnemyStackChangedSignature EnemyStackChanged;
 	
 protected:
 
@@ -160,7 +161,7 @@ protected:
 	UPROPERTY(Transient) TObjectPtr<UObject> HidingSpot;
 	UPROPERTY(Transient) TObjectPtr<UObject> WorldDevice;
 	UPROPERTY(Transient) TObjectPtr<class ULevelSequencePlayer> ActiveCutscene;
-	UPROPERTY(Transient) TMap<TObjectPtr<UObject>, EEnemyAIMode> EnemyStack;
+	UPROPERTY(Transient) TArray<TSoftObjectPtr<UObject>> EnemyStack;
 
 	float SlowTickTime;
 	FVector CamPosition;
@@ -317,16 +318,13 @@ public:
 		UObject* GetWorldDevice() const;
 	
 	UFUNCTION(BlueprintCallable, Category = "Player")
-		void AddEnemy(UObject* InObject, const EEnemyAIMode InMode);
+		void AddEnemy(const UObject* InObject);
 
 	UFUNCTION(BlueprintCallable, Category = "Player")
 		void RemoveEnemy(const UObject* InObject);
 	
 	UFUNCTION(BlueprintCallable, Category = "Player")
 		void ClearEnemyStack();
-
-	UFUNCTION(BlueprintPure, Category = "Player")
-		EEnemyAIMode GetPriorityEnemyMode() const;
 	
 	UFUNCTION(BlueprintCallable, BlueprintPure = false, Category = "Player")
 		void FadeToBlack(const float InTime, const bool bAudio = true) const;
@@ -351,8 +349,7 @@ public:
 	
 	UFUNCTION(BlueprintPure, Category = "Player")
 		ULevelSequencePlayer* GetActiveCutscene() const { return ActiveCutscene; }
-	
-	void EnemyStackChanged();
+
 	void TeleportPlayer(const FVector& InLocation, const FRotator& InRotation);
 	virtual void SetActorHiddenInGame(bool bNewHidden) override;
 
