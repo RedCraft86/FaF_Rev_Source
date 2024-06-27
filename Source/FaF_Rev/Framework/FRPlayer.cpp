@@ -502,23 +502,23 @@ UObject* AFRPlayerBase::GetWorldDevice() const
 	return WorldDevice;
 }
 
-void AFRPlayerBase::AddEnemy(const AFREnemyBase* InEnemy)
+void AFRPlayerBase::AddEnemy(AFREnemyBase* InEnemy)
 {
 	if (!EnemyStack.Contains(InEnemy))
 	{
 		EnemyStack.Add(InEnemy);
-		EnemyStack.RemoveAll([](const TSoftObjectPtr<AFREnemyBase>& Element) -> bool { return Element.IsNull(); });
-		EnemyStackChanged.Broadcast(EnemyStack);
+		EnemyStack.Remove(nullptr);
+		EnemyStackChanged.Broadcast(EnemyStack.Array());
 	}
 }
 
-void AFRPlayerBase::RemoveEnemy(const AFREnemyBase* InEnemy)
+void AFRPlayerBase::RemoveEnemy(AFREnemyBase* InEnemy)
 {
 	if (EnemyStack.Contains(InEnemy))
 	{
 		EnemyStack.Remove(InEnemy);
-		EnemyStack.RemoveAll([](const TSoftObjectPtr<AFREnemyBase>& Element) -> bool { return Element.IsNull(); });
-		EnemyStackChanged.Broadcast(EnemyStack);
+		EnemyStack.Remove(nullptr);
+		EnemyStackChanged.Broadcast(EnemyStack.Array());
 	}
 }
 
@@ -527,7 +527,7 @@ void AFRPlayerBase::ClearEnemyStack()
 	if (!EnemyStack.IsEmpty())
 	{
 		EnemyStack.Empty();
-		EnemyStackChanged.Broadcast(EnemyStack);
+		EnemyStackChanged.Broadcast(EnemyStack.Array());
 	}
 }
 

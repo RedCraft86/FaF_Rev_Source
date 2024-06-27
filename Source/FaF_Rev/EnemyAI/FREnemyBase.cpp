@@ -37,3 +37,21 @@ void AFREnemyBase::OnConstruction(const FTransform& Transform)
 	Super::OnConstruction(Transform);
 	if (PlayerChar.IsNull()) PlayerChar = AFRPlayerBase::Get(this);
 }
+
+EEnemyState AFREnemyBase::GetHighestEnemyState(const TArray<AFREnemyBase*>& InEnemies)
+{
+	for (const AFREnemyBase* Enemy : InEnemies)
+	{
+		if (!Enemy) continue;
+		switch (Enemy->GetEnemyState())
+		{
+		case EEnemyState::Chase: return EEnemyState::Chase;
+		case EEnemyState::Search: return EEnemyState::Search;
+		case EEnemyState::Alert: return EEnemyState::Alert;
+		case EEnemyState::Roam: return EEnemyState::Roam;
+		case EEnemyState::None: return EEnemyState::None;
+		}
+	}
+
+	return EEnemyState::None;
+}

@@ -13,7 +13,7 @@
 
 #define FRPlayer(Context) AFRPlayerBase::Get<AFRPlayerBase>(Context)
 
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FEnemyStackChangedSignature, const TArray<TSoftObjectPtr<AFREnemyBase>>&, Enemies)
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FEnemyStackChangedSignature, const TArray<AFREnemyBase*>&, Enemies)
 
 UCLASS(Abstract)
 class FAF_REV_API AFRPlayerBase final : public ACharacter
@@ -161,7 +161,7 @@ protected:
 	UPROPERTY(Transient) TObjectPtr<UObject> HidingSpot;
 	UPROPERTY(Transient) TObjectPtr<UObject> WorldDevice;
 	UPROPERTY(Transient) TObjectPtr<class ULevelSequencePlayer> ActiveCutscene;
-	UPROPERTY(Transient) TArray<TSoftObjectPtr<AFREnemyBase>> EnemyStack;
+	UPROPERTY(Transient) TSet<TObjectPtr<AFREnemyBase>> EnemyStack;
 
 	float SlowTickTime;
 	FVector CamPosition;
@@ -318,10 +318,10 @@ public:
 		UObject* GetWorldDevice() const;
 	
 	UFUNCTION(BlueprintCallable, Category = "Player")
-		void AddEnemy(const AFREnemyBase* InEnemy);
+		void AddEnemy(AFREnemyBase* InEnemy);
 
 	UFUNCTION(BlueprintCallable, Category = "Player")
-		void RemoveEnemy(const AFREnemyBase* InEnemy);
+		void RemoveEnemy(AFREnemyBase* InEnemy);
 	
 	UFUNCTION(BlueprintCallable, Category = "Player")
 		void ClearEnemyStack();

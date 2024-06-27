@@ -44,4 +44,9 @@ protected:
 	
 	virtual void BeginPlay() override;
 	virtual void OnConstruction(const FTransform& Transform) override;
+
+public: // Statics
+
+	UFUNCTION(BlueprintPure, Category = "EnemyAI")
+		static EEnemyState GetHighestEnemyState(const TArray<AFREnemyBase*>& InEnemies);
 };
