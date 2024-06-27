@@ -8,6 +8,7 @@
 #include "DetailsCustomization/PrimitiveCollisionDetails.h"
 #include "DetailsCustomization/PropertyMetadataDetails.h"
 #include "ComponentVisualizers/DebugShapesVisualizer.h"
+#include "ComponentVisualizers/VisionConeVisualizer.h"
 #include "CustomAssets/GameMusic/MusicDataAssetActions.h"
 #include "CustomAssets/Inventory/ItemDataAssetActions.h"
 #include "BlueprintEditorModule.h"
@@ -53,6 +54,7 @@ void FGTEditorModule::StartupModule()
 	if (GUnrealEd)
 	{
 		REGISTER_VISUALIZER(UDebugShapesComponent, FDebugShapesVisualizer);
+		REGISTER_VISUALIZER(UVisionConeComponent, FVisionConeVisualizer);
 	}
 
 	if (const FAssetToolsModule* AssetToolsModule = FModuleManager::LoadModulePtr<FAssetToolsModule>("AssetTools"))
@@ -97,6 +99,7 @@ void FGTEditorModule::ShutdownModule()
 	if (GUnrealEd)
 	{
 		UNREGISTER_VISUALIZER(UDebugShapesComponent);
+		UNREGISTER_VISUALIZER(UVisionConeComponent);
 	}
 
 	if (const FAssetToolsModule* AssetToolsModule = FModuleManager::GetModulePtr<FAssetToolsModule>("AssetTools"))
