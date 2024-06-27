@@ -3,17 +3,17 @@
 #pragma once
 
 #include "ExecEnums.h"
-#include "EnemyData.h"
 #include "PlayerData.h"
 #include "Data/MathTypes.h"
 #include "Data/LightingData.h"
 #include "InputActionValue.h"
+#include "EnemyAI/FREnemyBase.h"
 #include "GameFramework/Character.h"
 #include "FRPlayer.generated.h"
 
 #define FRPlayer(Context) AFRPlayerBase::Get<AFRPlayerBase>(Context)
 
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FEnemyStackChangedSignature, const TArray<TSoftObjectPtr<UObject>>&, Enemies)
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FEnemyStackChangedSignature, const TArray<TSoftObjectPtr<AFREnemyBase>>&, Enemies)
 
 UCLASS(Abstract)
 class FAF_REV_API AFRPlayerBase final : public ACharacter
@@ -161,7 +161,7 @@ protected:
 	UPROPERTY(Transient) TObjectPtr<UObject> HidingSpot;
 	UPROPERTY(Transient) TObjectPtr<UObject> WorldDevice;
 	UPROPERTY(Transient) TObjectPtr<class ULevelSequencePlayer> ActiveCutscene;
-	UPROPERTY(Transient) TArray<TSoftObjectPtr<UObject>> EnemyStack;
+	UPROPERTY(Transient) TArray<TSoftObjectPtr<AFREnemyBase>> EnemyStack;
 
 	float SlowTickTime;
 	FVector CamPosition;
@@ -181,7 +181,7 @@ protected:
 public:
 
 	UFUNCTION(BlueprintImplementableEvent, DisplayName = "Enemy Stack Changed")
-		void EnemyStackChangedEvent(const EEnemyAIMode PriorityMode);
+		void EnemyStackChangedEvent(const EEnemyState PriorityMode);
 
 	UFUNCTION(BlueprintCallable, Category = "Player")
 		void ResetStates();
@@ -318,10 +318,10 @@ public:
 		UObject* GetWorldDevice() const;
 	
 	UFUNCTION(BlueprintCallable, Category = "Player")
-		void AddEnemy(const UObject* InObject);
+		void AddEnemy(const AFREnemyBase* InEnemy);
 
 	UFUNCTION(BlueprintCallable, Category = "Player")
-		void RemoveEnemy(const UObject* InObject);
+		void RemoveEnemy(const AFREnemyBase* InEnemy);
 	
 	UFUNCTION(BlueprintCallable, Category = "Player")
 		void ClearEnemyStack();

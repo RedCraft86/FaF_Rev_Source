@@ -502,24 +502,33 @@ UObject* AFRPlayerBase::GetWorldDevice() const
 	return WorldDevice;
 }
 
-void AFRPlayerBase::AddEnemy(const UObject* InObject)
+void AFRPlayerBase::AddEnemy(const AFREnemyBase* InEnemy)
 {
-	EnemyStack.AddUnique(InObject);
-	EnemyStack.RemoveAll([](const TSoftObjectPtr<UObject>& Element) -> bool { return Element.IsNull(); });
-	EnemyStackChanged.Broadcast(EnemyStack);
+	if (!EnemyStack.Contains(InEnemy))
+	{
+		EnemyStack.Add(InEnemy);
+		EnemyStack.RemoveAll([](const TSoftObjectPtr<AFREnemyBase>& Element) -> bool { return Element.IsNull(); });
+		EnemyStackChanged.Broadcast(EnemyStack);
+	}
 }
 
-void AFRPlayerBase::RemoveEnemy(const UObject* InObject)
+void AFRPlayerBase::RemoveEnemy(const AFREnemyBase* InEnemy)
 {
-	EnemyStack.Remove(InObject);
-	EnemyStack.RemoveAll([](const TSoftObjectPtr<UObject>& Element) -> bool { return Element.IsNull(); });
-	EnemyStackChanged.Broadcast(EnemyStack);
+	if (EnemyStack.Contains(InEnemy))
+	{
+		EnemyStack.Remove(InEnemy);
+		EnemyStack.RemoveAll([](const TSoftObjectPtr<AFREnemyBase>& Element) -> bool { return Element.IsNull(); });
+		EnemyStackChanged.Broadcast(EnemyStack);
+	}
 }
 
 void AFRPlayerBase::ClearEnemyStack()
 {
-	EnemyStack.Empty();
-	EnemyStackChanged.Broadcast(EnemyStack);
+	if (!EnemyStack.IsEmpty())
+	{
+		EnemyStack.Empty();
+		EnemyStackChanged.Broadcast(EnemyStack);
+	}
 }
 
 void AFRPlayerBase::FadeToBlack(const float InTime, const bool bAudio) const
@@ -1116,7 +1125,14 @@ void AFRPlayerBase::SetupPlayerInputComponent(UInputComponent* PlayerInputCompon
 
 AFRPlayerBase* AFRPlayerBase::GetPlayerSmart(const UObject* WorldContextObject, const TSubclassOf<AFRPlayerBase> Class)
 {
-	AFRPlayerBase* Obj = Cast<AFRPlayerBase>(UGameplayStatics::GetPlayerPawn(WorldContextObject, 0));
+	AFRPlayerBase* Obj = nullptr;
+#if WITH_EDITOR
+	if (FApp::IsGame())
+#endif
+	{
+		Obj = Cast<AFRPlayerBase>(UGameplayStatics::GetPlayerPawn(WorldContextObject, 0));
+	}
+
 	if (!IsValid(Obj)) Obj = Cast<AFRPlayerBase>(UGameplayStatics::GetActorOfClass(WorldContextObject, StaticClass()));
 	return Obj && Obj->IsA(Class) ? Obj : nullptr;
 }
