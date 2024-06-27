@@ -119,16 +119,6 @@ bool UInventoryComponent::UseKeyItem(const UInventoryItemDataBase* InItem, const
 	return true;
 }
 
-void UInventoryComponent::UnequipItem()
-{
-	if (!EquipmentData.ItemID.IsValid()) return;
-}
-
-void UInventoryComponent::EquipItem(const FGuid& ItemKey)
-{
-	if (EquipmentData.ItemID.IsValid()) return;
-}
-
 void UInventoryComponent::ConsumeItem(const FGuid& ItemKey)
 {
 	const UInventoryItemData* ItemData = ItemSlots.FindRef(ItemKey).GetItemData<UInventoryItemData>();
@@ -143,12 +133,59 @@ void UInventoryComponent::ConsumeItem(const FGuid& ItemKey)
 	}
 }
 
+void UInventoryComponent::UnequipItem()
+{
+	if (!EquipmentData.ItemID.IsValid()) return;
+	if (EquipmentData.Equipment)
+	{
+		EquipmentData.Equipment->SetActorHiddenInGame(true);
+		EquipmentData.Equipment->bEquipped = false;
+		EquipmentData.Equipment->OnUnequip();
+	}
+	EquipmentData = {};
+}
+
+void UInventoryComponent::EquipItem(const FGuid& ItemKey)
+{
+	if (GetWorld()->GetTimerManager().IsTimerActive(EquipTimer)) return;
+
+	const UInventoryItemData* ItemData = ItemSlots.FindRef(ItemKey).GetItemData<UInventoryItemData>();
+	if (!ItemData || ItemData->ItemType != EInventoryItemType::Equipment || !ItemData->EquipmentClass) return;
+
+	float WaitTime = 0.01f;
+	if (EquipmentData.ItemID.IsValid())
+	{
+		UnequipItem();
+		WaitTime = 0.1f;
+	}
+
+	GetWorld()->GetTimerManager().SetTimer(EquipTimer, [this, ItemData, ItemKey]()
+	{
+		if (AEquipmentActor* Equipment = GetWorld()->SpawnActor<AEquipmentActor>(ItemData->ConsumableClass))
+		{
+			EquipmentData.ItemID = ItemKey;
+			EquipmentData.Equipment = Equipment;
+			Equipment->PlayerChar = PlayerChar;
+			Equipment->Inventory = this;
+			Equipment->ItemID = ItemKey;
+			Equipment->bEquipped = true;
+		}
+		else
+		{
+			EquipmentData = {};
+		}
+	}, WaitTime, false);
+}
+
 void UInventoryComponent::ImportSaveData(const FInventorySaveData& InData)
 {
 	CurrencyData = InData.CurrencyData;
 	if (ItemSlots.Contains(InData.ActiveEquipment))
 	{
-		// EQUIPMENT
+		GetWorld()->GetTimerManager().SetTimerForNextTick([this, InData]()
+		{
+			EquipItem(InData.ActiveEquipment);
+		});
 	}
 
 	ON_UPDATE();

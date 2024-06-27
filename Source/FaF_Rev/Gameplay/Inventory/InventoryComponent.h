@@ -13,8 +13,8 @@ struct FAF_REV_API FInventorySaveData
 {
 	GENERATED_BODY()
 
-	FGuid ActiveEquipment;
-	FGameCurrency CurrencyData;
+	UPROPERTY() FGuid ActiveEquipment;
+	UPROPERTY() FGameCurrency CurrencyData;
 
 	FInventorySaveData() : ActiveEquipment({}), CurrencyData({}) {}
 	FInventorySaveData(const FGuid InEquipment, const FGameCurrency InCurrency)
@@ -34,7 +34,7 @@ struct FAF_REV_API FInventoryEquipmentData
 {
 	GENERATED_BODY()
 
-	FGuid ItemID;
+	UPROPERTY() FGuid ItemID;
 	UPROPERTY(Transient) TObjectPtr<AEquipmentActor> Equipment;
 	FInventoryEquipmentData() : ItemID({}), Equipment(nullptr) {}
 };
@@ -65,10 +65,10 @@ public:
 	TArray<FGuid> GetSortedSlots(const EInventoryItemType TypeFilter = EInventoryItemType::Any);
 
 	bool UseKeyItem(const UInventoryItemDataBase* InItem, const FString& KeyID);
+	void ConsumeItem(const FGuid& ItemKey);
 	
 	void UnequipItem();
 	void EquipItem(const FGuid& ItemKey);
-	void ConsumeItem(const FGuid& ItemKey);
 	const FInventoryEquipmentData& GetEquipmentData() const { return EquipmentData; }
 		
 	void ImportSaveData(const FInventorySaveData& InData);
@@ -76,6 +76,7 @@ public:
 
 protected:
 
+	UPROPERTY() FTimerHandle EquipTimer;
 	UPROPERTY() bool bIsInInventory = false;
 	UPROPERTY(Transient) TObjectPtr<AFRPlayerBase> PlayerChar;
 	UPROPERTY(Transient) TObjectPtr<AInventoryPreview> InventoryPreview;
