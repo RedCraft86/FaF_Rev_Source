@@ -21,11 +21,19 @@ private:
 	{
 		if (const UVisionConeComponent* ConeComponent = Cast<const UVisionConeComponent>(Component))
 		{
-			DrawWireSphereCappedCone(PDI, ConeComponent->GetComponentTransform(), ConeComponent->MaxDistance,
-				ConeComponent->GetBaseAngle(), 16, 4, 8, FLinearColor::Red, SDPG_World);
-
-			DrawWireSphereCappedCone(PDI, ConeComponent->GetComponentTransform(), ConeComponent->MaxDistance,
-				ConeComponent->GetPeripheralAngle(), 16, 4, 8, FLinearColor::Yellow, SDPG_World);
+			if (FMath::IsNearlyZero(ConeComponent->PeripheralAngle) || FMath::IsNearlyEqual(ConeComponent->GetBaseAngle(), 90.0f))
+			{
+				DrawWireSphereCappedCone(PDI, ConeComponent->GetComponentTransform(), ConeComponent->MaxDistance,
+					ConeComponent->GetBaseAngle(), 16, 4, 16, FLinearColor::Red, SDPG_World);	
+			}
+			else
+			{
+				TArray<FVector> Verts;
+				DrawWireCone(PDI, Verts, ConeComponent->GetComponentTransform(), ConeComponent->MaxDistance,
+					ConeComponent->GetBaseAngle(), 16, FLinearColor::Red, SDPG_World);
+				DrawWireSphereCappedCone(PDI, ConeComponent->GetComponentTransform(), ConeComponent->MaxDistance,
+					ConeComponent->GetPeripheralAngle(), 16, 4, 16, FLinearColor::Yellow, SDPG_World);	
+			}
 		}
 	}
 
@@ -33,8 +41,8 @@ private:
 	{
 		if (const UVisionConeComponent* ConeComponent = Cast<const UVisionConeComponent>(Component))
 		{
-			VisualizerHelpers::DrawText(View, Canvas, ConeComponent->GetComponentLocation(),
-				UEnum::GetDisplayValueAsText<ECollisionChannel>(ConeComponent->TraceChannel),
+			VisualizerHelpers::DrawText(View, Canvas, ConeComponent->GetComponentLocation(), FText::Format(INVTEXT("Trace: {0}"), 
+				UEnum::GetDisplayValueAsText<ECollisionChannel>(ConeComponent->TraceChannel)),
 				12, FLinearColor::Green, true);
 		}
 	}

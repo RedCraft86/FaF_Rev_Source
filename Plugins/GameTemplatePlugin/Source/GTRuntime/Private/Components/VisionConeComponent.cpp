@@ -4,7 +4,7 @@
 #include "Libraries/GTRuntimeLibrary.h"
 
 UVisionConeComponent::UVisionConeComponent()
-	: TraceChannel(ECC_Visibility), MaxDistance(3000.0f), BaseAngle(50.0f), PeripheralAngle(30.0f)
+	: TraceChannel(ECC_Visibility), MaxDistance(2000.0f), BaseAngle(50.0f), PeripheralAngle(20.0f)
 {
 	PrimaryComponentTick.bCanEverTick = false;
 }
@@ -59,7 +59,8 @@ bool UVisionConeComponent::IsActorInVision(const AActor* InActor) const
 
 bool UVisionConeComponent::IsActorInPeripheral(const AActor* InActor) const
 {
-	if (!IsActorInRange(InActor) || FMath::IsNearlyEqual(GetBaseAngle(), GetPeripheralAngle())) return false;
+	if (!IsActorInRange(InActor) || FMath::IsNearlyZero(PeripheralAngle)
+		|| FMath::IsNearlyEqual(GetBaseAngle(), 90.0f)) return false;
 	
 	const float AngleToTarget = GetAngleTo(InActor);
 	if (AngleToTarget < 0.0f || AngleToTarget > GetPeripheralAngle() || AngleToTarget <= GetBaseAngle()) return false;
