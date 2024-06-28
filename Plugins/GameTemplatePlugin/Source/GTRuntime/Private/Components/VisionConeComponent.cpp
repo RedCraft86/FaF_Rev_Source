@@ -49,20 +49,15 @@ bool UVisionConeComponent::IsActorInRange(const AActor* InActor) const
 	return FVector::Distance(GetComponentLocation(), InActor->GetActorLocation()) <= FMath::Min(MaxDistance, 10.0f);
 }
 
-bool UVisionConeComponent::IsActorInVision(const AActor* InActor) const
+EVisionConeState UVisionConeComponent::GetActorVisionState(const AActor* InActor) const
 {
-	if (!IsActorInRange(InActor)) return false;
-	const float AngleToTarget = GetAngleTo(InActor);
-	if (AngleToTarget < 0.0f || AngleToTarget > GetBaseAngle()) return false;
-	return GetTraceTo(InActor);
-}
+	if (!IsActorInRange(InActor)) return EVisionConeState::None;
 
-bool UVisionConeComponent::IsActorInPeripheral(const AActor* InActor) const
-{
-	if (!IsActorInRange(InActor) || FMath::IsNearlyZero(PeripheralAngle)
-		|| FMath::IsNearlyEqual(GetBaseAngle(), 90.0f)) return false;
-	
 	const float AngleToTarget = GetAngleTo(InActor);
-	if (AngleToTarget < 0.0f || AngleToTarget > GetPeripheralAngle() || AngleToTarget <= GetBaseAngle()) return false;
-	return GetTraceTo(InActor);
+	if (AngleToTarget >= 0.0f && AngleToTarget <= GetPeripheralAngle() && GetTraceTo(InActor))
+	{
+		return AngleToTarget <= GetBaseAngle() ? EVisionConeState::FullySeen : EVisionConeState::Peripheral;
+	}
+	
+	return EVisionConeState::None;
 }

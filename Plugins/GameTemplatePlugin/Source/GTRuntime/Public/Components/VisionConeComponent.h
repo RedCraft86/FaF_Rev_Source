@@ -5,6 +5,14 @@
 #include "Components/SceneComponent.h"
 #include "VisionConeComponent.generated.h"
 
+UENUM(BlueprintType)
+enum class EVisionConeState : uint8
+{
+	None,
+	Peripheral,
+	FullySeen
+};
+
 UCLASS(ClassGroup = (Custom), meta = (BlueprintSpawnableComponent))
 class GTRUNTIME_API UVisionConeComponent final : public USceneComponent
 {
@@ -34,12 +42,9 @@ public:
 	
 	UFUNCTION(BlueprintPure, Category = "VisionCone")
 		bool IsActorInRange(const AActor* InActor) const;
-		
+
 	UFUNCTION(BlueprintPure, Category = "VisionCone")
-		bool IsActorInVision(const AActor* InActor) const;
-		
-	UFUNCTION(BlueprintPure, Category = "VisionCone")
-		bool IsActorInPeripheral(const AActor* InActor) const;
+		EVisionConeState GetActorVisionState(const AActor* InActor) const;
 
 	float GetBaseAngle() const { return FMath::Min(BaseAngle, 90.0f); }
 	float GetPeripheralAngle() const { return FMath::Min(GetBaseAngle() + PeripheralAngle, 90.0f); }
