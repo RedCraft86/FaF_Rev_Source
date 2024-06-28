@@ -6,7 +6,7 @@
 #include "AsyncDataDelete.generated.h"
 
 UCLASS()
-class GAMEJOLTAPI_API UAsyncDataDelete final : public UGamejoltAsyncAction
+class GAMEJOLTAPI_API UAsyncDataDelete final : public UExtendedAsyncAction
 {
 	GENERATED_BODY()
 	

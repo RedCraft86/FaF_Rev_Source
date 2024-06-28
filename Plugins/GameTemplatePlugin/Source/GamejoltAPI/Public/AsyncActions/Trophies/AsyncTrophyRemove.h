@@ -6,7 +6,7 @@
 #include "AsyncTrophyRemove.generated.h"
 
 UCLASS()
-class GAMEJOLTAPI_API UAsyncTrophyRemove final : public UGamejoltAsyncAction
+class GAMEJOLTAPI_API UAsyncTrophyRemove final : public UExtendedAsyncAction
 {
 	GENERATED_BODY()
 	

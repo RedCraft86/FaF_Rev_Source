@@ -6,7 +6,7 @@
 #include "AsyncSessionClose.generated.h"
 
 UCLASS()
-class GAMEJOLTAPI_API UAsyncSessionClose final : public UGamejoltAsyncAction
+class GAMEJOLTAPI_API UAsyncSessionClose final : public UExtendedAsyncAction
 {
 	GENERATED_BODY()
 	

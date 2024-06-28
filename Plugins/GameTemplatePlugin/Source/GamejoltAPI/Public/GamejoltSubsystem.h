@@ -7,6 +7,7 @@
 #include "GamejoltSubsystem.generated.h"
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FGamejoltCheckDelegate);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FGamejoltAsyncActionDelegate, const FString&, Error);
 
 UCLASS(BlueprintType)
 class GAMEJOLTAPI_API UGamejoltSubsystem final : public UEngineSubsystem
@@ -23,10 +24,10 @@ public:
 	UPROPERTY(BlueprintAssignable)
 		FGamejoltCheckDelegate OnConnectionTimedOut;
 
-	UFUNCTION(BlueprintPure, Category = "GamejoltAPI")
+	UFUNCTION(BlueprintCallable, BlueprintPure = false, Category = "GamejoltAPI")
 		void DeleteCredentials() const;
 
-	UFUNCTION(BlueprintPure, Category = "GamejoltAPI")
+	UFUNCTION(BlueprintCallable, BlueprintPure = false, Category = "GamejoltAPI")
 		void SaveCredentials() const;
 	
 	UFUNCTION(BlueprintPure, Category = "GamejoltAPI")
@@ -69,6 +70,9 @@ public: // Statics
 
 	UFUNCTION(BlueprintPure, Category = "GamejoltAPI")
 		static FString GetGamejoltVersionDataKey() { return TEXT("version"); }
+
+	UFUNCTION(BlueprintPure, Category = "GamejoltAPI")
+		static FIntVector4 FormatGamejoltVersionData(const FString& InString);
 
 	static FString GetCredentialsPath() { return FPaths::ProjectSavedDir() / TEXT("user-cache.gjc"); }
 	static UGamejoltSubsystem* Get() { return GEngine ? GEngine->GetEngineSubsystem<UGamejoltSubsystem>() : nullptr; }

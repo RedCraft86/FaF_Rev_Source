@@ -6,7 +6,7 @@
 #include "AsyncAuthLogin.generated.h"
 
 UCLASS()
-class GAMEJOLTAPI_API UAsyncAuthLogin final : public UGamejoltAsyncAction
+class GAMEJOLTAPI_API UAsyncAuthLogin final : public UExtendedAsyncAction
 {
 	GENERATED_BODY()
 	

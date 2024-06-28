@@ -6,7 +6,7 @@
 #include "AsyncSessionOpen.generated.h"
 
 UCLASS()
-class GAMEJOLTAPI_API UAsyncSessionOpen final : public UGamejoltAsyncAction
+class GAMEJOLTAPI_API UAsyncSessionOpen final : public UExtendedAsyncAction
 {
 	GENERATED_BODY()
 

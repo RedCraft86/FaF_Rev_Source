@@ -8,7 +8,7 @@
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FGamejoltCheckSessionDelegate, const bool, bActive, const FString&, Error);
 
 UCLASS()
-class GAMEJOLTAPI_API UAsyncSessionCheck final : public UGamejoltAsyncAction
+class GAMEJOLTAPI_API UAsyncSessionCheck final : public UExtendedAsyncAction
 {
 	GENERATED_BODY()
 

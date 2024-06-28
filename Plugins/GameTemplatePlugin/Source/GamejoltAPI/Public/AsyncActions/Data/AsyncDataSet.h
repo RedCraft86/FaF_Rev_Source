@@ -6,7 +6,7 @@
 #include "AsyncDataSet.generated.h"
 
 UCLASS()
-class GAMEJOLTAPI_API UAsyncDataSet final : public UGamejoltAsyncAction
+class GAMEJOLTAPI_API UAsyncDataSet final : public UExtendedAsyncAction
 {
 	GENERATED_BODY()
 	

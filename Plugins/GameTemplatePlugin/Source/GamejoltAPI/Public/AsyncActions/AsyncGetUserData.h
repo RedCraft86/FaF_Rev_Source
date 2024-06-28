@@ -8,7 +8,7 @@
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FGamejoltUserDataDelegate, const FGamejoltUserData&, UserData, const FString&, Error);
 
 UCLASS()
-class GAMEJOLTAPI_API UAsyncGetUserData final : public UGamejoltAsyncAction
+class GAMEJOLTAPI_API UAsyncGetUserData final : public UExtendedAsyncAction
 {
 	GENERATED_BODY()
 public:

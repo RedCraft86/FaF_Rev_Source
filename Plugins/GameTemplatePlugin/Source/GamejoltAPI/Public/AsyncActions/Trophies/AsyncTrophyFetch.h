@@ -8,7 +8,7 @@
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FGamejoltDataTrophiesDelegate, const TArray<FGamejoltTrophyData>&, Trophies, const FString&, Error);
 
 UCLASS()
-class GAMEJOLTAPI_API UAsyncTrophyFetch final : public UGamejoltAsyncAction
+class GAMEJOLTAPI_API UAsyncTrophyFetch final : public UExtendedAsyncAction
 {
 	GENERATED_BODY()
 

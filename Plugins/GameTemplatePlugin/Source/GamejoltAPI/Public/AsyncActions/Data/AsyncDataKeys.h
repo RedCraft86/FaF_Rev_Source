@@ -8,7 +8,7 @@
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FGamejoltDataKeysDelegate, const TArray<FString>&, Keys, const FString&, Error);
 
 UCLASS()
-class GAMEJOLTAPI_API UAsyncDataKeys final : public UGamejoltAsyncAction
+class GAMEJOLTAPI_API UAsyncDataKeys final : public UExtendedAsyncAction
 {
 	GENERATED_BODY()
 

@@ -455,3 +455,28 @@ void UGamejoltSubsystem::Initialize(FSubsystemCollectionBase& Collection)
 		GameData.Value = Settings->GameKey;
 	}
 }
+
+FIntVector4 UGamejoltSubsystem::FormatGamejoltVersionData(const FString& InString)
+{
+	FIntVector4 Result;
+	TArray<FString> VerNums;
+	InString.ParseIntoArray(VerNums, TEXT("."));
+	if (VerNums.IsValidIndex(0))
+	{
+		Result.X = FCString::Atoi(*VerNums[0]);
+	}
+	if (VerNums.IsValidIndex(1))
+	{
+		Result.Y = FCString::Atoi(*VerNums[1]);
+	}
+	if (VerNums.IsValidIndex(2))
+	{
+		Result.Z = FCString::Atoi(*VerNums[2]);
+	}
+	if (VerNums.IsValidIndex(3))
+	{
+		Result.W = FCString::Atoi(*VerNums[3]);
+	}
+
+	return Result;
+}
