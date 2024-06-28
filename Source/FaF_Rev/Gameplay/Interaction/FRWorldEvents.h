@@ -194,7 +194,7 @@ struct FAF_REV_API FWESimpleSubtitle final : public FWEMessagingBase
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Subtitle")
 		TArray<FSimpleSubtitleData> Subtitles;
 
-	FWESimpleSubtitle() : bOverride(false), Subtitles({}) {}
+	FWESimpleSubtitle() : bOverride(true), Subtitles({}) {}
 	
 protected:
 
