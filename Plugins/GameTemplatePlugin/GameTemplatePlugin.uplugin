@@ -49,11 +49,6 @@
 			"Name": "DataGraphEditor",
 			"Type": "Editor",
 			"LoadingPhase": "Default"
-		},
-		{
-			"Name": "GamejoltAPI",
-			"Type": "RuntimeNoCommandlet",
-			"LoadingPhase": "PostEngineInit"
 		}
 	],
 	"Plugins": [

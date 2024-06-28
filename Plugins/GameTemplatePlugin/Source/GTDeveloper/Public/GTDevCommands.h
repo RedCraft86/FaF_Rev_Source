@@ -40,9 +40,6 @@ public:
 		UI_COMMAND(TodoTaskList, "Todo List", "Opens the Todo/Task List",
 			EUserInterfaceActionType::Button, FInputChord());
 
-		UI_COMMAND(GamejoltVersion, "Gamejolt Version", "Opens the Gamejolt Version Editor",
-			EUserInterfaceActionType::Button, FInputChord());
-
 		UI_COMMAND(StaticMeshMerger, "Merge Static Meshes", "Opens the Merge Actors tab",
 			EUserInterfaceActionType::Button, FInputChord());
 
@@ -56,7 +53,6 @@ public:
 	TSharedPtr<FUICommandInfo> RestartEditor;
 	TSharedPtr<FUICommandInfo> ChannelPacker;
 	TSharedPtr<FUICommandInfo> TodoTaskList;
-	TSharedPtr<FUICommandInfo> GamejoltVersion;
 	TSharedPtr<FUICommandInfo> StaticMeshMerger;
 	TSharedPtr<FUICommandInfo> StaticMeshBaker;
 	TSharedPtr<FUICommandInfo> StaticMeshInstancer;

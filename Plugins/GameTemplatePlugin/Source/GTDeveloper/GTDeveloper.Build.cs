@@ -2,7 +2,7 @@
 
 using UnrealBuildTool;
 
-public class GTDeveloper : ModuleRules
+public class TDeveloper : ModuleRules
 {
     public GTDeveloper(ReadOnlyTargetRules Target) : base(Target)
     {
@@ -26,7 +26,6 @@ public class GTDeveloper : ModuleRules
                 "EngineSettings",
                 "EditorScriptingUtilities",
                 "WebBrowserWidget",
-                "GamejoltAPI",
                 "GTCore",
                 "GTRuntime",
             }

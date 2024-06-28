@@ -5,7 +5,6 @@
 #include "Tools/StaticMeshInstancerTool.h"
 #include "Tools/StaticMeshMergerTool.h"
 #include "Tools/StaticMeshBakerTool.h"
-#include "Tools/GamejoltVersionTool.h"
 #include "Tools/RestartEditorTool.h"
 #include "Tools/ChannelPackerTool.h"
 #include "Tools/TodoTaskListTool.h"
@@ -23,7 +22,6 @@ void FGTDeveloperModule::StartupModule()
     FRestartEditorTool::Register(PluginCommands);
     FChannelPackerTool::Register(PluginCommands);
     FTodoTaskListTool::Register(PluginCommands);
-    FGamejoltVersionTool::Register(PluginCommands);
     FStaticMeshMergerTool::Register(PluginCommands);
     FStaticMeshBakerTool::Register(PluginCommands);
     FStaticMeshInstancerTool::Register(PluginCommands);
@@ -50,7 +48,6 @@ void FGTDeveloperModule::RegisterMenus()
         FRestartEditorTool::RegisterMenus(PluginCommands);
         FChannelPackerTool::RegisterMenus(PluginCommands);
         FTodoTaskListTool::RegisterMenus(PluginCommands);
-        FGamejoltVersionTool::RegisterMenus(PluginCommands);
         FStaticMeshMergerTool::RegisterMenus(PluginCommands);
         FStaticMeshBakerTool::RegisterMenus(PluginCommands);
         FStaticMeshInstancerTool::RegisterMenus(PluginCommands);

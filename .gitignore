@@ -45,8 +45,7 @@ Build/*/**
 !/Build/**/*.ico
 
 /Plugins/SteamAudio/
-/Plugins/AudioNormalizer/
-Plugins/GameTemplatePlugin/Source/GamejoltAPI/Private/GamejoltKeys.h
+/Plugins/GameJoltAPI/
 
 !/Config/DefaultEngine.default
 !/Config/DefaultGame.default

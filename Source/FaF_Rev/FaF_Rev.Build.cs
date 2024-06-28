@@ -40,7 +40,6 @@ public class FaF_Rev : ModuleRules
 				"DataGraphRuntime",
 				"PulldownStruct",
 				"ExpressiveText",
-				"GamejoltAPI",
 				"StructUtils",
 				"Narrative",
 				"GTRuntime",

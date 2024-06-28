@@ -54,7 +54,6 @@ TSharedRef<FSlateStyleSet> FGTDevStyle::Create()
 	Style->Set("GTDevTools.RestartEditor", new IMAGE_BRUSH_SVG(TEXT("RestartEditor"), Icon20x20));
 	Style->Set("GTDevTools.ChannelPacker", new IMAGE_BRUSH_SVG(TEXT("ChannelPacker"), Icon20x20));
 	Style->Set("GTDevTools.TodoTaskList", new IMAGE_BRUSH_SVG(TEXT("TodoTaskList"), Icon20x20));
-	Style->Set("GTDevTools.GamejoltVersion", new IMAGE_BRUSH(TEXT("Gamejolt_NoColor"), Icon20x20));
 	Style->Set("GTDevTools.StaticMeshBaker", new IMAGE_BRUSH_SVG(TEXT("StaticMeshBaker"), Icon20x20));
 	Style->Set("GTDevTools.StaticMeshMerger", new IMAGE_BRUSH_SVG(TEXT("StaticMeshMerger"), Icon20x20));
 	Style->Set("GTDevTools.StaticMeshInstancer", new IMAGE_BRUSH_SVG(TEXT("StaticMeshInstancer"), Icon20x20));
