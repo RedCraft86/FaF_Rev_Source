@@ -2,7 +2,7 @@
 
 using UnrealBuildTool;
 
-public class TDeveloper : ModuleRules
+public class GTDeveloper : ModuleRules
 {
     public GTDeveloper(ReadOnlyTargetRules Target) : base(Target)
     {
