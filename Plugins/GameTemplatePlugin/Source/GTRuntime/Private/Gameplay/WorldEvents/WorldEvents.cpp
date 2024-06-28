@@ -93,6 +93,31 @@ void FWCFlipFlop::OnConstruction(const UObject* WorldContext, const bool bEditor
 	}
 }
 
+void FWCDoOnce::RunEvent(const UObject* WorldContext)
+{
+	if (bHasDone) return;
+	
+	bHasDone = true;
+	for (FInstancedStruct& Event : Events)
+	{
+		if (FWorldEventBase* EventPtr = Event.GetMutablePtr<FWorldEventBase>())
+		{
+			EventPtr->RunEvent(WorldContext);
+		}
+	}
+}
+
+void FWCDoOnce::OnConstruction(const UObject* WorldContext, const bool bEditorTime)
+{
+	for (FInstancedStruct& Event : Events)
+	{
+		if (FWorldEventBase* EventPtr = Event.GetMutablePtr<FWorldEventBase>())
+		{
+			EventPtr->OnConstruction(WorldContext, bEditorTime);
+		}
+	}
+}
+
 void FWEEventGlobal::RunEvent(const UObject* WorldContext)
 {
 	if (!EventID.IsValid()) return;

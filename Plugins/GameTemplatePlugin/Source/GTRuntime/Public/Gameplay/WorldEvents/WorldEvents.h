@@ -107,6 +107,23 @@ protected:
 	virtual void OnConstruction(const UObject* WorldContext, const bool bEditorTime) override;
 };
 
+USTRUCT(BlueprintType, DisplayName = "Flip Flop")
+struct GTRUNTIME_API FWCDoOnce final : public FWCBase
+{
+	GENERATED_BODY()
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "DoOnce", meta = (BaseStruct = "/Script/GTRuntime.WorldEventBase", ExcludeBaseStruct, ShowTreeView))
+		TArray<FInstancedStruct> Events;
+
+	FWCDoOnce() : bHasDone(false) {}
+
+protected:
+
+	bool bHasDone;
+	virtual void RunEvent(const UObject* WorldContext) override;
+	virtual void OnConstruction(const UObject* WorldContext, const bool bEditorTime) override;
+};
+
 USTRUCT(BlueprintInternalUseOnly, DisplayName = "Events", meta = (Hidden))
 struct GTRUNTIME_API FWEEventsBase : public FWorldEventBase
 { GENERATED_BODY() };
