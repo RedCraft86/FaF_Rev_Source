@@ -206,10 +206,11 @@ void FWEStepSequence::RunEvent(const UObject* WorldContext)
 		FTimerHandle Handle;
 		Timer.SetTimer(Handle, [this, WorldContext]()
 		{
+			Player.LoadSynchronous()->SetActorLocation(FVector::ZeroVector);
 			if (UGameSectionManager* Manager = UGameSectionManager::Get(WorldContext))
 			{
 				Manager->Step(Index);
 			}
-		}, FMath::Abs(FadeTime), false);
+		}, FMath::Abs(FadeTime) + 0.5f, false);
 	}
 }
