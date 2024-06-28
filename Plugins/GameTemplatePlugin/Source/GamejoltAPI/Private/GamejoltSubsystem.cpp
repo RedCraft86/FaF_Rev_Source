@@ -20,47 +20,69 @@ UGamejoltSubsystem::UGamejoltSubsystem()
 	GameData.Value = TEXT("");
 	Credentials.Key = TEXT("");
 	Credentials.Value = TEXT("");
-	TestConnectionData.Key = false;
-	TestConnectionData.Value = 0;
+	TestConnectionCount = 0;
 }
 
-void UGamejoltSubsystem::TestConnection(const bool bAutoLogin)
+void UGamejoltSubsystem::DeleteCredentials() const
 {
-	if (TestConnectionData.Value == 0)
+	if (FPaths::FileExists(GetCredentialsPath()))
 	{
-		TestConnectionData.Value = 1;
-		TestConnectionData.Key = bAutoLogin;
+		IFileManager::Get().Delete(*GetCredentialsPath(), true, false, true);
+	}
+}
+
+void UGamejoltSubsystem::SaveCredentials() const
+{
+	TArray<uint8> CompressedData;
+	if (!Credentials.Key.IsEmpty() && !Credentials.Value.IsEmpty())
+	{
+		FString Data = FString::Printf(TEXT("%s_&&_%s"), *Credentials.Key, *Credentials.Value);
+		Data = UGTDataUtilsLibrary::EncryptAES(Data, GamejoltAES);
+
+		FBufferArchive ToBinary(true);
+		ToBinary << Data;
+
+		CompressedData = UGTDataUtilsLibrary::CompressBytes(ToBinary);
+
+		ToBinary.FlushCache();
+		ToBinary.Close();
+
+		Data = TEXT("");
+	}
+	else
+	{
+		CompressedData = {0};
+	}
+
+	FFileHelper::SaveArrayToFile(CompressedData, *GetCredentialsPath());
+}
+
+void UGamejoltSubsystem::LoadCredentials(FString& OutName, FString& OutKey) const
+{
+	TArray<uint8> CompressedData;
+	if (FPaths::FileExists(GetCredentialsPath()))
+	{
+		FFileHelper::LoadFileToArray(CompressedData, *GetCredentialsPath());
 	}
 	
-	CheckConnetionInternal([this](const bool bConnected)
+	if (CompressedData.IsEmpty())
 	{
-		if (bConnected)
-		{
-			TestConnectionData.Value = 0;
-			OnConnectionSuccessful.Broadcast();
-			if (TestConnectionData.Key)
-			{
-				LoadCredentials([this](const FGamejoltResponse& InResponse)
-				{
-					OnAutoLoginUpdate.Broadcast(InResponse.bSuccess);
-				});
-			}
-		}
-		else
-		{
-			if (TestConnectionData.Value <= 5)
-			{
-				TestConnectionData.Value++;
-				TestConnection(TestConnectionData.Key);
-			}
-			else
-			{
-				TestConnectionData.Value = -1;
-				OnConnectionTimedOut.Broadcast();
-				UE_LOG(GamejoltAPI, Warning, TEXT("Connection Timed Out!"))
-			}
-		}
-	});
+		OutName = TEXT("");
+		OutKey = TEXT("");
+		return;
+	}
+
+	FMemoryReader FromBinary(UGTDataUtilsLibrary::DecompressBytes(CompressedData), true);
+	FromBinary.Seek(0);
+
+	FString Data;
+	FromBinary << Data;
+	Data = UGTDataUtilsLibrary::DecryptAES(Data, GamejoltAES);
+
+	FromBinary.FlushCache();
+	FromBinary.Close();
+
+	Data.Split(TEXT("_&&_"), &OutName, &OutKey, ESearchCase::CaseSensitive, ESearchDir::FromStart);
 }
 
 void UGamejoltSubsystem::GetUserData(TFunction<void(const FGamejoltResponse&, const FGamejoltUserData&)> Callback) const
@@ -116,16 +138,17 @@ void UGamejoltSubsystem::AuthLogin(const FString& UserName, const FString& UserT
 	Credentials.Value = UserToken;
 	MAKE_REQUEST(TEXT("users/auth/?"), true, [this, bRemember, Callback](const FGamejoltResponse& Response)
 	{
-		if (!Response.bSuccess)
+		if (!Response.bSuccess || !bRemember)
 		{
 			Credentials.Key = TEXT("");
 			Credentials.Value = TEXT("");
+			DeleteCredentials();
 		}
 		else if (bRemember)
 		{
 			SaveCredentials();
 		}
-
+		
 		CALLBACK(, Response);
 	});
 }
@@ -328,84 +351,6 @@ void UGamejoltSubsystem::FetchTrophies(const EGamejoltTrophyFilter TypeFilter, c
 		}
 		
 		CALLBACK(, Response, OutData);
-	});
-}
-
-void UGamejoltSubsystem::DeleteCredentials()
-{
-	Credentials.Key = TEXT("");
-	Credentials.Value = TEXT("");
-	if (FPaths::FileExists(GetCredentialsPath()))
-	{
-		IFileManager::Get().Delete(*GetCredentialsPath(), true, false, true);
-	}
-}
-
-void UGamejoltSubsystem::SaveCredentials() const
-{
-	TArray<uint8> CompressedData;
-	if (!Credentials.Key.IsEmpty() && !Credentials.Value.IsEmpty())
-	{
-		FString Data = FString::Printf(TEXT("%s_&&_%s"), *Credentials.Key, *Credentials.Value);
-		Data = UGTDataUtilsLibrary::EncryptAES(Data, GamejoltAES);
-
-		FBufferArchive ToBinary(true);
-		ToBinary << Data;
-
-		CompressedData = UGTDataUtilsLibrary::CompressBytes(ToBinary);
-
-		ToBinary.FlushCache();
-		ToBinary.Close();
-
-		Data = TEXT("");
-	}
-	else
-	{
-		CompressedData = {0};
-	}
-
-	AsyncTask(ENamedThreads::AnyBackgroundHiPriTask, [CompressedData](){
-		FFileHelper::SaveArrayToFile(CompressedData, *GetCredentialsPath());
-	});
-
-	CompressedData.Empty();
-}
-
-void UGamejoltSubsystem::LoadCredentials(const TFunction<void(const FGamejoltResponse&)>& Callback)
-{
-	AsyncTask(ENamedThreads::AnyBackgroundHiPriTask, [this, Callback]()
-	{
-		TArray<uint8> CompressedData;
-		if (FPaths::FileExists(GetCredentialsPath()))
-		{
-			FFileHelper::LoadFileToArray(CompressedData, *GetCredentialsPath());
-		}
-		AsyncTask(ENamedThreads::GameThread, [this, Callback, CompressedData]()
-		{
-			if (CompressedData.IsEmpty())
-			{
-				CALLBACK(, {false, TEXT("No existing data to load")})
-			}
-
-			FMemoryReader FromBinary(UGTDataUtilsLibrary::DecompressBytes(CompressedData), true);
-			FromBinary.Seek(0);
-
-			FString Data;
-			FromBinary << Data;
-			Data = UGTDataUtilsLibrary::DecryptAES(Data, GamejoltAES);
-
-			FromBinary.FlushCache();
-			FromBinary.Close();
-				
-			FString Name = TEXT(""), Key = TEXT("");
-			Data.Split(TEXT("_&&_"), &Name, &Key, ESearchCase::CaseSensitive, ESearchDir::FromStart);
-			AuthLogin(Name, Key, false, [Callback](const FGamejoltResponse& Response)
-			{
-				CALLBACK(, Response)
-			});
-
-			Data = TEXT("");
-		});
 	});
 }
 

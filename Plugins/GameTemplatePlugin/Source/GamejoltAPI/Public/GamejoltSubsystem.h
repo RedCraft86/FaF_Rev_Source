@@ -7,7 +7,6 @@
 #include "GamejoltSubsystem.generated.h"
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FGamejoltCheckDelegate);
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FGamejoltAutoLoginDelegate, const bool, bSuccess);
 
 UCLASS(BlueprintType)
 class GAMEJOLTAPI_API UGamejoltSubsystem final : public UEngineSubsystem
@@ -24,11 +23,14 @@ public:
 	UPROPERTY(BlueprintAssignable)
 		FGamejoltCheckDelegate OnConnectionTimedOut;
 
-	UPROPERTY(BlueprintAssignable)
-		FGamejoltAutoLoginDelegate OnAutoLoginUpdate;
+	UFUNCTION(BlueprintPure, Category = "GamejoltAPI")
+		void DeleteCredentials() const;
 
-	UFUNCTION(BlueprintCallable, Category = "GamejoltAPI")
-		void TestConnection(const bool bAutoLogin);
+	UFUNCTION(BlueprintPure, Category = "GamejoltAPI")
+		void SaveCredentials() const;
+	
+	UFUNCTION(BlueprintPure, Category = "GamejoltAPI")
+		void LoadCredentials(FString& OutName, FString& OutKey) const;
 	
 	void GetUserData(TFunction<void(const FGamejoltResponse&, const FGamejoltUserData&)> Callback) const;
 	void AuthLogin(const FString& UserName, const FString& UserToken, const bool bRemember, TFunction<void(const FGamejoltResponse&)> Callback);
@@ -48,18 +50,14 @@ public:
 	void AddTrophy(const int32 TrophyID, TFunction<void(const FGamejoltResponse&)> Callback) const;
 	void RemoveTrophy(const int32 TrophyID, TFunction<void(const FGamejoltResponse&)> Callback) const;
 	void FetchTrophies(const EGamejoltTrophyFilter TypeFilter, const TArray<int32>& IDFilter, TFunction<void(const FGamejoltResponse&, const TArray<FGamejoltTrophyData>&)> Callback) const;
-	
-	void DeleteCredentials();
-	void SaveCredentials() const;
-	void LoadCredentials(const TFunction<void(const FGamejoltResponse&)>& Callback);
 
 	virtual UWorld* GetWorld() const override;
 
 private:
 	
+	uint8 TestConnectionCount;
 	TTuple<int32, FString> GameData;
 	TTuple<FString, FString> Credentials;
-	TTuple<bool, uint8> TestConnectionData;
 
 	FString GetGamejoltVersion() const;
 	FString ConstructURL(const FString& URL, const bool bUser) const;
