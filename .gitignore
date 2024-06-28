@@ -46,7 +46,6 @@ Build/*/**
 
 /Plugins/SteamAudio/
 /Plugins/GameJoltAPI/
-Plugins/GameJoltAPI/GameJoltAPI.uplugin
 
 !/Config/DefaultEngine.default
 !/Config/DefaultGame.default
