@@ -70,9 +70,6 @@ public: // Statics
 	UFUNCTION(BlueprintPure, Category = "GamejoltAPI")
 		static FString GetGamejoltVersionDataKey() { return TEXT("version"); }
 
-	UFUNCTION(BlueprintPure, Category = "GamejoltAPI")
-		static FIntVector4 FormatGamejoltVersionData(const FString& InString);
-
 	static FString GetCredentialsPath() { return FPaths::ProjectSavedDir() / TEXT("user-cache.gjc"); }
 	static UGamejoltSubsystem* Get() { return GEngine ? GEngine->GetEngineSubsystem<UGamejoltSubsystem>() : nullptr; }
 };
