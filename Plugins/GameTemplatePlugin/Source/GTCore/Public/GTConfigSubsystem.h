@@ -43,9 +43,6 @@ public:
 	UFUNCTION(BlueprintPure, Category = "GameConfig|Defaults")
 		bool IsDeveloperMode() const;
 	
-	UFUNCTION(BlueprintPure, Category = "GameConfig|Defaults")
-		FString GetGamejoltVersion() const;
-	
 	void LoadGameConfig();
 	void SaveGameConfig() const;
 	bool CheckGameConfigDefaults() const;

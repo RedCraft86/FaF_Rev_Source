@@ -96,11 +96,6 @@ bool UGTConfigSubsystem::IsDeveloperMode() const
 #endif
 }
 
-FString UGTConfigSubsystem::GetGamejoltVersion() const
-{
-	return GetGameConfigString(TEXT("gamejolt-api-version"), TEXT("v1_2"));
-}
-
 void UGTConfigSubsystem::LoadGameConfig()
 {
 	FString GameConfigStr;
@@ -140,11 +135,6 @@ bool UGTConfigSubsystem::CheckGameConfigDefaults() const
 #else
 		GameConfig.JsonObject->SetBoolField(TEXT("developer-mode"), true);
 #endif
-		bNeedsResave = true;
-	}
-	if (!GameConfig.JsonObject->HasField(TEXT("gamejolt-api-version")))
-	{
-		GameConfig.JsonObject->SetStringField(TEXT("gamejolt-api-version"), TEXT("v1_2"));
 		bNeedsResave = true;
 	}
 	return bNeedsResave;
