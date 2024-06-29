@@ -35,6 +35,11 @@ void UGameSettings::InitializeSettings()
 		bLaunchWork = true;
 		RunHardwareBenchmark();
 		ApplyHardwareBenchmarkResults();
+		if (GetOverallQuality() > 3)
+		{
+			SetOverallQuality(3);
+		}
+		
 		SetResScalePercent(100.0f);
 		CacheScalabilityDefaults();
 	}
