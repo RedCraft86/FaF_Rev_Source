@@ -72,8 +72,11 @@ void ASplinePolygon::Construct()
 	ProceduralMesh->SetMaterial(0, Material);
 
 #if WITH_EDITORONLY_DATA
-	ProceduralMesh->CreateMeshSection(1, Vertices, Triangles, Normals, {}, {}, Tangents, false);
-	ProceduralMesh->SetMaterial(1, OverlayMaterial);
+	if (OverlayMaterial)
+	{
+		ProceduralMesh->CreateMeshSection(1, Vertices, Triangles, Normals, {}, {}, Tangents, false);
+		ProceduralMesh->SetMaterial(1, OverlayMaterial);
+	}
 #endif
 	
 	Super::Construct();
