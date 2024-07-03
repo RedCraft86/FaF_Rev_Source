@@ -16,11 +16,6 @@
 	"Installed": false,
 	"Modules": [
 		{
-			"Name": "SaveDirPatcher",
-			"Type": "RuntimeNoCommandlet",
-			"LoadingPhase": "EarliestPossible"
-		},
-		{
 			"Name": "GTCore",
 			"Type": "Runtime",
 			"LoadingPhase": "Default"
