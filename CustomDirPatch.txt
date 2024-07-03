@@ -1,0 +1,8 @@
+- Rename game exe to GameName.game
+
+- Write this into a .bat file
+@echo off
+start "" "%~dp0GameName.game" -UserDir="%APPDATA%\..\LocalLow\FadingLanternInt\GameName"
+
+- Convert the .bat into a .exe
+- Move the created .exe to the same folder GameName.game is in
