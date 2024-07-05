@@ -275,6 +275,6 @@ float UGameSettings::IntToFrameRate(const int32 InValue)
 	case 0: return 30.0f;
 	case 1: return 60.0f;
 	case 2: return 120.0f;
-	default: return 0.0f;
+	default: return 500.0f;
 	}
 }
