@@ -63,6 +63,9 @@ AMusicManagerBase::AMusicManagerBase()
 {
 	PrimaryActorTick.bCanEverTick = false;
 
+	SceneRoot = CreateDefaultSubobject<USceneComponent>("SceneRoot");
+	SetRootComponent(SceneRoot);
+	
 #define CREATE_AUDIO_COMPONENT(Channel) \
 	UAudioComponent* Channel = CreateDefaultSubobject<UAudioComponent>(#Channel TEXT("Audio")); \
 	BaseAudioComponent.Add(EWorldMusicChannel::Channel, Channel);\

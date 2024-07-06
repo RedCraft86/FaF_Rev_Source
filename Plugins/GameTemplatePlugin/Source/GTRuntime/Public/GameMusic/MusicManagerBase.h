@@ -34,6 +34,9 @@ public:
 	AMusicManagerBase();
 
 	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, Category = "Subobjects")
+		TObjectPtr<USceneComponent> SceneRoot;
+
+	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, Category = "Subobjects")
 		TMap<EWorldMusicChannel, TObjectPtr<UAudioComponent>> BaseAudioComponent;
 
 	UFUNCTION(BlueprintCallable, Category = "WorldMusicManager")
