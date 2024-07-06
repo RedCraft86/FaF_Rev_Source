@@ -63,10 +63,10 @@ void AFRPlayerController::OnWindowFocusChanged(bool bFocused)
 	
 	if (bFocused)
 	{
+		SetPause(false);
 		if (UnfocusedWidget->IsInViewport())
 		{
 			UnfocusedWidget->RemoveFromParent();
-			SetPause(false);
 		}
 	}
 	else if (!IsPaused())
