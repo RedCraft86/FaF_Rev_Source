@@ -31,6 +31,7 @@ void UInfoWidgetBase::OnSettingsUpdate()
 {
 	const UGameSettings* Settings = UGameSettings::Get();
 	TargetFPS = Settings->GetFrameRateLimit();
+	if (TargetFPS > 150.0f) TargetFPS = 60.0f;
 	bWantsFPS = Settings->GetShowFPS();
 	FrameRateTick();
 
