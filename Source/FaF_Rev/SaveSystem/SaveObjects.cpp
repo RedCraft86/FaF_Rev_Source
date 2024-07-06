@@ -29,7 +29,7 @@ void USaveObjectBase::SaveToFile(const TFunction<void(const ESaveGameError)>& Ca
 		LastError = ESaveGameError::Compress;
 		if (Callback) Callback(LastError);
 
-		SMART_LOG(Error, TEXT("Failed to save data: Compression error"));
+		SMART_LOG_P(Error, TEXT("Failed to save data: Compression error [Raw Data Length: %d]"), ToBinary.Num());
 		return;
 	}
 
@@ -42,7 +42,7 @@ void USaveObjectBase::SaveToFile(const TFunction<void(const ESaveGameError)>& Ca
 			LastError = ESaveGameError::FileWrite;
 			if (Callback) Callback(LastError);
 
-			SMART_LOG(Error, TEXT("Failed to save data: File Write error"));
+			SMART_LOG_P(Error, TEXT("Failed to save data: File Write error [Path: %s] [Data Length: %d]"), *GetSavePath(), CompressedData.Num());
 			return;
 		}
 		
