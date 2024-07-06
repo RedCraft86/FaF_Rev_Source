@@ -2,7 +2,7 @@
 #============================ PARAMETERS ============================#
 #--------------------------------------------------------------------#
 
-BASE_PATH = "D:/UnrealEngine/Unreal Projects/FaF_Rev"
+BASE_PATH = "D:/UnrealEngine/Unreal Projects/FaF_Rev/"
 BACKUP_PATH = "E:/Backups/FaF_Rev_Content/"
 
 ARCHIVE_LEVEL = 0

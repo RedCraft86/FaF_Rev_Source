@@ -107,7 +107,7 @@ protected:
 	virtual void OnConstruction(const UObject* WorldContext, const bool bEditorTime) override;
 };
 
-USTRUCT(BlueprintType, DisplayName = "Flip Flop")
+USTRUCT(BlueprintType, DisplayName = "Do Once")
 struct GTRUNTIME_API FWCDoOnce final : public FWCBase
 {
 	GENERATED_BODY()
