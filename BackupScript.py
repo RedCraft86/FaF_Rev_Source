@@ -73,4 +73,4 @@ for file in DirPairs.keys():
 
 time.sleep(5)
 LockFile.close()
-os.remove(ARCHIVE_PATH + "Backup.Lock")
+os.remove(ARCHIVE_PATH)
