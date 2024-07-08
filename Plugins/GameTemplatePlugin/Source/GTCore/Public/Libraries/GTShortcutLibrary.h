@@ -101,4 +101,7 @@ public:
 	/* Adjust an Ambient Sound actor's volume level smoothly. */
 	UFUNCTION(BlueprintCallable, Category = "AmbientSound", DisplayName = "Adjust Volume", meta = (DefaultToSelf = "Target"))
 		static void AdjustAmbientSoundVolume(const AAmbientSound* Target, const float FadeTime = 1.0f, const float FadeVolume = 1.0f);
+
+	UFUNCTION(BlueprintCallable, Category = "Actor", meta = (DeterminesOutputType = "InClass", DynamicOutputParam = "ReturnValue"))
+		static UActorComponent* AddActorInstanceComponent(AActor* Target, const TSubclassOf<UActorComponent> InClass);
 };

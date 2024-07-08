@@ -132,3 +132,18 @@ void UGTShortcutLibrary::AdjustAmbientSoundVolume(const AAmbientSound* Target, c
 		Audio->AdjustVolume(FadeTime, FadeVolume);
 	}
 }
+
+UActorComponent* UGTShortcutLibrary::AddActorInstanceComponent(AActor* Target, const TSubclassOf<UActorComponent> InClass)
+{
+#if WITH_EDITOR
+if (Target && InClass) 
+{
+	UActorComponent* NewComponent = NewObject<UActorComponent>(Target, InClass);
+	NewComponent->RegisterComponent();
+	Target->AddInstanceComponent(NewComponent);
+	return NewComponent;
+}
+#endif
+
+	return nullptr;
+}
