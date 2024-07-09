@@ -61,16 +61,3 @@ for output, inputs in DirPairs.items():
 time.sleep(5)
 LockFile.close()
 os.remove(CONTENT_PATH + "Backup.Lock")
-LockFile = open(ARCHIVE_PATH + "Backup.Lock", 'w')
-LockFile.write("Copying content...")
-LockFile.flush()
-
-for file in DirPairs.keys():
-    try:
-        shutil.move(ARCHIVE_PATH + file, BACKUP_PATH + file)
-    finally:
-        continue
-
-time.sleep(5)
-LockFile.close()
-os.remove(ARCHIVE_PATH)
