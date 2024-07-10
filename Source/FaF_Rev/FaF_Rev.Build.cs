@@ -36,6 +36,7 @@ public class FaF_Rev : ModuleRules
 				"LevelSequence",
 				"EngineSettings",
                 "CinematicCamera",
+                "NavigationSystem",
 				"DeveloperSettings",
 				"DataGraphRuntime",
 				"PulldownStruct",
