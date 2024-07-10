@@ -27,7 +27,8 @@ void AFRPlayerController::SetPauseState(const bool bInPaused)
 		{
 			PauseWidget = FRGameMode(this)->GetWidget<UPauseWidgetBase>();
 		}
-		
+
+		bGamePaused = bInPaused;
 		if (bInPaused)
 		{
 			PauseWidget->AddWidget(nullptr);
@@ -46,7 +47,6 @@ void AFRPlayerController::OnWindowFocusChanged(bool bFocused)
 		UnfocusedWidget = CreateWidget<UUserWidget>(this, UnfocusedWidgetClass);
 	}
 
-
 	if (!FRSettings->IsGameplayMap(this) || UGameSectionManager::Get(this)->IsLoading())
 	{
 #if !WITH_EDITOR
@@ -55,12 +55,13 @@ void AFRPlayerController::OnWindowFocusChanged(bool bFocused)
 #endif
 		return;
 	}
-
+	
 #if !WITH_EDITOR
 	UKismetSystemLibrary::ExecuteConsoleCommand(this, FString::Printf(TEXT("t.MaxFPS %f"),
 		UGameSettings::Get()->GetFrameRateLimit()));
 #endif
-	
+
+	if (bGamePaused) return;
 	if (bFocused)
 	{
 		SetPause(false);

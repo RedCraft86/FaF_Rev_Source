@@ -29,6 +29,7 @@ public:
 
 protected:
 
+	UPROPERTY(Transient) bool bGamePaused = false;
 	UPROPERTY(Transient) TObjectPtr<UUserWidget> UnfocusedWidget;
 	UPROPERTY(Transient) TObjectPtr<class UPauseWidgetBase> PauseWidget;
 	
