@@ -17,9 +17,10 @@
 
 #include "GTActor.h"
 #include "GTVolume.h"
-#include "Data/PulldownTypes.h"
+#include "Actors/DebugNavPath.h"
 #include "MeshGen/GTMeshGenBase.h"
 #include "Optimization/SmartCullingVolume.h"
+#include "Data/PulldownTypes.h"
 
 #define LOCTEXT_NAMESPACE "GTEditor"
 
@@ -38,6 +39,7 @@ void FGTEditorModule::StartupModule()
 		REGISTER_CLASS_CUSTOMIZATION(AGTActor, FGTActorDetails)
 		REGISTER_CLASS_CUSTOMIZATION(AGTVolume, FGTActorDetails)
 		REGISTER_CLASS_CUSTOMIZATION(AGTMeshGenBase, FGTActorDetails)
+		REGISTER_CLASS_CUSTOMIZATION(ADebugNavPath, FGTActorDetails)
 		REGISTER_CLASS_CUSTOMIZATION(ASmartCullingVolume, FGTActorDetails)
 		REGISTER_STRUCT_CUSTOMIZATION(FInlineFloatCurve, FInlineCurveDetails)
 		REGISTER_STRUCT_CUSTOMIZATION(FInlineVectorCurve, FInlineCurveDetails)
@@ -83,6 +85,7 @@ void FGTEditorModule::ShutdownModule()
 		UNREGISTER_CLASS_CUSTOMIZATION(AGTActor)
 		UNREGISTER_CLASS_CUSTOMIZATION(AGTVolume)
 		UNREGISTER_CLASS_CUSTOMIZATION(AGTMeshGenBase)
+		UNREGISTER_CLASS_CUSTOMIZATION(ADebugNavPath)
 		UNREGISTER_CLASS_CUSTOMIZATION(ASmartCullingVolume)
 		UNREGISTER_STRUCT_CUSTOMIZATION(FInlineFloatCurve)
 		UNREGISTER_STRUCT_CUSTOMIZATION(FInlineVectorCurve)

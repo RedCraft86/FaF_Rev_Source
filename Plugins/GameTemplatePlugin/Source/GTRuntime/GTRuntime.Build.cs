@@ -33,6 +33,7 @@ public class GTRuntime : ModuleRules
                 "StructUtils",
                 "GeometryCore",
                 "ApplicationCore",
+                "NavigationSystem",
                 "DeveloperSettings",
                 "ProceduralMeshComponent",
                 "DataGraphRuntime",
