@@ -110,6 +110,8 @@ void AFREnemyBase::OnFootstepAdjust()
 		}
 		else if (PathPoints.Num() > 1)
 		{
+			FootstepAudio->AttenuationOverrides.bAttenuate = false;
+			
 			FVector2D CurveRange; AudioVolumeCurve.GetTimeRange(CurveRange.X, CurveRange.Y);
 			FootstepAudio->SetVolumeMultiplier(AudioVolumeCurve.GetValue(FMath::GetMappedRangeValueClamped(
 				FVector2D(0.0f, FootstepAudio->AttenuationOverrides.FalloffDistance),
@@ -122,24 +124,22 @@ void AFREnemyBase::OnFootstepAdjust()
 			if (bDebugAudio)
 			{
 #if WITH_EDITOR
-				static FColor Color;
-				if (Color.ReinterpretAsLinear().IsAlmostBlack()) Color = FColor::MakeRandomColor();
-				
 				UKismetSystemLibrary::PrintString(this, FString::Printf(TEXT("[%s] Vol: %f | Pos: %s"),
 					*GetName(), FootstepAudio->VolumeMultiplier, *FootstepAudio->GetComponentLocation().ToString()),
-					true, false, Color, 0.6f, GetFName());
+					true, false, DebugColor, 0.6f, GetFName());
 				
 				DrawDebugSphere(GetWorld(), PathPoints[PathPoints.Num() - 1] + FVector(0.0f, 0.0f, 70.0f),
-					32, 16, Color, false, 0.6f, 0, 1);
+					8, 16, DebugColor, false, 0.6f, 0, 1);
+				
 				for (int i = 0; i < PathPoints.Num() - 1; i++)
 				{
 				
 					DrawDebugLine(GetWorld(), PathPoints[i] + FVector(0.0f, 0.0f, 70.0f),
 						PathPoints[i + 1] + FVector(0.0f, 0.0f, 70.0f),
-						Color, false, 0.6f, 0, 1);
+						DebugColor, false, 0.6f, 0, 1);
 				
 					DrawDebugSphere(GetWorld(), PathPoints[i] + FVector(0.0f, 0.0f, 70.0f),
-						32, 16, Color, false, 0.6f, 0, 1);
+						8, 16, DebugColor, false, 0.6f, 0, 1);
 				}
 #endif
 			}

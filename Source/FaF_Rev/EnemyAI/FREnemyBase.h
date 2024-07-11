@@ -32,12 +32,15 @@ public:
 	UPROPERTY(EditAnywhere, Category = "Settings")
 		bool bStartRoaming;
 
-	UPROPERTY(EditAnywhere, Category = "Settings", AdvancedDisplay)
+	UPROPERTY(EditAnywhere, Category = "Settings")
 		FInlineFloatCurve AudioVolumeCurve;
 
 #if WITH_EDITORONLY_DATA
 	UPROPERTY(EditAnywhere, Category = "Settings", AdvancedDisplay)
 		bool bDebugAudio = false;
+	
+	UPROPERTY(EditAnywhere, Category = "Settings", AdvancedDisplay)
+		FColor DebugColor = FColor::MakeRandomColor();
 #endif
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Settings", AdvancedDisplay)
