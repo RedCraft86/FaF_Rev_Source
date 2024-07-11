@@ -1,13 +1,13 @@
 ﻿// Copyright (C) RedCraft86. All Rights Reserved.
 
 #include "FREnemyBase.h"
+#include "NavigationPath.h"
+#include "NavigationSystem.h"
+#include "Kismet/GameplayStatics.h"
 #include "Components/AudioComponent.h"
 #include "Components/CapsuleComponent.h"
-#include "Kismet/GameplayStatics.h"
-#include "NavigationSystem.h"
-#include "FRPlayer.h"
-#include "NavigationPath.h"
 #include "Libraries/GTRuntimeLibrary.h"
+#include "FRPlayer.h"
 
 AFREnemyBase::AFREnemyBase() : bStartRoaming(true), EnemyState(EEnemyState::None)
 {
@@ -27,33 +27,6 @@ AFREnemyBase::AFREnemyBase() : bStartRoaming(true), EnemyState(EEnemyState::None
 }
 
 void AFREnemyBase::PlayFootstep()
-{
-	if (FootstepAudio->VolumeMultiplier > 0.0f)
-	{
-		FootstepAudio->Play();
-	}
-}
-
-void AFREnemyBase::SetEnemyState(const EEnemyState InNewState)
-{
-	if (EnemyState != InNewState)
-	{
-		EnemyState = InNewState;
-		if (AFRPlayerBase* Player = PlayerChar.LoadSynchronous())
-		{
-			if (EnemyState == EEnemyState::None || EnemyState == EEnemyState::Roam)
-			{
-				Player->RemoveEnemy(this);
-			}
-			else
-			{
-				Player->AddEnemy(this);
-			}
-		}
-	}
-}
-
-void AFREnemyBase::OnFootstepAdjust()
 {
 	FootstepAudio->AttenuationOverrides.bAttenuate = true;
 	if (const APlayerCameraManager* CM = UGameplayStatics::GetPlayerCameraManager(this, 0))
@@ -126,24 +99,48 @@ void AFREnemyBase::OnFootstepAdjust()
 #if WITH_EDITOR
 				UKismetSystemLibrary::PrintString(this, FString::Printf(TEXT("[%s] Vol: %f | Pos: %s"),
 					*GetName(), FootstepAudio->VolumeMultiplier, *FootstepAudio->GetComponentLocation().ToString()),
-					true, false, DebugColor, 0.6f, GetFName());
+					true, false, DebugColor, 1.0f, GetFName());
 				
 				DrawDebugSphere(GetWorld(), PathPoints[PathPoints.Num() - 1] + FVector(0.0f, 0.0f, 70.0f),
-					8, 16, DebugColor, false, 0.6f, 0, 1);
+					8, 16, DebugColor, false, 1.0f, 0, 1);
 				
 				for (int i = 0; i < PathPoints.Num() - 1; i++)
 				{
 				
 					DrawDebugLine(GetWorld(), PathPoints[i] + FVector(0.0f, 0.0f, 70.0f),
 						PathPoints[i + 1] + FVector(0.0f, 0.0f, 70.0f),
-						DebugColor, false, 0.6f, 0, 1);
+						DebugColor, false, 1.0f, 0, 1);
 				
 					DrawDebugSphere(GetWorld(), PathPoints[i] + FVector(0.0f, 0.0f, 70.0f),
-						8, 16, DebugColor, false, 0.6f, 0, 1);
+						8, 16, DebugColor, false, 1.0f, 0, 1);
 				}
 #endif
 			}
 #endif
+		}
+	}
+
+	if (FootstepAudio->VolumeMultiplier > 0.0f)
+	{
+		FootstepAudio->Play();
+	}
+}
+
+void AFREnemyBase::SetEnemyState(const EEnemyState InNewState)
+{
+	if (EnemyState != InNewState)
+	{
+		EnemyState = InNewState;
+		if (AFRPlayerBase* Player = PlayerChar.LoadSynchronous())
+		{
+			if (EnemyState == EEnemyState::None || EnemyState == EEnemyState::Roam)
+			{
+				Player->RemoveEnemy(this);
+			}
+			else
+			{
+				Player->AddEnemy(this);
+			}
 		}
 	}
 }
@@ -152,7 +149,6 @@ void AFREnemyBase::BeginPlay()
 {
 	Super::BeginPlay();
 	SetEnemyState(bStartRoaming ? EEnemyState::Roam : EEnemyState::None);
-	GetWorldTimerManager().SetTimer(FootstepAdjustTimer, this, &AFREnemyBase::OnFootstepAdjust, 0.5f, true);
 }
 
 void AFREnemyBase::OnConstruction(const FTransform& Transform)

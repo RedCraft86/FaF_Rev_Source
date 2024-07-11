@@ -58,9 +58,7 @@ public:
 protected:
 	
 	UPROPERTY() EEnemyState EnemyState;
-	UPROPERTY() FTimerHandle FootstepAdjustTimer;
 
-	void OnFootstepAdjust();
 	virtual void BeginPlay() override;
 	virtual void OnConstruction(const FTransform& Transform) override;
 
