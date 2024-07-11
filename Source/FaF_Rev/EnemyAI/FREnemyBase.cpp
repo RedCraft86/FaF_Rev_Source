@@ -122,21 +122,24 @@ void AFREnemyBase::OnFootstepAdjust()
 			if (bDebugAudio)
 			{
 #if WITH_EDITOR
+				static FColor Color;
+				if (Color.ReinterpretAsLinear().IsAlmostBlack()) Color = FColor::MakeRandomColor();
+				
 				UKismetSystemLibrary::PrintString(this, FString::Printf(TEXT("[%s] Vol: %f | Pos: %s"),
 					*GetName(), FootstepAudio->VolumeMultiplier, *FootstepAudio->GetComponentLocation().ToString()),
-					true, false, FColor::Yellow, 0.6f, GetFName());
+					true, false, Color, 0.6f, GetFName());
 				
-				DrawDebugSphere(GetWorld(), PathPoints[PathPoints.Num() - 1] + FVector(0.0f, 0.0f, 70.0f), 32, 16, FColor::Green,
-	   false, 0.6f, 0, 1);
+				DrawDebugSphere(GetWorld(), PathPoints[PathPoints.Num() - 1] + FVector(0.0f, 0.0f, 70.0f),
+					32, 16, Color, false, 0.6f, 0, 1);
 				for (int i = 0; i < PathPoints.Num() - 1; i++)
 				{
 				
 					DrawDebugLine(GetWorld(), PathPoints[i] + FVector(0.0f, 0.0f, 70.0f),
 						PathPoints[i + 1] + FVector(0.0f, 0.0f, 70.0f),
-						FColor::Green, false, 0.6f, 0, 1);
+						Color, false, 0.6f, 0, 1);
 				
 					DrawDebugSphere(GetWorld(), PathPoints[i] + FVector(0.0f, 0.0f, 70.0f),
-						32, 16, FColor::Green, false, 0.6f, 0, 1);
+						32, 16, Color, false, 0.6f, 0, 1);
 				}
 #endif
 			}
