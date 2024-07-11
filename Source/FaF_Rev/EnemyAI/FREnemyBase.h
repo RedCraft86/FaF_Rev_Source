@@ -2,6 +2,7 @@
 
 #pragma once
 
+#include "Data/InlineCurves.h"
 #include "GameFramework/Character.h"
 #include "FREnemyBase.generated.h"
 
@@ -31,6 +32,9 @@ public:
 	UPROPERTY(EditAnywhere, Category = "Settings")
 		bool bStartRoaming;
 
+	UPROPERTY(EditAnywhere, Category = "Settings", AdvancedDisplay)
+		FInlineFloatCurve AudioVolumeCurve;
+
 #if WITH_EDITORONLY_DATA
 	UPROPERTY(EditAnywhere, Category = "Settings", AdvancedDisplay)
 		bool bDebugAudio = false;
@@ -51,12 +55,10 @@ public:
 protected:
 	
 	UPROPERTY() EEnemyState EnemyState;
-	UPROPERTY() float TargetFootstepVolume;
 	UPROPERTY() FTimerHandle FootstepAdjustTimer;
 
 	void OnFootstepAdjust();
 	virtual void BeginPlay() override;
-	virtual void Tick(float DeltaSeconds) override;
 	virtual void OnConstruction(const FTransform& Transform) override;
 
 public: // Statics
