@@ -3,7 +3,6 @@
 #pragma once
 
 #include "GameFramework/Actor.h"
-#include "Components/DebugShapesComponent.h"
 #include "DebugNavPath.generated.h"
 
 UCLASS(NotBlueprintable, meta = (HideCategories = "Collision,Actor"))
@@ -18,17 +17,17 @@ public:
 	UPROPERTY(VisibleDefaultsOnly, Category = "Subobjects")
 		TObjectPtr<USceneComponent> SceneRoot;
 
-	UPROPERTY(VisibleAnywhere, Category = "Subobjects")
-		TObjectPtr<UDebugShapesComponent> ShapeComponent;
+	UPROPERTY(EditAnywhere, Category = "Settings", DuplicateTransient, meta = (HideAlphaChannel = true))
+		FColor Color = FColor::MakeRandomColor();
 
-	UPROPERTY(EditAnywhere, Category = "Settings", meta = (HideAlphaChannel = true))
-		FLinearColor Color = FLinearColor::MakeRandomColor();
-
-	UPROPERTY(EditAnywhere, Category = "Settings", meta = (HideAlphaChannel = true))
+	UPROPERTY(EditAnywhere, Category = "Settings", DuplicateTransient)
 		TSoftObjectPtr<ADebugNavPath> NextPath;
 	
 protected:
 
 	virtual void BeginPlay() override;
-	virtual void OnConstruction(const FTransform& Transform) override;
+	virtual void Tick(float DeltaSeconds) override;
+#if WITH_EDITOR
+	virtual bool ShouldTickIfViewportsOnly() const override { return true; }
+#endif
 };

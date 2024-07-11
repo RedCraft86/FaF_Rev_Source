@@ -6,14 +6,12 @@
 
 ADebugNavPath::ADebugNavPath()
 {
-	PrimaryActorTick.bCanEverTick = false;
+	PrimaryActorTick.bCanEverTick = true;
+	PrimaryActorTick.TickInterval = 0.1f;
 	bIsEditorOnlyActor = true;
 	
 	SceneRoot = CreateDefaultSubobject<USceneComponent>("SceneRoot");
 	SetRootComponent(SceneRoot);
-
-	ShapeComponent = CreateDefaultSubobject<UDebugShapesComponent>("ShapeComponent");
-	
 #if WITH_EDITORONLY_DATA
 	SceneRoot->bVisualizeComponent = true;
 	bRunConstructionScriptOnDrag = true;
@@ -23,16 +21,14 @@ ADebugNavPath::ADebugNavPath()
 void ADebugNavPath::BeginPlay()
 {
 	Super::BeginPlay();
+	SetActorTickEnabled(false);
 	K2_DestroyActor();
 }
 
-void ADebugNavPath::OnConstruction(const FTransform& Transform)
+void ADebugNavPath::Tick(float DeltaSeconds)
 {
-	Super::OnConstruction(Transform);
+	Super::Tick(DeltaSeconds);
 #if WITH_EDITORONLY_DATA
-	ShapeComponent->DebugLines.Empty();
-	ShapeComponent->DebugSpheres.Empty();
-	ShapeComponent->DebugStrings.Empty();
 	if (ADebugNavPath* PathPtr = NextPath.LoadSynchronous())
 	{
 		if (const UNavigationPath* NavPath = UNavigationSystemV1::FindPathToActorSynchronously(
@@ -41,22 +37,17 @@ void ADebugNavPath::OnConstruction(const FTransform& Transform)
 			const TArray<FVector> Points = NavPath->PathPoints;
 			for (int i = 0; i < Points.Num(); i++)
 			{
-				FDebugSphereData SD; SD.Color = Color;
-				SD.Location = GetActorTransform().InverseTransformPosition(Points[i]);
-				ShapeComponent->DebugSpheres.Add(*LexToString(i), SD);
+				DrawDebugSphere(GetWorld(), Points[i], 16, 8, Color, false,
+					PrimaryActorTick.TickInterval, 0, 1.0f);
 				if (i < Points.Num() - 1)
 				{
-					FDebugLineData LD;
-					LD.Color = Color;
-					LD.Start = SD.Location;
-					LD.End = GetActorTransform().InverseTransformPosition(Points[i + 1]);
-					ShapeComponent->DebugLines.Add(*LexToString(i), LD);
+					DrawDebugLine(GetWorld(), Points[i], Points[i + 1], Color, false,
+						PrimaryActorTick.TickInterval, 0, 1.0f);
 				}
 			}
 
-			FDebugStringData StrData; StrData.Color = Color;
-			StrData.String = FString::Printf(TEXT("Length: %.2f"), NavPath->GetPathLength());
-			ShapeComponent->DebugStrings.Add("PathLength", StrData);
+			DrawDebugString(GetWorld(), GetActorLocation(), FString::Printf(TEXT("Length: %.2f"), NavPath->GetPathLength()),
+				this, Color, PrimaryActorTick.TickInterval, true, 12);
 		}
 	}
 #endif
