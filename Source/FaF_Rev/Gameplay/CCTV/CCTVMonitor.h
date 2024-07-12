@@ -23,9 +23,6 @@ public:
 	UPROPERTY(EditAnywhere, Category = "Settings")
 		TMap<FName, TObjectPtr<ACCTVCamera>> Cameras;
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Settings")
-		TOptional<float> OptionalTest;
-
 	UFUNCTION(BlueprintCallable, Category = "CCTV")
 		void ChangeCamera(const FName InKey);
 
