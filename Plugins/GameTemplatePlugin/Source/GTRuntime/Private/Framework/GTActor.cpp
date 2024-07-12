@@ -4,7 +4,7 @@
 
 AGTActor::AGTActor() : bEnabled(true), bStartWithCollisionEnabled(true)
 {
-	PrimaryActorTick.bCanEverTick = false;
+	PrimaryActorTick.bCanEverTick = true;
 	PrimaryActorTick.bStartWithTickEnabled = false;
 
 	SceneRoot = CreateDefaultSubobject<USceneComponent>("SceneRoot");
