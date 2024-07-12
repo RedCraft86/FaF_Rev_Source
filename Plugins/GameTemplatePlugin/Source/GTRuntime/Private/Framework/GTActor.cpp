@@ -30,7 +30,7 @@ void AGTActor::BeginPlay()
 {
 	Super::BeginPlay();
 	SetActorEnableCollision(bStartWithCollisionEnabled);
-	if (!bEnabled) ON_ENABLE_STATE_CHANGED
+	if (!bEnabled) OnEnableStateChanged(bEnabled);
 }
 
 void AGTActor::OnConstruction(const FTransform& Transform)
