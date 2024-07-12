@@ -46,16 +46,8 @@ protected:
 	
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Actor", NonPIEDuplicateTransient, TextExportTransient, NonTransactional)
 		FGuid RuntimeGuid;
-
-#if WITH_EDITORONLY_DATA
-	UPROPERTY(EditDefaultsOnly, Category = "Tick")
-		bool bTickInEditor = false;
-#endif
 	
 	virtual void BeginPlay() override;
 	virtual void OnConstruction(const FTransform& Transform) override;
 	virtual void OnEnableStateChanged(const bool bIsEnabled);
-#if WITH_EDITORONLY_DATA
-	virtual bool ShouldTickIfViewportsOnly() const override { return bTickInEditor; }
-#endif
 };
