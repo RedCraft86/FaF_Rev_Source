@@ -7,7 +7,7 @@
 ADebugNavPath::ADebugNavPath()
 {
 	PrimaryActorTick.bCanEverTick = true;
-	PrimaryActorTick.TickInterval = 0.1f;
+	PrimaryActorTick.TickInterval = 0.01f;
 	bIsEditorOnlyActor = true;
 	
 	SceneRoot = CreateDefaultSubobject<USceneComponent>("SceneRoot");
@@ -37,17 +37,15 @@ void ADebugNavPath::Tick(float DeltaSeconds)
 			const TArray<FVector> Points = NavPath->PathPoints;
 			for (int i = 0; i < Points.Num(); i++)
 			{
-				DrawDebugSphere(GetWorld(), Points[i], 16, 8, Color, false,
-					PrimaryActorTick.TickInterval, 0, 1.0f);
+				DrawDebugSphere(GetWorld(), Points[i] + FVector(0.0f, 0.0f, 50.0f), 16, 8, Color,
+					false, PrimaryActorTick.TickInterval + 0.01f, 0, 1.0f);
 				if (i < Points.Num() - 1)
 				{
-					DrawDebugLine(GetWorld(), Points[i], Points[i + 1], Color, false,
-						PrimaryActorTick.TickInterval, 0, 1.0f);
+					DrawDebugLine(GetWorld(), Points[i] + FVector(0.0f, 0.0f, 50.0f),
+						Points[i + 1] + FVector(0.0f, 0.0f, 50.0f), Color, false,
+						PrimaryActorTick.TickInterval + 0.01f, 0, 1.0f);
 				}
 			}
-
-			DrawDebugString(GetWorld(), GetActorLocation(), FString::Printf(TEXT("Length: %.2f"), NavPath->GetPathLength()),
-				this, Color, PrimaryActorTick.TickInterval, true, 12);
 		}
 	}
 #endif
