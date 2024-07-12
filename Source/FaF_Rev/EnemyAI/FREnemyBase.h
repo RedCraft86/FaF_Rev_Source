@@ -17,6 +17,8 @@ enum class EEnemyState : uint8
 };
 ENUM_RANGE_BY_FIRST_AND_LAST(EEnemyState, EEnemyState::None, EEnemyState::Search);
 
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnEnemyAudioEvent, UAudioComponent*, Component)
+
 UCLASS(Abstract, DisplayName = "Enemy Character Base")
 class FAF_REV_API AFREnemyBase : public ACharacter
 {
@@ -46,6 +48,9 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Settings", AdvancedDisplay)
 		TSoftObjectPtr<class AFRPlayerBase> PlayerChar;
 
+	UPROPERTY(BlueprintAssignable)
+		FOnEnemyAudioEvent OnAudioPlayed;
+
 	UFUNCTION(BlueprintCallable, Category = "EnemyAI")
 		void PlayFootstep();
 
@@ -54,6 +59,9 @@ public:
 
 	UFUNCTION(BlueprintPure, Category = "EnemyAI")
 		EEnemyState GetEnemyState() const { return EnemyState; }
+
+	UFUNCTION(BlueprintCallable, Category = "EnemyAI")
+		void PlaySmartAudio(UAudioComponent* InComponent);
 
 protected:
 	

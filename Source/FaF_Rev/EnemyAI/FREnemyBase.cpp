@@ -43,7 +43,7 @@ void AFREnemyBase::PlayFootstep()
 			FootstepAudio->SetVolumeMultiplier(1.0f);
 			FootstepAudio->SetRelativeLocation(FVector::ZeroVector);
 			FootstepAudio->LowPassFilterFrequency = MAX_FILTER_FREQUENCY;
-			FootstepAudio->Play();
+			PlaySmartAudio(FootstepAudio);
 			return;
 		}
 		
@@ -60,7 +60,7 @@ void AFREnemyBase::PlayFootstep()
 				FootstepAudio->SetVolumeMultiplier(1.0f);
 				FootstepAudio->SetRelativeLocation(FVector::ZeroVector);
 				FootstepAudio->LowPassFilterFrequency = MAX_FILTER_FREQUENCY;
-				FootstepAudio->Play();
+				PlaySmartAudio(FootstepAudio);
 				return;
 			}
 		}
@@ -74,7 +74,7 @@ void AFREnemyBase::PlayFootstep()
 			FootstepAudio->SetVolumeMultiplier(1.0f);
 			FootstepAudio->SetRelativeLocation(FVector::ZeroVector);
 			FootstepAudio->LowPassFilterFrequency = MAX_FILTER_FREQUENCY;
-			FootstepAudio->Play();
+			PlaySmartAudio(FootstepAudio);
 			return;
 		}
 
@@ -95,7 +95,7 @@ void AFREnemyBase::PlayFootstep()
 
 			FootstepAudio->LowPassFilterFrequency = MAX_FILTER_FREQUENCY * 0.5f;
 			FootstepAudio->SetWorldLocation(PathPoints[PathPoints.Num() - 2] + FVector(0.0f, 0.0f, 70.0f));
-			FootstepAudio->Play();
+			PlaySmartAudio(FootstepAudio);
 
 #if WITH_EDITORONLY_DATA
 			if (bDebugAudio)
@@ -125,7 +125,7 @@ void AFREnemyBase::PlayFootstep()
 	}
 	else
 	{
-		FootstepAudio->Play();
+		PlaySmartAudio(FootstepAudio);
 	}
 }
 
@@ -145,6 +145,15 @@ void AFREnemyBase::SetEnemyState(const EEnemyState InNewState)
 				Player->AddEnemy(this);
 			}
 		}
+	}
+}
+
+void AFREnemyBase::PlaySmartAudio(UAudioComponent* InComponent)
+{
+	if (InComponent)
+	{
+		InComponent->Play();
+		OnAudioPlayed.Broadcast(InComponent);
 	}
 }
 
