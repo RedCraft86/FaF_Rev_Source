@@ -63,4 +63,8 @@ public:
 	/* Calls an event by name in the Target object. */
 	UFUNCTION(BlueprintCallable, Category = "Events", meta = (DefaultToSelf = "Target"))
 		static void CallLocalEvent(UObject* Target, const FName EventName);
+
+	/* Check if we're currently in editor or in a PIE/Standalone game. */
+	UFUNCTION(BlueprintPure, Category = "World")
+		static bool IsInEditor();
 };

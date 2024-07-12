@@ -140,3 +140,12 @@ void UGTRuntimeLibrary::CallLocalEvent(UObject* Target, const FName EventName)
 	Target->CallFunctionByNameWithArguments(*EventName.ToString(),
 		Ar, nullptr, true);
 }
+
+bool UGTRuntimeLibrary::IsInEditor()
+{
+#if WITH_EDITOR
+	return !FApp::IsGame();
+#else
+	return false;
+#endif
+}
