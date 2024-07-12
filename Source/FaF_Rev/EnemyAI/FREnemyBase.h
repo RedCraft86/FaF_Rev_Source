@@ -17,7 +17,7 @@ enum class EEnemyState : uint8
 };
 ENUM_RANGE_BY_FIRST_AND_LAST(EEnemyState, EEnemyState::None, EEnemyState::Search);
 
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnEnemyAudioEvent, UAudioComponent*, Component)
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FOnEnemyAudioEvent, const class AFREnemyBase*, Enemy, const UAudioComponent*, Component);
 
 UCLASS(Abstract, DisplayName = "Enemy Character Base")
 class FAF_REV_API AFREnemyBase : public ACharacter

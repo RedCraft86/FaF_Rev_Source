@@ -153,7 +153,7 @@ void AFREnemyBase::PlaySmartAudio(UAudioComponent* InComponent)
 	if (InComponent)
 	{
 		InComponent->Play();
-		OnAudioPlayed.Broadcast(InComponent);
+		OnAudioPlayed.Broadcast(this, InComponent);
 	}
 }
 
