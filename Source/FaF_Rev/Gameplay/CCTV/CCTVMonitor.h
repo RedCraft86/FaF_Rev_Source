@@ -4,6 +4,7 @@
 
 #include "GTActor.h"
 #include "Data/MathTypes.h"
+#include "Components/WidgetComponent.h"
 #include "CCTVMonitor.generated.h"
 
 UCLASS(Abstract)
@@ -20,6 +21,9 @@ public:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Subobjects")
 		TObjectPtr<UStaticMeshComponent> MonitorMesh;
 
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Subobjects")
+		TObjectPtr<UWidgetComponent> ScreenWidget;
+
 	UPROPERTY(EditAnywhere, Category = "Settings")
 		TMap<FName, TObjectPtr<ACCTVCamera>> Cameras;
 
@@ -27,15 +31,15 @@ public:
 		void ChangeCamera(const FName InKey);
 
 protected:
-	
-	UPROPERTY(Transient) FName ActiveCamera;
-	UPROPERTY(Transient) FGTInterpScalar CameraStaticAmount;
-	UPROPERTY(Transient) FGTInterpScalar MonitorStaticAmount;
 
-	ACCTVCamera* GetActiveCamera() const { return Cameras.Contains(ActiveCamera) ? Cameras[ActiveCamera] : nullptr; }
+	UPROPERTY() bool bSwapping;
+	UPROPERTY() FName ActiveCameraID;
+	UPROPERTY() FGTInterpScalar CameraStaticAmount;
+	UPROPERTY() FGTInterpScalar MonitorStaticAmount;
+	UPROPERTY(Transient) TObjectPtr<ACCTVCamera> ActiveCameraPtr;
 
-	void UpdateScreen() const;
 	void UpdateCameraState();
+	void UpdateScreen() const;
 	virtual void BeginPlay() override;
 	virtual void Tick(float DeltaTime) override;
 	virtual void OnEnableStateChanged(const bool bIsEnabled) override;
