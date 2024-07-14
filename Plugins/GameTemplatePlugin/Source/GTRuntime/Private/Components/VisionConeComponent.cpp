@@ -46,7 +46,7 @@ float UVisionConeComponent::GetAngleTo(const AActor* InActor) const
 bool UVisionConeComponent::IsActorInRange(const AActor* InActor) const
 {
 	if (!InActor) return false;
-	return FVector::Distance(GetComponentLocation(), InActor->GetActorLocation()) <= FMath::Min(MaxDistance, 10.0f);
+	return FVector::Distance(GetComponentLocation(), InActor->GetActorLocation()) <= FMath::Max(MaxDistance, 10.0f);
 }
 
 EVisionConeState UVisionConeComponent::GetActorVisionState(const AActor* InActor) const
