@@ -6,7 +6,8 @@
 ACCTVMonitor::ACCTVMonitor()
 {
 	PrimaryActorTick.bCanEverTick = true;
-
+	PrimaryActorTick.bStartWithTickEnabled = true;
+	
 	MonitorMesh = CreateDefaultSubobject<UStaticMeshComponent>("MonitorMesh");
 	MonitorMesh->SetupAttachment(SceneRoot);
 }
@@ -70,6 +71,6 @@ void ACCTVMonitor::Tick(float DeltaTime)
 void ACCTVMonitor::OnEnableStateChanged(const bool bIsEnabled)
 {
 	SetActorEnableCollision(bIsEnabled);
-	SetActorTickEnabled(PrimaryActorTick.bStartWithTickEnabled && bIsEnabled);
+	SetActorTickEnabled(bIsEnabled);
 }
 
