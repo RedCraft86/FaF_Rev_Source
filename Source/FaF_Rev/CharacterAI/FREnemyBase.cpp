@@ -80,9 +80,10 @@ void AFREnemyBase::PlayFootstep()
 
 		if (PathLen > FootstepAudio->AttenuationOverrides.FalloffDistance)
 		{
-			FootstepAudio->SetVolumeMultiplier(0.0f);
+			FootstepAudio->SetVolumeMultiplier(0.05f);
 			FootstepAudio->SetRelativeLocation(FVector::ZeroVector);
 			FootstepAudio->LowPassFilterFrequency = MAX_FILTER_FREQUENCY;
+			PlaySmartAudio(FootstepAudio);
 		}
 		else if (PathPoints.Num() > 1)
 		{
