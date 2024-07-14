@@ -78,7 +78,7 @@ struct FPlayerSettings
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Settings", meta = (InlineEditConditionToggle))
 		bool bOverride_StaminaRates;
 	
-	// X: Gain, Y: Drain
+	// X: Drain, Y: Gain
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Settings", meta = (EditCondition = "bOverride_StaminaRates", ClampMin = 0.0f, UIMin = 0.0f, ClampMax = 5.0f, UIMax = 5.0f))
 		FVector2D StaminaRates;
 
