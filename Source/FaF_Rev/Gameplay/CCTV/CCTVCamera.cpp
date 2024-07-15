@@ -130,6 +130,7 @@ void ACCTVCamera::OnConstruction(const FTransform& Transform)
 void ACCTVCamera::OnEnableStateChanged(const bool bIsEnabled)
 {
 	if (Monitor) Monitor->UpdateCameraStatic();
+	SceneCapture->AddOrUpdateBlendable(TrackingPostProcess, 0.0f);
 	bEnabled ? GetWorldTimerManager().UnPauseTimer(CaptureHandle) : GetWorldTimerManager().PauseTimer(CaptureHandle);
 	bEnabled ? GetWorldTimerManager().UnPauseTimer(RefreshHandle) : GetWorldTimerManager().PauseTimer(RefreshHandle);
 }

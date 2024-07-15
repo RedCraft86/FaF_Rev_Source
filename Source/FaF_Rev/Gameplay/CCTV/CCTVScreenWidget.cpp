@@ -32,5 +32,5 @@ void UCCTVScreenWidget::UpdateValues() const
 void UCCTVScreenWidget::NativeConstruct()
 {
 	Super::NativeConstruct();
-	GetWorld()->GetTimerManager().SetTimer(UpdateTimer, this, &UCCTVScreenWidget::UpdateValues, 0.5f, true);
+	GetWorld()->GetTimerManager().SetTimer(UpdateTimer, this, &UCCTVScreenWidget::UpdateValues, 0.25f, true);
 }
