@@ -104,6 +104,7 @@ void ACCTVMonitor::Tick(float DeltaTime)
 
 void ACCTVMonitor::OnEnableStateChanged(const bool bIsEnabled)
 {
+	if (ActiveCamera.Value) ActiveCamera.Value->SetEnabled(bIsEnabled);
 	SetActorEnableCollision(bIsEnabled);
 	SetActorTickEnabled(bIsEnabled);
 }
