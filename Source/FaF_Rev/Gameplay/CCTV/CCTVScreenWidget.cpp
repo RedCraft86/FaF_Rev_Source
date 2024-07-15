@@ -1,8 +1,8 @@
 ﻿// Copyright (C) RedCraft86. All Rights Reserved.
 
 #include "CCTVScreenWidget.h"
-#include "CCTVMonitor.h"
 #include "Components/TextBlock.h"
+#include "CCTVMonitor.h"
 
 void UCCTVScreenWidget::UpdateValues() const
 {
