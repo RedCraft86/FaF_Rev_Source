@@ -10,6 +10,8 @@ ACCTVMonitor::ACCTVMonitor()
 	
 	MonitorMesh = CreateDefaultSubobject<UStaticMeshComponent>("MonitorMesh");
 	MonitorMesh->SetupAttachment(SceneRoot);
+
+	ChangeCameraStatic.InterpSpeed = 10.0f;
 }
 
 TArray<FName> ACCTVMonitor::GetCameraOptions() const
@@ -33,6 +35,11 @@ void ACCTVMonitor::ChangeCamera(const FName InKey)
 	if (ActiveCamera.Value) ActiveCamera.Value->SetEnabled(true);
 }
 
+// void ACCTVMonitor::PlayMonitorAudio(const USoundBase* Sound, const float Volume)
+// {
+// 	
+// }
+
 void ACCTVMonitor::UpdateCameraStatic()
 {
 	ChangeCameraStatic.TargetValue = ActiveCamera.Value && ActiveCamera.Value->IsEnabled() ? 0.0f : 1.0f;
@@ -55,7 +62,10 @@ void ACCTVMonitor::BeginPlay()
 		DefaultCamera = GetCameraOptions()[0];
 	}
 
-	ChangeCamera(DefaultCamera);
+	GetWorldTimerManager().SetTimerForNextTick([this]()
+	{
+		ChangeCamera(DefaultCamera);	
+	});
 }
 
 void ACCTVMonitor::Tick(float DeltaTime)

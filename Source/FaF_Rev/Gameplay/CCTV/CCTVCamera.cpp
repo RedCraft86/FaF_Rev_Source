@@ -3,14 +3,16 @@
 #include "CCTVCamera.h"
 #include "CCTVMonitor.h"
 #include "CharacterAI/FREnemyBase.h"
-#include "Components/BoxComponent.h"
+#include "Components/AudioComponent.h"
 #include "Components/SceneCaptureComponent2D.h"
+#include "Components/VisionConeComponent.h"
 #if WITH_EDITOR
 #include "EngineUtils.h"
 #include "Components/DebugShapesComponent.h"
 #endif
 
 ACCTVCamera::ACCTVCamera() : TurningRate(FVector2D::UnitVector), TurningRange(25.0f, 10.0f)
+	, CaptureFrequency(0.25f), RefreshFrequency(0.25f)
 {
 	PrimaryActorTick.bCanEverTick = false;
 
@@ -19,16 +21,17 @@ ACCTVCamera::ACCTVCamera() : TurningRate(FVector2D::UnitVector), TurningRange(25
 
 	SceneCapture = CreateDefaultSubobject<USceneCaptureComponent2D>("SceneCapture");
 	SceneCapture->SetupAttachment(CaptureView);
+	SceneCapture->CaptureSource = SCS_FinalColorHDR;
 	SceneCapture->bAlwaysPersistRenderingState = true;
 	SceneCapture->bCaptureEveryFrame = false;
 	
-	TrackingVolume = CreateDefaultSubobject<UBoxComponent>("TrackingVolume");
-	TrackingVolume->SetupAttachment(SceneRoot);
-	TrackingVolume->ShapeColor = FColor::MakeRandomColor();
+	VisionCone = CreateDefaultSubobject<UVisionConeComponent>("VisionCone");
+	VisionCone->SetupAttachment(CaptureView);
+	VisionCone->PeripheralAngle = 0.0f;
+	VisionCone->BaseAngle = 40.0f;
 
 	bEnabled = false;
 	bStartWithCollisionEnabled = false;
-	TrackingArea.SetTranslation(TrackingArea.GetTranslation() + FVector{50.0f, 0.0f, 0.0f});
 
 #if WITH_EDITORONLY_DATA
 	DebugShapes = CreateEditorOnlyDefaultSubobject<UDebugShapesComponent>("DebugShapes");
@@ -58,10 +61,10 @@ void ACCTVCamera::RefreshEnemyState()
 	for (const TObjectPtr<const AFREnemyBase>& Enemy : Enemies)
 	{
 		if (!Enemy) continue;
-		bSeeEnemies = TrackingVolume->IsOverlappingActor(Enemy);
+		bSeeEnemies = VisionCone->GetActorVisionState(Enemy) != EVisionConeState::None;
 		if (bSeeEnemies) break;
 	}
-
+	
 	SceneCapture->AddOrUpdateBlendable(TrackingPostProcess, bSeeEnemies ? 1.0f : 0.0f);
 }
 
@@ -77,24 +80,26 @@ void ACCTVCamera::SetMonitor(ACCTVMonitor* InMonitor)
 void ACCTVCamera::BeginPlay()
 {
 	Super::BeginPlay();
+	SceneCapture->AddOrUpdateBlendable(TrackingPostProcess, 0.0f);
 	
-	GetWorldTimerManager().SetTimer(CaptureHandle, this, &ACCTVCamera::CaptureScene, 0.05f, true);
+	GetWorldTimerManager().SetTimer(CaptureHandle, this, &ACCTVCamera::CaptureScene, CaptureFrequency, true);
 	GetWorldTimerManager().PauseTimer(CaptureHandle);
 	
-	GetWorldTimerManager().SetTimer(RefreshHandle, this, &ACCTVCamera::RefreshEnemyState, 0.5f, true);
+	GetWorldTimerManager().SetTimer(RefreshHandle, this, &ACCTVCamera::RefreshEnemyState, RefreshFrequency, true);
 	GetWorldTimerManager().PauseTimer(RefreshHandle);
 	
 	Enemies.Remove(nullptr);
 	for (const TObjectPtr<const AFREnemyBase>& Enemy : Enemies)
 	{
 		if (!Enemy) continue;
+		const_cast<AFREnemyBase*>(Enemy.Get())->OnAudioPlayed.AddDynamic(this, &ACCTVCamera::OnEnemyAudioPlayed);
 	}
 }
 
 void ACCTVCamera::OnConstruction(const FTransform& Transform)
 {
 	Super::OnConstruction(Transform);
-	TrackingVolume->SetRelativeTransform(TrackingArea);
+	VisionCone->PeripheralAngle = 0.0f;
 	SceneCapture->SetRelativeRotation(FRotator::ZeroRotator);
 #if WITH_EDITORONLY_DATA
 	if (DebugShapes)
@@ -118,12 +123,6 @@ void ACCTVCamera::OnConstruction(const FTransform& Transform)
 		DebugArcY.Thickness = 0.5f;
 		DebugArcY.Sections = 16.0f;
 		DebugArcY.Radius = 24.0f;
-
-		FDebugBoxData& DebugTrackingVolume = DebugShapes->DebugBoxes.FindOrAdd("Tracking");
-		DebugTrackingVolume.Location = TrackingVolume->GetRelativeLocation();
-		DebugTrackingVolume.Rotation = TrackingVolume->GetRelativeRotation();
-		DebugTrackingVolume.Extents = TrackingVolume->GetScaledBoxExtent();
-		DebugTrackingVolume.Color = TrackingVolume->ShapeColor;
 	}
 #endif
 }
@@ -133,4 +132,15 @@ void ACCTVCamera::OnEnableStateChanged(const bool bIsEnabled)
 	if (Monitor) Monitor->UpdateCameraStatic();
 	bEnabled ? GetWorldTimerManager().UnPauseTimer(CaptureHandle) : GetWorldTimerManager().PauseTimer(CaptureHandle);
 	bEnabled ? GetWorldTimerManager().UnPauseTimer(RefreshHandle) : GetWorldTimerManager().PauseTimer(RefreshHandle);
+}
+
+void ACCTVCamera::OnEnemyAudioPlayed(const AFREnemyBase* Enemy, const UAudioComponent* Component)
+{
+	if (bEnabled && Monitor && Enemy && Component && Component->Sound && VisionCone->GetActorVisionState(Enemy) != EVisionConeState::None)
+	{
+		const float Volume = FMath::GetMappedRangeValueClamped(FVector2D(500.0f, VisionCone->MaxDistance),
+			FVector2D(1.0f, 0.1f), FVector::Distance(VisionCone->GetComponentLocation(), Component->GetComponentLocation()));
+
+		Monitor->PlayMonitorAudio(Component->Sound, Volume);
+	}
 }

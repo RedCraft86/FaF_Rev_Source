@@ -23,7 +23,7 @@ public:
 		TObjectPtr<USceneCaptureComponent2D> SceneCapture;
 
 	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, Category = "Subobjects")
-		TObjectPtr<class UBoxComponent> TrackingVolume;
+		TObjectPtr<class UVisionConeComponent> VisionCone;
 
 	UPROPERTY(EditAnywhere, Category = "Settings", meta = (ClampMin = 0.1f, UIMin = 0.1f))
 		FVector2D TurningRate;
@@ -31,14 +31,17 @@ public:
 	UPROPERTY(EditAnywhere, Category = "Settings", meta = (ClampMin = 0.0f, UIMin = 0.0f))
 		FVector2D TurningRange;
 
+	UPROPERTY(EditAnywhere, Category = "Settings", meta = (ClampMin = 0.01f, UIMin = 0.01f))
+		float CaptureFrequency;
+
+	UPROPERTY(EditAnywhere, Category = "Settings", meta = (ClampMin = 0.01f, UIMin = 0.01f))
+		float RefreshFrequency;
+	
 	UPROPERTY(EditAnywhere, Category = "Settings")
 		TSet<TObjectPtr<const class AFREnemyBase>> Enemies;
 	
 	UPROPERTY(EditAnywhere, Category = "Settings", AdvancedDisplay)
 		TObjectPtr<UMaterialInterface> TrackingPostProcess;
-
-	UPROPERTY(EditAnywhere, Category = "Settings", AdvancedDisplay, meta = (MakeEditWidget = true))
-		FTransform TrackingArea;
 
 #if WITH_EDITORONLY_DATA
 	UPROPERTY(EditAnywhere, Category = "Settings", AdvancedDisplay)
@@ -69,4 +72,6 @@ protected:
 	virtual void BeginPlay() override;
 	virtual void OnConstruction(const FTransform& Transform) override;
 	virtual void OnEnableStateChanged(const bool bIsEnabled) override;
+
+	UFUNCTION() void OnEnemyAudioPlayed(const AFREnemyBase* Enemy, const UAudioComponent* Component);
 };

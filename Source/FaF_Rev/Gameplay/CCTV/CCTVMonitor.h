@@ -35,6 +35,9 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "CCTV")
 		void ChangeCamera(const FName InKey);
 
+	UFUNCTION(BlueprintImplementableEvent, Category = "CCTV")
+		void PlayMonitorAudio(const USoundBase* Sound, const float Volume);
+	
 protected:
 
 	FTimerHandle ChangeCameraHandle;
