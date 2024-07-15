@@ -2,6 +2,7 @@
 
 #pragma once
 
+#include "CCTVCamera.h"
 #include "GTActor.h"
 #include "Data/MathTypes.h"
 #include "CCTVMonitor.generated.h"
@@ -23,6 +24,9 @@ public:
 	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, Category = "Subobjects")
 		TObjectPtr<UStaticMeshComponent> MonitorMesh;
 
+	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, Category = "Subobjects")
+		TObjectPtr<class UWidgetComponent> MonitorWidget;
+
 	UPROPERTY(EditAnywhere, Category = "Settings", meta = (GetOptions = "GetCameraOptions"))
 		FName DefaultCamera;
 
@@ -40,6 +44,15 @@ public:
 
 	UFUNCTION(BlueprintCallable, BlueprintPure = false, Category = "CCTV")
 		void PlayMonitorAudio(USoundBase* Sound, const float Volume) const;
+
+	UFUNCTION(BlueprintPure, Category = "CCTV")
+		bool IsOnActiveCamera() const { return ActiveCamera.Value && ActiveCamera.Value->IsEnabled(); }
+
+	UFUNCTION(BlueprintPure, Category = "CCTV")
+		bool IsSeeingEnemies() const { return IsOnActiveCamera() ? ActiveCamera.Value->IsSeeingEnemies() : false; }
+
+	UFUNCTION(BlueprintPure, Category = "CCTV")
+		FText GetCameraName() const { return IsOnActiveCamera() ? ActiveCamera.Value->DisplayName : FText::GetEmpty(); }
 	
 protected:
 

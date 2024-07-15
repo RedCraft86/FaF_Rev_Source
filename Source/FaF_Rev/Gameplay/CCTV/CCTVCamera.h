@@ -25,6 +25,9 @@ public:
 	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, Category = "Subobjects")
 		TObjectPtr<class UVisionConeComponent> VisionCone;
 
+	UPROPERTY(EditAnywhere, Category = "Settings")
+		FText DisplayName;
+	
 	UPROPERTY(EditAnywhere, Category = "Settings", meta = (ClampMin = 0.1f, UIMin = 0.1f))
 		FVector2D TurningRate;
 	
@@ -53,7 +56,7 @@ public:
 #endif
 
 	UFUNCTION(BlueprintPure, Category = "CCTV")
-		bool CanSeeEnemies() const { return bSeeEnemies; }
+		bool IsSeeingEnemies() const { return bSeeEnemies; }
 	
 protected:
 #if WITH_EDITORONLY_DATA

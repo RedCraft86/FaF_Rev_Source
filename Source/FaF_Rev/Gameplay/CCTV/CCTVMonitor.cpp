@@ -2,7 +2,9 @@
 
 #include "CCTVMonitor.h"
 #include "CCTVCamera.h"
+#include "CCTVScreenWidget.h"
 #include "Components/AudioComponent.h"
+#include "Components/WidgetComponent.h"
 
 ACCTVMonitor::ACCTVMonitor()
 {
@@ -22,6 +24,9 @@ ACCTVMonitor::ACCTVMonitor()
 	
 	MonitorMesh = CreateDefaultSubobject<UStaticMeshComponent>("MonitorMesh");
 	MonitorMesh->SetupAttachment(SceneRoot);
+
+	MonitorWidget = CreateDefaultSubobject<UWidgetComponent>("MonitorWidget");
+	MonitorWidget->SetupAttachment(MonitorMesh);
 
 	ChangeCameraStatic.InterpSpeed = 10.0f;
 }
@@ -74,6 +79,11 @@ void ACCTVMonitor::BeginPlay()
 	if (!Cameras.Contains(DefaultCamera) && Cameras.Num() > 0)
 	{
 		DefaultCamera = GetCameraOptions()[0];
+	}
+
+	if (UCCTVScreenWidget* Widget = Cast<UCCTVScreenWidget>(MonitorWidget->GetWidget()))
+	{
+		Widget->Monitor = this;
 	}
 
 	GetWorldTimerManager().SetTimerForNextTick([this]()
