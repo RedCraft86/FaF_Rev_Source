@@ -52,9 +52,6 @@ public:
 		FOnEnemyAudioEvent OnAudioPlayed;
 
 	UFUNCTION(BlueprintCallable, Category = "EnemyAI")
-		void PlayFootstep();
-
-	UFUNCTION(BlueprintCallable, Category = "EnemyAI")
 		void SetEnemyState(const EEnemyState InNewState);
 
 	UFUNCTION(BlueprintPure, Category = "EnemyAI")
