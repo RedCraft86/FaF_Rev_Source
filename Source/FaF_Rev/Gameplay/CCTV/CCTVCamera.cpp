@@ -28,7 +28,7 @@ ACCTVCamera::ACCTVCamera() : TurningRate(FVector2D::UnitVector), TurningRange(25
 	VisionCone = CreateDefaultSubobject<UVisionConeComponent>("VisionCone");
 	VisionCone->SetupAttachment(CaptureView);
 	VisionCone->PeripheralAngle = 0.0f;
-	VisionCone->BaseAngle = 40.0f;
+	VisionCone->BaseAngle = 45.0f;
 
 	bEnabled = false;
 	bStartWithCollisionEnabled = false;
