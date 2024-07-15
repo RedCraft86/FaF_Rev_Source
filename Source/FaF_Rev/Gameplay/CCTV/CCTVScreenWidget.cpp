@@ -4,15 +4,17 @@
 #include "CCTVMonitor.h"
 #include "Components/TextBlock.h"
 
-void UCCTVScreenWidget::UpdateValues()
+void UCCTVScreenWidget::UpdateValues() const
 {
-	if (Monitor && Monitor->IsOnActiveCamera())
+	if (Monitor && Monitor->IsEnabled() && Monitor->IsOnActiveCamera())
 	{
 		const bool bSeeEnemies = Monitor->IsSeeingEnemies();
-		TrackingStatusText->SetText(bSeeEnemies ? INVTEXT("Yes") : INVTEXT("No"));
+		TrackingStatusText->SetText(bSeeEnemies ? INVTEXT("Detected") : INVTEXT("Not Detected"));
 		TrackingStatusText->SetColorAndOpacity(bSeeEnemies ? FColor::Green : FColor::Red);
 
 		CameraStatusText->SetText(INVTEXT("Online"));
+		CameraStatusText->SetColorAndOpacity(FColor::Green);
+		
 		CameraNameText->SetText(Monitor->GetCameraName());
 	}
 	else
@@ -21,7 +23,9 @@ void UCCTVScreenWidget::UpdateValues()
 		TrackingStatusText->SetColorAndOpacity(FColor::White);
 
 		CameraStatusText->SetText(INVTEXT("Reconnecting..."));
-		CameraNameText->SetText(INVTEXT("Fetching..."));
+		CameraStatusText->SetColorAndOpacity(Monitor->IsEnabled() ? FColor::Yellow : FColor::Red);
+		
+		CameraNameText->SetText(Monitor->IsEnabled() ? INVTEXT("Fetching...") : INVTEXT("None"));
 	}
 }
 

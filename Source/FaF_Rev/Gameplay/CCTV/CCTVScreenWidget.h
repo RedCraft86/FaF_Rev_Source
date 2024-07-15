@@ -7,8 +7,8 @@
 
 class UTextBlock;
 
-UCLASS()
-class FAF_REV_API UCCTVScreenWidget : public UUserWidget
+UCLASS(Abstract)
+class FAF_REV_API UCCTVScreenWidget final : public UUserWidget
 {
 	GENERATED_BODY()
 
@@ -30,6 +30,6 @@ protected:
 	UPROPERTY() FTimerHandle UpdateTimer;
 	UPROPERTY(Transient) TObjectPtr<const ACCTVMonitor> Monitor;
 
-	void UpdateValues();
+	void UpdateValues() const;
 	virtual void NativeConstruct() override;
 };
