@@ -140,7 +140,7 @@ void ACCTVCamera::OnEnemyAudioPlayed(const AFREnemyBase* Enemy, const UAudioComp
 	if (bEnabled && Monitor && Enemy && Component && Component->Sound && VisionCone->GetActorVisionState(Enemy, true) != EVisionConeState::None)
 	{
 		const float Volume = FMath::GetMappedRangeValueClamped(FVector2D(500.0f, VisionCone->MaxDistance),
-			FVector2D(1.0f, 0.1f), FVector::Distance(VisionCone->GetComponentLocation(), Component->GetComponentLocation()));
+			FVector2D(1.0f, 0.1f), FVector::Distance(VisionCone->GetComponentLocation(), Enemy->GetActorLocation()));
 
 		Monitor->PlayMonitorAudio(Component->Sound, Volume);
 	}
