@@ -22,7 +22,7 @@ void UCCTVScreenWidget::UpdateValues() const
 		TrackingStatusText->SetText(INVTEXT("Unknown"));
 		TrackingStatusText->SetColorAndOpacity(FColor::White);
 
-		CameraStatusText->SetText(INVTEXT("Reconnecting..."));
+		CameraStatusText->SetText(Monitor->IsEnabled() ? INVTEXT("Reconnecting...") : INVTEXT("Offline"));
 		CameraStatusText->SetColorAndOpacity(Monitor->IsEnabled() ? FColor::Yellow : FColor::Red);
 		
 		CameraNameText->SetText(Monitor->IsEnabled() ? INVTEXT("Fetching...") : INVTEXT("None"));
