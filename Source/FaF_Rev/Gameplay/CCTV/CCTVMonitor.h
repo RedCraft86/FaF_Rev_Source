@@ -18,6 +18,9 @@ public:
 	ACCTVMonitor();
 
 	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, Category = "Subobjects")
+		TObjectPtr<UAudioComponent> MonitorAudio;
+	
+	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, Category = "Subobjects")
 		TObjectPtr<UStaticMeshComponent> MonitorMesh;
 
 	UPROPERTY(EditAnywhere, Category = "Settings", meta = (GetOptions = "GetCameraOptions"))
@@ -35,8 +38,8 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "CCTV")
 		void ChangeCamera(const FName InKey);
 
-	UFUNCTION(BlueprintImplementableEvent, Category = "CCTV")
-		void PlayMonitorAudio(const USoundBase* Sound, const float Volume);
+	UFUNCTION(BlueprintCallable, BlueprintPure = false, Category = "CCTV")
+		void PlayMonitorAudio(USoundBase* Sound, const float Volume) const;
 	
 protected:
 

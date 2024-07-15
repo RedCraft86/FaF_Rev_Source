@@ -16,6 +16,7 @@ AFREnemyBase::AFREnemyBase() : bStartRoaming(true), EnemyState(EEnemyState::None
 	FootstepAudio = CreateDefaultSubobject<UAudioComponent>("FootstepAudio");
 	FootstepAudio->SetRelativeLocation({0.0f, 0.0f, -50.0f});
 	FootstepAudio->SetupAttachment(GetCapsuleComponent());
+	FootstepAudio->bAutoActivate = false;
 	FootstepAudio->bEnableLowPassFilter = true;
 	FootstepAudio->bOverrideAttenuation = true;
 	FootstepAudio->AttenuationOverrides.bAttenuate = true;

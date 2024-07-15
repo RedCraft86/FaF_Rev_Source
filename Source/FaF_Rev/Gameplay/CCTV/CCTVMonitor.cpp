@@ -2,11 +2,23 @@
 
 #include "CCTVMonitor.h"
 #include "CCTVCamera.h"
+#include "Components/AudioComponent.h"
 
 ACCTVMonitor::ACCTVMonitor()
 {
 	PrimaryActorTick.bCanEverTick = true;
 	PrimaryActorTick.bStartWithTickEnabled = true;
+
+	MonitorAudio = CreateDefaultSubobject<UAudioComponent>("MonitorAudio");
+	MonitorAudio->SetupAttachment(SceneRoot);
+	MonitorAudio->bAutoActivate = false;
+	MonitorAudio->bCanPlayMultipleInstances = true;
+	MonitorAudio->bOverrideAttenuation = true;
+	MonitorAudio->AttenuationOverrides.bAttenuate = true;
+	MonitorAudio->AttenuationOverrides.AttenuationShapeExtents = {250.0f, 0.0f, 0.0f};
+	MonitorAudio->AttenuationOverrides.FalloffDistance = 1000.0f;
+	MonitorAudio->AttenuationOverrides.bEnableOcclusion = true;
+	MonitorAudio->AttenuationOverrides.OcclusionVolumeAttenuation = 0.1f;
 	
 	MonitorMesh = CreateDefaultSubobject<UStaticMeshComponent>("MonitorMesh");
 	MonitorMesh->SetupAttachment(SceneRoot);
@@ -35,10 +47,12 @@ void ACCTVMonitor::ChangeCamera(const FName InKey)
 	if (ActiveCamera.Value) ActiveCamera.Value->SetEnabled(true);
 }
 
-// void ACCTVMonitor::PlayMonitorAudio(const USoundBase* Sound, const float Volume)
-// {
-// 	
-// }
+void ACCTVMonitor::PlayMonitorAudio(USoundBase* Sound, const float Volume) const
+{
+	MonitorAudio->SetSound(Sound);
+	MonitorAudio->VolumeMultiplier = Volume;
+	MonitorAudio->Play();
+}
 
 void ACCTVMonitor::UpdateCameraStatic()
 {
