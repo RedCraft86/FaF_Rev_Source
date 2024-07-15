@@ -15,8 +15,8 @@ ACCTVMonitor::ACCTVMonitor()
 	MonitorAudio->bCanPlayMultipleInstances = true;
 	MonitorAudio->bOverrideAttenuation = true;
 	MonitorAudio->AttenuationOverrides.bAttenuate = true;
-	MonitorAudio->AttenuationOverrides.AttenuationShapeExtents = {250.0f, 0.0f, 0.0f};
-	MonitorAudio->AttenuationOverrides.FalloffDistance = 1000.0f;
+	MonitorAudio->AttenuationOverrides.AttenuationShapeExtents = {100.0f, 0.0f, 0.0f};
+	MonitorAudio->AttenuationOverrides.FalloffDistance = 600.0f;
 	MonitorAudio->AttenuationOverrides.bEnableOcclusion = true;
 	MonitorAudio->AttenuationOverrides.OcclusionVolumeAttenuation = 0.1f;
 	
