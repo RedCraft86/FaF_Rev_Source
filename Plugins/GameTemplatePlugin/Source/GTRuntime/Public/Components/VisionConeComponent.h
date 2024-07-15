@@ -35,7 +35,7 @@ public:
 		float PeripheralAngle;
 
 	UFUNCTION(BlueprintPure, Category = "VisionCone")
-		bool GetTraceTo(const AActor* InActor) const;
+		bool GetTraceTo(const AActor* InActor, const bool bCollidingOnly = false) const;
 	
 	UFUNCTION(BlueprintPure, Category = "VisionCone")
 		float GetAngleTo(const AActor* InActor) const;
@@ -44,7 +44,7 @@ public:
 		bool IsActorInRange(const AActor* InActor) const;
 
 	UFUNCTION(BlueprintPure, Category = "VisionCone")
-		EVisionConeState GetActorVisionState(const AActor* InActor) const;
+		EVisionConeState GetActorVisionState(const AActor* InActor, const bool bCollidingOnly = false) const;
 
 	float GetBaseAngle() const { return FMath::Min(BaseAngle, 90.0f); }
 	float GetPeripheralAngle() const { return FMath::Min(GetBaseAngle() + PeripheralAngle, 90.0f); }

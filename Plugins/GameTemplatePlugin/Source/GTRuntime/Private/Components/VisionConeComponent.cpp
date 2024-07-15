@@ -9,7 +9,7 @@ UVisionConeComponent::UVisionConeComponent()
 	PrimaryComponentTick.bCanEverTick = false;
 }
 
-bool UVisionConeComponent::GetTraceTo(const AActor* InActor) const
+bool UVisionConeComponent::GetTraceTo(const AActor* InActor, const bool bCollidingOnly) const
 {
 	if (!InActor) return false;
 	const FVector TraceStart = GetComponentLocation();
@@ -25,7 +25,7 @@ bool UVisionConeComponent::GetTraceTo(const AActor* InActor) const
 
 	FVector Origin, BoxExtent;
 	TArray<FVector> Vertices = UGTRuntimeLibrary::GetBoundingBoxVertices(InActor,
-		true, false, Origin, BoxExtent);
+		bCollidingOnly, false, Origin, BoxExtent);
 	Vertices.Add(Origin);
 	for (const FVector& Vert : Vertices)
 	{
@@ -49,12 +49,12 @@ bool UVisionConeComponent::IsActorInRange(const AActor* InActor) const
 	return FVector::Distance(GetComponentLocation(), InActor->GetActorLocation()) <= FMath::Max(MaxDistance, 10.0f);
 }
 
-EVisionConeState UVisionConeComponent::GetActorVisionState(const AActor* InActor) const
+EVisionConeState UVisionConeComponent::GetActorVisionState(const AActor* InActor, const bool bCollidingOnly) const
 {
 	if (!IsActorInRange(InActor)) return EVisionConeState::None;
 
 	const float AngleToTarget = GetAngleTo(InActor);
-	if (AngleToTarget >= 0.0f && AngleToTarget <= GetPeripheralAngle() && GetTraceTo(InActor))
+	if (AngleToTarget >= 0.0f && AngleToTarget <= GetPeripheralAngle() && GetTraceTo(InActor, bCollidingOnly))
 	{
 		return AngleToTarget <= GetBaseAngle() ? EVisionConeState::FullySeen : EVisionConeState::Peripheral;
 	}

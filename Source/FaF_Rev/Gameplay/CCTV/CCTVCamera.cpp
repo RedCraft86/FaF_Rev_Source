@@ -61,7 +61,7 @@ void ACCTVCamera::RefreshEnemyState()
 	for (const TObjectPtr<const AFREnemyBase>& Enemy : Enemies)
 	{
 		if (!Enemy) continue;
-		bSeeEnemies = VisionCone->GetActorVisionState(Enemy) != EVisionConeState::None;
+		bSeeEnemies = VisionCone->GetActorVisionState(Enemy, true) != EVisionConeState::None;
 		if (bSeeEnemies) break;
 	}
 	
@@ -136,7 +136,7 @@ void ACCTVCamera::OnEnableStateChanged(const bool bIsEnabled)
 
 void ACCTVCamera::OnEnemyAudioPlayed(const AFREnemyBase* Enemy, const UAudioComponent* Component)
 {
-	if (bEnabled && Monitor && Enemy && Component && Component->Sound && VisionCone->GetActorVisionState(Enemy) != EVisionConeState::None)
+	if (bEnabled && Monitor && Enemy && Component && Component->Sound && VisionCone->GetActorVisionState(Enemy, true) != EVisionConeState::None)
 	{
 		const float Volume = FMath::GetMappedRangeValueClamped(FVector2D(500.0f, VisionCone->MaxDistance),
 			FVector2D(1.0f, 0.1f), FVector::Distance(VisionCone->GetComponentLocation(), Component->GetComponentLocation()));
