@@ -39,7 +39,7 @@ public:
 		FOnCharacterAudioEvent OnAudioPlayed;
 
 	UFUNCTION(BlueprintImplementableEvent, Category = "AI")
-		USMStateMachineComponent* GetLogicComponent();
+		USMStateMachineComponent* GetLogicComponent() const;
 
 	UFUNCTION(BlueprintCallable, Category = "CharacterAI")
 		void PlaySmartAudio(UAudioComponent* InComponent);
