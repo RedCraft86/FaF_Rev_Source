@@ -1,6 +1,7 @@
 ﻿// Copyright (C) RedCraft86. All Rights Reserved.
 
 #include "FRCharacter.h"
+#include "GameFramework/CharacterMovementComponent.h"
 #include "Libraries/GTRuntimeLibrary.h"
 #include "Components/AudioComponent.h"
 #include "Components/CapsuleComponent.h"
@@ -138,6 +139,12 @@ void AFRCharacter::PlaySmartAudio(UAudioComponent* InComponent)
 			OnAudioPlayed.Broadcast(this, InComponent);
 		}
 	}
+}
+
+void AFRCharacter::DisableAI()
+{
+	if (GetLogicComponent()) GetLogicComponent()->Stop();
+	GetCharacterMovement()->StopMovementImmediately();
 }
 
 void AFRCharacter::OnConstruction(const FTransform& Transform)

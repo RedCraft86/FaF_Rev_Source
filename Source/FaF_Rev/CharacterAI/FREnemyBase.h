@@ -25,14 +25,8 @@ public:
 
 	AFREnemyBase();
 
-	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, Category = "Subobjects")
-		TObjectPtr<class USMStateMachineComponent> LogicComponent;
-
 	UPROPERTY(EditAnywhere, Category = "Settings")
 		bool bStartRoaming;
-
-	UFUNCTION(BlueprintCallable, Category = "EnemyAI")
-		void DisableAI();
 
 	UFUNCTION(BlueprintCallable, Category = "EnemyAI")
 		void SetEnemyState(const EEnemyState InNewState);

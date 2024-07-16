@@ -3,6 +3,7 @@
 #pragma once
 
 #include "Data/InlineCurves.h"
+#include "SMStateMachineComponent.h"
 #include "GameFramework/Character.h"
 #include "FRCharacter.generated.h"
 
@@ -37,8 +38,14 @@ public:
 	UPROPERTY(BlueprintAssignable)
 		FOnCharacterAudioEvent OnAudioPlayed;
 
-	UFUNCTION(BlueprintCallable, Category = "EnemyAI")
+	UFUNCTION(BlueprintImplementableEvent, Category = "AI")
+		USMStateMachineComponent* GetLogicComponent();
+
+	UFUNCTION(BlueprintCallable, Category = "CharacterAI")
 		void PlaySmartAudio(UAudioComponent* InComponent);
+
+	UFUNCTION(BlueprintCallable, Category = "CharacterAI")
+		void DisableAI();
 
 protected:
 

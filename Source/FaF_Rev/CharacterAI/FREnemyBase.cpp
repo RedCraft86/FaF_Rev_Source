@@ -2,18 +2,9 @@
 
 #include "FREnemyBase.h"
 #include "FRPlayer.h"
-#include "SMStateMachineComponent.h"
-#include "GameFramework/CharacterMovementComponent.h"
 
 AFREnemyBase::AFREnemyBase() : bStartRoaming(true), EnemyState(EEnemyState::None)
 {
-	LogicComponent = CreateDefaultSubobject<USMStateMachineComponent>("LogicComponent");
-}
-
-void AFREnemyBase::DisableAI()
-{
-	LogicComponent->Stop();
-	GetCharacterMovement()->StopMovementImmediately();
 }
 
 void AFREnemyBase::SetEnemyState(const EEnemyState InNewState)
@@ -39,7 +30,7 @@ void AFREnemyBase::BeginPlay()
 {
 	Super::BeginPlay();
 	SetEnemyState(bStartRoaming ? EEnemyState::Roam : EEnemyState::None);
-	if (EnemyState != EEnemyState::None) LogicComponent->Start();
+	if (EnemyState != EEnemyState::None && GetLogicComponent()) GetLogicComponent()->Start();
 }
 
 EEnemyState AFREnemyBase::GetHighestEnemyState(const TArray<AFREnemyBase*>& InEnemies)
