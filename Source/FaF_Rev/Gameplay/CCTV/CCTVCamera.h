@@ -42,6 +42,9 @@ public:
 	
 	UPROPERTY(EditAnywhere, Category = "Settings")
 		TSet<TObjectPtr<const class AFREnemyBase>> Enemies;
+
+	UPROPERTY(EditAnywhere, Category = "Settings")
+		TSet<TObjectPtr<const AActor>> CullingActors;
 	
 	UPROPERTY(EditAnywhere, Category = "Settings", AdvancedDisplay)
 		TObjectPtr<UMaterialInterface> TrackingPostProcess;

@@ -6,6 +6,7 @@
 #include "Components/AudioComponent.h"
 #include "Components/SceneCaptureComponent2D.h"
 #include "Components/VisionConeComponent.h"
+#include "Optimization/SmartCulling.h"
 #if WITH_EDITOR
 #include "EngineUtils.h"
 #include "Components/DebugShapesComponent.h"
@@ -133,6 +134,14 @@ void ACCTVCamera::OnEnableStateChanged(const bool bIsEnabled)
 	SceneCapture->AddOrUpdateBlendable(TrackingPostProcess, 0.0f);
 	bEnabled ? GetWorldTimerManager().UnPauseTimer(CaptureHandle) : GetWorldTimerManager().PauseTimer(CaptureHandle);
 	bEnabled ? GetWorldTimerManager().UnPauseTimer(RefreshHandle) : GetWorldTimerManager().PauseTimer(RefreshHandle);
+
+	for (const TObjectPtr<const AActor>& Actor : CullingActors)
+	{
+		if (USmartCullingComponent* Comp = Actor ? Actor->FindComponentByClass<USmartCullingComponent>() : nullptr)
+		{
+			bIsEnabled ? Comp->AddRenderRequest(this) : Comp->RemoveRenderRequest(this);
+		}
+	}
 }
 
 void ACCTVCamera::OnEnemyAudioPlayed(const AFREnemyBase* Enemy, const UAudioComponent* Component)
