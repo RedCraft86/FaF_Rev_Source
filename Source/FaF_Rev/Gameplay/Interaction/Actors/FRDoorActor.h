@@ -48,7 +48,7 @@ public:
 	UPROPERTY(EditAnywhere, Category = "Settings")
 		FTransformMeshData DoorProperties;
 	
-	UPROPERTY(EditAnywhere, Category = "Settings", meta = (ClampMin = 1.0f, UIMin = 1.0f))
+	UPROPERTY(EditAnywhere, Category = "Settings", meta = (ClampMin = 0.1f, UIMin = 0.1f))
 		FVector BoxScale;
 
 	UPROPERTY(EditAnywhere, Category = "Settings|Key", meta = (DisplayThumbnail = false))
