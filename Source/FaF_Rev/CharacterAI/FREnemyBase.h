@@ -2,8 +2,7 @@
 
 #pragma once
 
-#include "Data/InlineCurves.h"
-#include "GameFramework/Character.h"
+#include "FRCharacter.h"
 #include "FREnemyBase.generated.h"
 
 UENUM(BlueprintType, DisplayName = "Enemy AI Mode")
@@ -17,10 +16,8 @@ enum class EEnemyState : uint8
 };
 ENUM_RANGE_BY_FIRST_AND_LAST(EEnemyState, EEnemyState::None, EEnemyState::Search);
 
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FOnEnemyAudioEvent, const class AFREnemyBase*, Enemy, const UAudioComponent*, Component);
-
 UCLASS(Abstract, DisplayName = "Enemy Character Base")
-class FAF_REV_API AFREnemyBase : public ACharacter
+class FAF_REV_API AFREnemyBase : public AFRCharacter
 {
 	GENERATED_BODY()
 
@@ -29,27 +26,13 @@ public:
 	AFREnemyBase();
 
 	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, Category = "Subobjects")
-		TObjectPtr<UAudioComponent> FootstepAudio;
-	
+		TObjectPtr<class USMStateMachineComponent> LogicComponent;
+
 	UPROPERTY(EditAnywhere, Category = "Settings")
 		bool bStartRoaming;
 
-	UPROPERTY(EditAnywhere, Category = "Settings")
-		FInlineFloatCurve AudioVolumeCurve;
-
-#if WITH_EDITORONLY_DATA
-	UPROPERTY(EditAnywhere, Category = "Settings", AdvancedDisplay)
-		bool bDebugAudio = false;
-	
-	UPROPERTY(EditAnywhere, Category = "Settings", AdvancedDisplay)
-		FColor DebugColor = FColor::MakeRandomColor();
-#endif
-
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Settings", AdvancedDisplay)
-		TSoftObjectPtr<class AFRPlayerBase> PlayerChar;
-
-	UPROPERTY(BlueprintAssignable)
-		FOnEnemyAudioEvent OnAudioPlayed;
+	UFUNCTION(BlueprintCallable, Category = "EnemyAI")
+		void DisableAI();
 
 	UFUNCTION(BlueprintCallable, Category = "EnemyAI")
 		void SetEnemyState(const EEnemyState InNewState);
@@ -57,15 +40,11 @@ public:
 	UFUNCTION(BlueprintPure, Category = "EnemyAI")
 		EEnemyState GetEnemyState() const { return EnemyState; }
 
-	UFUNCTION(BlueprintCallable, Category = "EnemyAI")
-		void PlaySmartAudio(UAudioComponent* InComponent);
-
 protected:
 	
 	UPROPERTY() EEnemyState EnemyState;
 
 	virtual void BeginPlay() override;
-	virtual void OnConstruction(const FTransform& Transform) override;
 
 public: // Statics
 

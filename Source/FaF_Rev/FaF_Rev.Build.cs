@@ -43,6 +43,7 @@ public class FaF_Rev : ModuleRules
 				"ExpressiveText",
 				"StructUtils",
 				"Narrative",
+				"SMSystem",
 				"GTRuntime",
 				"GTCore",
 			}
