@@ -144,7 +144,7 @@ void ACCTVCamera::OnEnableStateChanged(const bool bIsEnabled)
 	}
 }
 
-void ACCTVCamera::OnEnemyAudioPlayed(const AFRCharacter* Enemy, const UAudioComponent* Component) const
+void ACCTVCamera::OnEnemyAudioPlayed(const AFRCharacter* Enemy, const UAudioComponent* Component)
 {
 	if (bEnabled && Monitor && Enemy && Component && Component->Sound && VisionCone->GetActorVisionState(Enemy, true) != EVisionConeState::None)
 	{

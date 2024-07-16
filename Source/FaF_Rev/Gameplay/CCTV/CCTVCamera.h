@@ -79,5 +79,5 @@ protected:
 	virtual void OnConstruction(const FTransform& Transform) override;
 	virtual void OnEnableStateChanged(const bool bIsEnabled) override;
 
-	UFUNCTION() void OnEnemyAudioPlayed(const AFRCharacter* Enemy, const UAudioComponent* Component) const;
+	UFUNCTION() void OnEnemyAudioPlayed(const AFRCharacter* Enemy, const UAudioComponent* Component);
 };
