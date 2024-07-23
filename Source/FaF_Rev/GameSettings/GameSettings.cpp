@@ -29,7 +29,7 @@ void UGameSettings::InitializeSettings()
 		SoundTypeToClass.Add(Type, Settings->SoundClasses.FindRef(Type).LoadSynchronous());
 	}
 
-	SetToDefaults();
+	//SetToDefaults();
 	if (UGTConfigSubsystem::Get(GameInstance)->IsFirstLaunch() && !bLaunchWork)
 	{
 		bLaunchWork = true;
@@ -48,7 +48,7 @@ void UGameSettings::InitializeSettings()
 		LoadSettings(true);
 	}
 	
-	ApplySettings(false);
+	ApplyNonResolutionSettings();
 	bInitializing = false;
 }
 
