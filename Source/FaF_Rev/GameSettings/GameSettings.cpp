@@ -40,7 +40,7 @@ void UGameSettings::InitializeSettings()
 			SetOverallQuality(3);
 		}
 		
-		SetResScalePercent(100.0f);
+		SetResolutionScaleNormalized(1.0f);
 		CacheScalabilityDefaults();
 	}
 	else

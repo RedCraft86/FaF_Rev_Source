@@ -76,9 +76,15 @@ void UGTGameUserSettings::SetToDefaults()
 #if WITH_EDITOR
 	SetScreenResolution({1920, 1080});
 	SetFullscreenMode(EWindowMode::Windowed);
+	PreferredFullscreenMode = EWindowMode::Windowed;
+	LastUserConfirmedResolutionSizeX = 1920;
+	LastUserConfirmedResolutionSizeY = 1080;
 #else
 	SetScreenResolution(GetDesktopResolution());
 	SetFullscreenMode(EWindowMode::Fullscreen);
+	PreferredFullscreenMode = EWindowMode::Windowed;
+	LastUserConfirmedResolutionSizeX = ResolutionSizeX;
+	LastUserConfirmedResolutionSizeY = ResolutionSizeY;
 #endif
 	SetResolutionScaleNormalized(1.0f);
 	SetVSyncEnabled(true);
