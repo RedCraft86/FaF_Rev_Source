@@ -74,12 +74,24 @@ struct GTRUNTIME_API FInventorySlotData
 	bool MatchesWith(const UInventoryItemDataBase* Item, const FInventoryItemFilter& FilterData) const;
 };
 
+USTRUCT(BlueprintType)
+struct FMetadataWrapper
+{
+	GENERATED_BODY()
+	
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Metadata")
+		TMap<FName, FString> Metadata;
+
+	FMetadataWrapper() : Metadata({}) {}
+	FMetadataWrapper(const TMap<FName, FString>& InMetadata) : Metadata(InMetadata) {}
+};
+
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FInventoryUpdateSignature);
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_ThreeParams(FInventoryIOUpdateSignature, const UInventoryItemDataBase*, Item, const int32, Amount, const bool, bNewOrEmpty);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_FourParams(FInventoryIOUpdateSignature, const UInventoryItemDataBase*, Item, const int32, Amount, const bool, bNewOrEmpty, const FMetadataWrapper&, Metadata);
 
 #define ON_UPDATE() { OnInventoryUpdate(); OnUpdate.Broadcast(); OnUpdateBP.Broadcast(); }
-#define ON_ITEM_ADDED(Item, Amount, New) { OnItemAdded.Broadcast(Item, Amount, New); OnItemAddedBP.Broadcast(Item, Amount, New); }
-#define ON_ITEM_REMOVED(Item, Amount, Empty) { OnItemRemoved.Broadcast(Item, Amount, Empty); OnItemRemovedBP.Broadcast(Item, Amount, Empty); }
+#define ON_ITEM_ADDED(Item, Amount, New, Meta) { OnItemAdded.Broadcast(Item, Amount, New, Meta); OnItemAddedBP.Broadcast(Item, Amount, New, Meta); }
+#define ON_ITEM_REMOVED(Item, Amount, Empty) { OnItemRemoved.Broadcast(Item, Amount, Empty, {}); OnItemRemovedBP.Broadcast(Item, Amount, Empty, {}); }
 
 UCLASS(Abstract)
 class GTRUNTIME_API UInventoryComponentBase : public UActorComponent
@@ -132,7 +144,7 @@ public:
 	DECLARE_MULTICAST_DELEGATE(FInventoryUpdateEvent);
 	FInventoryUpdateEvent OnUpdate;
 	
-	DECLARE_MULTICAST_DELEGATE_ThreeParams(FInventoryIOUpdateEvent, const UInventoryItemDataBase*, const int32, const bool);
+	DECLARE_MULTICAST_DELEGATE_FourParams(FInventoryIOUpdateEvent, const UInventoryItemDataBase*, const int32, const bool, const FMetadataWrapper&);
 	FInventoryIOUpdateEvent OnItemAdded, OnItemRemoved;
 	
 protected:

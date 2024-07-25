@@ -121,7 +121,7 @@ int32 UInventoryComponentBase::AddItemToSlot(const FGuid& SlotKey, const int32 A
 	}
 
 	if (!CleanInventory()) ON_UPDATE();
-	if (!bSilent) ON_ITEM_ADDED(Item, Amount - Overflow, false);
+	if (!bSilent) ON_ITEM_ADDED(Item, Amount - Overflow, false, ItemSlots.Contains(SlotKey) ? ItemSlots[SlotKey].Metadata : FMetadataWrapper());
 	return Overflow;
 }
 
@@ -206,7 +206,7 @@ void UInventoryComponentBase::AddItemToInventory(int32& Overflow, TSet<FGuid>& S
 
 	if (Final <= 0) return;
 	if (!CleanInventory()) ON_UPDATE();
-	if (!bSilent) ON_ITEM_ADDED(Item, Final, bIsNewStack);
+	if (!bSilent) ON_ITEM_ADDED(Item, Final, bIsNewStack, {Metadata});
 }
 
 int32 UInventoryComponentBase::AddItem(const UInventoryItemDataBase* Item, const int32 Amount, const TMap<FName, FString>& Metadata, const bool bSilent)

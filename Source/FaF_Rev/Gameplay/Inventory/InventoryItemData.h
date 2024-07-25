@@ -103,9 +103,14 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "DisplayMesh")
 		TMap<FString, FTransformMeshData> AltMeshes;
 
-	FText GetDisplayName(const TMap<FName, FString>& InMetadata) const;
-	FText GetDescription(const TMap<FName, FString>& InMetadata) const;
-	FTransformMeshData GetMeshData(const TMap<FName, FString>& InMetadata) const;
+	UFUNCTION(BlueprintPure, Category = "InventoryItem")
+		FText GetDisplayName(const TMap<FName, FString>& InMetadata) const;
+	
+	UFUNCTION(BlueprintPure, Category = "InventoryItem")
+		FText GetDescription(const TMap<FName, FString>& InMetadata) const;
+	
+	UFUNCTION(BlueprintPure, Category = "InventoryItem")
+		FTransformMeshData GetMeshData(const TMap<FName, FString>& InMetadata) const;
 
 #if WITH_EDITOR
 private:

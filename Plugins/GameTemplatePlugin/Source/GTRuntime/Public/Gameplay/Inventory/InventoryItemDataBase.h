@@ -15,7 +15,7 @@ enum class EInventoryItemStackType : uint8
 	Unique
 };
 
-UCLASS()
+UCLASS(BlueprintType)
 class GTRUNTIME_API UInventoryItemDataBase : public UDataAsset
 {
 	GENERATED_BODY()
