@@ -75,11 +75,11 @@ struct GTRUNTIME_API FInventorySlotData
 };
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FInventoryUpdateSignature);
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FInventoryIOUpdateSignature, const UInventoryItemDataBase*, Item, const int32, Amount);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_ThreeParams(FInventoryIOUpdateSignature, const UInventoryItemDataBase*, Item, const int32, Amount, const bool, bNewOrEmpty);
 
 #define ON_UPDATE() { OnInventoryUpdate(); OnUpdate.Broadcast(); OnUpdateBP.Broadcast(); }
-#define ON_ITEM_ADDED(Item, Amount) { OnItemAdded.Broadcast(Item, Amount); OnItemAddedBP.Broadcast(Item, Amount); }
-#define ON_ITEM_REMOVED(Item, Amount) { OnItemRemoved.Broadcast(Item, Amount); OnItemRemovedBP.Broadcast(Item, Amount); }
+#define ON_ITEM_ADDED(Item, Amount, New) { OnItemAdded.Broadcast(Item, Amount, New); OnItemAddedBP.Broadcast(Item, Amount, New); }
+#define ON_ITEM_REMOVED(Item, Amount, Empty) { OnItemRemoved.Broadcast(Item, Amount, Empty); OnItemRemovedBP.Broadcast(Item, Amount, Empty); }
 
 UCLASS(Abstract)
 class GTRUNTIME_API UInventoryComponentBase : public UActorComponent
@@ -132,7 +132,7 @@ public:
 	DECLARE_MULTICAST_DELEGATE(FInventoryUpdateEvent);
 	FInventoryUpdateEvent OnUpdate;
 	
-	DECLARE_MULTICAST_DELEGATE_TwoParams(FInventoryIOUpdateEvent, const UInventoryItemDataBase*, const int32);
+	DECLARE_MULTICAST_DELEGATE_ThreeParams(FInventoryIOUpdateEvent, const UInventoryItemDataBase*, const int32, const bool);
 	FInventoryIOUpdateEvent OnItemAdded, OnItemRemoved;
 	
 protected:

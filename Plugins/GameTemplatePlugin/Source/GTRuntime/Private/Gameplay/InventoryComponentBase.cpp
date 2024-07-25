@@ -121,7 +121,7 @@ int32 UInventoryComponentBase::AddItemToSlot(const FGuid& SlotKey, const int32 A
 	}
 
 	if (!CleanInventory()) ON_UPDATE();
-	if (!bSilent) ON_ITEM_ADDED(Item, Amount - Overflow);
+	if (!bSilent) ON_ITEM_ADDED(Item, Amount - Overflow, false);
 	return Overflow;
 }
 
@@ -140,7 +140,7 @@ int32 UInventoryComponentBase::RemoveItemFromSlot(const FGuid& SlotKey, const in
 	}
 
 	if (!CleanInventory()) ON_UPDATE();
-	if (!bSilent) ON_ITEM_REMOVED(Item, Amount - Missing);
+	if (!bSilent) ON_ITEM_REMOVED(Item, Amount - Missing, !ItemSlots.Contains(SlotKey));
 	return Missing;
 }
 
@@ -150,6 +150,8 @@ void UInventoryComponentBase::AddItemToInventory(int32& Overflow, TSet<FGuid>& S
 	Overflow = 0;
 	if (!IsValid(Item) || Amount <= 0) return;
 
+	bool bIsNewStack = false;
+	
 	int32 Raw, Final;
 	switch (Item->StackingMode)
 	{
@@ -168,6 +170,8 @@ void UInventoryComponentBase::AddItemToInventory(int32& Overflow, TSet<FGuid>& S
 				ItemSlots.Add(ItemGuid, NewSlot);
 				Slots.Add(ItemGuid);
 			}
+
+			bIsNewStack = true;
 		}
 		break;
 		
@@ -193,6 +197,8 @@ void UInventoryComponentBase::AddItemToInventory(int32& Overflow, TSet<FGuid>& S
 				FInventorySlotData NewSlot(Item, Final, Metadata);
 				ItemSlots.Add(ItemGuid, NewSlot);
 				Slots.Add(ItemGuid);
+				
+				bIsNewStack = true;
 			}
 		}
 		break;
@@ -200,7 +206,7 @@ void UInventoryComponentBase::AddItemToInventory(int32& Overflow, TSet<FGuid>& S
 
 	if (Final <= 0) return;
 	if (!CleanInventory()) ON_UPDATE();
-	if (!bSilent) ON_ITEM_ADDED(Item, Final);
+	if (!bSilent) ON_ITEM_ADDED(Item, Final, bIsNewStack);
 }
 
 int32 UInventoryComponentBase::AddItem(const UInventoryItemDataBase* Item, const int32 Amount, const TMap<FName, FString>& Metadata, const bool bSilent)
@@ -216,6 +222,8 @@ void UInventoryComponentBase::RemoveItemFromInventory(int32& Missing, const UInv
 	Missing = 0;
 	if (!IsValid(Item) || Amount <= 0) return;
 
+	bool bIsEmptyStack = false;
+	
 	int32 Raw, Final;
 	switch (Item->StackingMode)
 	{
@@ -233,6 +241,8 @@ void UInventoryComponentBase::RemoveItemFromInventory(int32& Missing, const UInv
 				ItemSlots.Remove(Slot);
 				if (Raw <= 0) break;
 			}
+
+			bIsEmptyStack = true;
 		}
 		break;
 		
@@ -248,6 +258,7 @@ void UInventoryComponentBase::RemoveItemFromInventory(int32& Missing, const UInv
 				if (ItemSlots[Slot].Amount <= 0)
 				{
 					ItemSlots.Remove(Slot);
+					bIsEmptyStack = true;
 				}
 			}
 			else
@@ -261,7 +272,7 @@ void UInventoryComponentBase::RemoveItemFromInventory(int32& Missing, const UInv
 
 	if (Final <= 0) return;
 	if (!CleanInventory()) ON_UPDATE();
-	if (!bSilent) ON_ITEM_REMOVED(Item, Final);
+	if (!bSilent) ON_ITEM_REMOVED(Item, Final, bIsEmptyStack);
 }
 
 int32 UInventoryComponentBase::RemoveItem(const UInventoryItemDataBase* Item, const int32 Amount, const FInventoryItemFilter& Filter, const bool bSilent)
