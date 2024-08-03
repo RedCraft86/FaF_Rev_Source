@@ -89,12 +89,12 @@ void ACCTVCamera::BeginPlay()
 	GetWorldTimerManager().SetTimer(RefreshHandle, this, &ACCTVCamera::RefreshEnemyState, RefreshFrequency, true);
 	GetWorldTimerManager().PauseTimer(RefreshHandle);
 	
-	Enemies.Remove(nullptr);
-	for (const TObjectPtr<const AFREnemyBase>& Enemy : Enemies)
-	{
-		if (!Enemy) continue;
-		const_cast<AFREnemyBase*>(Enemy.Get())->OnAudioPlayed.AddDynamic(this, &ACCTVCamera::OnEnemyAudioPlayed);
-	}
+	// Enemies.Remove(nullptr);
+	// for (const TObjectPtr<const AFREnemyBase>& Enemy : Enemies)
+	// {
+	// 	if (!Enemy) continue;
+	// 	const_cast<AFREnemyBase*>(Enemy.Get())->OnAudioPlayed.AddDynamic(this, &ACCTVCamera::OnEnemyAudioPlayed);
+	// }
 }
 
 void ACCTVCamera::OnConstruction(const FTransform& Transform)
