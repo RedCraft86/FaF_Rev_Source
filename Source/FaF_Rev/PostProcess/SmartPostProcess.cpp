@@ -68,10 +68,10 @@ ASmartPostProcess::ASmartPostProcess()
 void ASmartPostProcess::CopyFromTarget()
 {
 #if WITH_EDITORONLY_DATA
-	if (CopyTarget)
+	if (CopyTarget.LoadSynchronous())
 	{
 		FPostProcessSettings NewSettings = Settings;
-		if (const ASmartPostProcess* PPActor = Cast<ASmartPostProcess>(CopyTarget))
+		if (const ASmartPostProcess* PPActor = Cast<ASmartPostProcess>(CopyTarget.LoadSynchronous()))
 		{
 			NewSettings = PPActor->Settings;
 			Priority = PPActor->Priority;
@@ -79,7 +79,7 @@ void ASmartPostProcess::CopyFromTarget()
 			BlendWeight = PPActor->BlendWeight;
 			bUnbound = PPActor->bUnbound;
 		}
-		else if (const APostProcessVolume* PPVolume = Cast<APostProcessVolume>(CopyTarget))
+		else if (const APostProcessVolume* PPVolume = Cast<APostProcessVolume>(CopyTarget.LoadSynchronous()))
 		{
 			NewSettings = PPVolume->Settings;
 			Priority = PPVolume->Priority;
@@ -87,7 +87,7 @@ void ASmartPostProcess::CopyFromTarget()
 			BlendWeight = PPVolume->BlendWeight;
 			bUnbound = PPVolume->bUnbound;
 		}
-		else if (const ACameraActor* CamActor = Cast<ACameraActor>(CopyTarget))
+		else if (const ACameraActor* CamActor = Cast<ACameraActor>(CopyTarget.LoadSynchronous()))
 		{
 			NewSettings = CamActor->GetCameraComponent()->PostProcessSettings;
 			BlendWeight = CamActor->GetCameraComponent()->PostProcessBlendWeight;

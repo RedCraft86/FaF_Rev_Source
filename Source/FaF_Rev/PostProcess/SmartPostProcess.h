@@ -121,7 +121,7 @@ public:
 		bool bPreserveExposure = true;
 	
 	UPROPERTY(EditAnywhere, Category = "Copying")
-		const AActor* CopyTarget = nullptr;
+		TSoftObjectPtr<const AActor> CopyTarget = nullptr;
 #endif
 #if WITH_EDITOR
 	UFUNCTION(CallInEditor, Category = "Copying")
