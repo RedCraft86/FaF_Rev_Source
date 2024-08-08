@@ -97,7 +97,7 @@ void AElectricLightBase::OnStateChanged(const bool bState)
 void AElectricLightBase::Tick(float DeltaSeconds)
 {
 	Super::Tick(DeltaSeconds);
-	if (bFlicker && bCachedState)
+	if (!IsHidden() && bFlicker && bCachedState)
 		OnFlickerUpdate(DeltaSeconds);
 }
 
