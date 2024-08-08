@@ -19,6 +19,7 @@ ASplineBarrier::ASplineBarrier() : bClosedLoop(true), WallHeight(2.0f), Mesh(nul
 	WallMeshComponent->SetupAttachment(GetRootComponent());
 	WallMeshComponent->SetLightingChannels(false, false, false);
 	WallMeshComponent->bAffectDynamicIndirectLighting = false;
+	WallMeshComponent->bAffectDistanceFieldLighting = false;
 	WallMeshComponent->SetGenerateOverlapEvents(false);
 	WallMeshComponent->SetCastShadow(false);
 
