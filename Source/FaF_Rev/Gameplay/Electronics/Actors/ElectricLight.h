@@ -42,10 +42,8 @@ public:
 	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, Category = "Subobjects")
 		TObjectPtr<USmartCullingComponent> SmartCulling;
 
-#if WITH_EDITORONLY_DATA
 	UPROPERTY(EditAnywhere, Category = "Settings", meta = (DisplayPriority = -1))
 		bool bPreviewState = true;
-#endif
 
 	UPROPERTY(EditAnywhere, Category = "Settings", meta = (DisplayPriority = -1))
 		bool bFlicker;

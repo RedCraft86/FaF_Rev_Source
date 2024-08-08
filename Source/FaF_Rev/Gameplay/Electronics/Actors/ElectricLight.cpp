@@ -114,6 +114,7 @@ void AElectricLightBase::BeginPlay()
 		if (Light) CachedIntensity.Add(Light, Light->Intensity);
 	}
 
+	bCachedState = bPreviewState;
 	OnFlickerChanged(bFlicker);
 }
 
